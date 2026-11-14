@@ -1,0 +1,133 @@
+:root {
+  font-family: system-ui, 'Malgun Gothic', sans-serif;
+  color: #182238;
+  background: #f5f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+a {
+  color: #234ecb;
+}
+:focus-visible {
+  outline: 3px solid #234ecb;
+  outline-offset: 4px;
+}
+.shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px 64px;
+}
+.header {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #dde5f1;
+}
+.brand {
+  font-size: 22px;
+  font-weight: 800;
+  color: #234ecb;
+}
+.language {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.language select {
+  min-height: 44px;
+  max-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid #c7d2e5;
+  border-radius: 8px;
+  background: white;
+}
+.hero {
+  padding: 80px 0 56px;
+  max-width: 760px;
+}
+.eyebrow {
+  color: #234ecb;
+  font-weight: 700;
+}
+h1 {
+  margin: 16px 0;
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+.description {
+  font-size: 19px;
+  color: #52617b;
+}
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.feature {
+  padding: 28px;
+  background: white;
+  border: 1px solid #dde5f1;
+  border-radius: 16px;
+}
+.number {
+  color: #234ecb;
+  font-weight: 800;
+}
+h2 {
+  font-size: 22px;
+  margin: 18px 0 8px;
+  overflow-wrap: anywhere;
+}
+.feature p {
+  color: #52617b;
+  margin: 0;
+}
+.not-found {
+  padding-top: 80px;
+}
+@media (max-width: 640px) {
+  .shell {
+    padding: 0 20px 40px;
+  }
+  .header {
+    min-height: 88px;
+    flex-wrap: wrap;
+    padding: 16px 0;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 19px;
+  }
+  .language {
+    gap: 8px;
+    font-size: 14px;
+  }
+  .hero {
+    padding: 48px 0 32px;
+  }
+  .features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .feature {
+    padding: 24px;
+  }
+}

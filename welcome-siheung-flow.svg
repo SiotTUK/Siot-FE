@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1296" viewBox="0 0 1440 1296" role="img" aria-labelledby="title description">
+  <title id="title">웰컴시흥 통합 사용자 플로우</title>
+  <desc id="description">가입 단계에서 고른 사용자 유형에 따라 정착 홈과 생활 홈으로 나뉩니다. 각 분기의 네 가지 사례와 공통 기능, 별도 관리자 흐름을 한 장에 정리했습니다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#60718B"/>
+    </marker>
+  </defs>
+  <g font-family="'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" fill="#18253A">
+    <rect width="1440" height="1296" fill="#F5F7FA"/>
+    <text x="64" y="65" fill="#355786" font-size="15" font-weight="700">WELCOME SIHEUNG / PRODUCT FLOW</text>
+    <text x="64" y="118" font-size="44" font-weight="700">웰컴시흥 통합 사용자 플로우</text>
+    <text x="64" y="153" fill="#4A5A72" font-size="18">가입부터 맞춤 홈, 주요 상세와 공통 기능까지 한 장에</text>
+    <text x="1376" y="66" text-anchor="end" fill="#4A5A72" font-size="15">PC · 모바일 공통 흐름</text>
+
+    <rect x="64" y="181" width="1312" height="154" rx="18" fill="#FFFFFF" stroke="#D8E0EB"/>
+    <text x="88" y="214" fill="#355786" font-size="15" font-weight="700">01  첫 진입</text>
+    <g fill="#F0F4FA" stroke="#CFDAE9">
+      <rect x="88" y="237" width="170" height="53" rx="26"/>
+      <rect x="295" y="237" width="218" height="53" rx="10"/>
+      <rect x="550" y="237" width="218" height="53" rx="10"/>
+      <rect x="805" y="237" width="248" height="53" rx="10"/>
+    </g>
+    <g text-anchor="middle" font-size="17" font-weight="700">
+      <text x="173" y="270">서비스 시작</text>
+      <text x="404" y="270">언어 선택</text>
+      <text x="659" y="270">회원가입</text>
+      <text x="929" y="270">나의 상황 최초 선택</text>
+    </g>
+    <g fill="none" stroke="#60718B" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M258 263H289"/><path d="M513 263H544"/><path d="M768 263H799"/>
+    </g>
+    <text x="1080" y="250" fill="#4A5A72" font-size="15">기존 회원은 로그인 후 저장된 홈으로</text>
+    <text x="1080" y="275" fill="#4A5A72" font-size="15">비밀번호 분실 → 이메일로 재설정</text>
+    <text x="88" y="314" fill="#4A5A72" font-size="15">가입 이후 유형 변경은 내 정보 → 나의 상황에서 진행</text>
+
+    <path d="M929 290V299H720V355M720 355H382V377M720 355H1058V377" fill="none" stroke="#60718B" stroke-width="2"/>
+    <g fill="none" stroke="#60718B" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M382 377V386"/><path d="M1058 377V386"/>
+    </g>
+
+    <g id="newcomers">
+      <rect x="64" y="390" width="636" height="423" rx="18" fill="#FFFFFF" stroke="#B9CDEF"/>
+      <path d="M82 390H682Q700 390 700 408V451H64V408Q64 390 82 390Z" fill="#E8F0FE"/>
+      <text x="88" y="428" fill="#214B9B" font-size="24" font-weight="700">A  처음 왔어요</text>
+      <text x="676" y="428" text-anchor="end" fill="#214B9B" font-size="16" font-weight="700">M03 · 정착 홈</text>
+      <text x="88" y="481" font-size="17" font-weight="700">입국·이사 경로 → 날짜와 F-4 여부 → 맞춤 정착 할 일</text>
+      <rect x="88" y="500" width="588" height="200" rx="10" fill="#F7F9FC" stroke="#DFE6F0"/>
+      <g stroke="#DFE6F0"><path d="M88 540H676M88 580H676M88 620H676M88 660H676M359 500V700"/></g>
+      <g font-size="15">
+        <text x="104" y="526" font-weight="700">케이스</text><text x="375" y="526" font-weight="700">먼저 보여주는 할 일</text>
+        <text x="104" y="566">01  막 입국 · 일반</text><text x="375" y="566">외국인등록</text>
+        <text x="104" y="606">02  막 입국 · F-4</text><text x="375" y="606">국내거소신고</text>
+        <text x="104" y="646">03  다른 지역에서 이사 · 일반</text><text x="375" y="646">체류지 변경 신고</text>
+        <text x="104" y="686">04  이사 · F-4 거소신고자</text><text x="375" y="686">거소 이전 신고</text>
+      </g>
+      <text x="88" y="734" font-size="17" font-weight="700">다음 할 일 → 정착 체크리스트 → 할 일 상세</text>
+      <text x="88" y="762" fill="#4A5A72" font-size="15">필수·선택·해당 없음 · 준비물·방법·완료 · 상세에서 질문</text>
+      <text x="88" y="787" fill="#4A5A72" font-size="15">정착 정보 변경 · 추천 행사 → 행사 상세 → 알림 신청</text>
+    </g>
+
+    <g id="residents">
+      <rect x="740" y="390" width="636" height="423" rx="18" fill="#FFFFFF" stroke="#B5D7CE"/>
+      <path d="M758 390H1358Q1376 390 1376 408V451H740V408Q740 390 758 390Z" fill="#E4F3EE"/>
+      <text x="764" y="428" fill="#176451" font-size="24" font-weight="700">B  살고 있어요</text>
+      <text x="1352" y="428" text-anchor="end" fill="#176451" font-size="16" font-weight="700">M04 · 생활 홈</text>
+      <text x="764" y="481" font-size="17" font-weight="700">체류 목적 → 생활 상황 → 체류 만료일 → 맞춤 생활 할 일</text>
+      <rect x="764" y="500" width="588" height="200" rx="10" fill="#F7F9FC" stroke="#DFE6F0"/>
+      <g stroke="#DFE6F0"><path d="M764 540H1352M764 580H1352M764 620H1352M764 660H1352M994 500V700"/></g>
+      <g font-size="15">
+        <text x="780" y="526" font-weight="700">케이스</text><text x="1010" y="526" font-weight="700">대표 상세로 이어지는 예시</text>
+        <text x="780" y="566">05  공부</text><text x="1010" y="566">아르바이트 허가</text>
+        <text x="780" y="606">06  일 · 이사</text><text x="1010" y="606">생활 변화 → 체류지 변경 신고</text>
+        <text x="780" y="646">07  가족</text><text x="1010" y="646">체류기간 연장</text>
+        <text x="780" y="686">08  기타 · F-4</text><text x="1010" y="686">거소 이전 신고 · 취업 가능 업종 확인</text>
+      </g>
+      <text x="764" y="734" font-size="17" font-weight="700">마감 임박 → 할 일 상세 · 생활 변화 → 체크리스트</text>
+      <text x="764" y="762" fill="#4A5A72" font-size="15">체류 관리 → 연장 준비물 · 이번 달 할 일 → 달력 → 납부 상세</text>
+      <text x="764" y="787" fill="#4A5A72" font-size="15">추천 혜택 → 혜택 상세 → 지원 대상 확인</text>
+    </g>
+
+    <path d="M382 813V831H720M1058 813V831H720" fill="none" stroke="#60718B" stroke-width="2"/>
+    <path d="M720 831V850" fill="none" stroke="#60718B" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="64" y="855" width="1312" height="290" rx="18" fill="#FFFFFF" stroke="#D8E0EB"/>
+    <text x="88" y="892" fill="#355786" font-size="15" font-weight="700">02  두 홈에서 이용하는 공통 기능</text>
+    <g fill="#F7F9FC" stroke="#DFE6F0">
+      <rect x="88" y="910" width="406" height="94" rx="10"/><rect x="517" y="910" width="406" height="94" rx="10"/><rect x="946" y="910" width="406" height="94" rx="10"/>
+      <rect x="88" y="1021" width="406" height="94" rx="10"/><rect x="517" y="1021" width="406" height="94" rx="10"/><rect x="946" y="1021" width="406" height="94" rx="10"/>
+    </g>
+    <g font-size="17" font-weight="700">
+      <text x="104" y="938">고지서 번역</text><text x="533" y="938">생활 달력 · 행사</text><text x="962" y="938">생활 수칙 · 질문</text>
+      <text x="104" y="1049">알림</text><text x="533" y="1049">내 정보</text><text x="962" y="1049">도움 · 예외</text>
+    </g>
+    <g fill="#4A5A72" font-size="15">
+      <text x="104" y="964">촬영·업로드 → 처리 → 결과·원문·마감</text><text x="104" y="986">인식 실패 → 다시 올리기 또는 질문</text>
+      <text x="533" y="964">월별·연간 일정 → 납부 또는 행사 상세</text><text x="533" y="986">이번 달 일정 없음 → 다음 일정 안내</text>
+      <text x="962" y="964">수칙 검색·FAQ 또는 상세 → 챗봇 질문</text><text x="962" y="986">근거 있는 답변 · 근거 부족 시 문의처 안내</text>
+      <text x="104" y="1075">마감·행사·안내 변경 → 알림 목록 → 상세</text><text x="104" y="1097">알림 받기·해제 → 알림 설정</text>
+      <text x="533" y="1075">언어·상황·날짜 수정 → 홈 반영</text><text x="533" y="1097">선택 이메일 등록 · 로그아웃 · 탈퇴</text>
+      <text x="962" y="1075">긴급·통역 도움 → 연락처</text><text x="962" y="1097">빈 화면·오류 → 안내 또는 다시 시도</text>
+    </g>
+
+    <rect x="64" y="1165" width="1312" height="62" rx="12" fill="#E9EEF5"/>
+    <text x="88" y="1203" font-size="17" font-weight="700">별도 관리자 흐름</text>
+    <text x="278" y="1203" fill="#4A5A72" font-size="15">관리자 인증 → 문서·행사·수칙 관리 → 검색 반영·변경 알림 / 오류 신고·챗봇 피드백 검토</text>
+    <text x="64" y="1260" fill="#4A5A72" font-size="14">기준  ·  PC 및 모바일 와이어프레임, 모바일 사용자 플로우, 케이스별 플로우 / 가입 시 유형 선택은 최신 요청 반영</text>
+  </g>
+</svg>

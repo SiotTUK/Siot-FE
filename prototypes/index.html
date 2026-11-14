@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>웰컴시흥 · 맞춤 홈</title>
+  <style>
+    :root{font-family:system-ui,"Malgun Gothic",sans-serif;color:#182238;background:#eef2f8;line-height:1.5;--blue:#234ecb;--ink:#182238;--muted:#52617b;--line:#dde5f1;--tint:#edf2ff}
+    *{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer;color:inherit}a{color:var(--blue)}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #6587ee;outline-offset:3px}
+    #app{max-width:480px;margin:auto;background:#fff;min-height:100svh;display:flex;flex-direction:column}header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);min-height:62px}.brand{font-weight:850;letter-spacing:-.05em;color:var(--blue);font-size:21px}.header-actions{display:flex;align-items:center;gap:4px}header select{max-width:114px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);padding:7px 4px;font-size:13px}
+    main{flex:1;padding:0 18px 86px}h1,h2,h3,p{margin:0;overflow-wrap:anywhere}h1{font-size:27px;line-height:1.24;letter-spacing:-.045em}h2{font-size:18px;letter-spacing:-.035em}h3{font-size:16px}.muted{color:var(--muted);font-size:14px}.eyebrow{font-size:12px;color:var(--blue);font-weight:780;letter-spacing:.03em}.stack{display:grid;gap:12px}.card{padding:16px;border:1px solid var(--line);border-radius:16px;background:white}.hero{padding:18px;background:var(--tint);border-color:#dce5ff}.hero h2{font-size:24px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.row>:first-child{min-width:0}.row>:last-child{flex-shrink:0}.home-top{min-height:calc(100svh - 62px);padding-top:14px;padding-bottom:24px;align-content:start;gap:14px}.home-extra{border-top:1px solid var(--line);padding:24px 0 12px;gap:18px}.intro{margin:3px 0 1px}.intro h1{margin-top:3px}.intro .muted{margin-top:6px}
+    .situation-form{display:grid;gap:12px}.situation-form fieldset{display:grid;gap:8px;margin:0;padding:0;border:0}.situation-form legend{margin-bottom:8px;font-weight:750}.situation-choice{display:flex;align-items:center;gap:10px;cursor:pointer}.situation-choice input{accent-color:var(--blue)}.situation-choice:has(:checked){border-color:var(--blue);background:var(--tint)}.situation-choice strong,.situation-choice small{display:block}.situation-choice small{color:var(--muted);margin-top:3px}.purpose select{display:block;width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink)}.purpose[hidden]{display:none}
+    .plain,.link,.primary,.secondary{border:0;min-height:44px;border-radius:10px;font-weight:720;overflow-wrap:anywhere}.plain,.link{background:transparent;padding:6px;font-size:13px}.link{color:var(--blue)}.primary,.secondary{padding:10px 14px;text-align:center}.primary{color:white;background:var(--blue)}.secondary{color:var(--blue);background:#f0f4ff}.full{width:100%}.badge{display:inline-block;border-radius:100px;padding:4px 9px;background:var(--tint);color:var(--blue);font-size:12px;font-weight:800;white-space:nowrap}.urgent{background:#fce8e8;color:#9d2828}.done{background:#e5f6ee;color:#176747}.meta{font-size:13px;color:var(--muted)}
+    .tile{display:flex;align-items:center;justify-content:space-between;text-align:left;gap:12px;width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:white;min-height:52px}.tile strong,.tile small{display:block;overflow-wrap:anywhere}.tile small{margin-top:3px;color:var(--muted);font-size:13px}.tile-side{display:flex;align-items:center;gap:8px;flex-shrink:0;color:var(--blue)}.tile:hover,.secondary:hover{background:#f5f8ff}.deadline-list{gap:8px}.deadline-list .tile:first-child{border-color:#eccdce}.progress{height:6px;border:0;border-radius:8px;overflow:hidden;width:100%;background:#e8edf6;accent-color:var(--blue)}.progress::-webkit-progress-bar{background:#e8edf6}.progress::-webkit-progress-value{background:var(--blue)}.help{align-self:start;justify-self:end;text-decoration:underline;text-underline-offset:3px}.nav{position:fixed;z-index:2;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,480px);background:white;border-top:1px solid var(--line);padding:5px 8px max(5px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:2px}.nav button{min-width:0;border:0;background:white;border-radius:10px;min-height:54px;padding:4px 2px;font-size:11px;overflow-wrap:anywhere}.nav button[aria-current]{background:var(--tint);color:var(--blue);font-weight:800}.nav b{display:block;font-size:18px;line-height:1.15;margin-bottom:3px}.page{padding-top:12px;gap:18px}.back{justify-self:start}.section{gap:8px}.detail-list{padding-left:20px;margin:0}details summary{min-height:44px;padding:9px 0;cursor:pointer;color:var(--blue);font-weight:720}.notice{border-left:3px solid #7896ed;background:#f3f6fd;padding:10px 12px;color:#344560;font-size:13px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    dialog{border:0;border-radius:20px 20px 0 0;padding:18px;width:min(100%,480px);max-width:none;margin:auto auto 0;color:var(--ink)}dialog::backdrop{background:#12204480}dialog label{display:grid;gap:4px}dialog input,dialog select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:9px;padding:8px;background:white;color:var(--ink)}dialog input[type=checkbox]{width:18px;min-height:18px;accent-color:var(--blue)}dialog .check{display:flex;align-items:center;gap:8px}.sr-only{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}.file-name{overflow-wrap:anywhere}.file-label{display:block;cursor:pointer}#status{position:fixed;z-index:4;bottom:75px;left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);width:max-content;background:#182238;color:white;padding:8px 14px;border-radius:10px;font-size:13px}#status:empty{display:none}
+    dialog label[hidden]{display:none}
+    @media(min-width:481px){#app{box-shadow:0 0 35px #273c6617}}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="status" role="status"></div>
+  <dialog id="settings" aria-labelledby="settings-title"></dialog>
+  <script>
+    const demoToday = '2026-11-06';
+    const original = { onboarded:false, mode:null, purpose:'', conditions:[], lang:'ko', arrival:'2026-10-20', moveDate:'2026-11-01', stayEnd:'2026-12-10', path:'arrival', f4:false, change:'move', trackedChanges:['move'], done:['health'], reminders:[] };
+    const storageKey = 'welcome-siheung-prototype-v1';
+    let state = { ...original };
+    try { state = { ...original, ...JSON.parse(localStorage.getItem(storageKey)) }; } catch {}
+    const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {} };
+    const app = document.querySelector('#app');
+    const dialog = document.querySelector('#settings');
+    const status = document.querySelector('#status');
+    let statusTimer;
+    let screen = { name:state.onboarded ? 'home' : 'signup' };
+    let trail = [];
+    let selectedFile = '';
+    const languageLabels = { ko:'한국어', en:'English', zh:'中文', vi:'Tiếng Việt' };
+    const modeLabels = { new:'처음 왔어요', resident:'살고 있어요' };
+    const purposes = { study:'공부하러 왔어요', work:'일하러 왔어요', family:'가족과 살아요', other:'기타 · 잘 모르겠어요' };
+    const conditions = { children:'자녀가 있어요', vehicle:'차·오토바이가 있어요' };
+    const residentContext = () => [purposes[state.purpose], ...state.conditions.map(id => conditions[id])].filter(Boolean).join(' · ');
+    const copy = {
+      '웰컴시흥':['Welcome Siheung','欢迎来到始兴','Chào mừng đến Siheung'],
+      '처음 왔어요':['New to Siheung','初到始兴','Tôi mới đến Siheung'],
+      '살고 있어요':['I live in Siheung','已在始兴生活','Tôi đang sống ở Siheung'],
+      '긴급·통역 도움':['Emergency and interpretation help','紧急与口译帮助','Hỗ trợ khẩn cấp và phiên dịch'],
+      '알림':['Alerts','通知','Thông báo'],
+      '시흥에서의 첫걸음':['Getting started in Siheung','在始兴开始新生活','Những bước đầu tiên tại Siheung'],
+      '내 생활 한눈에':['Your life at a glance','生活事项一览','Tổng quan cuộc sống của bạn'],
+      '내게 필요한 정착 준비를 확인하세요.':['See what you need to get settled.','查看您需要办理的安顿事项。','Xem những việc bạn cần chuẩn bị để ổn định cuộc sống.'],
+      '가까운 마감과 지금 필요한 일을 확인하세요.':['See upcoming deadlines and what you need to do next.','查看即将到期和当前需要办理的事项。','Xem các hạn sắp tới và những việc bạn cần làm ngay.'],
+      '다음 정착 할 일':['Your next settlement task','下一项安顿任务','Việc cần làm tiếp theo để ổn định cuộc sống'],
+      '외국인등록':['Foreign resident registration','外国人登记','Đăng ký cư trú cho người nước ngoài'],
+      '준비물 보기':['See required documents','查看所需材料','Xem giấy tờ cần chuẩn bị'],
+      '정착 체크리스트 보기':['View settlement checklist','查看安顿清单','Xem danh sách việc cần làm khi mới đến'],
+      '마감 임박':['Upcoming deadlines','即将到期','Các hạn sắp tới'],
+      '체류지 변경 신고':['Report a change of residence','申报居住地址变更','Khai báo thay đổi địa chỉ cư trú'],
+      '체류 연장':['Extension of stay','延长停留期限','Gia hạn thời gian lưu trú'],
+      '사진 찍기 / 올리기':['Take or upload a photo','拍照或上传照片','Chụp hoặc tải ảnh lên'],
+      '이사 후 할 일':['Tasks after moving','搬家后需要办理的事项','Việc cần làm sau khi chuyển nhà'],
+      '고지서 사진 번역':['Translate a notice from a photo','拍照翻译通知单','Dịch thông báo từ ảnh chụp'],
+      '변경':['Change','更改','Thay đổi'],
+      '막 입국했어요':['Recently arrived in Korea','刚入境韩国','Tôi vừa nhập cảnh vào Hàn Quốc'],
+      '이사 왔어요':['Moved to Siheung','刚搬到始兴','Tôi vừa chuyển đến Siheung'],
+      '홈':['Home','首页','Trang chủ'], '생활 달력':['Calendar','日历','Lịch sinh hoạt'],
+      '생활 수칙':['Guide','生活指南','Hướng dẫn'], '질문':['Questions','提问','Câu hỏi'], '내 정보':['Profile','我的信息','Hồ sơ']
+    };
+    const t = (label) => copy[label]?.[Object.keys(languageLabels).indexOf(state.lang) - 1] || label;
+    const esc = (value) => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const dateValue = value => Date.parse(value + 'T00:00:00Z');
+    const formatDate = (value, full = false) => new Intl.DateTimeFormat({ko:'ko-KR',en:'en',zh:'zh-CN',vi:'vi'}[state.lang], {month:'long',day:'numeric',timeZone:'UTC',...(full && {year:'numeric'})}).format(dateValue(value));
+    const datePlus = (value, days) => new Date(dateValue(value) + days * 86400000).toISOString().slice(0, 10);
+    const daysUntil = value => Math.round((dateValue(value) - dateValue(demoToday)) / 86400000);
+    const countdown = value => daysUntil(value) === 0 ? 'D-day' : (daysUntil(value) > 0 ? 'D-' : 'D+') + Math.abs(daysUntil(value));
+    const dateLabel = value => state.lang === 'ko' ? formatDate(value) + '까지' : formatDate(value);
+
+    // Sample content for the wireframe. Dates and application instructions are not official guidance.
+    const tasks = {
+      registration:{title:'외국인등록', date:() => state.arrival && datePlus(state.arrival, 90), documents:['여권','증명사진','체류지 확인 서류'], steps:['방문 예약이 필요한지 확인해요.','준비물을 챙겨 안내된 접수처에 방문해요.'], office:'관할 출입국·외국인 관서'},
+      health:{title:'건강보험 가입 확인', context:'조건별 · 가입 상태와 적용 시점 확인', documents:['가입 여부를 확인할 수 있는 정보'], steps:['체류자격과 취업·재학 여부에 따라 적용 시점이 달라질 수 있어요.','본인의 가입 상태와 적용 시점을 확인해요.'], office:'국민건강보험공단'},
+      address:{title:'체류지 변경 신고', date:() => state.moveDate === original.moveDate ? '2026-11-11' : '', documents:['신분 확인 서류','새 주소 확인 서류'], steps:['내 상황에서 이용할 수 있는 신고 방법을 확인해요.','안내에 따라 접수하고 처리 결과를 확인해요.'], office:'동 행정복지센터 · 하이코리아'},
+      extension:{title:'체류 연장', date:() => state.stayEnd, documents:['여권','체류자격별 안내 서류'], steps:['체류자격에 맞는 연장 절차를 확인해요.'], office:'관할 출입국·외국인 관서'},
+      car:{title:'자동차 주소 변경', context:'차가 있다면 · 차량 등록 주소 변경', steps:['자동차 등록 주소를 확인해요.'], office:'차량 등록 담당 부서'},
+      utilities:{title:'공과금 명의 확인', steps:['고지서의 주소와 납부자 정보를 확인해요.'], office:'고지서에 표시된 공급 기관'},
+      mail:{title:'우편물 주소 변경', steps:['자주 받는 우편물의 주소를 확인해요.'], office:'각 발송 기관'},
+      transit:{title:'교통카드 준비', steps:['가까운 교통카드 판매처를 확인해요.']},
+      market:{title:'동네 생활시설 찾아보기', steps:['가까운 생활시설의 위치와 이용시간을 확인해요.']},
+      class:{title:'한국어 수업 알아보기', steps:['수업 일정과 신청 방법을 확인해요.']},
+      work:{title:'새 직장 관련 신고 확인', steps:['체류자격에 따른 신고 대상인지 확인해요.'], office:'관할 출입국·외국인 관서'},
+      school:{title:'학교 안내 확인', steps:['전입·입학에 필요한 안내를 확인해요.'], office:'학교 또는 관할 교육지원청'},
+      purchase:{title:'자동차 등록 확인', steps:['등록 여부와 등록 정보를 확인해요.'], office:'차량 등록 담당 부서'},
+      birth:{title:'출생 관련 신고 확인', documents:['출생 사실을 확인할 수 있는 서류'], steps:['아이의 국적과 가족의 상황에 맞는 출생 신고 및 체류 안내를 확인해요.'], office:'관할 행정기관 · 출입국 상담 1345'},
+      family:{title:'가족 방문·체류 준비', documents:['가족관계 확인 서류'], steps:['가족의 방문 목적과 예정 체류 기간에 맞춰 필요한 안내를 확인해요.'], office:'출입국 상담 1345'},
+      trip:{title:'출국·재입국 준비 확인', documents:['여권','체류 관련 서류'], steps:['출국 전 여권과 체류기간을 확인하고 재입국 관련 안내를 살펴봐요.'], office:'출입국 상담 1345'},
+      identity:{title:'등록사항 변경 신고 확인', documents:['변경된 여권이나 변경 사실을 확인할 수 있는 서류'], steps:['이름이나 여권 정보가 바뀌었다면 등록사항 변경 안내를 확인해요.'], office:'출입국 상담 1345'}
+    };
+    const changes = {
+      move:{label:'이사했어요',title:'이사 후 할 일',tasks:['address','car','utilities','mail']},
+      job:{label:'직장을 바꿨어요',title:'이직 후 할 일',tasks:['work']},
+      school:{label:'아이가 학교에 가요',title:'학교 생활 준비',tasks:['school']},
+      car:{label:'차를 샀어요',title:'자동차 구입 후 할 일',tasks:['purchase']},
+      baby:{label:'아기가 태어났어요',title:'출산 후 할 일',tasks:['birth']},
+      family:{label:'가족이 와요',title:'가족 방문·체류 준비',tasks:['family']},
+      trip:{label:'고향에 다녀와요',title:'출국 전 할 일',tasks:['trip']},
+      identity:{label:'이름·여권이 바뀌었어요',title:'이름·여권 변경 후 할 일',tasks:['identity']}
+    };
+    const required = () => state.path === 'move' ? ['address','health'] : state.f4 ? ['health'] : ['registration','health'];
+    const optional = ['transit','market','class'];
+    const isDone = id => state.done.includes(id);
+    const currentChange = () => changes[state.change];
+    const deadlines = () => [...new Set([...state.trackedChanges.flatMap(id => changes[id].tasks), 'extension'])]
+      .filter(id => !isDone(id) && tasks[id].date?.())
+      .sort((a,b) => daysUntil(tasks[a].date()) - daysUntil(tasks[b].date()))
+      .slice(0,2);
+    const alerts = () => state.mode === 'resident' ? deadlines() : required().filter(id => !isDone(id) && tasks[id].date?.());
+    const events = {
+      festival:['세계인의 날 축제','5월 · 정왕동','시흥에서 여러 나라의 문화를 만나는 행사입니다.'],
+      language:['한국어 무료 강좌','매주 토요일','한국어를 배우고 싶은 분을 위한 강좌입니다.'],
+      gaetgol:['시흥갯골축제','9~10월','시흥갯골을 둘러보고 체험 프로그램에 참여하는 지역 축제입니다.']
+    };
+    const benefits = {
+      pass:['시흥패스+','자녀 교통비 환급','자녀가 있는 가정에 추천해요.','거주지와 자녀 연령 등 사업별 조건을 확인해 주세요.'],
+      siru:['지역화폐 시루','동네 가맹점에서 쓰는 지역화폐','시흥에서 생활하는 분에게 추천해요.','사용 가능한 가맹점과 이용 조건을 확인해 주세요.'],
+      learning:['국민내일배움카드','직업훈련비 지원','일을 하거나 직업훈련을 알아보고 있는 분이 살펴볼 수 있어요.','본인의 신청 자격과 희망 과정의 지원 조건을 고용24에서 확인해 주세요.']
+    };
+
+    const action = (label, command, cls = 'secondary') => `<button type="button" class="${cls}" data-action="${command}">${t(label)}</button>`;
+    const badge = (label, kind = '') => `<span class="badge ${kind}">${label}</span>`;
+    const tile = (label, command, sub = '', tag = '') => `<button type="button" class="tile" data-action="${command}"><span><strong>${t(label)}</strong>${sub ? `<small>${sub}</small>` : ''}</span><span class="tile-side">${tag}<span aria-hidden="true">›</span></span></button>`;
+    const block = (label, content) => `<section class="stack section"><h2>${label}</h2>${content}</section>`;
+    const note = message => `<p class="notice">${message}</p>`;
+    const deadlineBadge = value => value ? badge(countdown(value),daysUntil(value) <= 7 ? 'urgent' : '') : '';
+    const taskRow = id => {
+      const date = tasks[id].date?.();
+      return tile(tasks[id].title,`task:${id}`,date ? dateLabel(date) : tasks[id].context || '',isDone(id) ? badge('완료','done') : deadlineBadge(date));
+    };
+    const helpLink = () => action('긴급·통역 도움','help','link help');
+
+    function newHome() {
+      const ids = required();
+      const complete = ids.filter(isDone).length;
+      const next = ids.find(id => !isDone(id));
+      const date = next && tasks[next].date?.();
+      const nextTitle = next ? t(tasks[next].title) : '필수 정착 준비를 모두 마쳤어요';
+      const description = date ? dateLabel(date) : next === 'registration' ? '입국일을 입력하면 마감일을 알려드려요' : '';
+      const nextAction = !next ? action('선택 항목 보기','check:new:optional','primary full') : next === 'registration' && !date
+        ? action('입국일 입력','settings','primary full') : action('준비물 보기',`task:${next}`,'primary full');
+      const progressCopy = state.lang === 'en' ? `${complete} of ${ids.length} required tasks complete` : state.lang === 'vi' ? `Đã hoàn thành ${complete}/${ids.length} việc bắt buộc` : state.lang === 'zh' ? `必办事项已完成 ${complete}/${ids.length} 项` : `필수 ${ids.length}개 중 ${complete}개 완료`;
+      return `<section class="hero card stack"><p class="eyebrow">${t('다음 정착 할 일')}</p><div class="row"><div><h2>${nextTitle}</h2>${description ? `<p class="muted">${description}</p>` : ''}</div>${deadlineBadge(date)}</div>${nextAction}</section>
+        <section class="card stack"><h2>${progressCopy}</h2><progress class="progress" max="${ids.length}" value="${complete}" aria-label="${progressCopy}"></progress>${action('정착 체크리스트 보기','check:new','secondary full')}</section>
+        <div class="row"><p class="muted">${t(state.path === 'arrival' ? '막 입국했어요' : '이사 왔어요')}${settlementDate() ? ' · ' + formatDate(settlementDate()) : ''}</p>${action('변경','settings','link')}</div>`;
+    }
+
+    const settlementDate = () => state.path === 'arrival' ? state.arrival : state.moveDate;
+
+    function residentHome() {
+      const list = deadlines();
+      const change = currentChange();
+      const pending = change?.tasks.filter(id => !isDone(id)).length || 0;
+      const count = state.lang === 'en' ? `${pending} tasks remaining` : state.lang === 'vi' ? `Còn ${pending} việc cần làm` : state.lang === 'zh' ? `还剩 ${pending} 项` : `${pending}개 남음`;
+      return `<section class="hero card stack"><h2>${t('마감 임박')}</h2>${list.length ? `<div class="stack deadline-list">${list.map(taskRow).join('')}</div>` : '<p class="muted">마감이 가까운 할 일이 없어요</p>'}</section>
+        ${tile('사진 찍기 / 올리기','translate')}
+        ${pending ? tile(change.title,'check:resident',count) : tile('생활 변화 선택하기','changes')}`;
+    }
+
+    function home() {
+      const newcomer = state.mode === 'new';
+      return `<div class="home-top stack"><div class="intro"><p class="eyebrow">${t(modeLabels[state.mode])}</p><h1 tabindex="-1">${t(newcomer ? '시흥에서의 첫걸음' : '내 생활 한눈에')}</h1><p class="muted">${t(newcomer ? '내게 필요한 정착 준비를 확인하세요.' : '가까운 마감과 지금 필요한 일을 확인하세요.')}</p></div>
+        ${newcomer ? newHome() : residentHome()}${helpLink()}</div>
+        <div class="home-extra stack">${newcomer
+          ? tile('고지서 사진 번역','translate') + recommendation('나에게 맞는 행사','events',events,'event')
+          : tile('내 체류 관리','stay',state.stayEnd ? '체류 만료 ' + formatDate(state.stayEnd,true) : '만료일 등록하기',deadlineBadge(state.stayEnd))
+            + tile('생활 변화 전체 보기','changes',`${Object.keys(changes).length}가지 상황별 할 일`)
+            + tile('이번 달 할 일','calendar','11월 납부 일정 없음 · 다음 달 자동차세')
+            + recommendation('내 상황에 맞는 혜택','benefits',benefits,'benefit')
+            + tile('나의 상황','profile',residentContext() || '내 정보에서 체류 목적과 생활 상황을 설정할 수 있어요.')}</div>`;
+    }
+
+    function recommendation(title, link, entries, detail) {
+      return `<section class="stack"><div class="row"><h2>${title}</h2>${action('전체 보기',link,'link')}</div><div class="stack">${Object.entries(entries).slice(0,2).map(([id,[label,sub]]) => tile(label,`${detail}:${id}`,sub)).join('')}</div></section>`;
+    }
+
+    function checklist(mode) {
+      const newcomer = mode === 'new';
+      const change = currentChange();
+      const ids = newcomer ? required() : change?.tasks || [];
+      const excluded = ['registration','address'].filter(id => !ids.includes(id));
+      const pending = ids.filter(id => !isDone(id));
+      const complete = ids.filter(isDone);
+      const rows = list => list.map(taskRow).join('');
+      return page(newcomer ? '정착 체크리스트' : change?.title || '생활 변화별 할 일',
+        newcomer ? block('필수',rows(ids)) + `<div id="optional">${block(`생활 준비 (선택) · ${optional.filter(isDone).length}/${optional.length}`,rows(optional))}</div>
+          <details id="excluded-items"><summary>내 상황에 해당하지 않는 항목 ${excluded.length}개</summary><div class="stack">${excluded.map(id => tile(tasks[id].title,`reference:${id}`,'선택한 정착 경로와 조건에 따라 제외됐어요.')).join('')}</div></details>`
+          : (state.change === 'move' && state.moveDate ? `<p class="muted">이사한 날 · ${formatDate(state.moveDate,true)}</p>` : '')
+            + block('남은 할 일',rows(pending) || '<p class="muted">남은 할 일이 없어요.</p>') + block('완료한 일',rows(complete) || '<p class="muted">아직 완료한 일이 없어요.</p>') + block('생활 변화',tile('다른 생활 변화 추가','changes')));
+    }
+
+    function task(id, reference = false) {
+      const entry = tasks[id];
+      const date = reference ? '' : entry.date?.();
+      const list = entries => `<ul class="detail-list">${entries.map(value => `<li>${value}</li>`).join('')}</ul>`;
+      return page(t(entry.title), `${reference ? note('현재 정착 체크리스트에서 제외된 항목입니다.') : `<div class="card stack"><h2>마감일</h2><div class="row"><p>${date ? formatDate(date,true) : '등록된 마감일 없음'}</p>${deadlineBadge(date)}</div></div>`}
+        ${block('준비물',entry.documents ? list(entry.documents) : '<p class="muted">안내를 확인해 주세요.</p>')}
+        ${block('신청 방법',list(entry.steps))}
+        ${block('담당 기관',`<p>${entry.office || '관련 안내에서 확인'}</p>`)}
+        ${note('와이어프레임 예시입니다. 실제 기한과 준비물은 담당 기관 안내에서 확인해 주세요.')}
+        ${reference ? '' : action(isDone(id) ? '완료 표시 취소' : '완료로 표시',`toggle:${id}`,'primary full')}`);
+    }
+
+    function page(title, body) {
+      return `<div class="page stack">${action('‹ 뒤로','back','link back')}<h1 tabindex="-1">${title}</h1>${body}</div>`;
+    }
+
+    function situationForm(signup) {
+      const descriptions = { new:'입국하거나 시흥에 이사한 지 얼마 안 됐어요.', resident:'시흥에서 생활한 지 꽤 됐어요.' };
+      const chosen = signup ? '' : state.mode;
+      return `<form id="situation-form" class="situation-form">
+        <fieldset><legend>지금 나의 상황은?</legend>${Object.entries(modeLabels).map(([id,label]) =>
+          `<label class="card situation-choice"><input type="radio" name="mode" value="${id}" required ${chosen === id ? 'checked' : ''}>
+            <span><strong>${t(label)}</strong><small>${descriptions[id]}</small></span></label>`).join('')}</fieldset>
+        <label class="purpose" ${chosen !== 'resident' ? 'hidden' : ''}>주된 체류 목적
+          <select name="purpose" ${chosen !== 'resident' ? 'disabled' : ''}><option value="">선택 안 함</option>
+            ${Object.entries(purposes).map(([id,label]) => `<option value="${id}" ${state.purpose === id ? 'selected' : ''}>${label}</option>`).join('')}
+          </select>
+        </label>
+        <div id="resident-conditions" ${chosen !== 'resident' ? 'hidden' : ''}><fieldset ${chosen !== 'resident' ? 'disabled' : ''}><legend>해당되는 생활 상황</legend>
+          ${Object.entries(conditions).map(([id,label]) => `<label><input type="checkbox" name="condition" value="${id}" ${state.conditions.includes(id) ? 'checked' : ''}> ${label}</label>`).join('')}
+        </fieldset></div>
+        <button class="primary full">${signup ? '가입 완료 · 맞춤 홈 시작' : '저장'}</button>
+      </form>`;
+    }
+
+    function content() {
+      switch (screen.name) {
+        case 'signup': return `<div class="page stack"><p class="eyebrow">가입 · 맞춤 설정</p><h1 tabindex="-1">시흥 생활을 시작해요</h1>
+          <p class="muted">가입할 때 고른 상황에 맞춰 홈을 보여드려요. 이후에는 내 정보에서 변경할 수 있어요.</p>
+          ${situationForm(true)}${note('가입 과정 중 맞춤 설정을 체험하는 시안입니다.')}</div>`;
+        case 'situation': return page('나의 상황 변경', '<p class="muted">저장하면 선택한 상황에 맞는 홈으로 바뀝니다.</p>' + situationForm(false));
+        case 'home': return home();
+        case 'check': return checklist(screen.id);
+        case 'task': return task(screen.id);
+        case 'reference': return task(screen.id,true);
+        case 'changes': return page('어떤 일이 있었나요?',Object.entries(changes).map(([id,change]) => tile(change.label,`choose:${id}`,'',state.trackedChanges.includes(id) ? badge('추적 중') : '')).join(''));
+        case 'stay': return page('내 체류 관리',`<div class="card stack"><div class="row"><div><h2>체류 만료일</h2><p>${state.stayEnd ? formatDate(state.stayEnd,true) : '등록된 만료일 없음'}</p></div>${deadlineBadge(state.stayEnd)}</div>${action('만료일 변경','stay-date')}</div>
+          ${tile('연장 준비물 보기','task:extension',isDone('extension') ? '완료로 표시한 할 일이에요.' : '준비물 · 신청 방법 · 담당 기관')}`);
+        case 'stay-date': return page('체류 만료일 변경',`<form id="stay-form" class="card stack"><label>체류 만료일 <input type="date" name="stayEnd" value="${esc(state.stayEnd)}"></label><button class="primary">저장</button></form>`);
+        case 'translate': return page('고지서 사진 번역',`<div class="card stack"><h2>받은 서류, 사진 한 장이면 돼요</h2><p class="muted">세금 고지서 · 과태료 · 관리비 · 가정통신문</p><label class="primary file-label">사진 찍기 / 올리기<input class="sr-only" id="photo" type="file" accept=".jpg,.jpeg,.png,.pdf"></label><p id="file-name" class="muted file-name">${esc(selectedFile)}</p>${note('JPG·PNG·PDF 파일 선택을 체험할 수 있습니다. 파일을 전송하거나 번역하지 않습니다.')}</div>${block('최근 번역',tile('자동차세 고지서','tax','납부 기간 12.16~12.31 · 위택스 / ATM'))}`);
+        case 'calendar': return page('생활 달력',block('11월 할 일','<p class="muted">등록된 납부 일정이 없어요.</p>') + block('12월 할 일',tile('자동차세 고지서','tax','납부 기간 12.16~12.31')));
+        case 'tax': return page('자동차세 고지서',block('납부 기간','<p>12월 16일 ~ 12월 31일</p>') + block('납부 상태','<p>미확인</p>') + block('납부 방법','<p>위택스 · ATM</p>') + note('번역 내역과 생활 달력에 연결된 예시 고지서입니다.'));
+        case 'benefits': return page('내 상황에 맞는 혜택',Object.entries(benefits).map(([id,[label,sub]]) => tile(label,`benefit:${id}`,sub)).join(''));
+        case 'benefit': {
+          const [label,sub,reason,eligibility] = benefits[screen.id];
+          return page(label,`<p>${sub}</p>` + block('추천 이유',`<p>${reason}</p>`) + `<details><summary>지원 대상 확인</summary><p class="muted">${eligibility}</p></details>`);
+        }
+        case 'events': return page('나에게 맞는 행사',Object.entries(events).map(([id,[label,sub]]) => tile(label,`event:${id}`,sub)).join(''));
+        case 'event': {
+          const [label,sub,description] = events[screen.id];
+          return page(label,block('일정 · 장소',`<p>${sub}</p>`) + block('행사 안내',`<p>${description}</p>`) + action(state.reminders.includes(screen.id) ? '알림 취소' : '알림 받기',`reminder:${screen.id}`,'primary full') + note('일정은 와이어프레임 예시이며, 알림 설정은 이 브라우저의 시안에만 저장됩니다.'));
+        }
+        case 'help': return page('긴급·통역 도움',`<div class="card stack"><h2>긴급 구조·구급</h2><a href="tel:119">119 전화하기</a><p class="muted">24시간</p></div><div class="card stack"><h2>경찰 긴급 신고</h2><a href="tel:112">112 전화하기</a><p class="muted">24시간</p></div><div class="card stack"><h2>체류 상담</h2><a href="tel:1345">1345 전화하기</a><p class="muted">평일 09:00~22:00 · 18시 이후 한국어·영어·중국어</p><a href="https://www.immigration.go.kr/moj/196/subview.do">출입국·외국인정책본부 안내</a></div><div class="card stack"><h2>다문화가족 상담·통역</h2><a href="tel:15771366">1577-1366 전화하기</a><p class="muted">다누리콜센터 · 24시간</p><a href="https://liveinkorea.kr/web/lay1/S1T40C44/contents.do">다누리 공식 안내</a></div>`);
+        case 'alerts': return page('알림',alerts().map(taskRow).join('') || '<p class="muted">표시할 마감 알림이 없어요.</p>');
+        case 'guide': return page('생활 수칙',tile('정착 체크리스트 보기','check:new') + tile('긴급·통역 도움','help'));
+        case 'questions': return page('질문',tile('긴급·통역 도움','help') + note('상담 채팅은 이 시안에 연결되어 있지 않습니다.'));
+        case 'profile': {
+          const situation = [t(modeLabels[state.mode]), state.mode === 'resident' && residentContext()].filter(Boolean).join(' · ');
+          return page('내 정보',tile('나의 상황','situation',situation) +
+            (state.mode === 'new' ? tile('정착 정보 변경','settings') : tile('내 체류 관리','stay')) + action('시안 처음부터 보기','reset'));
+        }
+      }
+    }
+
+    const tabs = [['home','⌂','홈'],['calendar','▦','생활 달력'],['guide','▤','생활 수칙'],['questions','?','질문'],['profile','◉','내 정보']];
+    function render() {
+      document.documentElement.lang = state.lang;
+      const count = alerts().length;
+      const activeTab = tabs.some(([id]) => screen.name === id) ? screen.name : (trail.findLast(({name}) => tabs.some(([id]) => id === name))?.name || 'home');
+      app.innerHTML = `<header><span class="brand">${t('웰컴시흥')}</span><div class="header-actions"><select id="language" aria-label="Language">${Object.entries(languageLabels).map(([code,label]) => `<option value="${code}" ${code === state.lang ? 'selected' : ''}>${label}</option>`).join('')}</select>${state.onboarded ? action(`${t('알림')}${count ? ' ' + count : ''}`,'alerts','plain') : ''}</div></header>
+        <main>${content()}</main>${state.onboarded ? `<nav class="nav" aria-label="주 메뉴">${tabs.map(([id,icon,label]) => `<button data-action="tab:${id}" ${activeTab === id ? 'aria-current="page"' : ''}><b aria-hidden="true">${icon}</b>${t(label)}</button>`).join('')}</nav>` : ''}`;
+    }
+
+    function go(name,id,section) {
+      trail.push({ ...screen, y:window.scrollY, focus:document.activeElement?.dataset.action, excludedOpen:app.querySelector('#excluded-items')?.open });
+      screen = { name,id };
+      render();
+      window.scrollTo(0,0);
+      app.querySelector('h1')?.focus({preventScroll:true});
+      if (section) document.getElementById(section)?.scrollIntoView();
+    }
+
+    function back() {
+      const previous = trail.pop() || {name:'home',y:0};
+      screen = previous;
+      render();
+      if (previous.excludedOpen) app.querySelector('#excluded-items').open = true;
+      window.scrollTo(0,previous.y);
+      const control = [...app.querySelectorAll('[data-action]')].find(button => button.dataset.action === previous.focus);
+      (control || app.querySelector('h1'))?.focus({preventScroll:true});
+    }
+
+    function announce(message) {
+      clearTimeout(statusTimer);
+      status.textContent = message;
+      statusTimer = setTimeout(() => status.textContent = '',2600);
+    }
+
+    function openSettings() {
+      dialog.innerHTML = `<form class="stack" id="settings-form"><div class="row"><h2 id="settings-title">정착 정보 변경</h2><button type="button" class="plain" id="close-settings">닫기</button></div>
+        <label>어떻게 시흥에 오셨어요?<select name="path"><option value="arrival" ${state.path === 'arrival' ? 'selected' : ''}>막 입국했어요</option><option value="move" ${state.path === 'move' ? 'selected' : ''}>이사 왔어요</option></select></label>
+        <label>입국한 날<input type="date" name="arrival" min="1900-01-01" max="${demoToday}" value="${esc(state.arrival)}"></label>
+        <label>이사한 날<input type="date" name="moveDate" min="1900-01-01" max="${demoToday}" value="${esc(state.moveDate)}"></label>
+        <label class="check"><input type="checkbox" name="f4" ${state.f4 ? 'checked' : ''}>재외동포(F-4)예요</label><button class="primary">저장</button></form>`;
+      const form = dialog.querySelector('form');
+      const sync = () => {
+        for (const input of [form.elements.arrival,form.elements.f4,form.elements.moveDate]) {
+          input.disabled = input.name === 'moveDate' ? form.elements.path.value !== 'move' : form.elements.path.value === 'move';
+          input.closest('label').hidden = input.disabled;
+        }
+      };
+      form.elements.path.addEventListener('change',sync);
+      sync();
+      dialog.querySelector('#close-settings').onclick = () => dialog.close();
+      form.onsubmit = event => {
+        event.preventDefault();
+        state.path = form.elements.path.value;
+        state.arrival = form.elements.arrival.value;
+        state.moveDate = form.elements.moveDate.value;
+        state.f4 = form.elements.f4.checked;
+        save();
+        dialog.close();
+        render();
+        app.querySelector('h1')?.focus({preventScroll:true});
+        announce('정착 정보를 저장했어요.');
+      };
+      dialog.showModal();
+    }
+
+    app.addEventListener('click', event => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const [name,id,section] = button.dataset.action.split(':');
+      switch (name) {
+        case 'back': back(); return;
+        case 'tab': trail = []; screen = {name:id}; render(); window.scrollTo(0,0); app.querySelector('h1')?.focus({preventScroll:true}); return;
+        case 'settings': openSettings(); return;
+        case 'toggle': {
+          const wasDone = isDone(id);
+          state.done = wasDone ? state.done.filter(value => value !== id) : [...state.done,id];
+          save();
+          back();
+          announce(wasDone ? '완료 표시를 취소했어요.' : '할 일을 완료로 표시했어요.');
+          return;
+        }
+        case 'choose':
+          state.change = id;
+          state.trackedChanges = [...new Set([...state.trackedChanges,id])];
+          save();
+          if (trail.at(-1)?.name === 'check') back();
+          else { screen = {name:'check',id:'resident'}; render(); window.scrollTo(0,0); app.querySelector('h1')?.focus({preventScroll:true}); }
+          return;
+        case 'reminder':
+          state.reminders = state.reminders.includes(id) ? state.reminders.filter(value => value !== id) : [...state.reminders,id];
+          save(); render(); app.querySelector(`[data-action="reminder:${id}"]`).focus(); announce('알림 설정을 저장했어요.'); return;
+        case 'reset':
+          state = {...original}; selectedFile = ''; save(); trail = []; screen = {name:'signup'}; render(); window.scrollTo(0,0); app.querySelector('h1')?.focus(); return;
+        default: go(name,id,section);
+      }
+    });
+
+    app.addEventListener('change', event => {
+      if (event.target.name === 'mode' && event.target.form?.id === 'situation-form') {
+        const form = event.target.form;
+        const purpose = form.elements.purpose;
+        const resident = event.target.value === 'resident';
+        purpose.disabled = !resident;
+        purpose.closest('label').hidden = purpose.disabled;
+        const conditions = form.querySelector('#resident-conditions');
+        conditions.hidden = !resident;
+        conditions.querySelector('fieldset').disabled = !resident;
+      }
+      if (event.target.id === 'language') {
+        state.lang = event.target.value;
+        save();
+        render();
+        app.querySelector('#language').focus();
+      }
+      if (event.target.id === 'photo' && event.target.files[0]) {
+        selectedFile = event.target.files[0].name;
+        document.querySelector('#file-name').textContent = selectedFile;
+      }
+    });
+    app.addEventListener('submit', event => {
+      if (event.target.id === 'stay-form') {
+        event.preventDefault();
+        const stayEnd = event.target.elements.stayEnd.value;
+        if (stayEnd !== state.stayEnd) state.done = state.done.filter(id => id !== 'extension');
+        state.stayEnd = stayEnd;
+        save();
+        back();
+        announce('체류 만료일을 저장했어요.');
+        return;
+      }
+      if (event.target.id !== 'situation-form') return;
+      event.preventDefault();
+      const form = event.target;
+      const mode = form.elements.mode.value;
+      if (!Object.hasOwn(modeLabels,mode)) return;
+      const signup = !state.onboarded;
+      state.onboarded = true;
+      state.mode = mode;
+      if (mode === 'resident') {
+        state.purpose = form.elements.purpose.value;
+        state.conditions = new FormData(form).getAll('condition');
+      }
+      save();
+      if (signup) {
+        screen = {name:'home'};
+        render();
+        window.scrollTo(0,0);
+        app.querySelector('h1').focus({preventScroll:true});
+      } else {
+        back();
+        announce('나의 상황을 저장했어요.');
+      }
+    });
+    render();
+  </script>
+</body>
+</html>

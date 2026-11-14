@@ -88,17 +88,17 @@ docs/prompts/   # 작업 판단·검증 기록
 ### 브랜치와 병합
 
 ```text
-main → 작업 브랜치 → PR·리뷰·CI → main
+main → 작업 브랜치 → PR·CI → main
 ```
 
 - 상시 브랜치는 `main`만 사용한다. 작업 브랜치는 최신 `main`에서 만들고 PR 대상도 `main`으로 지정한다.
 - 브랜치 이름은 `feature/{기능}/{작업}`, `fix/{작업}`, `docs/{작업}`, `chore/{작업}`을 사용한다.
 - `main`에 직접 커밋하거나 force push하지 않는다.
-- 작성자 외 FE 1명이 검토·승인하고, CI 통과 및 리뷰 반영 후 병합한다. 셀프 merge는 하지 않는다.
+- 리뷰는 필요할 때 서로 요청하며 승인 필수 조건은 두지 않는다. CI 통과 후 작성자가 직접 병합할 수 있다.
 - 작업 PR은 squash merge하고 병합된 작업 브랜치는 삭제한다.
 - 커밋·PR 제목은 `type: 내용` 형식이다. `feat`·`fix`·`refactor`·`test`·`docs`·`chore`·`style`을 사용한다.
 
-GitHub의 `main` 보호 규칙은 PR·승인 1명·`check` 통과를 요구하고, force push와 브랜치 삭제를 금지하도록 설정한다.
+GitHub의 `main` 보호 규칙은 PR·`check` 통과를 요구하고, force push와 브랜치 삭제를 금지하도록 설정한다. 리뷰 승인은 필수가 아니다.
 CI는 `main` 대상 PR과 `main` 푸시에서 `npm ci` → `npm run audit` → `npm run check`를 실행한다.
 
 ### PR과 AI 협업 기록
@@ -108,4 +108,4 @@ CI는 `main` 대상 PR과 `main` 푸시에서 `npm ci` → `npm run audit` → `
 - 단순 오탈자·색상 수정은 PR에 ‘해당 없음’과 이유를 적어 별도 기록을 생략할 수 있다.
 - 같은 작업의 기록은 판단을 보존하며 갱신한다. 병합 후 후속 작업은 새 기록에서 이전 기록·PR을 연결한다.
 - 목업 확인·실제 API 연동·미검증 항목을 구분하고 남은 작업과 BE 선행 작업을 적는다.
-- AI 작업은 [CLAUDE.md](CLAUDE.md)를 따른다. AI로 작성한 코드도 동일한 검사와 리뷰를 거친다.
+- AI 작업은 [CLAUDE.md](CLAUDE.md)를 따른다. AI로 작성한 코드도 작성자가 확인하고 동일한 검사를 수행한다.

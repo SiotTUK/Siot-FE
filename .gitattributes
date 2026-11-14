@@ -1,6 +1,5 @@
 * text=auto eol=lf
 prototypes/** -text
-welcome-siheung-flow.svg -text
 *.png binary
 *.jpg binary
 *.jpeg binary

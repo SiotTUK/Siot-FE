@@ -68,7 +68,7 @@ docs/prompts/   # 작업 판단·검증 기록
 - 이름: 컴포넌트는 PascalCase, 파일·디렉터리는 kebab-case. `@/`는 `src` 별칭.
 - 스타일/테스트: 전용 스타일은 `*.module.css`, 로직 테스트는 대상 파일 옆 `*.test.ts`.
 
-`prototypes/`와 `welcome-siheung-flow.svg`는 참고 자료이며 운영 빌드에 포함하지 않는다.
+`prototypes/`는 참고 자료이며 운영 빌드에 포함하지 않는다. 화면 흐름은 상단의 Figma를 기준으로 한다.
 
 ## API 연동
 

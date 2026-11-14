@@ -8,6 +8,22 @@ import './shared/i18n'
 import './styles.css'
 
 async function bootstrap() {
+  if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MOCKS === 'true') {
+    const { worker } = await import('./mocks/browser')
+    await worker.start({
+      onUnhandledFrame({ frame, defaults }) {
+        if (
+          frame.data &&
+          typeof frame.data === 'object' &&
+          'request' in frame.data &&
+          frame.data.request instanceof Request &&
+          new URL(frame.data.request.url).pathname.startsWith('/api/')
+        )
+          defaults.error()
+      },
+    })
+  }
+
   const root = document.getElementById('root')
   if (!root) throw new Error('Root element is missing')
 

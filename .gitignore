@@ -1,4 +1,9 @@
 # Logs
+# Local planning documents (keep on disk, exclude from commits)
+/docs/frontend-roadmap.md
+/docs/development-conventions.md
+/docs/api-integration.md
+
 logs
 *.log
 npm-debug.log*
@@ -69,6 +74,7 @@ web_modules/
 .env
 .env.*
 !.env.example
+!.env.mock
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

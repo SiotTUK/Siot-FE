@@ -1,0 +1,209 @@
+/* Layout */
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--bg-2);
+}
+.screen > header {
+  border-bottom: 1px solid var(--line-1);
+}
+.log {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Bubbles */
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.mine {
+  align-items: flex-end;
+}
+.bubble {
+  max-width: 82%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--white);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--title-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.mine .bubble {
+  background: var(--main-100);
+  color: var(--white);
+}
+.pending .bubble {
+  opacity: 0.7;
+}
+.caution {
+  background: var(--warning-bg);
+}
+.emergency {
+  background: var(--danger-bg);
+}
+.note {
+  font-size: 11px;
+  color: var(--body-3);
+}
+.calls,
+.chips,
+.feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.calls {
+  margin: 0 0 8px;
+}
+.calls a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--error);
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: none;
+}
+.chips button,
+.feedback button {
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 12px;
+  color: var(--body-2);
+}
+.chips button:disabled {
+  cursor: default;
+}
+.feedback {
+  font-size: 12px;
+  color: var(--body-4);
+}
+.feedback button[aria-pressed='true'] {
+  border-color: var(--main-100);
+  background: var(--main-25);
+  color: var(--main-125);
+  font-weight: 700;
+}
+.sourceDetail {
+  display: flex;
+  gap: 8px;
+  padding: 2px 4px;
+  font-size: 12px;
+  color: var(--body-3);
+}
+
+/* Composer */
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: var(--white);
+  border-top: 1px solid var(--line-2);
+}
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.suggestions button {
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1px solid var(--sub-100);
+  border-radius: 18px;
+  background: var(--sub-50);
+  font-size: 13px;
+  color: var(--main-125);
+}
+.privacy {
+  font-size: 11px;
+  color: var(--body-3);
+}
+.error {
+  font-size: 12px;
+  color: var(--error);
+}
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.inputRow textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  max-height: 120px;
+  padding: 11px 14px;
+  border: 1px solid var(--line-1);
+  border-radius: 22px;
+  font-size: 15px;
+  line-height: 1.4;
+  resize: none;
+  field-sizing: content;
+}
+.inputRow textarea:focus {
+  border-color: var(--main-100);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--main-25);
+}
+.inputRow button {
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--main-100);
+  color: var(--white);
+  font-weight: 700;
+}
+.inputRow button:disabled {
+  opacity: 0.45;
+}
+
+/* History */
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.historyRow a {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--title-2);
+  text-decoration: none;
+}
+.historyRow strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.historyRow span {
+  font-size: 12px;
+  color: var(--body-3);
+}

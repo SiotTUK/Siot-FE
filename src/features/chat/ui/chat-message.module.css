@@ -1,0 +1,122 @@
+.row {
+  display: flex;
+}
+.mine {
+  justify-content: flex-end;
+}
+.bubble {
+  max-width: 82%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.question {
+  background: var(--main-100);
+  color: var(--white);
+  white-space: pre-wrap;
+}
+.answer {
+  background: var(--white);
+  color: var(--title-2);
+}
+.caution {
+  background: #fdf6e3;
+  color: var(--title-2);
+}
+.emergency {
+  background: #fdecec;
+  color: var(--title-2);
+}
+.text {
+  white-space: pre-wrap;
+}
+.calls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.emergencyCall {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--error);
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: none;
+}
+.referral {
+  margin-top: 8px;
+}
+.plainList {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.plainList a {
+  font-weight: 700;
+}
+.sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.source {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sourceChip {
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 12px;
+  color: var(--body-2);
+  text-align: left;
+}
+.sourceChip:disabled {
+  cursor: default;
+}
+.sourceDetail {
+  display: flex;
+  gap: 8px;
+  padding-left: 4px;
+  font-size: 12px;
+  color: var(--body-3);
+}
+.feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--body-4);
+}
+.feedbackButton {
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 12px;
+  color: var(--title-3);
+}
+.feedbackButton[aria-pressed='true'] {
+  border-color: var(--main-100);
+  background: var(--main-25);
+  color: var(--main-125);
+  font-weight: 700;
+}
+.dots {
+  letter-spacing: 1px;
+}

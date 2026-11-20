@@ -1,0 +1,185 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 56px;
+  padding: 6px 12px 6px 4px;
+  border-bottom: 1px solid var(--line-1);
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 44px;
+  font-size: 26px;
+  color: var(--title-1);
+  text-decoration: none;
+}
+.title {
+  font-size: 18px;
+  font-weight: 700;
+}
+.body {
+  gap: 16px;
+  padding-top: 16px;
+}
+.menu,
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+  color: var(--title-2);
+  text-decoration: none;
+}
+.menuItem span {
+  font-size: 13px;
+  color: var(--body-3);
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+.filterField {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--title-3);
+}
+.filterField input,
+.filterField select,
+.filterField textarea {
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 14px;
+  font-weight: 400;
+}
+.filterField textarea {
+  resize: vertical;
+}
+.filterField input[aria-invalid='true'] {
+  border-color: var(--error);
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+}
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.email {
+  overflow-wrap: anywhere;
+}
+.tag {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--bg-1);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--body-2);
+}
+.tag[data-role='ADMIN'] {
+  background: var(--main-25);
+  color: var(--main-125);
+}
+.tag[data-reason='NEGATIVE'] {
+  background: #fdecec;
+  color: var(--error);
+}
+.tag[data-reason='NO_EVIDENCE'] {
+  background: #fdf6e3;
+  color: #8a6200;
+}
+.muted {
+  font-size: 12px;
+  color: var(--body-3);
+}
+.empty {
+  padding: 24px 0;
+  color: var(--body-3);
+  text-align: center;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  font-size: 14px;
+}
+.qa {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  margin: 0;
+  font-size: 14px;
+}
+.qa dt {
+  font-weight: 700;
+  color: var(--body-2);
+}
+.qa dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.reviewForm,
+.guideForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: 14px;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+}
+.saved {
+  font-size: 13px;
+  color: var(--success);
+}
+/* In vertical forms the filter basis would become a height. */
+.reviewForm .filterField,
+.guideForm .filterField {
+  flex: none;
+}

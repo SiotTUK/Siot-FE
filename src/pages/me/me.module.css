@@ -1,0 +1,130 @@
+.body {
+  gap: 20px;
+  padding-top: 20px;
+}
+.card {
+  margin: 0;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 14px;
+  border-top: 1px solid var(--line-2);
+  font-size: 14px;
+}
+.row:first-child {
+  border-top: 0;
+}
+.row dt {
+  flex: none;
+  color: var(--body-2);
+}
+.row dd {
+  min-width: 0;
+  margin: 0;
+  text-align: right;
+}
+.email {
+  color: var(--title-2);
+  overflow-wrap: anywhere;
+}
+.editLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--title-2);
+  text-decoration: none;
+}
+.editLink span:first-child {
+  overflow-wrap: anywhere;
+}
+.logout {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  color: var(--body-2);
+  text-decoration: underline;
+}
+.withdraw {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-1);
+}
+.withdrawTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--error);
+}
+.warning {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fdecec;
+  font-size: 13px;
+  color: var(--body-1);
+}
+.warning ul {
+  margin: 6px 0 0;
+  padding-left: 16px;
+}
+.withdrawForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.danger {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--white);
+}
+.danger:not(:disabled):hover {
+  background: #b81f1f;
+}
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line-1);
+  border-radius: 14px;
+}
+.confirmTitle {
+  font-size: 17px;
+  font-weight: 700;
+}
+.confirmActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.confirmActions button {
+  width: 100%;
+  min-height: 48px;
+}
+.editBody {
+  padding-top: 8px;
+}
+.editForm {
+  display: contents;
+}
+.adminLink {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  background: var(--main-25);
+  color: var(--main-125);
+  font-weight: 700;
+  text-decoration: none;
+}

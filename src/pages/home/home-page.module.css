@@ -1,0 +1,82 @@
+.body {
+  gap: 16px;
+  padding-top: 16px;
+  background: var(--white);
+}
+.muted {
+  font-size: 13px;
+  color: var(--body-3);
+}
+.todo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 16px;
+  border-radius: 16px;
+  background: var(--sub-50);
+}
+.todoTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--title-1);
+}
+.situation {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+.situationTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--title-2);
+}
+.sectionTitle {
+  margin: 8px 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--title-1);
+}
+.empty {
+  padding: 24px 16px;
+  border: 1px dashed var(--line-1);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--body-3);
+  text-align: center;
+}
+.bill,
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius);
+}
+.bill {
+  border: 1px solid var(--sub-100);
+  background: var(--sub-50);
+}
+.billTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--title-2);
+}
+.row {
+  background: var(--bg-2);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--body-2);
+}
+.badge {
+  flex: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--body-3);
+}

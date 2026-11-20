@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { ButtonLink } from '@/shared/ui/button'
+import { PageBody } from '@/shared/ui/mobile-frame'
+import styles from './pages.module.css'
 
 export function NotFoundPage() {
   const { t } = useTranslation()
   return (
-    <main className="shell not-found">
-      <h1>{t('notFound')}</h1>
-      <Link to="/">{t('home')}</Link>
-    </main>
+    <PageBody className={styles.notFound}>
+      <h1>{t('notFound.title')}</h1>
+      <ButtonLink to="/">{t('notFound.home')}</ButtonLink>
+    </PageBody>
   )
 }

@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './app/router'
 import { queryClient } from './app/query-client'
 import './shared/i18n'
+import './app/messages'
 import './styles.css'
 
 async function bootstrap() {

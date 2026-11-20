@@ -1,6 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { GuestOnly, RequireMember } from '@/features/auth/route-guards'
 import {
+  AdminGuidesPage,
+  AdminHomePage,
+  AdminMembersPage,
+  AdminReviewsPage,
+} from '@/pages/admin/admin-pages'
+import {
   LoginPage,
   PasswordResetPage,
   PasswordResetRequestPage,
@@ -79,6 +85,17 @@ export const router = createBrowserRouter([
           // Chat is full screen with its own header (M08), no tab bar.
           { path: '/chat/history', element: <ChatHistoryPage /> },
           { path: '/chat/:conversationId?', element: <ChatPage /> },
+        ],
+      },
+      {
+        // ADM-01·08, CHK-06. The server still rejects non-admins with 403.
+        path: '/admin',
+        element: <RequireMember when="admin" />,
+        children: [
+          { index: true, element: <AdminHomePage /> },
+          { path: 'members', element: <AdminMembersPage /> },
+          { path: 'reviews', element: <AdminReviewsPage /> },
+          { path: 'guides', element: <AdminGuidesPage /> },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

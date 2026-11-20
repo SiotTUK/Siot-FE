@@ -11,7 +11,7 @@ import { questionOrder } from '@/features/onboarding/questions'
 import { describeAnswer } from '@/features/onboarding/summary'
 import { currentLanguage } from '@/shared/i18n'
 import { errorMessage } from '@/shared/i18n/error-message'
-import { Button } from '@/shared/ui/button'
+import { Button, ButtonLink } from '@/shared/ui/button'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { FormError, PageHeading } from '@/shared/ui/page'
@@ -62,6 +62,11 @@ export function MePage() {
           )
         })}
       </dl>
+      {me.role === 'ADMIN' && (
+        <ButtonLink variant="secondary" to="/admin">
+          {t('admin.open')} ›
+        </ButtonLink>
+      )}
       <Button
         variant="text"
         disabled={logout.isPending}

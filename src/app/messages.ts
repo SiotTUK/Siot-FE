@@ -1,8 +1,9 @@
+import { adminMessages } from '@/features/admin/messages'
 import { authMessages } from '@/features/auth/messages'
 import { chatMessages } from '@/features/chat/messages'
+import { onboardingMessages } from '@/features/onboarding/messages'
 import { homeMessages } from '@/pages/home/messages'
 import { meMessages } from '@/pages/me/messages'
-import { onboardingMessages } from '@/features/onboarding/messages'
 import { pageMessages } from '@/pages/messages'
 import { registerMessages } from '@/shared/i18n'
 
@@ -14,4 +15,5 @@ registerMessages(
   homeMessages,
   meMessages,
   chatMessages,
+  adminMessages,
 )

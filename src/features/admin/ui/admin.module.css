@@ -1,0 +1,16 @@
+.qa {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  margin: 0;
+  font-size: 14px;
+}
+.qa dt {
+  font-weight: 700;
+  color: var(--body-2);
+}
+.qa dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

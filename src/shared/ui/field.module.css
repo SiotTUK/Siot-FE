@@ -1,0 +1,73 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--title-2);
+}
+.row {
+  display: flex;
+  gap: 8px;
+}
+.control {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-size: 16px;
+  color: var(--title-1);
+}
+textarea.control {
+  padding: 10px 12px;
+  resize: vertical;
+}
+.control::placeholder {
+  color: var(--body-4);
+}
+.control:focus {
+  border-color: var(--main-100);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--main-25);
+}
+.control[aria-invalid='true'] {
+  border-color: var(--error);
+}
+/* select is always :read-only, so only text controls get the locked look. */
+input.control:read-only,
+textarea.control:read-only,
+.control:disabled {
+  background: var(--bg-2);
+  color: var(--body-2);
+}
+.error,
+.default,
+.success {
+  font-size: 12px;
+}
+.error {
+  color: var(--error);
+}
+.default {
+  color: var(--body-3);
+}
+.success {
+  color: var(--success);
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: 14px;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--main-100);
+}

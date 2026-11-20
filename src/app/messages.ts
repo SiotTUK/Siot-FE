@@ -1,4 +1,5 @@
 import { authMessages } from '@/features/auth/messages'
+import { chatMessages } from '@/features/chat/messages'
 import { homeMessages } from '@/pages/home/messages'
 import { meMessages } from '@/pages/me/messages'
 import { onboardingMessages } from '@/features/onboarding/messages'
@@ -12,4 +13,5 @@ registerMessages(
   onboardingMessages,
   homeMessages,
   meMessages,
+  chatMessages,
 )

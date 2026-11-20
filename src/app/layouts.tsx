@@ -39,7 +39,7 @@ export function TopBarLayout() {
 
 /**
  * Member screens after onboarding: top bar + bottom tabs.
- * 홈·내 정보 exist; other tabs render disabled until their screens are built.
+ * 홈·질문·내 정보 exist; other tabs render disabled until their screens are built.
  */
 export function MainLayout() {
   const { t } = useTranslation()
@@ -53,7 +53,7 @@ export function MainLayout() {
           { label: t('nav.home'), to: '/home' },
           { label: t('nav.calendar') },
           { label: t('nav.rules') },
-          { label: t('nav.chat') },
+          { label: t('nav.chat'), to: '/chat' },
           { label: t('nav.me'), to: '/me' },
         ]}
       />

@@ -1,5 +1,5 @@
-import { createBrowserRouter } from 'react-router-dom'
-import { GuestOnly } from '@/features/auth/route-guards'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { GuestOnly, RequireMember } from '@/features/auth/route-guards'
 import {
   LoginPage,
   PasswordResetPage,
@@ -8,7 +8,8 @@ import {
 } from '@/pages/auth/auth-pages'
 import { LanguagePage } from '@/pages/language-page'
 import { NotFoundPage } from '@/pages/not-found-page'
-import { RootLayout, TopBarLayout } from './layouts'
+import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
+import { OnboardingLayout, RootLayout, TopBarLayout } from './layouts'
 
 /**
  * Logged out: language, signup, login and password reset only.
@@ -40,6 +41,19 @@ export const router = createBrowserRouter([
             element: <PasswordResetRequestPage />,
           },
           { path: '/password-reset', element: <PasswordResetPage /> },
+        ],
+      },
+      {
+        element: <RequireMember when="onboarding" />,
+        children: [
+          {
+            path: '/onboarding',
+            element: <OnboardingLayout />,
+            children: [
+              { index: true, element: <Navigate to="type" replace /> },
+              { path: ':question', element: <OnboardingPage /> },
+            ],
+          },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

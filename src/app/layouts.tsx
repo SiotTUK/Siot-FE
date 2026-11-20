@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Outlet, ScrollRestoration } from 'react-router-dom'
 import { MemberLanguageSync } from '@/features/auth/route-guards'
-import { useChangeLanguage } from '@/features/auth/use-session'
+import { useChangeLanguage, useMe } from '@/features/auth/use-session'
+import { OnboardingProvider } from '@/features/onboarding/onboarding-provider'
 import { currentLanguage } from '@/shared/i18n'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { MobileFrame } from '@/shared/ui/mobile-frame'
@@ -33,4 +34,11 @@ export function TopBarLayout() {
       <Outlet />
     </>
   )
+}
+
+/** Rendered under RequireMember, so `me` is present. */
+export function OnboardingLayout() {
+  const { data: me } = useMe()
+  if (!me) return null
+  return <OnboardingProvider key={me.id} memberId={me.id} />
 }

@@ -6,10 +6,16 @@ import {
   PasswordResetRequestPage,
   SignupPage,
 } from '@/pages/auth/auth-pages'
+import { HomePage } from '@/pages/home/home-page'
 import { LanguagePage } from '@/pages/language-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
-import { OnboardingLayout, RootLayout, TopBarLayout } from './layouts'
+import {
+  MainLayout,
+  OnboardingLayout,
+  RootLayout,
+  TopBarLayout,
+} from './layouts'
 
 /**
  * Logged out: language, signup, login and password reset only.
@@ -53,6 +59,15 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to="type" replace /> },
               { path: ':question', element: <OnboardingPage /> },
             ],
+          },
+        ],
+      },
+      {
+        element: <RequireMember when="onboarded" />,
+        children: [
+          {
+            element: <MainLayout />,
+            children: [{ path: '/home', element: <HomePage /> }],
           },
         ],
       },

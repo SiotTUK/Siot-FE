@@ -8,12 +8,14 @@ type RequestOptions = Omit<RequestInit, 'body' | 'credentials'> & {
 export class ApiError extends Error {
   readonly status: number
   readonly code: string
+  readonly details?: Record<string, unknown>
 
   constructor(status: number, error: ErrorResponse) {
     super(error.message)
     this.name = 'ApiError'
     this.status = status
     this.code = error.code
+    this.details = error.details
   }
 }
 
@@ -46,6 +48,13 @@ async function responseError(response: Response): Promise<ApiError> {
       return new ApiError(response.status, {
         code: body.code,
         message: body.message,
+        details:
+          'details' in body &&
+          body.details &&
+          typeof body.details === 'object' &&
+          !Array.isArray(body.details)
+            ? (body.details as Record<string, unknown>)
+            : undefined,
       })
   } catch {
     /* A proxy may return a non-JSON error page. */
@@ -113,6 +122,9 @@ export async function apiRequest<T = undefined>(
   }
   if (!response.ok) throw await responseError(response)
   if (response.status === 204) return undefined as T
-  const body = (await response.json()) as ApiResponse<T>
+  // 202 Accepted (e.g. password reset) may come without a body.
+  const text = await response.text()
+  if (!text) return undefined as T
+  const body = JSON.parse(text) as ApiResponse<T>
   return body.data
 }

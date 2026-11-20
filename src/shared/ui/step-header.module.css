@@ -1,0 +1,48 @@
+.header {
+  padding: 8px 16px 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+}
+.back {
+  width: 44px;
+  height: 44px;
+  margin-left: -12px;
+  border: 0;
+  background: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--title-1);
+}
+.skip {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  color: var(--body-3);
+}
+.progress {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 4px;
+}
+.segment {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line-2);
+}
+.segment[data-done='true'] {
+  background: var(--main-100);
+}
+.label {
+  margin-top: 28px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--main-100);
+}

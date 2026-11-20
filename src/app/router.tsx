@@ -8,6 +8,8 @@ import {
 } from '@/pages/auth/auth-pages'
 import { HomePage } from '@/pages/home/home-page'
 import { LanguagePage } from '@/pages/language-page'
+import { MeEditPage } from '@/pages/me/me-edit-page'
+import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
 import {
@@ -67,8 +69,12 @@ export const router = createBrowserRouter([
         children: [
           {
             element: <MainLayout />,
-            children: [{ path: '/home', element: <HomePage /> }],
+            children: [
+              { path: '/home', element: <HomePage /> },
+              { path: '/me', element: <MePage /> },
+            ],
           },
+          { path: '/me/edit/:question', element: <MeEditPage /> },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

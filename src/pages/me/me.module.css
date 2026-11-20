@@ -1,0 +1,44 @@
+.body {
+  gap: 16px;
+  padding-top: 20px;
+}
+.rows {
+  margin: 0;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 14px;
+  font-size: 14px;
+}
+.rows > div + div {
+  border-top: 1px solid var(--line-2);
+}
+.rows dt {
+  flex: none;
+  color: var(--body-2);
+}
+.rows dd {
+  min-width: 0;
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.rows a {
+  display: inline-block;
+  padding: 10px 0;
+  color: var(--title-2);
+  text-decoration: none;
+}
+.divider {
+  width: 100%;
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid var(--line-1);
+}

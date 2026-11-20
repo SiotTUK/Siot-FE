@@ -49,18 +49,25 @@ npm run dev
 
 ```text
 src/
-  app/          # 라우터·Query Client·앱 설정
-  pages/        # 라우트별 화면 조립
-  shared/       # 공통 API 클라이언트·타입·다국어
-  mocks/        # MSW 핸들러·브라우저 설정
+  app/          # 라우터·레이아웃·Query Client·문구 등록
+  pages/        # 라우트별 화면 조립 (auth, onboarding, home, me, chat, admin)
+  features/     # 기능별 API·상태·검증·UI·문구 (auth, onboarding, chat, admin)
+  shared/
+    api/        # 공통 API 클라이언트·응답 타입
+    i18n/       # 다국어 설정·공통 문구·오류 문구 변환
+    ui/         # 공통 UI 컴포넌트 (필드·버튼·헤더·확인 패널·목록 상태)
+  mocks/        # MSW 상태(db.ts)·기능별 핸들러(handlers/)
   test/         # 공통 테스트 설정
   main.tsx      # 앱 진입점
-  styles.css    # 전역 스타일
+  styles.css    # 디자인 토큰·전역 스타일
 docs/prompts/   # 작업 판단·검증 기록
 ```
 
 기능 구현 시 `src/features/{기능}`에 해당 기능의 API·상태·검증·UI를 모은다.
 빈 디렉터리를 미리 만들지 않고, 기능 규모에 따라 `api`·`model`·`ui`로 나눈다.
+
+- 화면 문구는 기능·화면마다 `messages.ts`(ko·en·zh·vi)에 두고 `app/messages.ts`에서 등록한다. 언어별 키가 다르면 타입 검사에서 실패한다. 내부용 관리자 화면 문구는 한국어만 둔다.
+- 색·간격은 `styles.css`의 토큰을, 화면 요소는 `shared/ui` 컴포넌트를 쓴다. 디자인 변경은 토큰과 공통 컴포넌트에서 한다.
 
 - 의존 방향: `app/pages → features → shared`. `shared`는 상위 계층을 참조하지 않는다.
 - 상태: 서버 데이터는 TanStack Query, 로컬 UI는 `useState`, 공유 초안은 기능 범위 Context.

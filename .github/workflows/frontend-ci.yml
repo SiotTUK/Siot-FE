@@ -9,9 +9,20 @@ on:
 permissions:
   contents: read
 
+# PR 은 새 커밋이 오면 이전 실행을 취소한다. main 은 배포 도중 끊기지 않게 취소하지 않는다
 concurrency:
   group: frontend-ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# 아래 값은 식별자일 뿐 비밀 값이 아니다. GCP 쪽 설정: Siot-BE docs/deployment.md
+env:
+  GCP_PROJECT_ID: siot-514601
+  GCP_WIF_PROVIDER: projects/511164544275/locations/global/workloadIdentityPools/github/providers/siot-fe
+  GCP_SERVICE_ACCOUNT: github-fe-deployer@siot-514601.iam.gserviceaccount.com
+  VM_NAME: instance-20261113-012436
+  VM_ZONE: asia-northeast3-c
+  DEPLOY_DIR: /opt/siot/frontend
+  SITE_URL: https://34-22-97-3.sslip.io
 
 jobs:
   check:
@@ -26,3 +37,71 @@ jobs:
       - run: npm ci
       - run: npm run audit
       - run: npm run check
+
+      # main 푸시면 check 가 만든 빌드 결과를 배포 job 에 넘긴다
+      - if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  deploy:
+    name: Deploy to GCP VM
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: deploy-frontend-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Upload build
+        run: |
+          test -f dist/index.html
+          tar -czf frontend.tgz -C dist .
+          gcloud compute scp frontend.tgz "${VM_NAME}:/tmp/siot-frontend-${GITHUB_RUN_ID}.tgz" --project "$GCP_PROJECT_ID" --zone "$VM_ZONE" --quiet --strict-host-key-checking=no
+
+      # Caddy 는 bind mount 로 폴더를 읽으므로 폴더를 바꿔치기(mv)하지 않고 안의 내용만 바꾼다.
+      # 직전 버전은 frontend.old 에 남긴다 (롤백: Siot-BE docs/deployment.md)
+      - name: Replace files on VM
+        run: |
+          gcloud compute ssh "$VM_NAME" --project "$GCP_PROJECT_ID" --zone "$VM_ZONE" --quiet --strict-host-key-checking=no --command "
+              set -e
+              TGZ=/tmp/siot-frontend-$GITHUB_RUN_ID.tgz
+              STAGE=\$(mktemp -d)
+              tar -xzf \$TGZ -C \$STAGE
+              test -f \$STAGE/index.html
+              sudo rm -rf $DEPLOY_DIR.old
+              sudo cp -a $DEPLOY_DIR $DEPLOY_DIR.old
+              sudo find $DEPLOY_DIR -mindepth 1 -delete
+              sudo cp -a \$STAGE/. $DEPLOY_DIR/
+              rm -rf \$STAGE \$TGZ
+              echo 'Deployed frontend $GITHUB_SHA'
+            "
+
+      - name: Check the site serves this build
+        run: |
+          ASSET=$(grep -o 'assets/index-[^"]*\.js' dist/index.html | head -1)
+          for i in $(seq 1 6); do
+            if curl -fsS "$SITE_URL/" | grep -q "$ASSET" && curl -fsS -o /dev/null "$SITE_URL/$ASSET"; then
+              echo "Serving $ASSET"; exit 0
+            fi
+            sleep 5
+          done
+          echo "Site is not serving $ASSET"; exit 1

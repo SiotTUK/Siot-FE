@@ -88,7 +88,7 @@ docs/prompts/   # 작업 판단·검증 기록
 - 공통 요청은 `src/shared/api/client.ts`의 `apiRequest`를 사용한다.
 - 세션 쿠키를 전송하고, 상태 변경 요청에는 CSRF 토큰을 포함한다. 인증 전환 시 `refreshCsrf`로 갱신한다.
 - 목업은 개발·테스트에만 사용하며 실제 연동 검증과 구분한다. 목업 범위는 `src/mocks/handlers.ts`에서 확인한다.
-- 운영 배포 시 SPA fallback·`/api` 프록시·HTTPS를 구성한다. [BE 통합 안내](https://github.com/SiotTUK/Siot-BE/blob/main/docs/compose-integration.md)를 참고한다.
+- 운영 주소는 https://34-22-97-3.sslip.io 이다. BE VM의 Caddy가 빌드 결과를 서빙하고 같은 주소의 `/api`를 BE로 넘긴다(SPA fallback·HTTPS 포함). 구성은 [BE 배포 가이드](https://github.com/SiotTUK/Siot-BE/blob/main/docs/deployment.md)를 참고한다.
 
 ## 협업 규칙
 
@@ -107,6 +107,7 @@ main → 작업 브랜치 → PR·CI → main
 
 GitHub의 `main` 보호 규칙은 PR·`check` 통과를 요구하고, force push와 브랜치 삭제를 금지하도록 설정한다. 리뷰 승인은 필수가 아니다.
 CI는 `main` 대상 PR과 `main` 푸시에서 `npm ci` → `npm run audit` → `npm run check`를 실행한다.
+`main` 푸시는 검사 통과 후 빌드 결과(`dist/`)를 VM `/opt/siot/frontend`에 배포하고 운영 주소가 새 빌드를 서빙하는지 확인한다. GCP 인증은 Workload Identity Federation(provider `siot-fe`, 서비스 계정 `github-fe-deployer`)을 사용해 GitHub Secret이 없다.
 
 ### PR과 AI 협업 기록
 

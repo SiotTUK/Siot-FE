@@ -4,6 +4,7 @@ import {
   currentMember,
   error,
   languages,
+  mockSignupCode,
   persist,
   publicMember,
   state,
@@ -11,7 +12,7 @@ import {
   unauthorized,
 } from '../db'
 
-/** Me, language, onboarding answers, withdrawal. */
+/** Me, language, onboarding answers, email verification (NTF-09), withdrawal. */
 export const memberHandlers = [
   http.get('*/api/members/me', () => {
     const member = currentMember()
@@ -50,6 +51,42 @@ export const memberHandlers = [
     persist()
     return HttpResponse.json({ data: publicMember(member) })
   }),
+
+  // NTF-09: members who signed up before verification. The code is mockSignupCode.
+  http.post('*/api/members/me/email/verification', () => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    if (member.emailVerified)
+      return error(409, 'EMAIL_ALREADY_VERIFIED', '이미 인증된 이메일입니다.')
+    return HttpResponse.json(
+      {
+        data: {
+          email: member.email,
+          expiresInSeconds: 600,
+          resendAvailableInSeconds: 60,
+        },
+      },
+      { status: 202 },
+    )
+  }),
+
+  http.post(
+    '*/api/members/me/email/verification/confirm',
+    async ({ request }) => {
+      const member = currentMember()
+      if (!member) return unauthorized()
+      const { code } = await body(request)
+      if (String(code ?? '').trim() !== mockSignupCode)
+        return error(
+          400,
+          'EMAIL_VERIFICATION_CODE_INVALID',
+          '인증 코드가 맞지 않습니다.',
+        )
+      member.emailVerified = true
+      persist()
+      return HttpResponse.json({ data: publicMember(member) })
+    },
+  ),
 
   http.post('*/api/members/me/withdrawal', async ({ request }) => {
     const member = currentMember()

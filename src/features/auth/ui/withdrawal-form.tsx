@@ -42,6 +42,7 @@ export function WithdrawalForm() {
     <Section title={t('withdrawal.title')}>
       <Notice tone="danger" title={t('withdrawal.warning')}>
         <ul>
+          <li>{t('withdrawal.itemAccount')}</li>
           <li>{t('withdrawal.item1')}</li>
           <li>{t('withdrawal.item2')}</li>
           <li>{t('withdrawal.item3')}</li>

@@ -77,10 +77,13 @@ export function ChatMessage({
   message,
   onFeedback,
   feedbackDisabled,
+  onRetry,
 }: {
   message: MessageResponse
   onFeedback: (helpful: boolean) => void
   feedbackDisabled?: boolean
+  /** CB-02·COM-04: offered on a failed (ERROR) answer to send the question again. */
+  onRetry?: () => void
 }) {
   const { t } = useTranslation()
   if (message.role === 'USER')
@@ -90,7 +93,8 @@ export function ChatMessage({
       </ChatBubble>
     )
 
-  const { emergencyContacts, referral, sources, answerStatus } = message
+  const { emergencyContacts, referral, sources, relatedPages, answerStatus } =
+    message
   const call = (contact: { label: string; number: string }) => ({
     href: telHref(contact.number),
     'aria-label': t('chat.call', {
@@ -130,6 +134,18 @@ export function ChatMessage({
           ))}
         </>
       )}
+      {relatedPages.length > 0 && (
+        // CB-10·CB-02: related checklist / rule / event items. Their detail
+        // screens are not built yet, so only the titles are shown for now.
+        <div className={styles.related}>
+          <span>{t('chat.related')}</span>
+          <ul>
+            {relatedPages.map((page) => (
+              <li key={`${page.type}-${page.code}`}>{page.title}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {sources.length > 0 && (
         <ul className={styles.chips}>
           {[...sources]
@@ -138,6 +154,13 @@ export function ChatMessage({
               <SourceChip key={source.order} source={source} />
             ))}
         </ul>
+      )}
+      {answerStatus === 'ERROR' && onRetry && (
+        <div className={styles.feedback}>
+          <button type="button" onClick={onRetry}>
+            {t('chat.retryAnswer')}
+          </button>
+        </div>
       )}
       {answerStatus !== 'ERROR' && (
         <div className={styles.feedback}>

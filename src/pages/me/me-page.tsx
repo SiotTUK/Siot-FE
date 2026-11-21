@@ -6,6 +6,7 @@ import {
   useLogout,
   useMe,
 } from '@/features/auth/use-session'
+import { EmailVerificationForm } from '@/features/auth/ui/email-verification-form'
 import { WithdrawalForm } from '@/features/auth/ui/withdrawal-form'
 import { questionOrder } from '@/features/onboarding/questions'
 import { describeAnswer } from '@/features/onboarding/summary'
@@ -18,7 +19,7 @@ import { FormError, PageHeading } from '@/shared/ui/page'
 import { answerLabels } from './answer-labels'
 import styles from './me.module.css'
 
-/** M10 내 정보: saved answers (tap to change), logout, account deletion. */
+/** M10 내 정보: email verification (NTF-09), saved answers (tap to change), logout, account deletion. */
 export function MePage() {
   const { t } = useTranslation()
   const { data: me } = useMe()
@@ -62,6 +63,7 @@ export function MePage() {
           )
         })}
       </dl>
+      {!me.emailVerified && <EmailVerificationForm />}
       {me.role === 'ADMIN' && (
         <ButtonLink variant="secondary" to="/admin">
           {t('admin.open')} ›

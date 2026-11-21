@@ -50,6 +50,18 @@ export const meQueryOptions = queryOptions({
   queryFn: fetchMe,
 })
 
+/** M-02: `email` comes back trimmed and lower-cased. */
+export interface EmailAvailabilityResponse {
+  email: string
+  available: boolean
+}
+
+export function checkEmailAvailability(email: string) {
+  return apiRequest<EmailAvailabilityResponse>(
+    `/api/auth/email/availability?email=${encodeURIComponent(email)}`,
+  )
+}
+
 export function sendSignupCode(body: { email: string; language: Language }) {
   return apiRequest<SignupVerificationResponse>(
     '/api/auth/signup/email-verification',
@@ -107,6 +119,22 @@ export function withdraw(password: string) {
     method: 'POST',
     body: { password },
   })
+}
+
+/** NTF-09: a member who signed up before email verification gets a code at the sign-up email. */
+export function sendMyEmailCode() {
+  return apiRequest<SignupVerificationResponse>(
+    '/api/members/me/email/verification',
+    { method: 'POST' },
+  )
+}
+
+/** Returns the member with `emailVerified: true`. */
+export function confirmMyEmailCode(code: string) {
+  return apiRequest<MemberResponse>(
+    '/api/members/me/email/verification/confirm',
+    { method: 'POST', body: { code } },
+  )
 }
 
 export function updateMyLanguage(language: Language) {

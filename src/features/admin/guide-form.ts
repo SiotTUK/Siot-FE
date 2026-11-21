@@ -4,20 +4,49 @@ import type {
   GuideTranslationUpdateRequest,
 } from './api'
 
-const text = z.string()
+/** Same limits as the BE GuideTranslationUpdateRequest. */
+export const guideMaxLength = {
+  title: 255,
+  summary: 5000,
+  content: 20000,
+  badge: 100,
+  place: 2000,
+  fee: 255,
+  law: 255,
+  penalty: 2000,
+  sourceName: 255,
+} as const
+const docsMaxItems = 30
+const docMaxLength = 255
+
+const text = (max: number) => z.string().max(max, 'admin.tooLong')
+
+/** `docs` textarea → one item per non-blank line. */
+function docLines(docs: string) {
+  return docs
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
 
 /** Editable text of one guide translation; `docs` is one item per line. */
 export const guideFormSchema = z.object({
-  title: text.trim().min(1, 'admin.titleRequired'),
-  summary: text,
-  content: text,
-  badge: text,
-  place: text,
-  docs: text,
-  fee: text,
-  law: text,
-  penalty: text,
-  sourceName: text,
+  title: text(guideMaxLength.title).trim().min(1, 'admin.titleRequired'),
+  summary: text(guideMaxLength.summary),
+  content: text(guideMaxLength.content),
+  badge: text(guideMaxLength.badge),
+  place: text(guideMaxLength.place),
+  docs: z.string().refine((docs) => {
+    const lines = docLines(docs)
+    return (
+      lines.length <= docsMaxItems &&
+      lines.every((line) => line.length <= docMaxLength)
+    )
+  }, 'admin.docsLimit'),
+  fee: text(guideMaxLength.fee),
+  law: text(guideMaxLength.law),
+  penalty: text(guideMaxLength.penalty),
+  sourceName: text(guideMaxLength.sourceName),
   noticeChanged: z.boolean(),
 })
 export type GuideForm = z.input<typeof guideFormSchema>
@@ -65,10 +94,7 @@ export function toGuideRequest(form: GuideForm): GuideTranslationUpdateRequest {
     content: optional(form.content),
     badge: optional(form.badge),
     place: optional(form.place),
-    docs: form.docs
-      .split('\n')
-      .map((line) => line.trim())
-      .filter(Boolean),
+    docs: docLines(form.docs),
     fee: optional(form.fee),
     law: optional(form.law),
     penalty: optional(form.penalty),

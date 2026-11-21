@@ -19,6 +19,7 @@ import type { GuideTranslationResponse } from '../api'
 import {
   guideFields,
   guideFormSchema,
+  guideMaxLength,
   toGuideForm,
   toGuideRequest,
   type GuideForm,
@@ -110,6 +111,7 @@ function GuideTextForm({
         {guideFields.map(([field, labelKey, multiline]) => {
           const props = {
             ...register(field),
+            maxLength: field === 'docs' ? undefined : guideMaxLength[field],
             label: t(labelKey),
             error: msg(formState.errors[field]?.message),
           }

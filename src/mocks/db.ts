@@ -35,6 +35,8 @@ export interface MockState {
     string,
     { reviewed: boolean; adminMemo: string | null; reviewedAt: string | null }
   >
+  /** member email → `code:periodKey` → mark */
+  checklist: Record<string, Record<string, 'DONE' | 'NOT_APPLICABLE'>>
 }
 
 export interface MockConversation {
@@ -134,6 +136,7 @@ function seedState(): MockState {
       },
     },
     reviews: {},
+    checklist: {},
   }
 }
 

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ApiError, refreshCsrf } from '@/shared/api/client'
 import type { Language, MemberResponse } from '@/shared/api/types'
 import {
@@ -26,6 +26,30 @@ export function homePathFor(member: MemberResponse) {
   return member.onboarded ? '/home' : '/onboarding/type'
 }
 
+/** Router state passed between the guards, login and the logged-out landing. */
+export interface SessionLocationState {
+  /** M-08·M-10: the screen to return to after login. */
+  from?: string
+  /** The member just logged out or withdrew; guest screens must not bounce them home. */
+  signedOut?: boolean
+  /** M-06: show "탈퇴되었습니다" on the landing screen. */
+  notice?: 'withdrawn'
+}
+
+export function sessionState(state: unknown): SessionLocationState {
+  return state && typeof state === 'object'
+    ? (state as SessionLocationState)
+    : {}
+}
+
+/** Only same-app paths; never a guest screen that would bounce back. */
+function returnPath(from: string | undefined) {
+  if (!from || !from.startsWith('/') || from.startsWith('//')) return undefined
+  const path = from.split(/[?#]/)[0]
+  if (['/', '/login', '/signup'].includes(path)) return undefined
+  return from
+}
+
 async function refreshCsrfQuietly() {
   // The session (and its CSRF token) changes on login/logout.
   // If this fails, apiRequest refreshes on the next CSRF_TOKEN_INVALID.
@@ -36,7 +60,9 @@ async function refreshCsrfQuietly() {
 export function useStartSession() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const location = useLocation()
   const { i18n } = useTranslation()
+  const from = returnPath(sessionState(location.state).from)
 
   return useCallback(
     async (member: MemberResponse) => {
@@ -55,9 +81,12 @@ export function useStartSession() {
         queryClient.setQueryData(meQueryKey, member)
         void i18n.changeLanguage(member.language)
       }
-      navigate(homePathFor(member), { replace: true })
+      // M-08: back to the screen before login. Onboarding still comes first.
+      navigate(member.onboarded && from ? from : homePathFor(member), {
+        replace: true,
+      })
     },
-    [i18n, navigate, queryClient],
+    [from, i18n, navigate, queryClient],
   )
 }
 
@@ -94,13 +123,16 @@ function useEndSession() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   return useCallback(
-    async (to: string) => {
+    async (notice?: SessionLocationState['notice']) => {
       await refreshCsrfQuietly()
+      // M-06·M-09: logged out, to the main screen. `signedOut` keeps GuestOnly
+      // from sending the visitor home while `me` is still being cleared.
+      const state: SessionLocationState = { signedOut: true, notice }
+      navigate('/', { replace: true, state })
       queryClient.removeQueries({
         predicate: (query) => query.queryKey[0] !== meQueryKey[0],
       })
       queryClient.setQueryData(meQueryKey, null)
-      navigate(to, { replace: true })
     },
     [navigate, queryClient],
   )
@@ -117,7 +149,7 @@ export function useLogout() {
       // 401 means the session had already ended; anything else keeps the user logged in.
       if (!(error instanceof ApiError && error.status === 401)) throw error
     }
-    await endSession('/login')
+    await endSession()
   }, [endSession])
 }
 
@@ -127,9 +159,7 @@ export function useWithdraw() {
   return useCallback(
     async (password: string) => {
       await withdraw(password)
-      // Same landing as logout: the member guard sends a session-less visitor
-      // to login as soon as `me` is cleared, so a different target would race it.
-      await endSession('/login')
+      await endSession('withdrawn')
     },
     [endSession],
   )

@@ -58,6 +58,8 @@ export const adminMessages = defineKoreanMessages({
     noticeChanged: '실제 안내 내용이 바뀌었어요 (상세 화면에 "변경됨" 표시)',
     updatedAt: '마지막 수정 {{date}}',
     titleRequired: '제목을 입력해 주세요',
+    tooLong: '입력할 수 있는 길이를 넘었어요',
+    docsLimit: '준비물은 30개까지, 한 줄에 255자까지 입력할 수 있어요',
   },
   errors: {
     ADMIN_SELF_DEMOTION: '자기 자신의 관리자 권한은 내릴 수 없어요',

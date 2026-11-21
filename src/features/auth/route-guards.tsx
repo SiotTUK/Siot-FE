@@ -1,11 +1,16 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import type { MemberResponse } from '@/shared/api/types'
 import { hasStoredLanguage } from '@/shared/i18n'
 import { PageBody, PageLoader } from '@/shared/ui/mobile-frame'
 import { QueryState } from '@/shared/ui/query-state'
-import { homePathFor, useMe } from './use-session'
+import {
+  homePathFor,
+  sessionState,
+  type SessionLocationState,
+  useMe,
+} from './use-session'
 
 /**
  * `/`, `/signup`, `/login`: logged-in members go to onboarding or home.
@@ -14,8 +19,9 @@ import { homePathFor, useMe } from './use-session'
 export function GuestOnly() {
   const { t } = useTranslation()
   const { data: me, isPending } = useMe()
+  const { signedOut } = sessionState(useLocation().state)
   if (isPending) return <PageLoader label={t('common.loading')} />
-  if (me) return <Navigate to={homePathFor(me)} replace />
+  if (me && !signedOut) return <Navigate to={homePathFor(me)} replace />
   return <Outlet />
 }
 
@@ -35,6 +41,7 @@ const allowed: Record<
  */
 export function RequireMember({ when }: { when: keyof typeof allowed }) {
   const query = useMe()
+  const location = useLocation()
   const me = query.data
   if (me === undefined)
     return (
@@ -42,7 +49,19 @@ export function RequireMember({ when }: { when: keyof typeof allowed }) {
         <QueryState query={query}>{null}</QueryState>
       </PageBody>
     )
-  if (!me) return <Navigate to={hasStoredLanguage() ? '/login' : '/'} replace />
+  if (!me) {
+    // M-10: after login, come back here.
+    const state: SessionLocationState = {
+      from: location.pathname + location.search,
+    }
+    return (
+      <Navigate
+        to={hasStoredLanguage() ? '/login' : '/'}
+        replace
+        state={state}
+      />
+    )
+  }
   if (!allowed[when](me)) return <Navigate to={homePathFor(me)} replace />
   return <Outlet />
 }

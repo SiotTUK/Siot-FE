@@ -3,6 +3,7 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const authMessages = defineMessages({
   ko: {
     signup: {
+      emailAvailable: '가입할 수 있는 이메일이에요',
       title: '회원가입',
       email: '이메일',
       emailPlaceholder: 'example@email.com',
@@ -25,6 +26,7 @@ export const authMessages = defineMessages({
       login: '로그인',
     },
     passwordRules: {
+      allowedCharacters: '영문 · 숫자 · 특수문자만',
       length: '8~64자',
       letterAndDigit: '영문 · 숫자 각 1자 이상',
       noWhitespace: '공백 없음',
@@ -67,7 +69,20 @@ export const authMessages = defineMessages({
       invalid: '링크가 만료됐어요. 다시 요청해 주세요.',
       requestAgain: '재설정 링크 다시 받기',
     },
+    emailVerification: {
+      title: '이메일 인증',
+      description:
+        '비밀번호 재설정과 알림 메일은 인증한 이메일로만 보내요. 가입 이메일로 받은 6자리 코드를 입력해 주세요.',
+      send: '인증 코드 받기',
+      resend: '다시 받기',
+      sent: '메일로 6자리 코드를 보냈어요 · 10분 안에 입력해 주세요',
+      code: '인증 코드',
+      confirm: '확인',
+      done: '이메일을 인증했어요',
+    },
     withdrawal: {
+      itemAccount: '회원 정보 · 가입 이메일',
+      done: '탈퇴되었습니다',
       title: '회원 탈퇴',
       warning: '바로 삭제되고 복구할 수 없어요',
       item1: '생활 정보 (입국일·체류 목적·거주 정보·체류 만료일)',
@@ -80,6 +95,7 @@ export const authMessages = defineMessages({
       confirmAction: '탈퇴',
     },
     errors: {
+      EMAIL_ALREADY_VERIFIED: '이미 인증한 이메일이에요',
       EMAIL_FORMAT: '이메일 형식으로 입력해 주세요',
       DUPLICATE_EMAIL: '이미 가입한 이메일이에요',
       PASSWORD_LENGTH: '비밀번호는 8~64자로 입력해 주세요',
@@ -110,6 +126,7 @@ export const authMessages = defineMessages({
   },
   en: {
     signup: {
+      emailAvailable: 'You can sign up with this email',
       title: 'Sign up',
       email: 'Email',
       emailPlaceholder: 'example@email.com',
@@ -134,6 +151,7 @@ export const authMessages = defineMessages({
       login: 'Log in',
     },
     passwordRules: {
+      allowedCharacters: 'Letters, numbers and symbols only',
       length: '8–64 characters',
       letterAndDigit: 'At least 1 letter and 1 number',
       noWhitespace: 'No spaces',
@@ -178,7 +196,20 @@ export const authMessages = defineMessages({
       invalid: 'This link has expired. Please request a new one.',
       requestAgain: 'Get a new reset link',
     },
+    emailVerification: {
+      title: 'Verify your email',
+      description:
+        'Password reset and notification emails go only to a verified email. Enter the 6-digit code sent to your sign-up email.',
+      send: 'Get a code',
+      resend: 'Send again',
+      sent: 'We sent a 6-digit code · enter it within 10 minutes',
+      code: 'Verification code',
+      confirm: 'Confirm',
+      done: 'Your email is verified',
+    },
     withdrawal: {
+      itemAccount: 'Your account and sign-up email',
+      done: 'Your account has been deleted',
       title: 'Delete account',
       warning: 'Deleted right away and cannot be recovered',
       item1:
@@ -192,6 +223,7 @@ export const authMessages = defineMessages({
       confirmAction: 'Delete',
     },
     errors: {
+      EMAIL_ALREADY_VERIFIED: 'Your email is already verified',
       EMAIL_FORMAT: 'Please enter a valid email address',
       DUPLICATE_EMAIL: 'This email is already registered',
       PASSWORD_LENGTH: 'Password must be 8–64 characters',
@@ -223,6 +255,7 @@ export const authMessages = defineMessages({
   },
   zh: {
     signup: {
+      emailAvailable: '该邮箱可以注册',
       title: '注册',
       email: '电子邮箱',
       emailPlaceholder: 'example@email.com',
@@ -245,6 +278,7 @@ export const authMessages = defineMessages({
       login: '登录',
     },
     passwordRules: {
+      allowedCharacters: '仅限英文字母、数字和特殊字符',
       length: '8~64个字符',
       letterAndDigit: '英文字母和数字各至少1个',
       noWhitespace: '不含空格',
@@ -287,7 +321,20 @@ export const authMessages = defineMessages({
       invalid: '链接已过期。请重新申请。',
       requestAgain: '重新获取重置链接',
     },
+    emailVerification: {
+      title: '邮箱验证',
+      description:
+        '重置密码和通知邮件只发送到已验证的邮箱。请输入发送到注册邮箱的6位验证码。',
+      send: '获取验证码',
+      resend: '重新发送',
+      sent: '已发送6位验证码 · 请在10分钟内输入',
+      code: '验证码',
+      confirm: '确认',
+      done: '邮箱已验证',
+    },
     withdrawal: {
+      itemAccount: '会员信息和注册邮箱',
+      done: '账号已注销',
       title: '注销账号',
       warning: '将立即删除且无法恢复',
       item1: '生活信息（入境日期、滞留目的、居住信息、滞留到期日）',
@@ -300,6 +347,7 @@ export const authMessages = defineMessages({
       confirmAction: '注销',
     },
     errors: {
+      EMAIL_ALREADY_VERIFIED: '邮箱已验证',
       EMAIL_FORMAT: '请输入正确的邮箱格式',
       DUPLICATE_EMAIL: '该邮箱已注册',
       PASSWORD_LENGTH: '密码长度应为8~64个字符',
@@ -323,6 +371,7 @@ export const authMessages = defineMessages({
   },
   vi: {
     signup: {
+      emailAvailable: 'Bạn có thể đăng ký bằng email này',
       title: 'Đăng ký',
       email: 'Email',
       emailPlaceholder: 'example@email.com',
@@ -347,6 +396,7 @@ export const authMessages = defineMessages({
       login: 'Đăng nhập',
     },
     passwordRules: {
+      allowedCharacters: 'Chỉ chữ cái, chữ số và ký tự đặc biệt',
       length: '8~64 ký tự',
       letterAndDigit: 'Ít nhất 1 chữ cái và 1 chữ số',
       noWhitespace: 'Không có khoảng trắng',
@@ -390,7 +440,20 @@ export const authMessages = defineMessages({
       invalid: 'Liên kết đã hết hạn. Hãy yêu cầu lại.',
       requestAgain: 'Nhận lại liên kết đặt lại',
     },
+    emailVerification: {
+      title: 'Xác minh email',
+      description:
+        'Email đặt lại mật khẩu và thông báo chỉ gửi đến email đã xác minh. Nhập mã 6 chữ số gửi đến email đăng ký.',
+      send: 'Nhận mã',
+      resend: 'Gửi lại',
+      sent: 'Đã gửi mã 6 chữ số · nhập trong 10 phút',
+      code: 'Mã xác minh',
+      confirm: 'Xác nhận',
+      done: 'Email đã được xác minh',
+    },
     withdrawal: {
+      itemAccount: 'Thông tin tài khoản và email đăng ký',
+      done: 'Tài khoản đã được xóa',
       title: 'Xóa tài khoản',
       warning: 'Sẽ bị xóa ngay và không thể khôi phục',
       item1:
@@ -404,6 +467,7 @@ export const authMessages = defineMessages({
       confirmAction: 'Xóa',
     },
     errors: {
+      EMAIL_ALREADY_VERIFIED: 'Email của bạn đã được xác minh',
       EMAIL_FORMAT: 'Hãy nhập đúng định dạng email',
       DUPLICATE_EMAIL: 'Email này đã được đăng ký',
       PASSWORD_LENGTH: 'Mật khẩu phải có 8~64 ký tự',

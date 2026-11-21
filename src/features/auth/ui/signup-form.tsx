@@ -10,7 +10,12 @@ import { errorKey, useMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
 import { TextField } from '@/shared/ui/field'
 import { FormError, Notice, Stack } from '@/shared/ui/page'
-import { confirmSignupCode, sendSignupCode, signup } from '../api'
+import {
+  checkEmailAvailability,
+  confirmSignupCode,
+  sendSignupCode,
+  signup,
+} from '../api'
 import {
   codeSchema,
   emailSchema,
@@ -50,6 +55,28 @@ export function SignupForm() {
   })
   const { register, getValues, setError, clearErrors, formState } = form
   const email = useWatch({ control: form.control, name: 'email' })
+  // M-02: the address the server said is free (lower-cased). Editing clears it.
+  const [availableEmail, setAvailableEmail] = useState<string>()
+
+  const check = useMutation({
+    mutationFn: checkEmailAvailability,
+    onSuccess: (result) => {
+      // Ignore an answer for an address the user has already changed.
+      if (getValues('email').trim().toLowerCase() !== result.email) return
+      if (result.available) {
+        setAvailableEmail(result.email)
+        clearErrors('email')
+      } else {
+        setAvailableEmail(undefined)
+        setError('email', { message: 'errors.DUPLICATE_EMAIL' })
+      }
+    },
+    onError: (error) => setError('email', { message: errorKey(error) }),
+  })
+  const onCheckEmail = async () => {
+    if (verifiedEmail || !getValues('email').trim()) return
+    if (await form.trigger('email')) check.mutate(getValues('email').trim())
+  }
 
   const send = useMutation({
     mutationFn: sendSignupCode,
@@ -112,8 +139,14 @@ export function SignupForm() {
     <form onSubmit={(event) => void onSubmit(event)} noValidate>
       <Stack>
         <TextField
-          // Editing the address after sending invalidates the sent code.
-          {...register('email', { onChange: () => setSentEmail(undefined) })}
+          // Editing the address invalidates the duplicate check and the sent code (M-02).
+          {...register('email', {
+            onChange: () => {
+              setSentEmail(undefined)
+              setAvailableEmail(undefined)
+            },
+            onBlur: () => void onCheckEmail(),
+          })}
           label={t('signup.email')}
           type="email"
           inputMode="email"
@@ -121,7 +154,13 @@ export function SignupForm() {
           placeholder={t('signup.emailPlaceholder')}
           readOnly={verified}
           error={msg(errors.email?.message)}
-          help={sentEmail && `○ ${t('signup.codeSent')}`}
+          help={
+            sentEmail
+              ? `○ ${t('signup.codeSent')}`
+              : availableEmail === email.trim().toLowerCase()
+                ? `✓ ${t('signup.emailAvailable')}`
+                : undefined
+          }
           helpTone="success"
           action={
             <Button

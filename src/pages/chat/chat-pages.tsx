@@ -88,14 +88,26 @@ export function ChatPage() {
           }
         >
           {empty && <ChatBubble>{t('chat.greeting')}</ChatBubble>}
-          {chat.list.map((message) => (
-            <ChatMessage
-              key={message.messageId}
-              message={message}
-              feedbackDisabled={chat.feedback.isPending}
-              onFeedback={(helpful) => chat.rate(message.messageId, helpful)}
-            />
-          ))}
+          {chat.list.map((message, index) => {
+            // Only the latest failed answer offers to send its question again.
+            const question = chat.list[index - 1]
+            const retryable =
+              index === chat.list.length - 1 &&
+              message.answerStatus === 'ERROR' &&
+              question?.role === 'USER' &&
+              chat.sending === undefined
+            return (
+              <ChatMessage
+                key={message.messageId}
+                message={message}
+                feedbackDisabled={chat.feedback.isPending}
+                onFeedback={(helpful) => chat.rate(message.messageId, helpful)}
+                onRetry={
+                  retryable ? () => chat.send(question.content) : undefined
+                }
+              />
+            )
+          })}
           {chat.sending !== undefined && (
             <>
               <ChatBubble mine pending>

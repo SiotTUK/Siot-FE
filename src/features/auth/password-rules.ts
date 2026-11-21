@@ -2,11 +2,12 @@ import { z } from 'zod'
 
 /**
  * Client-side mirror of the BE password policy for instant feedback.
- * The server still validates (incl. PASSWORD_INVALID_CHARACTER) and its error wins.
+ * The server still validates and its error wins.
  */
 export const passwordRuleKeys = [
   'length',
   'letterAndDigit',
+  'allowedCharacters',
   'noWhitespace',
   'notEmail',
 ] as const
@@ -20,6 +21,9 @@ export function checkPasswordRules(
   return {
     length: password.length >= 8 && password.length <= 64,
     letterAndDigit: /[A-Za-z]/.test(password) && /\d/.test(password),
+    // M-03: letters, digits and special characters only (printable ASCII like the BE).
+    // Whitespace has its own rule, so it does not break this one.
+    allowedCharacters: password.length > 0 && /^[\x21-\x7E\s]*$/.test(password),
     noWhitespace: password.length > 0 && !/\s/.test(password),
     notEmail:
       password.length > 0 &&
@@ -30,6 +34,7 @@ export function checkPasswordRules(
 const ruleErrorKey: Record<PasswordRule, string> = {
   length: 'errors.PASSWORD_LENGTH',
   letterAndDigit: 'errors.PASSWORD_LETTER_AND_DIGIT_REQUIRED',
+  allowedCharacters: 'errors.PASSWORD_INVALID_CHARACTER',
   noWhitespace: 'errors.PASSWORD_WHITESPACE',
   notEmail: 'errors.PASSWORD_SAME_AS_EMAIL',
 }
@@ -44,6 +49,7 @@ export function firstPasswordError(
   const order: PasswordRule[] = [
     'length',
     'noWhitespace',
+    'allowedCharacters',
     'letterAndDigit',
     'notEmail',
   ]

@@ -47,20 +47,24 @@ export function optimisticStatus(
   return item.dDay !== null && item.dDay < 0 ? 'OVERDUE' : 'TODO'
 }
 
-const itemKey = (item: ChecklistItemResponse) =>
+export const checklistItemKey = (item: ChecklistItemResponse) =>
   `${item.code}:${item.periodKey}`
+
+export function deadlineText(
+  item: ChecklistItemResponse,
+  pastDeadline: string,
+) {
+  return item.dDay !== null && item.dDay < 0 ? pastDeadline : item.dDayText
+}
 
 /**
  * Fresh server data in the order the member is looking at. The server moves
  * completed items to the end; doing that right after a tap makes the cards
  * jump, so the visible order is kept until the next visit. New items go last.
  */
-export function keepOrder(
-  fresh: ChecklistItemResponse[],
-  shown: ChecklistItemResponse[],
-) {
-  const position = new Map(shown.map((item, index) => [itemKey(item), index]))
+export function keepOrder(fresh: ChecklistItemResponse[], shownKeys: string[]) {
+  const position = new Map(shownKeys.map((key, index) => [key, index]))
   const rank = (item: ChecklistItemResponse) =>
-    position.get(itemKey(item)) ?? Number.MAX_SAFE_INTEGER
+    position.get(checklistItemKey(item)) ?? Number.MAX_SAFE_INTEGER
   return [...fresh].sort((a, b) => rank(a) - rank(b))
 }

@@ -55,12 +55,15 @@ export type ChecklistMark = 'DONE' | 'NOT_APPLICABLE' | null
 
 export const checklistKeys = {
   all: ['checklist'] as const,
-  summary: (language: Language) => [...checklistKeys.all, language] as const,
+  member: (memberId: number) => [...checklistKeys.all, memberId] as const,
+  summary: (memberId: number, language: Language) =>
+    [...checklistKeys.member(memberId), language] as const,
 }
 
-export function fetchChecklist(language: Language) {
+export function fetchChecklist(language: Language, signal?: AbortSignal) {
   return apiRequest<ChecklistSummaryResponse>(
     `/api/members/me/checklist?language=${language}`,
+    { signal },
   )
 }
 

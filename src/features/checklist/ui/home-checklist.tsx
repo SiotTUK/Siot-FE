@@ -6,16 +6,23 @@ import { formatMonthDay } from '@/shared/i18n/format'
 import { FormError, Muted, Section, Stack, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import type { ChecklistItemResponse } from '../api'
-import { groupItems, nextMark, pickDeadlineAlert } from '../checklist'
+import {
+  checklistItemKey,
+  deadlineText,
+  groupItems,
+  keepOrder,
+  nextMark,
+  pickDeadlineAlert,
+} from '../checklist'
 import { useChecklist, useMarkChecklistItem } from '../use-checklist'
 import { ChecklistCard } from './checklist-card'
 import styles from './checklist.module.css'
 
 /** Home top: "나에게 필요한 할 일 N개", progress and the nearest-deadline alert. */
-export function ChecklistProgress() {
+export function ChecklistProgress({ memberId }: { memberId: number }) {
   const { t } = useTranslation()
   const language = currentLanguage()
-  const { data } = useChecklist(language)
+  const { data } = useChecklist(memberId, language)
   if (!data) return null
   const alert = pickDeadlineAlert(data.items)
   return (
@@ -46,7 +53,7 @@ export function ChecklistProgress() {
           <Tag tone="warning">{t('checklist.alertTag')}</Tag>
           {t('checklist.alert', {
             title: alert.title,
-            dDay: alert.dDayText ?? '',
+            dDay: deadlineText(alert, t('checklist.pastDeadline')) ?? '',
             date: formatMonthDay(alert.deadline, language),
           })}
         </div>
@@ -56,16 +63,26 @@ export function ChecklistProgress() {
 }
 
 /** "내 체크리스트" cards, then optional "생활 준비" folded. */
-export function ChecklistSection() {
+export function ChecklistSection({ memberId }: { memberId: number }) {
   const { t } = useTranslation()
   const language = currentLanguage()
-  const checklist = useChecklist(language)
-  const mark = useMarkChecklistItem(language)
+  const checklist = useChecklist(memberId, language)
+  const mark = useMarkChecklistItem(memberId, language)
   const [showOptional, setShowOptional] = useState(false)
-  const { main, optional } = groupItems(checklist.data?.items ?? [])
+  const [shownKeys, setShownKeys] = useState<string[]>([])
+  const items = checklist.data ? keepOrder(checklist.data.items, shownKeys) : []
+  const nextKeys = items.map(checklistItemKey)
+  if (
+    checklist.data &&
+    (nextKeys.length !== shownKeys.length ||
+      nextKeys.some((key, index) => key !== shownKeys[index]))
+  ) {
+    setShownKeys(nextKeys)
+  }
+  const { main, optional } = groupItems(items)
 
   const card = (item: ChecklistItemResponse) => (
-    <li key={`${item.code}:${item.periodKey}`}>
+    <li key={checklistItemKey(item)}>
       <ChecklistCard
         item={item}
         busy={mark.isPending}

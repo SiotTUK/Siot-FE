@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { meQueryKey } from '@/features/auth/api'
+import { checklistKeys } from '@/features/checklist/api'
 import { ApiError } from '@/shared/api/client'
 import { saveOnboarding } from './api'
 
@@ -8,7 +9,13 @@ export function useSaveOnboarding() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: saveOnboarding,
-    onSuccess: (member) => queryClient.setQueryData(meQueryKey, member),
+    onSuccess: (member) => {
+      queryClient.setQueryData(meQueryKey, member)
+      const queryKey = checklistKeys.member(member.id)
+      // Returning to Home should load the new checklist without flashing the old one.
+      queryClient.removeQueries({ queryKey, type: 'inactive' })
+      return queryClient.invalidateQueries({ queryKey })
+    },
     onError: (error) => {
       // Session expired: the route guard sends the member to login.
       if (error instanceof ApiError && error.status === 401)

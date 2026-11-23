@@ -3,6 +3,7 @@ import { currentLanguage } from '@/shared/i18n'
 import { formatMonthDay } from '@/shared/i18n/format'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
+import { deadlineText } from '../checklist'
 import styles from './checklist.module.css'
 
 /**
@@ -24,6 +25,7 @@ export function ChecklistCard({
   const checkable = item.itemType !== 'INFO'
   const notApplicable = item.status === 'NOT_APPLICABLE'
   const overdue = item.status === 'OVERDUE'
+  const dDayText = deadlineText(item, t('checklist.pastDeadline'))
 
   return (
     <article
@@ -70,9 +72,9 @@ export function ChecklistCard({
         )}
       </div>
       <div className={styles.side}>
-        {item.dDayText && (
+        {dDayText && (
           <span className={styles.dDay} data-overdue={overdue}>
-            {item.dDayText}
+            {dDayText}
           </span>
         )}
         {checkable && (

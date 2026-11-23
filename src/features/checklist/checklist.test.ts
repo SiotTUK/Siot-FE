@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { ChecklistItemResponse } from './api'
 import {
+  checklistItemKey,
+  deadlineText,
   groupItems,
   keepOrder,
   nextMark,
@@ -86,6 +88,18 @@ describe('checklist screen rules', () => {
     expect(optimisticStatus(item({ dDay: 4 }), 'DONE')).toBe('DONE')
   })
 
+  it('localizes a past deadline even on closed cards and preserves other server text', () => {
+    expect(
+      deadlineText(
+        item({ dDay: -1, dDayText: '기한 지남', status: 'DONE' }),
+        'Overdue',
+      ),
+    ).toBe('Overdue')
+    expect(deadlineText(item({ dDay: 3, dDayText: 'D-3' }), 'Overdue')).toBe(
+      'D-3',
+    )
+  })
+
   it('keeps the order on screen after a refresh and appends new items', () => {
     const shown = [
       item({ code: 'A' }),
@@ -99,7 +113,7 @@ describe('checklist screen rules', () => {
       item({ code: 'D' }),
       item({ code: 'A', status: 'DONE' }),
     ]
-    const kept = keepOrder(fresh, shown)
+    const kept = keepOrder(fresh, shown.map(checklistItemKey))
     expect(kept.map((entry) => entry.code)).toEqual(['A', 'B', 'C', 'D'])
     expect(kept[0]?.status).toBe('DONE')
   })
@@ -110,7 +124,9 @@ describe('checklist screen rules', () => {
       item({ code: 'CL-10', periodKey: '2026-12' }),
     ]
     expect(
-      keepOrder([...shown].reverse(), shown).map((entry) => entry.periodKey),
+      keepOrder([...shown].reverse(), shown.map(checklistItemKey)).map(
+        (entry) => entry.periodKey,
+      ),
     ).toEqual(['2026-06', '2026-12'])
   })
 })

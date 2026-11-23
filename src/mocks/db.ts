@@ -143,7 +143,11 @@ function seedState(): MockState {
 function loadState(): MockState {
   try {
     const saved = sessionStorage.getItem(storageKey)
-    if (saved) return JSON.parse(saved) as MockState
+    if (saved) {
+      const state = JSON.parse(saved) as MockState
+      state.checklist ??= {}
+      return state
+    }
   } catch {
     /* Node tests have no sessionStorage. */
   }

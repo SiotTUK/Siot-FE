@@ -1,5 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Language } from '@/shared/api/types'
+import {
+  CancelledError,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { meQueryKey } from '@/features/auth/api'
+import type { Language, MemberResponse } from '@/shared/api/types'
 import {
   checklistKeys,
   fetchChecklist,
@@ -8,24 +14,20 @@ import {
   type ChecklistMark,
   type ChecklistSummaryResponse,
 } from './api'
-import { keepOrder, optimisticStatus } from './checklist'
+import { checklistItemKey, optimisticStatus } from './checklist'
 
 /** Text comes in the screen language, so the language is part of the key. */
-export function useChecklist(language: Language) {
+export function useChecklist(memberId: number, language: Language) {
   return useQuery({
-    queryKey: checklistKeys.summary(language),
-    queryFn: () => fetchChecklist(language),
+    queryKey: checklistKeys.summary(memberId, language),
+    queryFn: ({ signal }) => fetchChecklist(language, signal),
   })
 }
 
-/**
- * Marks an item done / not applicable / back to TODO. The card changes right
- * away; afterwards status and progress come from the server again, but in the
- * order already on screen so cards do not jump (see keepOrder).
- */
-export function useMarkChecklistItem(language: Language) {
+/** Update the card optimistically, then refresh the member's active checklist. */
+export function useMarkChecklistItem(memberId: number, language: Language) {
   const queryClient = useQueryClient()
-  const key = checklistKeys.summary(language)
+  const key = checklistKeys.summary(memberId, language)
   return useMutation({
     mutationFn: ({
       item,
@@ -39,15 +41,29 @@ export function useMarkChecklistItem(language: Language) {
         status: mark,
       }),
     onMutate: async ({ item, mark }) => {
+      const cache = queryClient.getQueryCache()
+      const filter = { queryKey: key, exact: true }
+      const query = cache.find(filter)
+      // Logout removes this query. A later login can create a new one with the same key.
+      const isSessionCurrent = () =>
+        !!query &&
+        cache.find(filter) === query &&
+        queryClient.getQueryData<MemberResponse | null>(meQueryKey)?.id ===
+          memberId
+
       await queryClient.cancelQueries({ queryKey: key })
-      const previous = queryClient.getQueryData<ChecklistSummaryResponse>(key)
+      if (!isSessionCurrent()) throw new CancelledError()
+      const itemKey = checklistItemKey(item)
+      const previous = queryClient
+        .getQueryData<ChecklistSummaryResponse>(key)
+        ?.items.find((entry) => checklistItemKey(entry) === itemKey)
       queryClient.setQueryData<ChecklistSummaryResponse>(
         key,
         (current) =>
           current && {
             ...current,
             items: current.items.map((entry) =>
-              entry.code === item.code && entry.periodKey === item.periodKey
+              checklistItemKey(entry) === itemKey
                 ? {
                     ...entry,
                     status: optimisticStatus(entry, mark),
@@ -57,25 +73,34 @@ export function useMarkChecklistItem(language: Language) {
             ),
           },
       )
-      return { previous }
+      return { key, memberId, isSessionCurrent, previous }
     },
-    onError: (_error, _input, context) =>
-      queryClient.setQueryData(key, context?.previous),
-    onSettled: async () => {
-      // Other languages are stale too; they refetch when shown.
-      void queryClient.invalidateQueries({
-        queryKey: checklistKeys.all,
-        refetchType: 'none',
-      })
-      try {
-        const fresh = await fetchChecklist(language)
-        queryClient.setQueryData<ChecklistSummaryResponse>(key, (shown) => ({
-          ...fresh,
-          items: keepOrder(fresh.items, shown?.items ?? []),
-        }))
-      } catch {
-        void queryClient.invalidateQueries({ queryKey: key })
-      }
+    onError: (_error, { item }, context) => {
+      const previous = context?.previous
+      if (!previous || !context.isSessionCurrent()) return
+      const itemKey = checklistItemKey(item)
+      queryClient.setQueryData<ChecklistSummaryResponse>(
+        context.key,
+        (current) =>
+          current && {
+            ...current,
+            items: current.items.map((entry) =>
+              checklistItemKey(entry) === itemKey
+                ? {
+                    ...entry,
+                    status: previous.status,
+                    completed: previous.completed,
+                  }
+                : entry,
+            ),
+          },
+      )
+    },
+    onSettled: (_data, _error, _input, context) => {
+      if (context?.isSessionCurrent())
+        return queryClient.invalidateQueries({
+          queryKey: checklistKeys.member(context.memberId),
+        })
     },
   })
 }

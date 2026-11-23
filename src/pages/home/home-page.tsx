@@ -22,13 +22,13 @@ export function HomePage() {
 
   return (
     <PageBody className={styles.body}>
-      <ChecklistProgress />
+      {me && <ChecklistProgress memberId={me.id} />}
       {situation && (
         <Notice tone="note" title={situation.title}>
           {situation.detail}
         </Notice>
       )}
-      <ChecklistSection />
+      {me && <ChecklistSection key={me.id} memberId={me.id} />}
       <div className={styles.row} data-tone="info">
         <div>
           <strong>{t('home.billTitle')}</strong>

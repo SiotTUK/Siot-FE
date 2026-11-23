@@ -51,7 +51,7 @@ export function LifeChangeEditor({
         back={{ label: t('lifeChanges.backHome'), to: '/home' }}
       />
       <PageBody className={styles.editor}>
-        <QueryState query={changes}>
+        <QueryState query={changes} keepContentOnError={changes.isRefetchError}>
           <DateForm
             key={savedDate}
             code={code}

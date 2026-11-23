@@ -26,6 +26,8 @@ export function useChangeLifeChange(memberId: number, code: LifeChangeCode) {
   const checklist = { queryKey: checklistKeys.member(memberId) }
 
   const mutation = useMutation({
+    // Keep writes to the same record ordered across editor remounts.
+    scope: { id: `life-change:${memberId}:${code}` },
     onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
     mutationFn: async ({
       change,

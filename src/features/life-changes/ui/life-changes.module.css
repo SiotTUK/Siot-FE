@@ -1,0 +1,112 @@
+.trigger,
+.choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 50px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  color: var(--body-1);
+  background: var(--white);
+  text-align: start;
+  text-decoration: none;
+}
+.trigger {
+  background: var(--bg-2);
+  font-weight: 700;
+}
+.sheet {
+  position: fixed;
+  inset: auto 0 0;
+  width: min(100%, 480px);
+  max-width: none;
+  max-height: 90dvh;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  padding: 12px 16px max(24px, env(safe-area-inset-bottom));
+  background: var(--white);
+  color: var(--body-1);
+}
+.sheet::backdrop {
+  background: rgb(15 23 42 / 60%);
+}
+.handle {
+  width: 40px;
+  height: 4px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: var(--line-1);
+}
+.sheetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.sheetHeader h2,
+.sheetHeader p {
+  margin: 0;
+}
+.sheetHeader h2 {
+  font-size: 18px;
+}
+.sheetHeader p,
+.choice small {
+  color: var(--body-3);
+  font-size: 13px;
+}
+.sheetHeader button {
+  padding: 0;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 22px;
+}
+.choices {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.choice strong {
+  font-size: 14px;
+}
+.choice small {
+  display: block;
+}
+.choice:hover,
+.choice:focus-visible {
+  border-color: var(--main-100);
+  background: var(--main-25);
+}
+.editor,
+.form,
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.editor {
+  padding-top: 20px;
+  padding-inline: 16px;
+}
+.date label {
+  font-size: 20px;
+}
+.tasks h2 {
+  margin: 0;
+  color: var(--success);
+  font-size: 16px;
+}
+.success {
+  margin: 0;
+  font-size: 14px;
+}
+.remove {
+  align-self: start;
+  margin-top: 4px;
+}

@@ -25,3 +25,14 @@ export function formatMonthDay(
     day: 'numeric',
   }).format(date)
 }
+
+/** A stored calendar date with its year, independent of the viewer's timezone. */
+export function formatCalendarDate(value: string, language: string) {
+  const date = new Date(`${value}T00:00:00Z`)
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat(language, {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+      }).format(date)
+}

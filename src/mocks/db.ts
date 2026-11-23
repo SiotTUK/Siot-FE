@@ -4,6 +4,8 @@ import {
   firstPasswordError,
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
+import type { LifeChangeResponse } from '@/features/life-changes/api'
+import type { LifeChangeCode } from '@/features/life-changes/life-changes'
 import type { MessageResponse } from '@/features/chat/api'
 import type { MemberResponse } from '@/shared/api/types'
 
@@ -37,6 +39,10 @@ export interface MockState {
   >
   /** member email → `code:periodKey` → mark */
   checklist: Record<string, Record<string, 'DONE' | 'NOT_APPLICABLE'>>
+  lifeChanges: Record<
+    string,
+    Partial<Record<LifeChangeCode, LifeChangeResponse>>
+  >
 }
 
 export interface MockConversation {
@@ -137,6 +143,7 @@ function seedState(): MockState {
     },
     reviews: {},
     checklist: {},
+    lifeChanges: {},
   }
 }
 
@@ -146,6 +153,7 @@ function loadState(): MockState {
     if (saved) {
       const state = JSON.parse(saved) as MockState
       state.checklist ??= {}
+      state.lifeChanges ??= {}
       return state
     }
   } catch {

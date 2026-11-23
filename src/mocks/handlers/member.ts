@@ -98,6 +98,7 @@ export const memberHandlers = [
     if (password !== member.password)
       return error(400, 'PASSWORD_INCORRECT', '비밀번호가 맞지 않습니다.')
     delete state.members[member.email]
+    delete state.lifeChanges[member.email]
     for (const [id, conversation] of Object.entries(state.conversations))
       if (conversation.ownerEmail === member.email)
         delete state.conversations[id]

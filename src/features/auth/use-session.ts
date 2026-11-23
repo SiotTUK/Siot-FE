@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { checklistKeys } from '@/features/checklist/api'
+import { lifeChangeKeys } from '@/features/life-changes/api'
 import { ApiError, refreshCsrf } from '@/shared/api/client'
 import type { Language, MemberResponse } from '@/shared/api/types'
 import {
@@ -70,6 +71,7 @@ export function useStartSession() {
     async (member: MemberResponse) => {
       rotateSessionScope(queryClient)
       queryClient.removeQueries({ queryKey: checklistKeys.all })
+      queryClient.removeQueries({ queryKey: lifeChangeKeys.all })
       await refreshCsrfQuietly()
       // The language chosen on F01/top bar right before login wins; otherwise
       // use the account language so it follows the member across devices.

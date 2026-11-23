@@ -70,9 +70,11 @@ export function fetchChecklist(language: Language, signal?: AbortSignal) {
 export function updateChecklistItem(
   code: string,
   body: { periodKey: string; status: ChecklistMark },
+  isSessionCurrent?: () => boolean,
 ) {
   return apiRequest(`/api/members/me/checklist/${encodeURIComponent(code)}`, {
     method: 'PUT',
     body,
+    isRequestCurrent: isSessionCurrent,
   })
 }

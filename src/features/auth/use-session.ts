@@ -17,6 +17,7 @@ import {
   updateMyLanguage,
   withdraw,
 } from './api'
+import { rotateSessionScope } from './session-scope'
 
 export function useMe() {
   return useQuery(meQueryOptions)
@@ -67,6 +68,7 @@ export function useStartSession() {
 
   return useCallback(
     async (member: MemberResponse) => {
+      rotateSessionScope(queryClient)
       queryClient.removeQueries({ queryKey: checklistKeys.all })
       await refreshCsrfQuietly()
       // The language chosen on F01/top bar right before login wins; otherwise
@@ -126,7 +128,7 @@ function useEndSession() {
   const navigate = useNavigate()
   return useCallback(
     async (notice?: SessionLocationState['notice']) => {
-      await refreshCsrfQuietly()
+      rotateSessionScope(queryClient)
       // M-06·M-09: logged out, to the main screen. `signedOut` keeps GuestOnly
       // from sending the visitor home while `me` is still being cleared.
       const state: SessionLocationState = { signedOut: true, notice }
@@ -135,6 +137,7 @@ function useEndSession() {
         predicate: (query) => query.queryKey[0] !== meQueryKey[0],
       })
       queryClient.setQueryData(meQueryKey, null)
+      await refreshCsrfQuietly()
     },
     [navigate, queryClient],
   )

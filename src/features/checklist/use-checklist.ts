@@ -4,8 +4,8 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { meQueryKey } from '@/features/auth/api'
-import type { Language, MemberResponse } from '@/shared/api/types'
+import { captureSessionScope } from '@/features/auth/session-scope'
+import type { Language } from '@/shared/api/types'
 import {
   checklistKeys,
   fetchChecklist,
@@ -15,6 +15,8 @@ import {
   type ChecklistSummaryResponse,
 } from './api'
 import { checklistItemKey, optimisticStatus } from './checklist'
+
+type MarkInput = { item: ChecklistItemResponse; mark: ChecklistMark }
 
 /** Text comes in the screen language, so the language is part of the key. */
 export function useChecklist(memberId: number, language: Language) {
@@ -28,31 +30,24 @@ export function useChecklist(memberId: number, language: Language) {
 export function useMarkChecklistItem(memberId: number, language: Language) {
   const queryClient = useQueryClient()
   const key = checklistKeys.summary(memberId, language)
-  return useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: ({
       item,
       mark,
-    }: {
-      item: ChecklistItemResponse
-      mark: ChecklistMark
-    }) =>
-      updateChecklistItem(item.code, {
-        periodKey: item.periodKey,
-        status: mark,
-      }),
-    onMutate: async ({ item, mark }) => {
+      isSessionCurrent,
+    }: MarkInput & { isSessionCurrent: () => boolean }) =>
+      updateChecklistItem(
+        item.code,
+        { periodKey: item.periodKey, status: mark },
+        isSessionCurrent,
+      ),
+    onMutate: async ({ item, mark, isSessionCurrent }) => {
       const cache = queryClient.getQueryCache()
       const filter = { queryKey: key, exact: true }
-      const query = cache.find(filter)
-      // Logout removes this query. A later login can create a new one with the same key.
-      const isSessionCurrent = () =>
-        !!query &&
-        cache.find(filter) === query &&
-        queryClient.getQueryData<MemberResponse | null>(meQueryKey)?.id ===
-          memberId
 
-      await queryClient.cancelQueries({ queryKey: key })
+      await queryClient.cancelQueries(filter)
       if (!isSessionCurrent()) throw new CancelledError()
+      const query = cache.find(filter)
       const itemKey = checklistItemKey(item)
       const previous = queryClient
         .getQueryData<ChecklistSummaryResponse>(key)
@@ -73,11 +68,18 @@ export function useMarkChecklistItem(memberId: number, language: Language) {
             ),
           },
       )
-      return { key, memberId, isSessionCurrent, previous }
+      return {
+        key,
+        memberId,
+        isSessionCurrent,
+        isQueryCurrent: () => cache.find(filter) === query,
+        previous,
+      }
     },
     onError: (_error, { item }, context) => {
       const previous = context?.previous
-      if (!previous || !context.isSessionCurrent()) return
+      if (!previous || !context.isSessionCurrent() || !context.isQueryCurrent())
+        return
       const itemKey = checklistItemKey(item)
       queryClient.setQueryData<ChecklistSummaryResponse>(
         context.key,
@@ -103,4 +105,15 @@ export function useMarkChecklistItem(memberId: number, language: Language) {
         })
     },
   })
+
+  return {
+    isPending,
+    isError,
+    error,
+    mutate: (input: MarkInput) =>
+      mutate({
+        ...input,
+        isSessionCurrent: captureSessionScope(queryClient, memberId),
+      }),
+  }
 }

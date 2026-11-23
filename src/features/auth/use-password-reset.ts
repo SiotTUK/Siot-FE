@@ -6,6 +6,7 @@ import {
   meQueryKey,
   validatePasswordResetToken,
 } from './api'
+import { rotateSessionScope } from './session-scope'
 
 /** M02d link check. The token is a secret, so it stays out of the query key. */
 export function usePasswordResetLink(token: string) {
@@ -27,6 +28,7 @@ export function useConfirmPasswordReset() {
   return useMutation({
     mutationFn: confirmPasswordReset,
     onSuccess: async () => {
+      rotateSessionScope(queryClient)
       queryClient.setQueryData(meQueryKey, null)
       await refreshCsrf().catch(() => undefined)
       navigate('/login', { replace: true, state: { passwordChanged: true } })

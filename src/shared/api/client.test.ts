@@ -99,9 +99,35 @@ describe('API client contract', () => {
       }),
     )
     await expect(
-      apiRequest('/api/test', { method: 'POST' }),
+      apiRequest('/api/test', { method: 'POST', isRequestCurrent: () => true }),
     ).resolves.toBeUndefined()
     expect(calls).toBe(2)
+  })
+
+  it('cancels a guarded write if its session ends during CSRF refresh', async () => {
+    browserEnvironment('XSRF-TOKEN=old-token')
+    let isCurrent = true
+    const write = vi.fn(() =>
+      HttpResponse.json(
+        { code: 'CSRF_TOKEN_INVALID', message: 'Expired' },
+        { status: 403 },
+      ),
+    )
+    server.use(
+      http.post(`${origin}/api/test`, write),
+      http.get(`${origin}/api/auth/csrf`, () => {
+        document.cookie = 'XSRF-TOKEN=new-token'
+        isCurrent = false
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    await expect(
+      apiRequest('/api/test', {
+        method: 'POST',
+        isRequestCurrent: () => isCurrent,
+      }),
+    ).rejects.toMatchObject({ name: 'AbortError' })
+    expect(write).toHaveBeenCalledTimes(1)
   })
 
   it('does not retry a mutation rejected for insufficient permissions', async () => {

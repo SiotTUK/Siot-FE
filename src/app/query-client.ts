@@ -1,5 +1,7 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
 import { meQueryKey } from '@/features/auth/api'
+import { rotateSessionScope } from '@/features/auth/session-scope'
+import { checklistKeys } from '@/features/checklist/api'
 import { ApiError } from '../shared/api/client'
 
 /**
@@ -8,13 +10,29 @@ import { ApiError } from '../shared/api/client'
  * (LOGIN_FAILED is also 401 but means wrong credentials, not an expired session.)
  */
 function onSessionExpired(error: unknown) {
-  if (error instanceof ApiError && error.code === 'UNAUTHORIZED')
+  if (error instanceof ApiError && error.code === 'UNAUTHORIZED') {
+    rotateSessionScope(queryClient)
     queryClient.setQueryData(meQueryKey, null)
+    queryClient.removeQueries({ queryKey: checklistKeys.all })
+  }
 }
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({ onError: onSessionExpired }),
-  mutationCache: new MutationCache({ onError: onSessionExpired }),
+  mutationCache: new MutationCache({
+    onError: (error, _variables, context) => {
+      // Ignore session errors from work that belongs to a session that already ended.
+      if (
+        context &&
+        typeof context === 'object' &&
+        'isSessionCurrent' in context &&
+        typeof context.isSessionCurrent === 'function' &&
+        !context.isSessionCurrent()
+      )
+        return
+      onSessionExpired(error)
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,

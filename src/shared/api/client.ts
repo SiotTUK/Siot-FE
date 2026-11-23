@@ -3,6 +3,7 @@ import type { ApiResponse, ErrorResponse } from './types'
 type ApiPath = `/api/${string}`
 type RequestOptions = Omit<RequestInit, 'body' | 'credentials'> & {
   body?: unknown
+  isRequestCurrent?: () => boolean
 }
 
 export class ApiError extends Error {
@@ -81,16 +82,21 @@ export async function refreshCsrf(): Promise<void> {
 /** Same-origin /api requests. Cookie sessions remain HttpOnly; never store passwords or tokens. */
 export async function apiRequest<T = undefined>(
   path: ApiPath,
-  options: RequestOptions = {},
+  { body, isRequestCurrent, ...options }: RequestOptions = {},
 ): Promise<T> {
   const method = (options.method ?? 'GET').toUpperCase()
   const changesState = !['GET', 'HEAD', 'OPTIONS'].includes(method)
 
+  const assertRequestCurrent = () => {
+    if (isRequestCurrent && !isRequestCurrent())
+      throw new DOMException('The request session has ended', 'AbortError')
+  }
+
   const send = async () => {
+    assertRequestCurrent()
     const headers = new Headers(options.headers)
     headers.set('Accept', 'application/json')
-    if (options.body !== undefined)
-      headers.set('Content-Type', 'application/json')
+    if (body !== undefined) headers.set('Content-Type', 'application/json')
     if (changesState) {
       const token = readCookie('XSRF-TOKEN')
       if (!token)
@@ -105,17 +111,20 @@ export async function apiRequest<T = undefined>(
       method,
       headers,
       credentials: 'include',
-      body:
-        options.body === undefined ? undefined : JSON.stringify(options.body),
+      body: body === undefined ? undefined : JSON.stringify(body),
     })
   }
 
-  if (changesState && !readCookie('XSRF-TOKEN')) await refreshCsrf()
+  if (changesState && !readCookie('XSRF-TOKEN')) {
+    assertRequestCurrent()
+    await refreshCsrf()
+  }
   let response = await send()
   if (changesState && response.status === 403) {
     const error = await responseError(response.clone())
     // Only retry requests explicitly rejected by CSRF protection, never arbitrary mutations.
     if (error.code === 'CSRF_TOKEN_INVALID') {
+      assertRequestCurrent()
       await refreshCsrf()
       response = await send()
     }
@@ -125,6 +134,6 @@ export async function apiRequest<T = undefined>(
   // 202 Accepted (e.g. password reset) may come without a body.
   const text = await response.text()
   if (!text) return undefined as T
-  const body = JSON.parse(text) as ApiResponse<T>
-  return body.data
+  const payload = JSON.parse(text) as ApiResponse<T>
+  return payload.data
 }

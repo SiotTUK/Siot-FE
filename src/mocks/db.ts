@@ -35,6 +35,8 @@ export interface MockState {
     string,
     { reviewed: boolean; adminMemo: string | null; reviewedAt: string | null }
   >
+  /** member email → `code:periodKey` → mark */
+  checklist: Record<string, Record<string, 'DONE' | 'NOT_APPLICABLE'>>
 }
 
 export interface MockConversation {
@@ -134,13 +136,18 @@ function seedState(): MockState {
       },
     },
     reviews: {},
+    checklist: {},
   }
 }
 
 function loadState(): MockState {
   try {
     const saved = sessionStorage.getItem(storageKey)
-    if (saved) return JSON.parse(saved) as MockState
+    if (saved) {
+      const state = JSON.parse(saved) as MockState
+      state.checklist ??= {}
+      return state
+    }
   } catch {
     /* Node tests have no sessionStorage. */
   }

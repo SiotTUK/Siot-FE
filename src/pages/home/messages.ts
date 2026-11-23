@@ -3,10 +3,6 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const homeMessages = defineMessages({
   ko: {
     home: {
-      todoTitle: '나에게 필요한 할 일',
-      todoPending: '나에게 맞는 할 일을 준비하고 있어요',
-      checklistTitle: '내 체크리스트',
-      checklistEmpty: '체크리스트는 곧 이곳에서 보여 드려요',
       billTitle: '받은 서류, 사진 한 장이면 돼요',
       billLabel: '고지서 번역',
       eventsTitle: '나에게 맞는 행사',
@@ -25,10 +21,6 @@ export const homeMessages = defineMessages({
   },
   en: {
     home: {
-      todoTitle: 'Things you need to do',
-      todoPending: 'We are preparing your personalized to-dos',
-      checklistTitle: 'My checklist',
-      checklistEmpty: 'Your checklist will appear here soon',
       billTitle: 'Got a document? One photo is enough',
       billLabel: 'Bill translation',
       eventsTitle: 'Events for you',
@@ -47,10 +39,6 @@ export const homeMessages = defineMessages({
   },
   zh: {
     home: {
-      todoTitle: '我需要做的事',
-      todoPending: '正在为您准备专属待办事项',
-      checklistTitle: '我的清单',
-      checklistEmpty: '清单很快就会显示在这里',
       billTitle: '收到的文件，拍一张照片就可以',
       billLabel: '账单翻译',
       eventsTitle: '适合我的活动',
@@ -69,10 +57,6 @@ export const homeMessages = defineMessages({
   },
   vi: {
     home: {
-      todoTitle: 'Việc bạn cần làm',
-      todoPending: 'Chúng tôi đang chuẩn bị việc cần làm dành cho bạn',
-      checklistTitle: 'Danh sách của tôi',
-      checklistEmpty: 'Danh sách việc cần làm sẽ sớm hiển thị tại đây',
       billTitle: 'Giấy tờ nhận được, chỉ cần một tấm ảnh',
       billLabel: 'Dịch hóa đơn',
       eventsTitle: 'Sự kiện dành cho bạn',

@@ -29,17 +29,26 @@
 
 .filter {
   display: grid;
-  gap: var(--space-8);
+  gap: 2px;
   min-inline-size: 0;
   margin: 0;
   padding: 0;
   border: 0;
 }
 
-.grid {
+.filter .all {
+  margin-bottom: var(--space-8);
+}
+
+.weekdays,
+.week {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 2px;
+  column-gap: 2px;
+}
+
+.week {
+  grid-template-rows: 44px;
 }
 
 .weekday {
@@ -53,6 +62,10 @@
 .day {
   position: relative;
   cursor: pointer;
+}
+
+.day {
+  grid-row: 1 / -1;
 }
 
 .all span,
@@ -71,22 +84,44 @@
 }
 
 .day span {
-  position: relative;
+  height: 100%;
+  padding-top: 10px;
+  place-content: start center;
   font: var(--text-label);
 }
 
-.day span[data-has-schedules="true"]::after {
-  position: absolute;
-  inset-block-end: 4px;
-  inset-inline-start: calc(50% - 2px);
-  width: 4px;
+.scheduleLine {
+  z-index: 1;
+  align-self: start;
   height: 4px;
-  border-radius: 50%;
-  background: currentcolor;
-  content: "";
+  background: #a9c9f5;
+  pointer-events: none;
 }
 
-.day span[data-today="true"] {
+.scheduleLine[data-kind='TAX'],
+.scheduleLine[data-kind='TAX_CAR'],
+.scheduleLine[data-kind='TAX_PROPERTY'] {
+  background: #a4d7bd;
+}
+
+.scheduleLine[data-kind='STAY_EXPIRY'],
+.scheduleLine[data-kind='STAY_EXTENSION_START'] {
+  background: #c6afe9;
+}
+
+.scheduleLine[data-start='true'] {
+  margin-inline-start: 5px;
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+}
+
+.scheduleLine[data-end='true'] {
+  margin-inline-end: 5px;
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+}
+
+.day span[data-today='true'] {
   border-color: var(--primary);
 }
 
@@ -119,7 +154,7 @@
   overflow-wrap: anywhere;
 }
 
-.schedule[data-highlighted="true"] {
+.schedule[data-highlighted='true'] {
   border-color: var(--warning);
   background: var(--warning-bg);
 }

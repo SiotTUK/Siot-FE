@@ -52,6 +52,18 @@ describe('checklist screen rules', () => {
     expect(optional.map((entry) => entry.code)).toEqual(['CL-20'])
   })
 
+  it('moves items marked not applicable to the bottom of their group', () => {
+    const { main, optional } = groupItems([
+      item({ code: 'CL-01', status: 'NOT_APPLICABLE' }),
+      item({ code: 'CL-04' }),
+      item({ code: 'CL-20', itemType: 'OPTIONAL', status: 'NOT_APPLICABLE' }),
+      item({ code: 'CL-07', status: 'DONE' }),
+      item({ code: 'CL-21', itemType: 'OPTIONAL' }),
+    ])
+    expect(main.map((entry) => entry.code)).toEqual(['CL-04', 'CL-07', 'CL-01'])
+    expect(optional.map((entry) => entry.code)).toEqual(['CL-21', 'CL-20'])
+  })
+
   it('alerts the nearest open deadline within 30 days only', () => {
     const alert = pickDeadlineAlert([
       item({ code: 'CL-05', dDay: 27, deadline: '2026-12-10' }),

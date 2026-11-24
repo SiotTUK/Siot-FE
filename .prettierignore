@@ -3,4 +3,4 @@ dist
 coverage
 package-lock.json
 public/mockServiceWorker.js
-prototypes
+/docs/prototypes/

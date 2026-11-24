@@ -16,7 +16,7 @@
 
 ## 환경 및 명령
 
-- 실행 환경은 .node-version·package.json, 의존성 설치 버전은 package-lock.json을 확인한다.
+- 실행 환경은 .nvmrc·package.json, 의존성 설치 버전은 package-lock.json을 확인한다.
 - 실행 위치: Siot-FE 저장소 루트
 - 설치: `npm ci`
 - 개발: `npm run dev` / BE 없는 개발: `npm run dev:mock`

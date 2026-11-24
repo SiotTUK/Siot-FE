@@ -124,7 +124,9 @@ export function ChatMessage({
       )}
       {answerStatus === 'ANSWERED' ? (
         <div className={styles.markdown}>
-          <Markdown skipHtml>{message.content}</Markdown>
+          <Markdown skipHtml disallowedElements={['img']}>
+            {message.content}
+          </Markdown>
         </div>
       ) : (
         message.content

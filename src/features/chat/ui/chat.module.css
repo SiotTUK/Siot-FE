@@ -46,6 +46,9 @@
 .markdown {
   white-space: normal;
 }
+.markdown :is(p, li) {
+  white-space: pre-line;
+}
 .markdown > * {
   margin-block: 0;
 }

@@ -1,6 +1,9 @@
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { MessageResponse, SourceResponse } from '../api'
+import Markdown, { type Components } from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import type { MessageResponse } from '../api'
+import { groupSources, type SourceGroup } from '../sources'
 import styles from './chat.module.css'
 
 /** Phone link that keeps digits only, e.g. "031-310-3009" → tel:0313103009. */
@@ -33,16 +36,39 @@ export function ChatBubble({
   )
 }
 
-function SourceChip({ source }: { source: SourceResponse }) {
+/** Answer links leave the app, so they open in a new tab. */
+const markdownComponents: Components = {
+  a: ({ href, children }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ),
+}
+
+/** Answer text is Markdown. Raw HTML in it shows as text, never rendered. */
+function AnswerText({ children }: { children: string }) {
+  return (
+    <div className={styles.markdown}>
+      <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        {children}
+      </Markdown>
+    </div>
+  )
+}
+
+/** One chip per document; all cited pages of it in one line. */
+function SourceChip({ source }: { source: SourceGroup }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const { pageStart, pageEnd, sourceUrl } = source
+  const { sourceUrl } = source
   const pages =
-    pageStart === null
-      ? undefined
-      : pageEnd !== null && pageEnd !== pageStart
-        ? t('chat.pages', { start: pageStart, end: pageEnd })
-        : t('chat.page', { start: pageStart })
+    source.pages
+      .map(({ start, end }) =>
+        end !== start
+          ? t('chat.pages', { start, end })
+          : t('chat.page', { start }),
+      )
+      .join(', ') || undefined
   const hasDetail = Boolean(pages || sourceUrl)
   return (
     <li>
@@ -71,7 +97,8 @@ function SourceChip({ source }: { source: SourceResponse }) {
 }
 
 /**
- * One question or answer (M08b·M08c). Server text is plain text, never HTML.
+ * One question or answer (M08b·M08c). Questions are plain text; answers are
+ * Markdown rendered without raw HTML.
  */
 export function ChatMessage({
   message,
@@ -121,7 +148,7 @@ export function ChatMessage({
           ))}
         </div>
       )}
-      {message.content}
+      <AnswerText>{message.content}</AnswerText>
       {referral && (
         <>
           {'\n'}
@@ -148,11 +175,9 @@ export function ChatMessage({
       )}
       {sources.length > 0 && (
         <ul className={styles.chips}>
-          {[...sources]
-            .sort((a, b) => a.order - b.order)
-            .map((source) => (
-              <SourceChip key={source.order} source={source} />
-            ))}
+          {groupSources(sources).map((source) => (
+            <SourceChip key={source.key} source={source} />
+          ))}
         </ul>
       )}
       {answerStatus === 'ERROR' && onRetry && (

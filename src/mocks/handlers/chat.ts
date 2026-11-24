@@ -223,8 +223,9 @@ function cannedAnswer(question: string): Partial<MessageResponse> {
   return {
     ...answerId,
     answerStatus: 'ANSWERED',
+    // Like the BE: Markdown text, several chunks cited from one document.
     content:
-      '입국한 날부터 90일 안에 안산출입국·외국인사무소에서 해요. 하이코리아에서 방문 예약을 먼저 하세요.',
+      '**입국한 날부터 90일 안**에 안산출입국·외국인사무소에서 해요.\n\n1. [하이코리아](https://www.hikorea.go.kr)에서 방문 예약을 먼저 하세요.\n2. 여권, 사진 1장, 수수료를 준비하세요.',
     sources: [
       {
         order: 1,
@@ -233,6 +234,22 @@ function cannedAnswer(question: string): Partial<MessageResponse> {
         pageEnd: 13,
         sourceUrl: null,
         relevanceScore: 0.82,
+      },
+      {
+        order: 2,
+        documentName: '시흥시 외국인주민 생활안내',
+        pageStart: 13,
+        pageEnd: null,
+        sourceUrl: null,
+        relevanceScore: 0.79,
+      },
+      {
+        order: 3,
+        documentName: '시흥시 외국인주민 생활안내',
+        pageStart: 13,
+        pageEnd: null,
+        sourceUrl: null,
+        relevanceScore: 0.74,
       },
     ],
     relatedPages: [{ type: 'CHECKLIST', code: 'CL-01', title: '외국인등록' }],

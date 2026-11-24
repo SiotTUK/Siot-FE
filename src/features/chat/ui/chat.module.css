@@ -112,6 +112,82 @@
   color: var(--muted-foreground);
 }
 
+/* Answer Markdown: the bubble keeps pre-wrap for the referral lines. */
+.markdown {
+  white-space: normal;
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote,
+.markdown pre,
+.markdown table {
+  margin: 0 0 8px;
+}
+.markdown ul,
+.markdown ol {
+  padding-left: 20px;
+}
+.markdown li + li {
+  margin-top: 2px;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  margin: 12px 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.markdown a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.markdown code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--secondary);
+  font-size: 13px;
+}
+.markdown pre {
+  padding: 8px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: var(--secondary);
+  white-space: pre;
+}
+.markdown pre code {
+  padding: 0;
+  background: none;
+}
+.markdown blockquote {
+  padding-left: 10px;
+  border-left: 3px solid var(--border);
+  color: var(--muted-foreground);
+}
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.markdown th,
+.markdown td {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+}
+.markdown hr {
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
 /* Composer */
 .composer {
   display: flex;

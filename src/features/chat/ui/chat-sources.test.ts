@@ -79,4 +79,29 @@ describe('groupChatSources', () => {
       [],
     ])
   })
+
+  it('compacts long contiguous runs and keeps short runs and gaps visible', () => {
+    const [group] = groupChatSources([
+      source(1, 8, 500),
+      source(2, 1, 7),
+      source(3, 400, 450),
+      source(4, 502, 511),
+      source(5, 513, 523),
+    ])
+
+    expect(group?.pages).toEqual([
+      { start: 1, end: 500 },
+      502,
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509,
+      510,
+      511,
+      { start: 513, end: 523 },
+    ])
+  })
 })

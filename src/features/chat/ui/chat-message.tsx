@@ -56,7 +56,13 @@ function SourceChip({ source }: { source: ChatSource }) {
         <span className={styles.sourceDetail}>
           {pages.length > 0 && (
             <span>
-              {pages.map((start) => t('chat.page', { start })).join(', ')}
+              {pages
+                .map((page) =>
+                  typeof page === 'number'
+                    ? t('chat.page', { start: page })
+                    : t('chat.pages', page),
+                )
+                .join(', ')}
             </span>
           )}
           {sourceUrl && (

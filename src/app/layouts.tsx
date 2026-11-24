@@ -39,7 +39,7 @@ export function TopBarLayout() {
 
 /**
  * Member screens after onboarding: top bar + bottom tabs.
- * 홈·질문·내 정보 exist; other tabs render disabled until their screens are built.
+ * Tabs without a screen remain disabled.
  */
 export function MainLayout() {
   const { t } = useTranslation()
@@ -51,7 +51,7 @@ export function MainLayout() {
         disabledHint={t('home.comingSoon')}
         items={[
           { label: t('nav.home'), to: '/home' },
-          { label: t('nav.calendar') },
+          { label: t('nav.calendar'), to: '/calendar' },
           { label: t('nav.rules') },
           { label: t('nav.chat'), to: '/chat' },
           { label: t('nav.me'), to: '/me' },

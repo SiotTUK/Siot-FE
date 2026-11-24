@@ -1,0 +1,131 @@
+.body {
+  padding-top: var(--space-16);
+}
+
+.month {
+  display: grid;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.monthNavigation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.monthNavigation h2 {
+  font: var(--text-heading);
+  text-align: center;
+}
+
+.previousIcon {
+  transform: rotate(180deg);
+}
+
+.filter {
+  display: grid;
+  gap: var(--space-8);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.weekday {
+  padding-block: var(--space-4);
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+  text-align: center;
+}
+
+.all,
+.day {
+  position: relative;
+  cursor: pointer;
+}
+
+.all span,
+.day span {
+  display: grid;
+  min-height: 44px;
+  place-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-8);
+  text-align: center;
+}
+
+.all span {
+  padding-inline: var(--space-8);
+  font: var(--text-label);
+}
+
+.day span {
+  position: relative;
+  font: var(--text-label);
+}
+
+.day span[data-has-schedules="true"]::after {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-start: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentcolor;
+  content: "";
+}
+
+.day span[data-today="true"] {
+  border-color: var(--primary);
+}
+
+.filter input:checked + span {
+  background: var(--secondary);
+  color: var(--primary-hover);
+  font-weight: 700;
+}
+
+.filter input:focus-visible + span {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.schedules {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schedule {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  overflow-wrap: anywhere;
+}
+
+.schedule[data-highlighted="true"] {
+  border-color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}

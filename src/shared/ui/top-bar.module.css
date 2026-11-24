@@ -5,20 +5,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-12);
   min-height: 54px;
-  padding: 8px 16px;
-  background: var(--white);
-  border-bottom: 1px solid var(--line-1);
+  padding: var(--space-8) var(--gutter);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
 }
 .brand {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--main-100);
+  font: var(--text-heading);
+  color: var(--primary);
   white-space: nowrap;
 }
 .actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
 }

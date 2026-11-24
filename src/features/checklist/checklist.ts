@@ -6,14 +6,23 @@ export const urgentDays = 30
 const open = (item: ChecklistItemResponse) =>
   item.status === 'TODO' || item.status === 'OVERDUE'
 
+const notApplicableLast = (items: ChecklistItemResponse[]) => [
+  ...items.filter((item) => item.status !== 'NOT_APPLICABLE'),
+  ...items.filter((item) => item.status === 'NOT_APPLICABLE'),
+]
+
 /**
- * Splits items the way H1/H2 shows them. Server order is kept: the server
- * already sorts by nearest deadline, then no deadline, then optional.
+ * Splits items the way H1/H2 shows them. Server order is kept, except that
+ * items marked "해당 없음" sink to the bottom of their group.
  */
 export function groupItems(items: ChecklistItemResponse[]) {
   return {
-    main: items.filter((item) => item.itemType !== 'OPTIONAL'),
-    optional: items.filter((item) => item.itemType === 'OPTIONAL'),
+    main: notApplicableLast(
+      items.filter((item) => item.itemType !== 'OPTIONAL'),
+    ),
+    optional: notApplicableLast(
+      items.filter((item) => item.itemType === 'OPTIONAL'),
+    ),
   }
 }
 

@@ -1,35 +1,33 @@
+/* Figma design-system "Button": primary / secondary, 52px high. */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
-  border-radius: var(--radius);
-  font-weight: 700;
+  border-radius: var(--radius-16);
+  font: var(--text-label);
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
   transition:
     background-color 0.15s,
-    opacity 0.15s;
-}
-.button:disabled {
-  opacity: 0.45;
+    filter 0.15s;
 }
 .primary,
 .danger {
   width: 100%;
-  min-height: 50px;
-  padding: 0 16px;
-  color: var(--white);
-  font-size: 16px;
+  min-height: var(--control-height);
+  padding: 0 var(--space-16);
+  color: var(--card);
 }
 .primary {
-  background: var(--main-100);
+  background: var(--primary);
 }
 .primary:not(:disabled):hover {
-  background: var(--main-125);
+  background: var(--primary-hover);
 }
 .danger {
-  background: var(--error);
+  background: var(--destructive);
 }
 .danger:not(:disabled):hover {
   filter: brightness(0.9);
@@ -38,22 +36,38 @@
   flex: none;
   min-height: 44px;
   min-width: 50px;
-  padding: 0 12px;
-  border-color: var(--line-1);
-  background: var(--white);
-  color: var(--title-2);
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  color: var(--primary);
   font-size: 14px;
 }
+.block {
+  width: 100%;
+  min-height: var(--control-height);
+  border-radius: var(--radius-16);
+  font-size: 15px;
+}
 .secondary:not(:disabled):hover {
-  border-color: var(--main-75);
+  filter: brightness(0.96);
+}
+.primary:disabled,
+.danger:disabled,
+.secondary:disabled {
+  background: var(--background);
+  border-color: var(--border);
+  color: var(--placeholder);
 }
 .text {
   align-self: flex-start;
   min-height: 44px;
   padding: 0;
   background: none;
+  font: var(--text-caption);
   font-size: 14px;
-  font-weight: 400;
-  color: var(--body-2);
+  color: var(--muted-foreground);
   text-decoration: underline;
+}
+.text:disabled {
+  opacity: 0.45;
 }

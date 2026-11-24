@@ -40,7 +40,7 @@ export function WithdrawalForm() {
 
   return (
     <Section title={t('withdrawal.title')}>
-      <Notice tone="danger" title={t('withdrawal.warning')}>
+      <Notice tone="note" title={t('withdrawal.warning')}>
         <ul>
           <li>{t('withdrawal.itemAccount')}</li>
           <li>{t('withdrawal.item1')}</li>
@@ -58,6 +58,7 @@ export function WithdrawalForm() {
           <TextField
             {...register('password')}
             label={t('withdrawal.password')}
+            hideLabel
             type="password"
             autoComplete="current-password"
             placeholder={t('withdrawal.passwordPlaceholder')}
@@ -75,7 +76,7 @@ export function WithdrawalForm() {
               onConfirm={() => withdraw.mutate(getValues('password'))}
             />
           ) : (
-            <Button type="submit" variant="danger">
+            <Button type="submit" variant="secondary" block>
               {t('withdrawal.submit')}
             </Button>
           )}

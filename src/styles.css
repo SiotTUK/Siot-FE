@@ -1,43 +1,50 @@
-/* Figma "디자인 시스템 · Color" tokens. */
+/* Figma "design-system" tokens (웰컴시흥 디자인 시스템). */
 :root {
-  --main-25: #e0ddff;
-  --main-50: #bbb4ff;
-  --main-75: #7f72fd;
-  --main-100: #4938f2;
-  --main-125: #392bbf;
-  --main-150: #22188d;
-  --sub-50: #dfeeff;
-  --sub-75: #badeff;
-  --sub-100: #9ed0ff;
-  --sub-125: #6eb9ff;
-  --sub-150: #2f9aff;
-  --sub-175: #0075e3;
-  --title-1: #111111;
-  --title-2: #1f1f1f;
-  --title-3: #2b2b2b;
-  --body-1: #4b4b4b;
-  --body-2: #5e5e5e;
-  --body-3: #7b7b7b;
-  --body-4: #a8a8a8;
-  --line-1: #d9d9d9;
-  --line-2: #e8e8e8;
-  --bg-1: #eeeeee;
-  --bg-2: #f7f7f8;
-  --white: #ffffff;
+  --primary: #1769dc;
+  --primary-hover: #1554af;
+  --secondary: #e8f3ff;
+  --foreground: #191f28;
+  --muted-foreground: #4e5968;
+  --border: #d1d6db;
+  --background: #f2f4f6;
+  --card: #ffffff;
+  --destructive: #c73640;
+  --translation: #6741d9;
   /* Not in the design system yet; confirm with the team. */
-  --error: #d92929;
+  --placeholder: #8b95a1;
+  --destructive-bg: #fdecec;
   --success: #10995f;
   --success-bg: #e9f6ef;
-  --danger-bg: #fdecec;
   --warning: #8a6200;
   --warning-bg: #fdf6e3;
+  --page-outside: var(--border);
 
-  --radius: 12px;
-  --gutter: 20px;
+  /* Type scale: size / line height. */
+  --text-display: 700 30px / 40px var(--font);
+  --text-title: 700 24px / 32px var(--font);
+  --text-heading: 700 20px / 28px var(--font);
+  --text-body: 400 16px / 24px var(--font);
+  --text-label: 500 15px / 22px var(--font);
+  --text-caption: 400 13px / 20px var(--font);
 
-  font-family: 'Noto Sans KR', system-ui, 'Malgun Gothic', sans-serif;
-  color: var(--title-1);
-  background: var(--bg-1);
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --radius-8: 8px;
+  --radius-16: 16px;
+  /* Screen frames in the Figma design-system page use 16px (358 of 390). */
+  --gutter: var(--space-16);
+  --control-height: 52px;
+
+  --font:
+    'Pretendard Variable', Pretendard, system-ui, 'Malgun Gothic', sans-serif;
+  font-family: var(--font);
+  color: var(--foreground);
+  background: var(--page-outside);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -49,11 +56,13 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--bg-1);
+  /* Outside the 480px app frame (desktop). Not in the design system. */
+  background: var(--page-outside);
 }
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -64,7 +73,7 @@ button:disabled {
   cursor: not-allowed;
 }
 a {
-  color: var(--main-100);
+  color: var(--primary);
 }
 h1,
 h2,
@@ -73,7 +82,7 @@ p {
   overflow-wrap: anywhere;
 }
 :focus-visible {
-  outline: 3px solid var(--main-75);
+  outline: 3px solid var(--primary);
   outline-offset: 2px;
 }
 .visually-hidden {

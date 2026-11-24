@@ -4,10 +4,10 @@
 }
 .empty {
   padding: 24px 16px;
-  border: 1px dashed var(--line-1);
-  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-16);
   font-size: 14px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
   text-align: center;
 }
 .row {
@@ -16,11 +16,11 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px;
-  border-radius: var(--radius);
-  background: var(--bg-2);
+  border-radius: var(--radius-16);
+  background: var(--card);
   font-size: 14px;
 }
 .row[data-tone='info'] {
-  border: 1px solid var(--sub-100);
-  background: var(--sub-50);
+  border: 1px solid var(--secondary);
+  background: var(--secondary);
 }

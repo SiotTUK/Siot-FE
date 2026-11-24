@@ -24,6 +24,8 @@ type FieldProps = {
   helpTone?: 'default' | 'success'
   /** Inline action on the right, e.g. "코드 보내기". */
   action?: ReactNode
+  /** Keep the label for screen readers only (placeholder-only designs). */
+  hideLabel?: boolean
   className?: string
 }
 
@@ -34,6 +36,7 @@ function Field({
   help,
   helpTone = 'default',
   action,
+  hideLabel,
   className,
   children,
 }: FieldProps & { children: (control: ControlProps) => ReactNode }) {
@@ -42,7 +45,10 @@ function Field({
   const message = error ?? help
   return (
     <div className={`${styles.field} ${className ?? ''}`.trim()}>
-      <label className={styles.label} htmlFor={id}>
+      <label
+        className={hideLabel ? 'visually-hidden' : styles.label}
+        htmlFor={id}
+      >
         {label}
       </label>
       <div className={styles.row}>
@@ -75,6 +81,7 @@ export function TextField({
   help,
   helpTone,
   action,
+  hideLabel,
   className,
   ref,
   ...input
@@ -82,7 +89,7 @@ export function TextField({
   ref?: Ref<HTMLInputElement>
 }) {
   return (
-    <Field {...{ label, error, help, helpTone, action, className }}>
+    <Field {...{ label, error, help, helpTone, action, hideLabel, className }}>
       {(control) => <input {...input} {...control} ref={ref} />}
     </Field>
   )

@@ -6,13 +6,20 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: var(--background);
+}
+/* On wide screens, set the app apart from the page around it. */
+@media (min-width: 481px) {
+  .frame {
+    border-inline: 1px solid var(--border);
+    box-shadow: 0 0 24px rgb(25 31 40 / 8%);
+  }
 }
 .body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 32px var(--gutter) 32px;
+  padding: var(--space-32) var(--gutter);
 }
 .loader {
   flex: 1;
@@ -20,16 +27,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 48px var(--gutter);
-  color: var(--body-3);
+  gap: var(--space-12);
+  padding: var(--space-48) var(--gutter);
+  color: var(--muted-foreground);
+  font: var(--text-caption);
   font-size: 14px;
 }
 .spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid var(--main-25);
-  border-top-color: var(--main-100);
+  border: 3px solid var(--secondary);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

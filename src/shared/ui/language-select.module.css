@@ -6,17 +6,39 @@
 .select {
   appearance: none;
   min-height: 36px;
-  padding: 4px 28px 4px 10px;
-  border: 1px solid var(--line-1);
-  border-radius: 6px;
-  background: var(--white);
+  padding: var(--space-4) 28px var(--space-4) var(--space-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-8);
+  background: var(--card);
   font-size: 14px;
-  color: var(--title-2);
+  color: var(--foreground);
 }
 .caret {
   position: absolute;
-  right: 9px;
+  right: 10px;
   font-size: 11px;
   pointer-events: none;
-  color: var(--title-2);
+  color: var(--primary);
+}
+/* Figma "NativeSelect": translate icon, full width, chevron. */
+.field {
+  display: flex;
+  width: 100%;
+}
+.field .select {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 48px 0 56px;
+  font: var(--text-label);
+}
+.field .icon {
+  position: absolute;
+  left: var(--space-16);
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+  pointer-events: none;
+}
+.field .caret {
+  right: var(--space-16);
 }

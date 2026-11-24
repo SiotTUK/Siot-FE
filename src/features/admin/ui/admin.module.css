@@ -7,7 +7,7 @@
 }
 .qa dt {
   font-weight: 700;
-  color: var(--body-2);
+  color: var(--muted-foreground);
 }
 .qa dd {
   margin: 0;

@@ -13,6 +13,7 @@ import { describeAnswer } from '@/features/onboarding/summary'
 import { currentLanguage } from '@/shared/i18n'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { Button, ButtonLink } from '@/shared/ui/button'
+import { ChevronRightIcon } from '@/shared/ui/icons'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { FormError, PageHeading } from '@/shared/ui/page'
@@ -30,39 +31,37 @@ export function MePage() {
   return (
     <PageBody className={styles.body}>
       <PageHeading title={t('me.title')} />
-      <dl className={styles.rows}>
-        <div>
+      <div className={styles.card}>
+        <dl className={styles.email}>
           <dt>{t('me.email')}</dt>
           <dd>{me.email}</dd>
-        </div>
-        <div>
-          <dt>{t('me.language')}</dt>
-          <dd>
-            <LanguageSelect
-              label={t('me.language')}
-              value={currentLanguage()}
-              onChange={changeLanguage}
-            />
-          </dd>
-        </div>
-        {questionOrder.map((question) => {
-          const label = t(answerLabels[question])
-          const value = describeAnswer(t, question, me)
-          return (
-            <div key={question}>
-              <dt>{label}</dt>
-              <dd>
-                <Link
-                  to={`/me/edit/${question}`}
-                  aria-label={`${t('me.edit', { label })}: ${value}`}
-                >
-                  {value} <span aria-hidden="true">›</span>
-                </Link>
-              </dd>
-            </div>
-          )
-        })}
-      </dl>
+        </dl>
+        <LanguageSelect
+          label={t('me.language')}
+          value={currentLanguage()}
+          onChange={changeLanguage}
+          variant="field"
+        />
+        <dl className={styles.rows}>
+          {questionOrder.map((question) => {
+            const label = t(answerLabels[question])
+            const value = describeAnswer(t, question, me)
+            return (
+              <div key={question}>
+                <dt>{label}</dt>
+                <dd>
+                  <Link
+                    to={`/me/edit/${question}`}
+                    aria-label={`${t('me.edit', { label })}: ${value}`}
+                  >
+                    {value} <ChevronRightIcon />
+                  </Link>
+                </dd>
+              </div>
+            )
+          })}
+        </dl>
+      </div>
       {!me.emailVerified && <EmailVerificationForm />}
       {me.role === 'ADMIN' && (
         <ButtonLink variant="secondary" to="/admin">
@@ -70,14 +69,14 @@ export function MePage() {
         </ButtonLink>
       )}
       <Button
-        variant="text"
+        variant="secondary"
+        block
         disabled={logout.isPending}
         onClick={() => logout.mutate()}
       >
         {t('common.logout')}
       </Button>
       {logout.isError && <FormError message={errorMessage(t, logout.error)} />}
-      <hr className={styles.divider} />
       <WithdrawalForm />
     </PageBody>
   )

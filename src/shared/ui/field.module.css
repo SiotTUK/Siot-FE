@@ -1,60 +1,58 @@
+/* Figma design-system "Field + Input": 8px label gap, error under the input. */
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-8);
 }
 .label {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--title-2);
+  font: var(--text-label);
+  color: var(--foreground);
 }
 .row {
   display: flex;
-  gap: 8px;
+  gap: var(--space-8);
 }
 .control {
   flex: 1;
   min-width: 0;
-  min-height: 48px;
-  padding: 0 12px;
-  border: 1px solid var(--line-1);
-  border-radius: var(--radius);
-  background: var(--white);
-  font-size: 16px;
-  color: var(--title-1);
+  min-height: var(--control-height);
+  padding: 0 var(--space-16);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-8);
+  background: var(--card);
+  font: var(--text-body);
+  color: var(--foreground);
 }
 textarea.control {
-  padding: 10px 12px;
+  padding: var(--space-12) var(--space-16);
   resize: vertical;
 }
 .control::placeholder {
-  color: var(--body-4);
+  color: var(--placeholder);
 }
 .control:focus {
-  border-color: var(--main-100);
-  outline: none;
-  box-shadow: 0 0 0 3px var(--main-25);
+  border-color: var(--primary);
 }
 .control[aria-invalid='true'] {
-  border-color: var(--error);
+  border-color: var(--destructive);
 }
 /* select is always :read-only, so only text controls get the locked look. */
 input.control:read-only,
 textarea.control:read-only,
 .control:disabled {
-  background: var(--bg-2);
-  color: var(--body-2);
+  background: var(--background);
+  color: var(--muted-foreground);
 }
 .error,
 .default,
 .success {
-  font-size: 12px;
+  font: var(--text-caption);
 }
 .error {
-  color: var(--error);
+  color: var(--destructive);
 }
 .default {
-  color: var(--body-3);
+  color: var(--muted-foreground);
 }
 .success {
   color: var(--success);
@@ -62,12 +60,12 @@ textarea.control:read-only,
 .check {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-8);
   min-height: 40px;
-  font-size: 14px;
+  font: var(--text-label);
 }
 .check input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--main-100);
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
 }

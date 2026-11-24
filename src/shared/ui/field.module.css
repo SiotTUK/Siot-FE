@@ -32,7 +32,6 @@ textarea.control {
 }
 .control:focus {
   border-color: var(--primary);
-  outline: none;
 }
 .control[aria-invalid='true'] {
   border-color: var(--destructive);

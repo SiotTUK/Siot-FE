@@ -1,6 +1,7 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
 import { meQueryKey } from '@/features/auth/api'
 import { rotateSessionScope } from '@/features/auth/session-scope'
+import { scheduleQueryKey } from '@/features/calendar/api'
 import { checklistKeys } from '@/features/checklist/api'
 import { lifeChangeKeys } from '@/features/life-changes/api'
 import { ApiError } from '../shared/api/client'
@@ -15,6 +16,7 @@ function onSessionExpired(error: unknown) {
     rotateSessionScope(queryClient)
     queryClient.setQueryData(meQueryKey, null)
     queryClient.removeQueries({ queryKey: checklistKeys.all })
+    queryClient.removeQueries({ queryKey: scheduleQueryKey })
     queryClient.removeQueries({ queryKey: lifeChangeKeys.all })
   }
 }

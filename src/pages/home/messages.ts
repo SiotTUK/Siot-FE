@@ -7,7 +7,6 @@ export const homeMessages = defineMessages({
       billLabel: '고지서 번역',
       eventsTitle: '나에게 맞는 행사',
       eventsEmpty: '행사 정보는 곧 이곳에서 보여 드려요',
-      lifeChange: '요즘 무슨 일이 있나요? (이사·직장 변경 등)',
       comingSoon: '준비 중',
     },
     nav: {
@@ -25,7 +24,6 @@ export const homeMessages = defineMessages({
       billLabel: 'Bill translation',
       eventsTitle: 'Events for you',
       eventsEmpty: 'Event information will appear here soon',
-      lifeChange: 'Anything new lately? (moving, changing jobs, etc.)',
       comingSoon: 'Coming soon',
     },
     nav: {
@@ -43,7 +41,6 @@ export const homeMessages = defineMessages({
       billLabel: '账单翻译',
       eventsTitle: '适合我的活动',
       eventsEmpty: '活动信息很快就会显示在这里',
-      lifeChange: '最近有什么变化吗？（搬家、换工作等）',
       comingSoon: '准备中',
     },
     nav: {
@@ -61,7 +58,6 @@ export const homeMessages = defineMessages({
       billLabel: 'Dịch hóa đơn',
       eventsTitle: 'Sự kiện dành cho bạn',
       eventsEmpty: 'Thông tin sự kiện sẽ sớm hiển thị tại đây',
-      lifeChange: 'Gần đây có thay đổi gì không? (chuyển nhà, đổi việc, v.v.)',
       comingSoon: 'Đang chuẩn bị',
     },
     nav: {

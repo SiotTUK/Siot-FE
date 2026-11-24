@@ -14,6 +14,7 @@ import {
 } from '@/pages/auth/auth-pages'
 import { ChatHistoryPage, ChatPage } from '@/pages/chat/chat-pages'
 import { HomePage } from '@/pages/home/home-page'
+import { LifeChangePage } from '@/pages/home/life-change-page'
 import { LanguagePage } from '@/pages/language-page'
 import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
@@ -81,6 +82,7 @@ export const router = createBrowserRouter([
               { path: '/me', element: <MePage /> },
             ],
           },
+          { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.
           { path: '/chat/history', element: <ChatHistoryPage /> },

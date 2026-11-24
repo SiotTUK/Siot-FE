@@ -22,26 +22,33 @@ type QueryLike = {
 export function QueryState({
   query,
   children,
+  keepContentOnError = false,
 }: {
   query: QueryLike
   children: ReactNode
+  keepContentOnError?: boolean
 }) {
   const { t } = useTranslation()
   if (query.isPending) return <PageLoader label={t('common.loading')} />
-  if (query.isError)
-    return (
-      <Stack gap={12}>
-        <FormError message={errorMessage(t, query.error)} />
-        <Button
-          variant="secondary"
-          loading={query.isFetching}
-          onClick={() => void query.refetch()}
-        >
-          {t('common.retry')}
-        </Button>
-      </Stack>
-    )
-  return children
+  const error = query.isError ? (
+    <Stack gap={12}>
+      <FormError message={errorMessage(t, query.error)} />
+      <Button
+        variant="secondary"
+        loading={query.isFetching}
+        onClick={() => void query.refetch()}
+      >
+        {t('common.retry')}
+      </Button>
+    </Stack>
+  ) : null
+  if (!keepContentOnError && error) return error
+  return (
+    <>
+      {error}
+      {children}
+    </>
+  )
 }
 
 /** Paged list (page/size/hasNext responses) with empty state and "더 보기". */

@@ -4,6 +4,7 @@ import {
   ChecklistProgress,
   ChecklistSection,
 } from '@/features/checklist/ui/home-checklist'
+import { LifeChangePicker } from '@/features/life-changes/ui/life-change-picker'
 import { situationSummary } from '@/features/onboarding/summary'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, Notice, Section, Tag } from '@/shared/ui/page'
@@ -11,8 +12,7 @@ import styles from './home-page.module.css'
 
 /**
  * H1/H2 personalized home: checklist progress and items (server-computed
- * deadlines), my situation. Events, bill translation and life changes are
- * still "coming soon".
+ * deadlines), my situation and life changes.
  */
 export function HomePage() {
   const { t } = useTranslation()
@@ -39,10 +39,7 @@ export function HomePage() {
       <Section title={t('home.eventsTitle')}>
         <p className={styles.empty}>{t('home.eventsEmpty')}</p>
       </Section>
-      <div className={styles.row} aria-disabled="true">
-        <strong>{t('home.lifeChange')}</strong>
-        {comingSoon}
-      </div>
+      {me && <LifeChangePicker key={me.id} memberId={me.id} />}
     </PageBody>
   )
 }

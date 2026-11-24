@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
-import type { MessageResponse, SourceResponse } from '../api'
+import type { MessageResponse } from '../api'
+import { groupChatSources, type ChatSource } from './chat-sources'
 import styles from './chat.module.css'
 
 /** Phone link that keeps digits only, e.g. "031-310-3009" → tel:0313103009. */
@@ -34,17 +35,11 @@ export function ChatBubble({
   )
 }
 
-function SourceChip({ source }: { source: SourceResponse }) {
+function SourceChip({ source }: { source: ChatSource }) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const { pageStart, pageEnd, sourceUrl } = source
-  const pages =
-    pageStart === null
-      ? undefined
-      : pageEnd !== null && pageEnd !== pageStart
-        ? t('chat.pages', { start: pageStart, end: pageEnd })
-        : t('chat.page', { start: pageStart })
-  const hasDetail = Boolean(pages || sourceUrl)
+  const { pages, sourceUrl } = source
+  const hasDetail = pages.length > 0 || Boolean(sourceUrl)
   return (
     <li>
       <button
@@ -59,7 +54,11 @@ function SourceChip({ source }: { source: SourceResponse }) {
       </button>
       {open && (
         <span className={styles.sourceDetail}>
-          {pages}
+          {pages.length > 0 && (
+            <span>
+              {pages.map((start) => t('chat.page', { start })).join(', ')}
+            </span>
+          )}
           {sourceUrl && (
             <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
               {t('chat.openSource')}
@@ -156,11 +155,9 @@ export function ChatMessage({
       )}
       {sources.length > 0 && (
         <ul className={styles.chips}>
-          {[...sources]
-            .sort((a, b) => a.order - b.order)
-            .map((source) => (
-              <SourceChip key={source.order} source={source} />
-            ))}
+          {groupChatSources(sources).map((source) => (
+            <SourceChip key={source.order} source={source} />
+          ))}
         </ul>
       )}
       {answerStatus === 'ERROR' && onRetry && (

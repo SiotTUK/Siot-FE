@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import Markdown from 'react-markdown'
 import type { MessageResponse, SourceResponse } from '../api'
 import styles from './chat.module.css'
 
@@ -71,7 +72,7 @@ function SourceChip({ source }: { source: SourceResponse }) {
 }
 
 /**
- * One question or answer (M08b·M08c). Server text is plain text, never HTML.
+ * One question or answer (M08b·M08c).
  */
 export function ChatMessage({
   message,
@@ -121,10 +122,17 @@ export function ChatMessage({
           ))}
         </div>
       )}
-      {message.content}
+      {answerStatus === 'ANSWERED' ? (
+        <div className={styles.markdown}>
+          <Markdown skipHtml disallowedElements={['img']}>
+            {message.content}
+          </Markdown>
+        </div>
+      ) : (
+        message.content
+      )}
       {referral && (
-        <>
-          {'\n'}
+        <div className={styles.referral}>
           {referral.notice}
           {referral.contacts.map((contact) => (
             <span key={`${contact.topic}-${contact.number}`}>
@@ -132,7 +140,7 @@ export function ChatMessage({
               <a {...call(contact)}>☎{contact.number}</a> {contact.label}
             </span>
           ))}
-        </>
+        </div>
       )}
       {relatedPages.length > 0 && (
         // CB-10·CB-02: related checklist / rule / event items. Their detail

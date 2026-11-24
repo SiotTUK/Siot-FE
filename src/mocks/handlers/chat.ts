@@ -224,7 +224,7 @@ function cannedAnswer(question: string): Partial<MessageResponse> {
     ...answerId,
     answerStatus: 'ANSWERED',
     content:
-      '입국한 날부터 90일 안에 안산출입국·외국인사무소에서 해요. 하이코리아에서 방문 예약을 먼저 하세요.',
+      '입국한 날부터 **90일 안에** 외국인등록을 해야 해요.\n\n1. 하이코리아에서 방문을 예약하세요.\n2. 안산출입국·외국인사무소를 방문하세요.',
     sources: [
       {
         order: 1,

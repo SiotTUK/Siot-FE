@@ -43,6 +43,25 @@
   background: var(--primary);
   color: var(--card);
 }
+.markdown {
+  white-space: normal;
+}
+.markdown :is(p, li) {
+  white-space: pre-line;
+}
+.markdown > * {
+  margin-block: 0;
+}
+.markdown > * + *,
+.referral {
+  margin-block-start: var(--space-8);
+}
+.markdown :is(ul, ol) {
+  padding-inline-start: var(--space-24);
+}
+.markdown pre {
+  overflow-x: auto;
+}
 .pending .bubble {
   opacity: 0.7;
 }

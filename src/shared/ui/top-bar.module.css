@@ -14,7 +14,8 @@
 .brand {
   font: var(--text-heading);
   color: var(--primary);
-  white-space: nowrap;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
 }
 .actions {
   display: flex;

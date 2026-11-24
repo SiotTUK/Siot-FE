@@ -1,3 +1,4 @@
+import { koreaToday } from '@/shared/i18n/format'
 import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { login, logout } from '@/features/auth/api'
@@ -5,7 +6,7 @@ import { fetchChecklist, updateChecklistItem } from '@/features/checklist/api'
 import { apiRequest } from '@/shared/api/client'
 import { server } from '@/test/setup'
 import { deleteLifeChange, fetchLifeChanges, saveLifeChange } from './api'
-import { koreaToday, relatedLifeChangeTasks } from './life-changes'
+import { relatedLifeChangeTasks } from './life-changes'
 
 const origin = 'http://localhost'
 const path = '/api/members/me/life-changes'

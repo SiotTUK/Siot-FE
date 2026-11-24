@@ -1,3 +1,4 @@
+import { koreaToday } from '@/shared/i18n/format'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -19,11 +20,7 @@ import { PageBody, PageLoader } from '@/shared/ui/mobile-frame'
 import { FormError, Muted, Stack } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import { ScreenHeader } from '@/shared/ui/screen-header'
-import {
-  koreaToday,
-  relatedLifeChangeTasks,
-  type LifeChangeCode,
-} from '../life-changes'
+import { relatedLifeChangeTasks, type LifeChangeCode } from '../life-changes'
 import { useChangeLifeChange, useLifeChanges } from '../use-life-changes'
 import styles from './life-changes.module.css'
 

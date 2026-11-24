@@ -17,15 +17,6 @@ export function isLifeChangeCode(value: unknown): value is LifeChangeCode {
   return lifeChangeCodes.some((code) => code === value)
 }
 
-export function koreaToday(now = new Date()): string {
-  return new Intl.DateTimeFormat('sv-SE', {
-    timeZone: 'Asia/Seoul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(now)
-}
-
 export function relatedLifeChangeTasks(
   items: ChecklistItemResponse[],
   code: LifeChangeCode,

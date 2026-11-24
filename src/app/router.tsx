@@ -12,6 +12,7 @@ import {
   PasswordResetRequestPage,
   SignupPage,
 } from '@/pages/auth/auth-pages'
+import { CalendarPage } from '@/pages/calendar/calendar-page'
 import { ChatHistoryPage, ChatPage } from '@/pages/chat/chat-pages'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
@@ -79,6 +80,7 @@ export const router = createBrowserRouter([
             element: <MainLayout />,
             children: [
               { path: '/home', element: <HomePage /> },
+              { path: '/calendar', element: <CalendarPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },

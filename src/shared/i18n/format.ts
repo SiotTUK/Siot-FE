@@ -36,3 +36,13 @@ export function formatCalendarDate(value: string, language: string) {
         timeZone: 'UTC',
       }).format(date)
 }
+
+/** Date in Korea, in YYYY-MM-DD format. */
+export function koreaToday(now = new Date()): string {
+  return new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now)
+}

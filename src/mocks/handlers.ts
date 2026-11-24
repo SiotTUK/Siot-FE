@@ -1,5 +1,6 @@
 import { adminHandlers } from './handlers/admin'
 import { authHandlers } from './handlers/auth'
+import { scheduleHandlers } from './handlers/schedules'
 import { chatHandlers } from './handlers/chat'
 import { checklistHandlers } from './handlers/checklist'
 import { lifeChangeHandlers } from './handlers/life-changes'
@@ -12,6 +13,7 @@ export const handlers = [
   ...authHandlers,
   ...memberHandlers,
   ...checklistHandlers,
+  ...scheduleHandlers,
   ...lifeChangeHandlers,
   ...chatHandlers,
   ...adminHandlers,

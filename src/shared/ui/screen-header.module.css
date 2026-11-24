@@ -1,11 +1,12 @@
 .header {
-  padding: 6px 12px 0 4px;
-  background: var(--white);
+  padding: 6px var(--space-12) var(--space-8) var(--space-4);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
 }
 .row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-4);
   min-height: 52px;
 }
 .back {
@@ -17,15 +18,16 @@
   border: 0;
   background: none;
   font-size: 26px;
-  color: var(--title-1);
+  color: var(--foreground);
   text-decoration: none;
 }
 .title {
   flex: 1;
   min-width: 0;
+  font: var(--text-label);
   font-size: 17px;
   font-weight: 700;
-  color: var(--main-100);
+  color: var(--foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -33,18 +35,19 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-4);
   margin-left: auto;
 }
 .action {
   display: inline-flex;
   align-items: center;
   min-height: 40px;
-  padding: 0 4px;
+  padding: 0 var(--space-4);
   border: 0;
   background: none;
-  font-size: 13px;
-  color: var(--body-2);
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -52,19 +55,19 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 6px;
-  margin: 4px 0 0 12px;
+  margin: var(--space-4) var(--space-4) 0 var(--space-12);
 }
 .progress span {
   height: 4px;
   border-radius: 2px;
-  background: var(--line-2);
+  background: var(--secondary);
 }
 .progress span[data-done='true'] {
-  background: var(--main-100);
+  background: var(--primary);
 }
 .step {
-  margin: 28px 0 0 16px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--main-100);
+  margin: var(--space-16) 0 0 var(--space-12);
+  font: var(--text-label);
+  font-size: 14px;
+  color: var(--primary);
 }

@@ -5,41 +5,41 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 2px;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-  background: var(--white);
-  border-top: 1px solid var(--line-1);
+  padding: var(--space-8) var(--space-8)
+    calc(var(--space-8) + env(safe-area-inset-bottom));
+  background: var(--card);
+  border-top: 1px solid var(--border);
 }
 .item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--space-4);
   min-height: 52px;
-  padding: 4px 2px;
-  border-radius: 8px;
-  font-size: 11px;
+  padding: var(--space-4) 2px;
+  border-radius: var(--radius-8);
+  font-size: 12px;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
-  color: var(--body-2);
+  color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
 .icon {
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  background: var(--line-2);
+  background: var(--border);
 }
 .active {
-  background: var(--sub-50);
-  color: var(--main-100);
+  color: var(--primary);
   font-weight: 700;
 }
 .active .icon {
-  background: var(--main-100);
+  background: var(--primary);
 }
 .disabled {
-  color: var(--body-4);
+  color: var(--placeholder);
   cursor: not-allowed;
 }

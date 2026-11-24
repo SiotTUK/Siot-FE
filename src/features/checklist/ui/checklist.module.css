@@ -2,20 +2,21 @@
 .progress {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 16px;
-  border-radius: 16px;
-  background: var(--sub-50);
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--secondary);
 }
 .progress h1 {
-  font-size: 20px;
+  font: var(--text-heading);
 }
 .progressRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--main-100);
+  gap: var(--space-12);
+  font: var(--text-label);
+  font-weight: 700;
+  color: var(--primary);
   white-space: nowrap;
 }
 .progressRow progress {
@@ -25,42 +26,43 @@
   border-radius: 4px;
   overflow: hidden;
   appearance: none;
-  background: var(--white);
+  background: var(--card);
 }
 .progressRow progress::-webkit-progress-bar {
-  background: var(--white);
+  background: var(--card);
 }
 .progressRow progress::-webkit-progress-value {
-  background: var(--main-100);
+  background: var(--primary);
 }
 .progressRow progress::-moz-progress-bar {
-  background: var(--main-100);
+  background: var(--primary);
 }
 .alert {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 10px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-16);
   background: var(--warning-bg);
+  font: var(--text-caption);
   font-size: 14px;
-  color: var(--title-2);
+  color: var(--foreground);
 }
 
-/* Item card */
+/* Item card: design-system Card (white on the grey screen). */
 .card {
   display: flex;
-  gap: 12px;
-  padding: 16px 14px;
-  border: 1px solid var(--line-1);
-  border-radius: var(--radius);
-  background: var(--white);
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border: 1px solid transparent;
+  border-radius: var(--radius-16);
+  background: var(--card);
 }
 .card[data-highlighted='true'] {
-  border-color: var(--main-75);
+  border-color: var(--primary);
 }
 .card[data-status='DONE'] .title {
-  color: var(--body-3);
+  color: var(--muted-foreground);
   text-decoration: line-through;
 }
 .card[data-status='NOT_APPLICABLE'] .body {
@@ -71,7 +73,7 @@
   width: 22px;
   height: 22px;
   margin-top: 30px;
-  accent-color: var(--main-100);
+  accent-color: var(--primary);
 }
 .body {
   flex: 1;
@@ -86,22 +88,23 @@
   gap: 6px;
 }
 .title {
-  font-size: 16px;
+  font: var(--text-label);
   font-weight: 700;
-  color: var(--title-1);
+  color: var(--foreground);
 }
 .text {
-  font-size: 13px;
-  color: var(--body-2);
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
 .meta {
-  font-size: 12px;
-  color: var(--body-3);
+  font: var(--text-caption);
+  color: var(--muted-foreground);
 }
 .overdue {
-  font-size: 12px;
-  color: var(--error);
+  font: var(--text-caption);
+  color: var(--destructive);
 }
 .side {
   flex: none;
@@ -112,17 +115,17 @@
   gap: 6px;
 }
 .dDay {
-  padding: 4px 8px;
-  border-radius: 6px;
-  background: var(--sub-50);
-  font-size: 13px;
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-caption);
   font-weight: 700;
-  color: var(--main-125);
+  color: var(--primary);
   white-space: nowrap;
 }
 .dDay[data-overdue='true'] {
-  background: var(--danger-bg);
-  color: var(--error);
+  background: var(--destructive-bg);
+  color: var(--destructive);
 }
 .textButton {
   min-height: 32px;
@@ -130,7 +133,7 @@
   border: 0;
   background: none;
   font-size: 12px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
   text-decoration: underline;
 }
 
@@ -144,16 +147,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 52px;
-  padding: 0 16px;
+  min-height: var(--control-height);
+  padding: 0 var(--space-16);
   border: 0;
-  border-radius: var(--radius);
-  background: var(--bg-2);
-  font-size: 15px;
+  border-radius: var(--radius-16);
+  background: var(--card);
+  font: var(--text-label);
   font-weight: 700;
-  color: var(--title-2);
+  color: var(--foreground);
 }
 .optional > button span:last-child {
   font-size: 13px;
-  color: var(--main-100);
+  color: var(--primary);
 }

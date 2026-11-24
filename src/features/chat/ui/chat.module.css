@@ -4,10 +4,10 @@
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
-  background: var(--bg-2);
+  background: var(--background);
 }
 .screen > header {
-  border-bottom: 1px solid var(--line-1);
+  border-bottom: 1px solid var(--border);
 }
 .log {
   flex: 1;
@@ -30,18 +30,18 @@
 }
 .bubble {
   max-width: 82%;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: var(--white);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  font: var(--text-body);
   font-size: 15px;
-  line-height: 1.55;
-  color: var(--title-2);
+  color: var(--foreground);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .mine .bubble {
-  background: var(--main-100);
-  color: var(--white);
+  background: var(--primary);
+  color: var(--card);
 }
 .pending .bubble {
   opacity: 0.7;
@@ -50,11 +50,11 @@
   background: var(--warning-bg);
 }
 .emergency {
-  background: var(--danger-bg);
+  background: var(--destructive-bg);
 }
 .note {
   font-size: 11px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
 }
 .calls,
 .chips,
@@ -76,8 +76,8 @@
   min-height: 40px;
   padding: 0 12px;
   border-radius: 8px;
-  background: var(--error);
-  color: var(--white);
+  background: var(--destructive);
+  color: var(--card);
   font-weight: 700;
   text-decoration: none;
 }
@@ -85,23 +85,23 @@
 .feedback button {
   min-height: 30px;
   padding: 2px 10px;
-  border: 1px solid var(--line-1);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--card);
   font-size: 12px;
-  color: var(--body-2);
+  color: var(--muted-foreground);
 }
 .chips button:disabled {
   cursor: default;
 }
 .feedback {
   font-size: 12px;
-  color: var(--body-4);
+  color: var(--placeholder);
 }
 .feedback button[aria-pressed='true'] {
-  border-color: var(--main-100);
-  background: var(--main-25);
-  color: var(--main-125);
+  border-color: var(--primary);
+  background: var(--secondary);
+  color: var(--primary-hover);
   font-weight: 700;
 }
 .sourceDetail {
@@ -109,7 +109,7 @@
   gap: 8px;
   padding: 2px 4px;
   font-size: 12px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
 }
 
 /* Composer */
@@ -118,8 +118,8 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: var(--white);
-  border-top: 1px solid var(--line-2);
+  background: var(--card);
+  border-top: 1px solid var(--border);
 }
 .suggestions {
   display: flex;
@@ -132,19 +132,19 @@
 .suggestions button {
   min-height: 36px;
   padding: 4px 12px;
-  border: 1px solid var(--sub-100);
+  border: 1px solid var(--secondary);
   border-radius: 18px;
-  background: var(--sub-50);
+  background: var(--secondary);
   font-size: 13px;
-  color: var(--main-125);
+  color: var(--primary-hover);
 }
 .privacy {
   font-size: 11px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
 }
 .error {
   font-size: 12px;
-  color: var(--error);
+  color: var(--destructive);
 }
 .inputRow {
   display: flex;
@@ -157,7 +157,7 @@
   min-height: 44px;
   max-height: 120px;
   padding: 11px 14px;
-  border: 1px solid var(--line-1);
+  border: 1px solid var(--border);
   border-radius: 22px;
   font-size: 15px;
   line-height: 1.4;
@@ -165,9 +165,9 @@
   field-sizing: content;
 }
 .inputRow textarea:focus {
-  border-color: var(--main-100);
+  border-color: var(--primary);
   outline: none;
-  box-shadow: 0 0 0 3px var(--main-25);
+  box-shadow: 0 0 0 3px var(--secondary);
 }
 .inputRow button {
   min-width: 56px;
@@ -175,8 +175,8 @@
   padding: 0 14px;
   border: 0;
   border-radius: 22px;
-  background: var(--main-100);
-  color: var(--white);
+  background: var(--primary);
+  color: var(--card);
   font-weight: 700;
 }
 .inputRow button:disabled {
@@ -195,7 +195,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: var(--title-2);
+  color: var(--foreground);
   text-decoration: none;
 }
 .historyRow strong {
@@ -205,12 +205,12 @@
 }
 .historyRow span {
   font-size: 12px;
-  color: var(--body-3);
+  color: var(--muted-foreground);
 }
 .related {
   margin: 8px 0 0;
   font-size: 12px;
-  color: var(--body-4);
+  color: var(--placeholder);
 }
 .related ul {
   display: flex;
@@ -222,8 +222,8 @@
 }
 .related li {
   padding: 2px 10px;
-  border: 1px solid var(--line-1);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--white);
-  color: var(--body-2);
+  background: var(--card);
+  color: var(--muted-foreground);
 }

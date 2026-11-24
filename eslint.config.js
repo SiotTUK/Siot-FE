@@ -11,7 +11,7 @@ export default tseslint.config(
       'dist/**',
       'coverage/**',
       'public/mockServiceWorker.js',
-      'prototypes/**',
+      'docs/prototypes/**',
     ],
   },
   js.configs.recommended,

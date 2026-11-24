@@ -8,7 +8,8 @@ React/TypeScript/Vite를 사용하며 한국어/영어/중국어/베트남어를
 
 ## 빠른 시작
 
-Node 버전은 [.node-version](.node-version), Node·npm 허용 범위는 [package.json](package.json)을 따른다.
+로컬 개발과 CI의 Node 버전은 [.nvmrc](.nvmrc)를 따른다. nvm 사용자는 `nvm install`로 해당 버전을 설치하고 `nvm use`로 전환할 수 있다.
+Node·npm 허용 범위는 [package.json](package.json)을 따른다.
 아래 명령은 `Siot-FE` 루트에서 실행한다.
 
 1. `.env.example`을 `.env.local`로 복사한다. 기존 파일이 있으면 유지한다.
@@ -60,7 +61,8 @@ src/
   test/         # 공통 테스트 설정
   main.tsx      # 앱 진입점
   styles.css    # 디자인 토큰·전역 스타일
-docs/prompts/   # 작업 판단·검증 기록
+docs/prompts/     # 작업 판단·검증 기록
+docs/prototypes/  # 초기 HTML 프로토타입 보관
 ```
 
 기능 구현 시 `src/features/{기능}`에 해당 기능의 API·상태·검증·UI를 모은다.
@@ -75,7 +77,7 @@ docs/prompts/   # 작업 판단·검증 기록
 - 이름: 컴포넌트는 PascalCase, 파일·디렉터리는 kebab-case. `@/`는 `src` 별칭.
 - 스타일/테스트: 전용 스타일은 `*.module.css`, 로직 테스트는 대상 파일 옆 `*.test.ts`.
 
-`prototypes/`는 참고 자료이며 운영 빌드에 포함하지 않는다. 화면 흐름은 상단의 Figma를 기준으로 한다.
+[초기 HTML 프로토타입](docs/prototypes/index.html)은 참고 자료이며 운영 빌드에 포함하지 않는다. 화면 흐름은 상단의 Figma를 기준으로 한다.
 
 ## API 연동
 

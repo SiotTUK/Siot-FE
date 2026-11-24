@@ -15,6 +15,8 @@ export interface ScheduleResponse {
 }
 
 export const scheduleQueryKey = ['schedules'] as const
+export const memberScheduleQueryKey = (memberId: number) =>
+  [...scheduleQueryKey, memberId] as const
 
 export function fetchMonthlySchedules(
   year: number,

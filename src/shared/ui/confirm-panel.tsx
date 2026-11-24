@@ -23,7 +23,7 @@ export function ConfirmPanel({
     <div className={styles.panel} role="alertdialog" aria-label={message}>
       <p className={styles.message}>{message}</p>
       <div className={styles.actions}>
-        <Button variant="secondary" disabled={pending} onClick={onCancel}>
+        <Button variant="secondary" block disabled={pending} onClick={onCancel}>
           {cancelLabel}
         </Button>
         <Button

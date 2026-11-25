@@ -100,6 +100,7 @@ export function ChatPage() {
               <ChatMessage
                 key={message.messageId}
                 message={message}
+                conversationPath={id === undefined ? undefined : `/chat/${id}`}
                 feedbackDisabled={chat.feedback.isPending}
                 onFeedback={(helpful) => chat.rate(message.messageId, helpful)}
                 onRetry={

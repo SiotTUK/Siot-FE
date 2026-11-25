@@ -5,8 +5,6 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: '받은 서류, 사진 한 장이면 돼요',
       billLabel: '고지서 번역',
-      eventsTitle: '나에게 맞는 행사',
-      eventsEmpty: '행사 정보는 곧 이곳에서 보여 드려요',
       comingSoon: '준비 중',
     },
     nav: {
@@ -22,8 +20,6 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: 'Got a document? One photo is enough',
       billLabel: 'Bill translation',
-      eventsTitle: 'Events for you',
-      eventsEmpty: 'Event information will appear here soon',
       comingSoon: 'Coming soon',
     },
     nav: {
@@ -39,8 +35,6 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: '收到的文件，拍一张照片就可以',
       billLabel: '账单翻译',
-      eventsTitle: '适合我的活动',
-      eventsEmpty: '活动信息很快就会显示在这里',
       comingSoon: '准备中',
     },
     nav: {
@@ -56,8 +50,6 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: 'Giấy tờ nhận được, chỉ cần một tấm ảnh',
       billLabel: 'Dịch hóa đơn',
-      eventsTitle: 'Sự kiện dành cho bạn',
-      eventsEmpty: 'Thông tin sự kiện sẽ sớm hiển thị tại đây',
       comingSoon: 'Đang chuẩn bị',
     },
     nav: {

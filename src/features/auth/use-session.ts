@@ -1,9 +1,14 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  type QueryClient,
+} from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { scheduleQueryKey } from '@/features/calendar/api'
 import { checklistKeys } from '@/features/checklist/api'
+import { eventKeys } from '@/features/events/api'
 import { lifeChangeKeys } from '@/features/life-changes/api'
 import { ApiError, refreshCsrf } from '@/shared/api/client'
 import type { Language, MemberResponse } from '@/shared/api/types'
@@ -19,7 +24,7 @@ import {
   updateMyLanguage,
   withdraw,
 } from './api'
-import { rotateSessionScope } from './session-scope'
+import { captureSessionScope, rotateSessionScope } from './session-scope'
 
 export function useMe() {
   return useQuery(meQueryOptions)
@@ -60,6 +65,21 @@ async function refreshCsrfQuietly() {
   await refreshCsrf().catch(() => undefined)
 }
 
+function savedLanguageHandler(queryClient: QueryClient, memberId: number) {
+  const isSessionCurrent = captureSessionScope(queryClient, memberId)
+  return async (updated: MemberResponse) => {
+    if (!isSessionCurrent()) return
+    queryClient.setQueryData(meQueryKey, updated)
+
+    // Event text uses the language persisted by the server.
+    const queryKey = eventKeys.member(memberId)
+    await queryClient.cancelQueries({ queryKey })
+    if (!isSessionCurrent()) return
+    queryClient.removeQueries({ queryKey, type: 'inactive' })
+    await queryClient.invalidateQueries({ queryKey })
+  }
+}
+
 /** Called after login or signup succeeds (session cookie is set). */
 export function useStartSession() {
   const queryClient = useQueryClient()
@@ -73,6 +93,7 @@ export function useStartSession() {
       rotateSessionScope(queryClient)
       queryClient.removeQueries({ queryKey: checklistKeys.all })
       queryClient.removeQueries({ queryKey: scheduleQueryKey })
+      queryClient.removeQueries({ queryKey: eventKeys.all })
       queryClient.removeQueries({ queryKey: lifeChangeKeys.all })
       await refreshCsrfQuietly()
       // The language chosen on F01/top bar right before login wins; otherwise
@@ -82,7 +103,7 @@ export function useStartSession() {
         queryClient.setQueryData(meQueryKey, { ...member, language: chosen })
         void i18n.changeLanguage(chosen)
         updateMyLanguage(chosen).then(
-          (updated) => queryClient.setQueryData(meQueryKey, updated),
+          savedLanguageHandler(queryClient, member.id),
           () => undefined, // Keep the screen language; it is saved again on the next change.
         )
       } else {
@@ -116,7 +137,7 @@ export function useChangeLanguage() {
       void i18n.changeLanguage(language)
       queryClient.setQueryData(meQueryKey, { ...me, language })
       updateMyLanguage(language).then(
-        (updated) => queryClient.setQueryData(meQueryKey, updated),
+        savedLanguageHandler(queryClient, me.id),
         () =>
           // Saving failed: return to the language the server still has.
           void queryClient.invalidateQueries({ queryKey: meQueryKey }),

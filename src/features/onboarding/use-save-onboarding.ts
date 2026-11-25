@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { meQueryKey } from '@/features/auth/api'
 import { memberScheduleQueryKey } from '@/features/calendar/api'
 import { checklistKeys } from '@/features/checklist/api'
+import { eventKeys } from '@/features/events/api'
 import { ApiError } from '@/shared/api/client'
 import { saveOnboarding } from './api'
 
@@ -15,6 +16,7 @@ export function useSaveOnboarding() {
       const affectedKeys = [
         checklistKeys.member(member.id),
         memberScheduleQueryKey(member.id),
+        eventKeys.recommendations(member.id),
       ]
       return Promise.all(
         affectedKeys.map((queryKey) => {

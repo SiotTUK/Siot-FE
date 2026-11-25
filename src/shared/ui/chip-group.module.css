@@ -1,0 +1,26 @@
+/* Figma M06 chips: plain words, the picked one as a small Badge. */
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12) var(--space-8);
+}
+.chip {
+  min-height: 28px;
+  padding: 0 2px;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: none;
+  font: var(--text-label);
+  color: var(--foreground);
+}
+.chip[aria-pressed='true'] {
+  padding: 2px var(--space-8);
+  background: var(--secondary);
+  font: var(--text-caption);
+  font-weight: 600;
+  color: var(--primary);
+}
+.chip:not([aria-pressed='true']):hover {
+  color: var(--primary);
+}

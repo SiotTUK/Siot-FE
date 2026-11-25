@@ -128,7 +128,8 @@ export function EventDetailPage() {
   const from = state?.from
   const backTo =
     from === '/home' ||
-    (typeof from === 'string' && /^\/events(?:\?[^#]*)?$/.test(from))
+    (typeof from === 'string' &&
+      /^\/(?:events|calendar)(?:\?[^#]*)?$/.test(from))
       ? from
       : '/events'
 

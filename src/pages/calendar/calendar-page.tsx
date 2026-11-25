@@ -1,13 +1,21 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
 import type { ScheduleResponse } from '@/features/calendar/api'
 import {
-  getWeekScheduleLines,
+  calendarEntries,
+  getCalendarWeek,
   isScheduledOn,
-  scheduleKey,
 } from '@/features/calendar/calendar'
+import {
+  calendarSearch,
+  firstCalendarMonth,
+  lastCalendarMonth,
+  readCalendarLocation,
+} from '@/features/calendar/calendar-location'
 import { useMonthlySchedules } from '@/features/calendar/use-monthly-schedules'
+import { useEventCalendar } from '@/features/events/use-events'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate, koreaToday } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
@@ -40,15 +48,17 @@ function MonthlyCalendar({
 }) {
   const { t } = useTranslation()
   const language = currentLanguage()
-  const [monthStart, setMonthStart] = useState(
-    () => new Date(`${today.slice(0, 7)}-01T00:00:00Z`),
+  const [params, setParams] = useSearchParams()
+  const { month: monthPrefix, date: selectedDate } = readCalendarLocation(
+    params,
+    today,
   )
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const groupName = useId()
+  const monthStart = new Date(`${monthPrefix}-01T00:00:00Z`)
   const year = monthStart.getUTCFullYear()
   const month = monthStart.getUTCMonth() + 1
-  const query = useMonthlySchedules(memberId, year, month, language)
-  const monthPrefix = monthStart.toISOString().slice(0, 7)
+  const schedulesQuery = useMonthlySchedules(memberId, year, month, language)
+  const eventsQuery = useEventCalendar(memberId, year, month)
   const firstWeekday = monthStart.getUTCDay()
   const numberOfDays = new Date(Date.UTC(year, month, 0)).getUTCDate()
   const monthLabel = new Intl.DateTimeFormat(language, {
@@ -75,18 +85,37 @@ function MonthlyCalendar({
       firstColumn: index === 0 ? firstWeekday + 1 : 1,
     }),
   )
-  const schedules = query.data ?? []
-  const visibleSchedules = selectedDate
-    ? schedules.filter((schedule) => isScheduledOn(schedule, selectedDate))
-    : schedules
+  const { scheduleEntries, eventEntries, all } = calendarEntries(
+    schedulesQuery.data ?? [],
+    eventsQuery.data ?? [],
+  )
+  const visibleEntries = selectedDate
+    ? all.filter((entry) => isScheduledOn(entry, selectedDate))
+    : all
+  const from = `/calendar?${calendarSearch(monthPrefix, selectedDate)}`
+  const sources = [
+    {
+      query: schedulesQuery,
+      key: 'schedules',
+      error: 'calendar.scheduleError',
+    },
+    { query: eventsQuery, key: 'events', error: 'calendar.eventError' },
+  ] as const
+
+  function selectDate(date: string | null) {
+    setParams(calendarSearch(monthPrefix, date), {
+      replace: true,
+      preventScrollReset: true,
+    })
+  }
 
   function moveMonth(offset: number) {
-    setMonthStart((previous) => {
-      const next = new Date(previous)
-      next.setUTCMonth(next.getUTCMonth() + offset)
-      return next
+    const next = new Date(monthStart)
+    next.setUTCMonth(next.getUTCMonth() + offset)
+    setParams(calendarSearch(next.toISOString().slice(0, 7), null), {
+      replace: true,
+      preventScrollReset: true,
     })
-    setSelectedDate(null)
   }
 
   return (
@@ -97,6 +126,7 @@ function MonthlyCalendar({
           <Button
             variant="secondary"
             aria-label={t('calendar.previousMonth')}
+            disabled={monthPrefix === firstCalendarMonth}
             onClick={() => moveMonth(-1)}
           >
             <ChevronRightIcon className={styles.previousIcon} />
@@ -105,6 +135,7 @@ function MonthlyCalendar({
           <Button
             variant="secondary"
             aria-label={t('calendar.nextMonth')}
+            disabled={monthPrefix === lastCalendarMonth}
             onClick={() => moveMonth(1)}
           >
             <ChevronRightIcon />
@@ -118,7 +149,7 @@ function MonthlyCalendar({
               type="radio"
               name={groupName}
               checked={selectedDate === null}
-              onChange={() => setSelectedDate(null)}
+              onChange={() => selectDate(null)}
             />
             <span>{t('calendar.all')}</span>
           </label>
@@ -132,22 +163,26 @@ function MonthlyCalendar({
             ))}
           </div>
           {weeks.map(({ dates, firstColumn }) => {
-            const { lines, laneCount } = getWeekScheduleLines(dates, schedules)
+            const { lines, laneCount, days } = getCalendarWeek(
+              dates,
+              scheduleEntries,
+              eventEntries,
+            )
+            const overflowRow = days.some(({ hidden }) => hidden > 0)
             return (
               <div
                 className={styles.week}
                 key={dates[0]}
                 style={
                   laneCount
-                    ? { gridTemplateRows: `38px repeat(${laneCount}, 7px)` }
+                    ? {
+                        gridTemplateRows: `38px repeat(${laneCount}, 7px)${overflowRow ? ' 18px' : ''}`,
+                      }
                     : undefined
                 }
               >
                 {dates.map((date, index) => {
-                  const count = lines.filter(
-                    ({ firstDay, lastDay }) =>
-                      firstDay <= index && index <= lastDay,
-                  ).length
+                  const { total: count, hidden } = days[index]
                   const dateLabel = formatCalendarDate(date, language)
                   return (
                     <label
@@ -169,11 +204,16 @@ function MonthlyCalendar({
                         }
                         aria-current={date === today ? 'date' : undefined}
                         checked={selectedDate === date}
-                        onChange={() => setSelectedDate(date)}
+                        onChange={() => selectDate(date)}
                       />
                       <span data-today={date === today}>
                         {dayNumber.format(Number(date.slice(-2)))}
                       </span>
+                      {hidden > 0 && (
+                        <span className={styles.overflow} aria-hidden="true">
+                          +{dayNumber.format(hidden)}
+                        </span>
+                      )}
                     </label>
                   )
                 })}
@@ -181,12 +221,16 @@ function MonthlyCalendar({
                   <span
                     aria-hidden="true"
                     className={styles.scheduleLine}
-                    data-kind={schedule.kind}
+                    data-kind={
+                      schedule.source === 'event'
+                        ? 'EVENT'
+                        : schedule.schedule.kind
+                    }
                     data-start={dates[firstDay] === schedule.startsOn}
                     data-end={
                       dates[lastDay] === (schedule.endsOn ?? schedule.startsOn)
                     }
-                    key={scheduleKey(schedule)}
+                    key={schedule.key}
                     style={{
                       gridColumn: `${firstColumn + firstDay} / ${firstColumn + lastDay + 1}`,
                       gridRow: lane + 2,
@@ -205,32 +249,59 @@ function MonthlyCalendar({
             : t('calendar.all')
         }
       >
-        {query.isPending ? (
+        {sources.map(({ query, key, error }) =>
+          query.isError ? (
+            <div className={styles.sourceStatus} key={key}>
+              <FormError message={t(error)} />
+              <Button
+                variant="secondary"
+                aria-label={t(`calendar.retry_${key}`)}
+                loading={query.isFetching}
+                onClick={() => void query.refetch()}
+              >
+                {t('common.retry')}
+              </Button>
+            </div>
+          ) : null,
+        )}
+        {sources.some(({ query }) => query.isPending) && (
           <div role="status">
             <Muted>{t('common.loading')}</Muted>
           </div>
-        ) : query.isError ? (
-          <>
-            <FormError message={t('calendar.error')} />
-            <Button
-              variant="secondary"
-              loading={query.isFetching}
-              onClick={() => void query.refetch()}
-            >
-              {t('common.retry')}
-            </Button>
-          </>
-        ) : visibleSchedules.length === 0 ? (
+        )}
+        {visibleEntries.length > 0 ? (
+          <ul className={styles.schedules}>
+            {visibleEntries.map((entry) =>
+              entry.source === 'schedule' ? (
+                <ScheduleItem key={entry.key} schedule={entry.schedule} />
+              ) : (
+                <li key={entry.key}>
+                  <Link
+                    className={`${styles.schedule} ${styles.event}`}
+                    to={`/events/${entry.event.eventId}`}
+                    state={{ from }}
+                  >
+                    <Tag tone="warning">{t('events.detail')}</Tag>
+                    <strong lang={entry.event.translated ? undefined : 'ko'}>
+                      {entry.event.title}
+                    </strong>
+                    <CalendarPeriod
+                      startsOn={entry.startsOn}
+                      endsOn={entry.endsOn}
+                    />
+                    {!entry.event.translated && (
+                      <Muted>{t('events.translationPending')}</Muted>
+                    )}
+                  </Link>
+                </li>
+              ),
+            )}
+          </ul>
+        ) : sources.every(({ query }) => query.isSuccess) ? (
           <Muted>
             {t(selectedDate ? 'calendar.emptyDay' : 'calendar.emptyMonth')}
           </Muted>
-        ) : (
-          <ul className={styles.schedules}>
-            {visibleSchedules.map((schedule) => (
-              <ScheduleItem key={scheduleKey(schedule)} schedule={schedule} />
-            ))}
-          </ul>
-        )}
+        ) : null}
       </Section>
     </PageBody>
   )
@@ -238,10 +309,6 @@ function MonthlyCalendar({
 
 function ScheduleItem({ schedule }: { schedule: ScheduleResponse }) {
   const { t } = useTranslation()
-  const language = currentLanguage()
-  const start = formatCalendarDate(schedule.startsOn, language)
-  const end = schedule.endsOn && formatCalendarDate(schedule.endsOn, language)
-
   return (
     <li className={styles.schedule} data-highlighted={schedule.highlighted}>
       {(schedule.personal || schedule.highlighted) && (
@@ -253,12 +320,26 @@ function ScheduleItem({ schedule }: { schedule: ScheduleResponse }) {
         </div>
       )}
       <strong>{schedule.title}</strong>
-      <Muted>
-        {end && end !== start ? t('calendar.period', { start, end }) : start}
-      </Muted>
+      <CalendarPeriod startsOn={schedule.startsOn} endsOn={schedule.endsOn} />
       {schedule.targetDescription && (
         <Muted>{schedule.targetDescription}</Muted>
       )}
     </li>
+  )
+}
+
+function CalendarPeriod({
+  startsOn,
+  endsOn,
+}: Pick<ScheduleResponse, 'startsOn' | 'endsOn'>) {
+  const { t } = useTranslation()
+  const language = currentLanguage()
+  const start = formatCalendarDate(startsOn, language)
+  const end = endsOn && formatCalendarDate(endsOn, language)
+
+  return (
+    <Muted>
+      {end && end !== start ? t('calendar.period', { start, end }) : start}
+    </Muted>
   )
 }

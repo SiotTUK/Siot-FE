@@ -69,7 +69,7 @@
 }
 
 .all span,
-.day span {
+.day > span:first-of-type {
   display: grid;
   min-height: 44px;
   place-content: center;
@@ -83,7 +83,7 @@
   font: var(--text-label);
 }
 
-.day span {
+.day > span:first-of-type {
   height: 100%;
   padding-top: 10px;
   place-content: start center;
@@ -96,6 +96,21 @@
   height: 4px;
   background: #a9c9f5;
   pointer-events: none;
+}
+
+.scheduleLine[data-kind='EVENT'] {
+  background: #f2ba8e;
+}
+
+.overflow {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
 }
 
 .scheduleLine[data-kind='TAX'],
@@ -121,17 +136,17 @@
   border-end-end-radius: 4px;
 }
 
-.day span[data-today='true'] {
+.day > span:first-of-type[data-today='true'] {
   border-color: var(--primary);
 }
 
-.filter input:checked + span {
+.filter input:checked + span:first-of-type {
   background: var(--secondary);
   color: var(--primary-hover);
   font-weight: 700;
 }
 
-.filter input:focus-visible + span {
+.filter input:focus-visible + span:first-of-type {
   outline: 2px solid var(--primary);
   outline-offset: -2px;
 }
@@ -163,4 +178,23 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
+}
+
+.event {
+  color: inherit;
+  text-decoration: none;
+}
+
+.event:hover strong {
+  text-decoration: underline;
+}
+
+.event > span {
+  justify-self: start;
+}
+
+.sourceStatus {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-8);
 }

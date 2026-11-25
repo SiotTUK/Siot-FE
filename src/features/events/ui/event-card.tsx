@@ -19,10 +19,11 @@ export function EventCard({
   const { pathname, search } = useLocation()
   const dates = formatEventDates(event, currentLanguage())
   const today = koreaToday()
+  const startDate = event.startsOn ?? event.endsOn
   const endDate = event.endsOn ?? event.startsOn
   const status =
-    event.startsOn && endDate && endDate >= today
-      ? event.startsOn <= today
+    startDate && endDate && endDate >= today
+      ? startDate <= today
         ? 'ongoing'
         : 'planned'
       : undefined

@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import {
+  Navigate,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
 import type { EventDetail } from '@/features/events/api'
 import {
@@ -49,6 +54,25 @@ function EventList({ memberId }: { memberId: number }) {
       : 0
   const query = useEvents(memberId, page)
   const data = query.data
+  const lastPage = data ? Math.max(0, data.totalPages - 1) : page
+
+  if (query.isSuccess && page > lastPage) {
+    const nextParams = new URLSearchParams(params)
+    if (lastPage === 0) nextParams.delete('page')
+    else nextParams.set('page', String(lastPage))
+    return (
+      <Section title={t('events.all')}>
+        <EventQueryNotice
+          pending
+          fetching={query.isFetching}
+          retry={() => void query.refetch()}
+        />
+        {!query.isFetching && (
+          <Navigate replace to={{ search: nextParams.toString() }} />
+        )}
+      </Section>
+    )
+  }
 
   return (
     <Section title={t('events.all')}>

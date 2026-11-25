@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   eventKeys,
+  fetchEventCalendar,
   fetchEventDetail,
   fetchEventRecommendations,
   fetchEvents,
@@ -24,5 +25,16 @@ export function useEventDetail(memberId: number, eventId: string) {
   return useQuery({
     queryKey: eventKeys.detail(memberId, eventId),
     queryFn: ({ signal }) => fetchEventDetail(eventId, signal),
+  })
+}
+
+export function useEventCalendar(
+  memberId: number,
+  year: number,
+  month: number,
+) {
+  return useQuery({
+    queryKey: eventKeys.calendar(memberId, year, month),
+    queryFn: ({ signal }) => fetchEventCalendar(year, month, signal),
   })
 }

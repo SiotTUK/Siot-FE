@@ -31,6 +31,15 @@ export interface EventRecommendation {
   reasons: string[]
 }
 
+export interface EventCalendarItem {
+  eventId: number
+  title: string
+  startsOn: string | null
+  endsOn: string | null
+  region: string | null
+  translated: boolean
+}
+
 export const eventKeys = {
   all: ['events'] as const,
   member: (memberId: number) => [...eventKeys.all, memberId] as const,
@@ -38,6 +47,8 @@ export const eventKeys = {
     [...eventKeys.member(memberId), 'recommendations'] as const,
   list: (memberId: number, page: number) =>
     [...eventKeys.member(memberId), 'list', page] as const,
+  calendar: (memberId: number, year: number, month: number) =>
+    [...eventKeys.member(memberId), 'calendar', year, month] as const,
   detail: (memberId: number, eventId: string) =>
     [...eventKeys.member(memberId), 'detail', eventId] as const,
 }
@@ -57,4 +68,15 @@ export function fetchEvents(page: number, signal?: AbortSignal) {
 
 export function fetchEventDetail(eventId: string, signal?: AbortSignal) {
   return apiRequest<EventDetail>(`/api/events/${eventId}`, { signal })
+}
+
+export function fetchEventCalendar(
+  year: number,
+  month: number,
+  signal?: AbortSignal,
+) {
+  return apiRequest<EventCalendarItem[]>(
+    `/api/events/calendar?year=${year}&month=${month}`,
+    { signal },
+  )
 }

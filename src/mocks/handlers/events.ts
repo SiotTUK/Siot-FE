@@ -1,5 +1,9 @@
 import { http, HttpResponse } from 'msw'
-import type { EventDetail, EventRecommendation } from '@/features/events/api'
+import type {
+  EventCalendarItem,
+  EventDetail,
+  EventRecommendation,
+} from '@/features/events/api'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { currentMember, error, unauthorized } from '../db'
@@ -80,7 +84,7 @@ function mockEvents(language: Language) {
     title,
     venue: text.venues[index],
     startsOn: dateIn(index === 0 ? -9 : index * 4),
-    endsOn: dateIn(index === 0 ? 14 : index * 4),
+    endsOn: dateIn(index === 0 ? 14 : index * 4 + 12),
     startsAt: index === 1 ? null : '14:00:00',
     endsAt: index === 1 ? null : '16:00:00',
     timeUnknown: index === 1,
@@ -124,6 +128,37 @@ export const eventHandlers = [
         hasNext: false,
       },
     })
+  }),
+  http.get('*/api/events/calendar', ({ request }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const params = new URL(request.url).searchParams
+    const year = Number(params.get('year'))
+    const month = Number(params.get('month'))
+    if (
+      !Number.isInteger(year) ||
+      !Number.isInteger(month) ||
+      year < 2000 ||
+      year > 2100 ||
+      month < 1 ||
+      month > 12
+    )
+      return error(400, 'INVALID_INPUT', '유효한 연도와 월을 입력해 주세요.')
+
+    const first = new Date(Date.UTC(year, month - 1, 1))
+      .toISOString()
+      .slice(0, 10)
+    const last = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10)
+    const data = mockEvents(member.language).flatMap<EventCalendarItem>(
+      ({ eventId, title, startsOn, endsOn, region, translated }) => {
+        const start = startsOn ?? endsOn
+        const end = endsOn ?? startsOn
+        return start && end && start <= last && end >= first
+          ? [{ eventId, title, startsOn, endsOn, region, translated }]
+          : []
+      },
+    )
+    return HttpResponse.json({ data })
   }),
   http.get('*/api/events/:eventId', ({ params }) => {
     const member = currentMember()

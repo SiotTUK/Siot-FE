@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Navigate,
   useLocation,
+  useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router-dom'
@@ -124,11 +125,13 @@ export function EventDetailPage() {
   const { t } = useTranslation()
   const { eventId } = useParams()
   const { state } = useLocation()
+  const navigate = useNavigate()
   const { data: member } = useMe()
   const from = state?.from
   const backTo =
     from === '/home' ||
-    (typeof from === 'string' && /^\/events(?:\?[^#]*)?$/.test(from))
+    (typeof from === 'string' &&
+      /^\/(?:events|calendar)(?:\?[^#]*)?$/.test(from))
       ? from
       : '/events'
 
@@ -136,7 +139,11 @@ export function EventDetailPage() {
     <>
       <ScreenHeader
         title={t('events.detail')}
-        back={{ to: backTo, label: t('common.back') }}
+        back={
+          from === 'calendar'
+            ? { onClick: () => void navigate(-1), label: t('common.back') }
+            : { to: backTo, label: t('common.back') }
+        }
       />
       <PageBody className={styles.detail}>
         {eventId && /^[1-9]\d{0,18}$/.test(eventId) ? (

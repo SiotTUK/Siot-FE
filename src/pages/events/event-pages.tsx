@@ -18,6 +18,7 @@ import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
+import { EventReport } from '@/features/events/ui/event-report'
 import { useEventDetail, useEvents } from '@/features/events/use-events'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
@@ -174,7 +175,16 @@ function EventDetailContent({
       />
     )
 
-  return <EventDetails event={query.data} />
+  return (
+    <>
+      <EventDetails event={query.data} />
+      <EventReport
+        key={`${memberId}:${eventId}`}
+        event={query.data}
+        memberId={memberId}
+      />
+    </>
+  )
 }
 
 function EventDetails({ event }: { event: EventDetail }) {

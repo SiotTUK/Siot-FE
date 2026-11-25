@@ -99,7 +99,11 @@
 }
 
 .scheduleLine[data-kind='EVENT'] {
-  background: #f2ba8e;
+  background: repeating-linear-gradient(
+    to right,
+    #9b461a 0 5px,
+    transparent 5px 8px
+  );
 }
 
 .overflow {

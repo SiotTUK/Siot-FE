@@ -25,11 +25,11 @@ export function scheduleKey(schedule: ScheduleResponse) {
   return schedule.scheduleId ?? `${schedule.kind}:${schedule.startsOn}`
 }
 
-export function getWeekScheduleLines<T extends DateRange>(
+function getWeekRanges(
   dates: string[],
-  schedules: T[],
+  schedules: (CalendarSchedule | CalendarEvent)[],
 ) {
-  const ranges = schedules
+  return schedules
     .map((schedule) => ({
       schedule,
       firstDay: dates.findIndex((date) => isScheduledOn(schedule, date)),
@@ -37,16 +37,6 @@ export function getWeekScheduleLines<T extends DateRange>(
     }))
     .filter(({ firstDay }) => firstDay !== -1)
     .sort((first, second) => first.firstDay - second.firstDay)
-
-  const laneEnds: number[] = []
-  const lines = ranges.map((range) => {
-    const freeLane = laneEnds.findIndex((end) => end < range.firstDay)
-    const lane = freeLane === -1 ? laneEnds.length : freeLane
-    laneEnds[lane] = range.lastDay
-    return { ...range, lane }
-  })
-
-  return { lines, laneCount: laneEnds.length }
 }
 
 export function calendarEntries(
@@ -83,38 +73,43 @@ export function calendarEntries(
   }
 }
 
-const eventLaneLimit = 3
+const weekLaneLimit = 3
 
 export function getCalendarWeek(
   dates: string[],
   schedules: CalendarSchedule[],
   events: CalendarEvent[],
 ) {
-  const scheduleWeek = getWeekScheduleLines(dates, schedules)
-  const eventWeek = getWeekScheduleLines(dates, events)
-  const allLines = [...scheduleWeek.lines, ...eventWeek.lines]
-  const hiddenEvents = eventWeek.lines.filter(
-    ({ lane }) => lane >= eventLaneLimit,
+  // Give living schedules the first choice of lanes, then fill any gaps with events.
+  const ranges = [
+    ...getWeekRanges(dates, schedules),
+    ...getWeekRanges(dates, events),
+  ]
+  const lanes = Array.from({ length: weekLaneLimit }, () =>
+    Array<boolean>(dates.length).fill(false),
   )
+  const days = dates.map(() => ({ scheduleCount: 0, eventCount: 0, hidden: 0 }))
+  const lines = ranges.flatMap((range) => {
+    const { firstDay, lastDay, schedule } = range
+    const lane = lanes.findIndex((occupied) =>
+      occupied.slice(firstDay, lastDay + 1).every((day) => !day),
+    )
 
-  function countOnDay(lines: typeof allLines, index: number) {
-    return lines.filter(
-      ({ firstDay, lastDay }) => firstDay <= index && index <= lastDay,
-    ).length
-  }
+    for (let day = firstDay; day <= lastDay; day++) {
+      const count = days[day]
+      if (schedule.source === 'event') count.eventCount++
+      else count.scheduleCount++
+      if (lane === -1) count.hidden++
+    }
+
+    if (lane === -1) return []
+    lanes[lane].fill(true, firstDay, lastDay + 1)
+    return [{ ...range, lane }]
+  })
 
   return {
-    lines: [
-      ...scheduleWeek.lines,
-      ...eventWeek.lines
-        .filter(({ lane }) => lane < eventLaneLimit)
-        .map((line) => ({ ...line, lane: line.lane + scheduleWeek.laneCount })),
-    ],
-    laneCount:
-      scheduleWeek.laneCount + Math.min(eventWeek.laneCount, eventLaneLimit),
-    days: dates.map((_, index) => ({
-      total: countOnDay(allLines, index),
-      hidden: countOnDay(hiddenEvents, index),
-    })),
+    lines,
+    laneCount: lanes.filter((occupied) => occupied.some(Boolean)).length,
+    days,
   }
 }

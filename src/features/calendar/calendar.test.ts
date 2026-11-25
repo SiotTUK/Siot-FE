@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { EventCalendarItem } from '@/features/events/api'
 import type { ScheduleResponse } from './api'
-import {
-  calendarEntries,
-  getCalendarWeek,
-  getWeekScheduleLines,
-  isScheduledOn,
-} from './calendar'
+import { calendarEntries, getCalendarWeek, isScheduledOn } from './calendar'
 
 const schedule: ScheduleResponse = {
   scheduleId: 1,
@@ -37,15 +32,17 @@ describe('isScheduledOn', () => {
   })
 })
 
-describe('getWeekScheduleLines', () => {
+describe('weekly schedule lines', () => {
   it('keeps a range continuous across its week and resumes it on the next row', () => {
+    const { scheduleEntries } = calendarEntries([schedule], [])
     expect(
-      getWeekScheduleLines(['2026-11-27', '2026-11-28'], [schedule]).lines,
+      getCalendarWeek(['2026-11-27', '2026-11-28'], scheduleEntries, []).lines,
     ).toMatchObject([{ firstDay: 1, lastDay: 1 }])
     expect(
-      getWeekScheduleLines(
+      getCalendarWeek(
         ['2026-11-29', '2026-11-30', '2026-12-01', '2026-12-02', '2026-12-03'],
-        [schedule],
+        scheduleEntries,
+        [],
       ).lines,
     ).toMatchObject([{ firstDay: 0, lastDay: 3 }])
   })
@@ -54,7 +51,11 @@ describe('getWeekScheduleLines', () => {
     const overlapping = { ...schedule, startsOn: '2026-11-29', endsOn: null }
     const later = { ...schedule, startsOn: '2026-12-03', endsOn: null }
     const outside = { ...schedule, startsOn: '2026-11-27', endsOn: null }
-    const { lines, laneCount } = getWeekScheduleLines(
+    const { scheduleEntries } = calendarEntries(
+      [overlapping, later, outside, schedule],
+      [],
+    )
+    const { lines, laneCount } = getCalendarWeek(
       [
         '2026-11-28',
         '2026-11-29',
@@ -63,7 +64,8 @@ describe('getWeekScheduleLines', () => {
         '2026-12-02',
         '2026-12-03',
       ],
-      [overlapping, later, outside, schedule],
+      scheduleEntries,
+      [],
     )
 
     expect(laneCount).toBe(2)
@@ -123,7 +125,7 @@ describe('the combined calendar', () => {
     })
   })
 
-  it('caps event lanes separately and counts hidden entries only on affected dates', () => {
+  it('caps combined lanes and counts hidden entries only on affected dates', () => {
     const { scheduleEntries, eventEntries, all } = calendarEntries(
       [schedule],
       [
@@ -135,15 +137,46 @@ describe('the combined calendar', () => {
     )
     const dates = ['2026-12-01', '2026-12-02', '2026-12-03']
     const week = getCalendarWeek(dates, scheduleEntries, eventEntries)
-    expect(week.laneCount).toBe(4)
-    expect(week.lines.map(({ lane }) => lane)).toEqual([0, 1, 2, 3])
+    expect(week.laneCount).toBe(3)
+    expect(week.lines.map(({ lane }) => lane)).toEqual([0, 1, 2])
     expect(week.days).toEqual([
-      { total: 4, hidden: 0 },
-      { total: 5, hidden: 1 },
-      { total: 0, hidden: 0 },
+      { scheduleCount: 1, eventCount: 3, hidden: 1 },
+      { scheduleCount: 1, eventCount: 4, hidden: 2 },
+      { scheduleCount: 0, eventCount: 0, hidden: 0 },
     ])
     expect(all.filter((entry) => isScheduledOn(entry, dates[1]))).toHaveLength(
       5,
     )
+  })
+
+  it('reuses a living schedule lane on other days', () => {
+    const { scheduleEntries, eventEntries } = calendarEntries(
+      [{ ...schedule, startsOn: '2026-12-02', endsOn: null }],
+      [{ ...event, startsOn: '2026-12-01', endsOn: '2026-12-01' }],
+    )
+    const week = getCalendarWeek(
+      ['2026-12-01', '2026-12-02'],
+      scheduleEntries,
+      eventEntries,
+    )
+    expect(week.laneCount).toBe(1)
+    expect(week.lines.map(({ lane }) => lane)).toEqual([0, 0])
+  })
+
+  it('also caps weeks that contain only living schedules', () => {
+    const { scheduleEntries, eventEntries } = calendarEntries(
+      [1, 2, 3, 4].map((scheduleId) => ({ ...schedule, scheduleId })),
+      [],
+    )
+    const week = getCalendarWeek(
+      ['2026-12-02', '2026-12-03'],
+      scheduleEntries,
+      eventEntries,
+    )
+    expect(week.laneCount).toBe(3)
+    expect(week.days).toEqual([
+      { scheduleCount: 4, eventCount: 0, hidden: 1 },
+      { scheduleCount: 0, eventCount: 0, hidden: 0 },
+    ])
   })
 })

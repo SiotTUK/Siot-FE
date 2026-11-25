@@ -92,7 +92,6 @@ function MonthlyCalendar({
   const visibleEntries = selectedDate
     ? all.filter((entry) => isScheduledOn(entry, selectedDate))
     : all
-  const from = `/calendar?${calendarSearch(monthPrefix, selectedDate)}`
   const sources = [
     {
       query: schedulesQuery,
@@ -182,7 +181,7 @@ function MonthlyCalendar({
                 }
               >
                 {dates.map((date, index) => {
-                  const { total: count, hidden } = days[index]
+                  const { scheduleCount, eventCount, hidden } = days[index]
                   const dateLabel = formatCalendarDate(date, language)
                   return (
                     <label
@@ -195,10 +194,11 @@ function MonthlyCalendar({
                         type="radio"
                         name={groupName}
                         aria-label={
-                          count
-                            ? t('calendar.dateWithSchedules', {
+                          scheduleCount || eventCount
+                            ? t('calendar.dateWithEntries', {
                                 date: dateLabel,
-                                count,
+                                schedules: dayNumber.format(scheduleCount),
+                                events: dayNumber.format(eventCount),
                               })
                             : dateLabel
                         }
@@ -279,7 +279,7 @@ function MonthlyCalendar({
                   <Link
                     className={`${styles.schedule} ${styles.event}`}
                     to={`/events/${entry.event.eventId}`}
-                    state={{ from }}
+                    state={{ from: 'calendar' }}
                   >
                     <Tag tone="warning">{t('events.detail')}</Tag>
                     <strong lang={entry.event.translated ? undefined : 'ko'}>

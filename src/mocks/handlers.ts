@@ -3,6 +3,7 @@ import { authHandlers } from './handlers/auth'
 import { scheduleHandlers } from './handlers/schedules'
 import { chatHandlers } from './handlers/chat'
 import { checklistHandlers } from './handlers/checklist'
+import { eventHandlers } from './handlers/events'
 import { lifeChangeHandlers } from './handlers/life-changes'
 import { memberHandlers } from './handlers/member'
 
@@ -14,6 +15,7 @@ export const handlers = [
   ...memberHandlers,
   ...checklistHandlers,
   ...scheduleHandlers,
+  ...eventHandlers,
   ...lifeChangeHandlers,
   ...chatHandlers,
   ...adminHandlers,

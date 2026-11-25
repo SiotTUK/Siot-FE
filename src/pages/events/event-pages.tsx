@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
 import type { EventDetail } from '@/features/events/api'
 import {
@@ -7,26 +7,112 @@ import {
   formatEventDates,
   formatEventTimes,
 } from '@/features/events/event-display'
+import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
-import { useEventDetail } from '@/features/events/use-events'
+import { EventRecommendations } from '@/features/events/ui/event-recommendations'
+import { useEventDetail, useEvents } from '@/features/events/use-events'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
+import { Button } from '@/shared/ui/button'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, Tag } from '@/shared/ui/page'
+import { Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './event-pages.module.css'
+
+export function EventsPage() {
+  const { t } = useTranslation()
+  const { data: member } = useMe()
+
+  return (
+    <PageBody className={styles.body}>
+      <PageHeading title={t('events.title')} />
+      {member && (
+        <>
+          <EventRecommendations memberId={member.id} />
+          <EventList memberId={member.id} />
+        </>
+      )}
+    </PageBody>
+  )
+}
+
+function EventList({ memberId }: { memberId: number }) {
+  const { t } = useTranslation()
+  const [params, setParams] = useSearchParams()
+  const requestedPage = Number(params.get('page'))
+  const page =
+    Number.isInteger(requestedPage) &&
+    requestedPage >= 0 &&
+    requestedPage <= 2_147_483_647
+      ? requestedPage
+      : 0
+  const query = useEvents(memberId, page)
+  const data = query.data
+
+  return (
+    <Section title={t('events.all')}>
+      {query.isPending || query.isError ? (
+        <EventQueryNotice
+          pending={query.isPending}
+          fetching={query.isFetching}
+          retry={() => void query.refetch()}
+        />
+      ) : data?.content.length ? (
+        <ul className={styles.grid}>
+          {data.content.map((event) => (
+            <li key={event.eventId}>
+              <EventCard event={event} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Muted>{t('events.empty')}</Muted>
+      )}
+      {data && (page > 0 || data.hasNext) && (
+        <div className={styles.pager}>
+          <Button
+            variant="secondary"
+            disabled={page === 0}
+            onClick={() =>
+              setParams(page === 1 ? {} : { page: String(page - 1) })
+            }
+          >
+            {t('events.previous')}
+          </Button>
+          <span>
+            {t('events.page', { current: page + 1, total: data.totalPages })}
+          </span>
+          <Button
+            variant="secondary"
+            disabled={!data.hasNext}
+            onClick={() => setParams({ page: String(page + 1) })}
+          >
+            {t('events.next')}
+          </Button>
+        </div>
+      )}
+    </Section>
+  )
+}
 
 export function EventDetailPage() {
   const { t } = useTranslation()
   const { eventId } = useParams()
+  const { state } = useLocation()
   const { data: member } = useMe()
+  const from = state?.from
+  const backTo =
+    from === '/home' ||
+    (typeof from === 'string' && /^\/events(?:\?[^#]*)?$/.test(from))
+      ? from
+      : '/events'
 
   return (
     <>
       <ScreenHeader
         title={t('events.detail')}
-        back={{ to: '/home', label: t('common.back') }}
+        back={{ to: backTo, label: t('common.back') }}
       />
       <PageBody className={styles.detail}>
         {eventId && /^[1-9]\d{0,18}$/.test(eventId) ? (

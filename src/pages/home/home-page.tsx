@@ -4,10 +4,11 @@ import {
   ChecklistProgress,
   ChecklistSection,
 } from '@/features/checklist/ui/home-checklist'
+import { EventRecommendations } from '@/features/events/ui/event-recommendations'
 import { LifeChangePicker } from '@/features/life-changes/ui/life-change-picker'
 import { situationSummary } from '@/features/onboarding/summary'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, Notice, Section, Tag } from '@/shared/ui/page'
+import { Muted, Notice, Tag } from '@/shared/ui/page'
 import styles from './home-page.module.css'
 
 /**
@@ -36,9 +37,7 @@ export function HomePage() {
         </div>
         {comingSoon}
       </div>
-      <Section title={t('home.eventsTitle')}>
-        <p className={styles.empty}>{t('home.eventsEmpty')}</p>
-      </Section>
+      {me && <EventRecommendations memberId={me.id} showAllLink />}
       {me && <LifeChangePicker key={me.id} memberId={me.id} />}
     </PageBody>
   )

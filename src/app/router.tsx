@@ -14,7 +14,7 @@ import {
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
 import { ChatHistoryPage, ChatPage } from '@/pages/chat/chat-pages'
-import { EventDetailPage } from '@/pages/events/event-pages'
+import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
 import { LanguagePage } from '@/pages/language-page'
@@ -82,6 +82,7 @@ export const router = createBrowserRouter([
             children: [
               { path: '/home', element: <HomePage /> },
               { path: '/calendar', element: <CalendarPage /> },
+              { path: '/events', element: <EventsPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },

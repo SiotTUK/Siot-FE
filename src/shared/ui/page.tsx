@@ -19,17 +19,28 @@ export function PageHeading({
   )
 }
 
-/** Section with an h2 title (홈 · 관리자 lists). */
+/** Section with an h2 title and an optional trailing action. */
 export function Section({
   title,
+  action,
   children,
 }: {
   title: string
+  action?: ReactNode
   children: ReactNode
 }) {
+  const heading = <h2 className={styles.sectionTitle}>{title}</h2>
+
   return (
     <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>{title}</h2>
+      {action ? (
+        <div className={styles.sectionHeader}>
+          {heading}
+          {action}
+        </div>
+      ) : (
+        heading
+      )}
       {children}
     </section>
   )

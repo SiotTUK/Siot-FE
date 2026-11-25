@@ -12,6 +12,14 @@ import {
   type MockMember,
 } from '../db'
 import type { MessageResponse } from '@/features/chat/api'
+import { mockEvents } from './events'
+
+const eventAnswer = {
+  ko: '관련 행사에서 자세한 일정을 확인해 보세요.',
+  en: 'Open a related event to see its schedule.',
+  zh: '打开相关活动即可查看日程。',
+  vi: 'Mở sự kiện liên quan để xem lịch tổ chức.',
+}
 
 /** Chatbot (CB-03·04·08·09·11·16). Canned answers by keyword, not real RAG. */
 export const chatHandlers = [
@@ -99,7 +107,7 @@ export const chatHandlers = [
       const question = message('USER', maskedContent, now)
       const answer = {
         ...message('ASSISTANT', '', now),
-        ...cannedAnswer(content),
+        ...cannedAnswer(content, toLanguage(conversation.language)),
       }
       conversation.messages.push(question, answer)
       conversation.updatedAt = now
@@ -185,7 +193,10 @@ function message(
   }
 }
 
-function cannedAnswer(question: string): Partial<MessageResponse> {
+function cannedAnswer(
+  question: string,
+  language: ReturnType<typeof toLanguage>,
+): Partial<MessageResponse> {
   const answerId = { messageId: nextMessageId() + 1 }
   if (/불|화재|fire/i.test(question))
     return {
@@ -219,6 +230,19 @@ function cannedAnswer(question: string): Partial<MessageResponse> {
       answerStatus: 'NO_EVIDENCE',
       content:
         '자료에서 찾지 못했어요. 추측해서 답하지 않을게요.\n· ☎1345 (24시간)\n· 외국인주민과 ☎031-310-3009',
+    }
+  if (/행사|축제|공연|event|festival|活动|节日|sự kiện|lễ hội/i.test(question))
+    return {
+      ...answerId,
+      answerStatus: 'NO_EVIDENCE',
+      content: eventAnswer[language],
+      relatedPages: mockEvents(language)
+        .slice(0, 2)
+        .map(({ eventId, title }) => ({
+          type: 'EVENT',
+          code: String(eventId),
+          title,
+        })),
     }
   return {
     ...answerId,

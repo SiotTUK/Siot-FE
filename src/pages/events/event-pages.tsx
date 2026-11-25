@@ -13,6 +13,7 @@ import {
   formatEventDates,
   formatEventTimes,
 } from '@/features/events/event-display'
+import { eventDetailBackPath, isEventId } from '@/features/events/event-routes'
 import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
@@ -128,12 +129,6 @@ export function EventDetailPage() {
   const navigate = useNavigate()
   const { data: member } = useMe()
   const from = state?.from
-  const backTo =
-    from === '/home' ||
-    (typeof from === 'string' &&
-      /^\/(?:events|calendar)(?:\?[^#]*)?$/.test(from))
-      ? from
-      : '/events'
 
   return (
     <>
@@ -142,11 +137,11 @@ export function EventDetailPage() {
         back={
           from === 'calendar'
             ? { onClick: () => void navigate(-1), label: t('common.back') }
-            : { to: backTo, label: t('common.back') }
+            : { to: eventDetailBackPath(from), label: t('common.back') }
         }
       />
       <PageBody className={styles.detail}>
-        {eventId && /^[1-9]\d{0,18}$/.test(eventId) ? (
+        {isEventId(eventId) ? (
           member && (
             <EventDetailContent memberId={member.id} eventId={eventId} />
           )

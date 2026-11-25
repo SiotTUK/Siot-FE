@@ -73,7 +73,7 @@ const sampleText = {
   },
 }
 
-function mockEvents(language: Language) {
+export function mockEvents(language: Language) {
   const text = sampleText[language]
   const today = Date.parse(`${koreaToday()}T00:00:00Z`)
   const dateIn = (days: number) =>

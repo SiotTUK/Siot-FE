@@ -1,7 +1,9 @@
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
+import { Link } from 'react-router-dom'
 import type { MessageResponse } from '../api'
+import { relatedPagePath } from '../related-pages'
 import { groupChatSources, type ChatSource } from './chat-sources'
 import styles from './chat.module.css'
 
@@ -84,10 +86,12 @@ export function ChatMessage({
   onFeedback,
   feedbackDisabled,
   onRetry,
+  conversationPath,
 }: {
   message: MessageResponse
   onFeedback: (helpful: boolean) => void
   feedbackDisabled?: boolean
+  conversationPath?: string
   /** CB-02·COM-04: offered on a failed (ERROR) answer to send the question again. */
   onRetry?: () => void
 }) {
@@ -148,14 +152,23 @@ export function ChatMessage({
         </div>
       )}
       {relatedPages.length > 0 && (
-        // CB-10·CB-02: related checklist / rule / event items. Their detail
-        // screens are not built yet, so only the titles are shown for now.
         <div className={styles.related}>
           <span>{t('chat.related')}</span>
           <ul>
-            {relatedPages.map((page) => (
-              <li key={`${page.type}-${page.code}`}>{page.title}</li>
-            ))}
+            {relatedPages.map((page) => {
+              const path = relatedPagePath(page)
+              return (
+                <li key={`${page.type}-${page.code}`}>
+                  {path ? (
+                    <Link to={path} state={{ from: conversationPath }}>
+                      {page.title}
+                    </Link>
+                  ) : (
+                    <span>{page.title}</span>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

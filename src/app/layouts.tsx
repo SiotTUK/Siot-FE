@@ -64,7 +64,7 @@ export function MainLayout() {
         items={[
           { label: t('nav.home'), to: '/home' },
           { label: t('nav.calendar'), to: '/calendar' },
-          { label: t('nav.rules') },
+          { label: t('nav.rules'), to: '/rules' },
           { label: t('nav.chat'), to: '/chat' },
           { label: t('nav.me'), to: '/me' },
         ]}

@@ -22,6 +22,7 @@ import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
+import { RuleDetailPage, RulesPage } from '@/pages/rules/rule-pages'
 import {
   MainLayout,
   OnboardingLayout,
@@ -83,10 +84,12 @@ export const router = createBrowserRouter([
               { path: '/home', element: <HomePage /> },
               { path: '/calendar', element: <CalendarPage /> },
               { path: '/events', element: <EventsPage /> },
+              { path: '/rules', element: <RulesPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },
           { path: '/events/:eventId', element: <EventDetailPage /> },
+          { path: '/rules/:code', element: <RuleDetailPage /> },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.

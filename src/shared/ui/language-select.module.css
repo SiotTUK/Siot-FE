@@ -20,6 +20,33 @@
   pointer-events: none;
   color: var(--primary);
 }
+/* Figma M/TopBar: globe icon + language name, no box. */
+/* Figma: 20px globe, 16px to the text, both centered on one line. */
+.inline .select {
+  min-height: 40px;
+  padding: 0 0 0 36px;
+  border: 0;
+  background: none;
+  font: var(--text-label);
+  font-weight: 600;
+  line-height: 40px;
+  /* Fit the chosen language, not the longest option ("Tiếng Việt"). */
+  field-sizing: content;
+}
+.inline .icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.inline:focus-within {
+  border-radius: var(--radius-8);
+}
+
 /* Figma "NativeSelect": translate icon, full width, chevron. */
 .field {
   display: flex;

@@ -34,7 +34,7 @@ export function RuleCategoryCard({
       <ul className={styles.rows}>
         {group.rules.map((rule) => (
           <li key={rule.code}>
-            <Link to={`/rules/${rule.code}`}>
+            <Link to={`/rules/${rule.code}`} state={{ from: 'rules' }}>
               {rule.title}
               <span aria-hidden="true">›</span>
             </Link>

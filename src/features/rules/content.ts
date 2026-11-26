@@ -24,6 +24,13 @@ const resourceDept = l(
   'Phòng Tuần hoàn Tài nguyên Siheung 031-310-2254',
 )
 
+const residentTaxSummary = l(
+  '7월 1일 기준 시흥시에 주소(외국인은 체류지)를 둔 개인은 원칙적으로 8월 16~31일에 주민세를 내요. 기초생활수급자, 일정 요건에 해당하는 미성년자·세대원 등은 제외돼요. 7월 1일에 외국인등록 후 1년이 지나지 않은 외국인도 제외돼요.',
+  'Individuals whose address (or registered place of stay for foreign residents) is in Siheung on 1 July generally pay resident tax from 16 to 31 August. Basic livelihood benefit recipients and certain minors and household members are exempt. Foreign residents who registered less than one year before 1 July are also exempt.',
+  '截至7月1日住址（外国人为居留地）在始兴市的个人，原则上于8月16日至31日缴纳居民税。基础生活保障领取者及符合条件的未成年人、家庭成员等免缴。截至7月1日办理外国人登记未满一年的外国人也免缴。',
+  'Cá nhân có địa chỉ tại Siheung (nơi lưu trú đối với người nước ngoài) vào ngày 1/7 thường nộp thuế cư trú từ 16 đến 31/8. Người hưởng trợ cấp bảo đảm sinh hoạt cơ bản và một số người chưa thành niên, thành viên hộ gia đình được miễn. Người nước ngoài đăng ký chưa đủ một năm tính đến ngày 1/7 cũng được miễn.',
+)
+
 export const ruleEntries: RuleEntry[] = [
   // ---- 기초 질서 ----
   {
@@ -476,12 +483,7 @@ export const ruleEntries: RuleEntry[] = [
       '居民税（个人部分）',
       'Thuế cư trú (cá nhân)',
     ),
-    summary: l(
-      '7월 1일 기준 시흥시에 사는 개인이 8월 16~31일에 내요. 외국인은 외국인등록 후 1년이 지나면 대상이에요.',
-      'People living in Siheung on 1 July pay it from 16 to 31 August. Foreigners pay it once one year has passed since alien registration.',
-      '7月1日在始兴市居住的个人于8月16日至31日缴纳。外国人在外国人登录满1年后成为缴纳对象。',
-      'Người sống tại Siheung vào ngày 1/7 nộp từ 16 đến 31/8. Người nước ngoài phải nộp khi đã đăng ký người nước ngoài được 1 năm.',
-    ),
+    summary: residentTaxSummary,
     points: [
       l(
         '외국인은 주소 대신 출입국관리법상 체류지를 기준으로 해요.',
@@ -514,6 +516,10 @@ export const ruleEntries: RuleEntry[] = [
     sources: [
       { name: '시흥시 주민세', url: siheung('0402010600', 'economy') },
       {
+        name: '국가법령정보센터 — 지방세법 제75조',
+        url: 'https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1030540701',
+      },
+      {
         name: '시흥시 보도자료 — 외국인 납세자 맞춤형 주민세 고지서 발송',
         url: 'https://www.siheung.go.kr/media/bbs/view.do?mId=0100000000&bIdx=177130&ptIdx=82',
       },
@@ -524,17 +530,17 @@ export const ruleEntries: RuleEntry[] = [
     category: 'tax',
     title: l('재산세', 'Property tax', '财产税', 'Thuế tài sản'),
     summary: l(
-      '6월 1일에 집·건물·토지를 가진 사람이 7월과 9월에 나눠서 내요.',
-      'People who own a home, building or land on 1 June pay it in July and September.',
-      '6月1日拥有住宅、建筑物或土地的人于7月和9月分两次缴纳。',
-      'Người sở hữu nhà, công trình hoặc đất vào ngày 1/6 nộp chia làm hai lần vào tháng 7 và tháng 9.',
+      '6월 1일 소유자를 기준으로 해요. 주택 외 건축물은 7월, 토지는 9월에 내요. 주택분은 7월과 9월에 나눠 내지만 연간 본세가 10만 원 이하면 7월에 전액 내요.',
+      'Tax is based on ownership on 1 June. Non-residential buildings are billed in July and land in September. Homeowners pay in July and September, except when the annual base property tax on the home is 100,000 won or less, in which case the full amount is due in July.',
+      '按6月1日的所有权确定纳税人。非住宅建筑物在7月缴纳，土地在9月缴纳。住宅在7月和9月分两期缴纳；如果住宅全年财产税本金不超过10万韩元，则在7月一次缴清。',
+      'Thuế được xác định theo quyền sở hữu vào ngày 1/6. Công trình không phải nhà ở nộp vào tháng 7, đất nộp vào tháng 9. Thuế nhà ở nộp vào tháng 7 và tháng 9; nếu tiền thuế gốc cả năm không quá 100.000 won thì nộp toàn bộ vào tháng 7.',
     ),
     points: [
       l(
-        '7월(16~31일): 주택 세금의 절반과 주택 외 건축물. 주택 세금이 10만 원 이하이면 7월에 한 번에 내요.',
-        'July (16–31): half of the housing tax and buildings other than housing. If the housing tax is 100,000 won or less, it is paid all at once in July.',
-        '7月（16~31日）：住宅税额的一半及住宅以外的建筑物。住宅税额在10万韩元以下时于7月一次缴清。',
-        'Tháng 7 (16–31): một nửa thuế nhà ở và công trình không phải nhà ở. Nếu thuế nhà ở từ 100.000 won trở xuống thì nộp một lần vào tháng 7.',
+        '7월(16~31일): 주택분의 절반과 주택 외 건축물분. 주택분 연간 본세가 10만 원 이하이면 7월에 전액 내요.',
+        'July (16–31): half of the home’s property tax and all tax on buildings other than homes. If the annual base property tax on the home is 100,000 won or less, the full amount is due in July.',
+        '7月（16~31日）：缴纳住宅财产税的一半及非住宅建筑物的全部税额。住宅全年财产税本金不超过10万韩元时，在7月一次缴清。',
+        'Tháng 7 (16–31): nộp một nửa thuế nhà ở và toàn bộ thuế công trình không phải nhà ở. Nếu tiền thuế gốc cả năm của nhà ở không quá 100.000 won thì nộp toàn bộ vào tháng 7.',
       ),
       l(
         '9월(16~30일): 주택 세금의 나머지 절반과 토지.',
@@ -973,12 +979,7 @@ export const ruleFaqs: RuleFaq[] = [
       '谁需要缴纳居民税？',
       'Ai phải nộp thuế cư trú?',
     ),
-    answer: l(
-      '7월 1일 기준 시흥시에 사는 개인이 8월 16~31일에 내요. 외국인은 외국인등록 후 1년이 지나면 대상이에요.',
-      'People living in Siheung on 1 July pay it from 16 to 31 August. Foreigners pay once one year has passed since alien registration.',
-      '7月1日在始兴市居住的个人于8月16~31日缴纳。外国人在外国人登录满1年后成为缴纳对象。',
-      'Người sống tại Siheung vào ngày 1/7 nộp từ 16 đến 31/8. Người nước ngoài nộp khi đã đăng ký được 1 năm.',
-    ),
+    answer: residentTaxSummary,
   },
   {
     rule: 'order-noise',

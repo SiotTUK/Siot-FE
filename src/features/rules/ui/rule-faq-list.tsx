@@ -27,7 +27,9 @@ export function RuleFaqList({
           <p>
             <KeepTogether text={faq.answer} />
           </p>
-          <Link to={`/rules/${faq.rule}`}>{t('rules.more')}</Link>
+          <Link to={`/rules/${faq.rule}`} state={{ from: 'rules' }}>
+            {t('rules.more')}
+          </Link>
         </details>
       ))}
     </div>

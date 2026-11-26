@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { RuleDetail } from '@/features/rules/ui/rule-detail'
 import { RuleBrowser } from '@/features/rules/ui/rule-groups'
 import { PageBody } from '@/shared/ui/mobile-frame'
@@ -21,11 +21,19 @@ export function RulesPage() {
 export function RuleDetailPage() {
   const { t } = useTranslation()
   const { code } = useParams()
+  const { state } = useLocation()
+  const navigate = useNavigate()
   return (
     <>
       <ScreenHeader
         title={t('rules.detail')}
-        back={{ to: '/rules', label: t('common.back') }}
+        back={{
+          label: t('common.back'),
+          onClick: () => {
+            if (state?.from === 'rules') void navigate(-1)
+            else void navigate('/rules', { replace: true })
+          },
+        }}
       />
       <PageBody className={styles.body}>
         {code ? (

@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ChipGroup } from '@/shared/ui/chip-group'
 import { TextField } from '@/shared/ui/field'
 import { SearchIcon } from '@/shared/ui/icons'
@@ -23,12 +23,23 @@ type Filter = 'all' | RuleCategory
 export function RuleBrowser() {
   const { t } = useTranslation()
   const { rules, faqs } = useRules()
-  const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<Filter>('all')
+  const [params, setParams] = useSearchParams()
+  const categoryChips = useRef<HTMLDivElement>(null)
+  const query = params.get('q') ?? ''
+  const filter =
+    ruleCategories.find((category) => category === params.get('category')) ??
+    'all'
   const searching = query.trim().length > 0
   const groups = groupByCategory(
     filter === 'all' ? rules : rules.filter((rule) => rule.category === filter),
   )
+
+  function updateParam(name: 'q' | 'category', value: string) {
+    const next = new URLSearchParams(params)
+    if (value) next.set(name, value)
+    else next.delete(name)
+    setParams(next, { replace: true, preventScrollReset: true })
+  }
 
   return (
     <>
@@ -40,14 +51,17 @@ export function RuleBrowser() {
           type="search"
           placeholder={t('rules.searchPlaceholder')}
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => updateParam('q', event.target.value)}
         />
       </div>
       {!searching && (
         <ChipGroup<Filter>
+          ref={categoryChips}
           label={t('rules.categoriesLabel')}
           value={filter}
-          onChange={setFilter}
+          onChange={(category) =>
+            updateParam('category', category === 'all' ? '' : category)
+          }
           options={[
             { value: 'all', label: t('rules.all') },
             ...ruleCategories.map((category) => ({
@@ -77,7 +91,14 @@ export function RuleBrowser() {
                   defaultOpen={filter !== 'all'}
                   onViewAll={
                     filter === 'all'
-                      ? () => setFilter(group.category)
+                      ? () => {
+                          categoryChips.current
+                            ?.querySelector<HTMLButtonElement>(
+                              `button[value="${group.category}"]`,
+                            )
+                            ?.focus()
+                          updateParam('category', group.category)
+                        }
                       : undefined
                   }
                 />
@@ -100,7 +121,7 @@ function SearchResults({ rules }: { rules: Rule[] }) {
         <ul className={`${styles.rows} ${styles.resultList}`}>
           {rules.map((rule) => (
             <li key={rule.code}>
-              <Link to={`/rules/${rule.code}`}>
+              <Link to={`/rules/${rule.code}`} state={{ from: 'rules' }}>
                 <span>
                   {rule.title}
                   <small>{rule.summary}</small>

@@ -32,6 +32,7 @@ export const eventMessages = defineMessages({
         open: '오류 신고',
         quote: '문제가 있는 문구',
         quoteRequired: '문제가 있는 문구를 입력해 주세요.',
+        quoteTooLong: '문구는 2000자까지 입력할 수 있어요.',
         reason: '신고 사유',
         chooseReason: '사유를 선택하세요',
         reasonRequired: '신고 사유를 선택해 주세요.',
@@ -50,6 +51,9 @@ export const eventMessages = defineMessages({
         MULTICULTURAL: '다문화 행사',
         SIHEUNG: '시흥시 행사',
       },
+    },
+    errors: {
+      EVENT_NOT_FOUND: '이 행사는 더 이상 볼 수 없어요.',
     },
   },
   en: {
@@ -83,6 +87,7 @@ export const eventMessages = defineMessages({
         open: 'Report an error',
         quote: 'Text with the error',
         quoteRequired: 'Enter the text with the error.',
+        quoteTooLong: 'You can enter up to 2,000 characters.',
         reason: 'Reason for reporting',
         chooseReason: 'Choose a reason',
         reasonRequired: 'Choose a reason for reporting.',
@@ -101,6 +106,9 @@ export const eventMessages = defineMessages({
         MULTICULTURAL: 'Multicultural event',
         SIHEUNG: 'In Siheung',
       },
+    },
+    errors: {
+      EVENT_NOT_FOUND: 'This event is no longer available.',
     },
   },
   zh: {
@@ -134,6 +142,7 @@ export const eventMessages = defineMessages({
         open: '报告错误',
         quote: '有问题的原文',
         quoteRequired: '请输入有问题的原文。',
+        quoteTooLong: '最多可输入2000个字符。',
         reason: '报告原因',
         chooseReason: '请选择原因',
         reasonRequired: '请选择报告原因。',
@@ -152,6 +161,9 @@ export const eventMessages = defineMessages({
         MULTICULTURAL: '多文化活动',
         SIHEUNG: '始兴市活动',
       },
+    },
+    errors: {
+      EVENT_NOT_FOUND: '该活动已无法查看。',
     },
   },
   vi: {
@@ -185,6 +197,7 @@ export const eventMessages = defineMessages({
         open: 'Báo lỗi',
         quote: 'Đoạn văn có lỗi',
         quoteRequired: 'Hãy nhập đoạn văn có lỗi.',
+        quoteTooLong: 'Bạn có thể nhập tối đa 2.000 ký tự.',
         reason: 'Lý do báo lỗi',
         chooseReason: 'Chọn lý do',
         reasonRequired: 'Hãy chọn lý do báo lỗi.',
@@ -203,6 +216,9 @@ export const eventMessages = defineMessages({
         MULTICULTURAL: 'Sự kiện đa văn hóa',
         SIHEUNG: 'Sự kiện tại Siheung',
       },
+    },
+    errors: {
+      EVENT_NOT_FOUND: 'Sự kiện này không còn khả dụng.',
     },
   },
 })

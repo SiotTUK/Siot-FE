@@ -108,6 +108,9 @@ function GuideTextForm({
             ` · ${t('admin.updatedAt', { date: formatDateTime(saved.updatedAt, currentLanguage()) })}`}
         </Muted>
         {!saved && <Notice>{t('admin.newTranslation')}</Notice>}
+        {language === 'ko' && (
+          <Notice tone="note">{t('admin.koreanRegenerates')}</Notice>
+        )}
         {guideFields.map(([field, labelKey, multiline]) => {
           const props = {
             ...register(field),

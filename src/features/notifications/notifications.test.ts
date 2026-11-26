@@ -1,0 +1,87 @@
+import { describe, expect, it } from 'vitest'
+import {
+  groupEnabled,
+  groupUpdates,
+  notificationDay,
+  notificationGroup,
+  notificationPath,
+  unreadBadge,
+} from './notifications'
+
+describe('notification screen rules', () => {
+  it.each([
+    ['STAY_EXPIRY', 'deadline'],
+    ['CHECKLIST_DEADLINE', 'deadline'],
+    ['TAX', 'deadline'],
+    ['EVENT', 'event'],
+    ['NOTICE_CHANGED', 'notice'],
+    ['SOMETHING_NEW', 'other'],
+  ])('groups %s as %s', (kind, group) => {
+    expect(notificationGroup(kind)).toBe(group)
+  })
+
+  it('says today and yesterday in Korea time, else the date', () => {
+    // 2026-11-26 10:00 in Korea
+    const now = new Date('2026-11-26T01:00:00Z')
+    expect(notificationDay('2026-11-26T00:30:00+09:00', 'ko', now)).toEqual({
+      relative: 'today',
+    })
+    // 23:30 UTC on the 25th is already the 26th in Korea
+    expect(notificationDay('2026-11-25T23:30:00Z', 'ko', now)).toEqual({
+      relative: 'today',
+    })
+    expect(notificationDay('2026-11-25T09:00:00+09:00', 'ko', now)).toEqual({
+      relative: 'yesterday',
+    })
+    expect(notificationDay('2026-11-03T09:00:00+09:00', 'ko', now)).toEqual({
+      date: '11. 3.',
+    })
+  })
+
+  const prefs = [
+    { kind: 'STAY_EXPIRY', enabled: true, leadDays: 30 },
+    { kind: 'CHECKLIST_DEADLINE', enabled: true, leadDays: 7 },
+    { kind: 'TAX', enabled: false, leadDays: 7 },
+    { kind: 'EVENT', enabled: true, leadDays: 1 },
+    { kind: 'NOTICE_CHANGED', enabled: true, leadDays: 0 },
+  ]
+
+  it('turns a settings group on only when all its kinds are on', () => {
+    expect(groupEnabled(prefs, 'deadline')).toBe(false)
+    expect(groupEnabled(prefs, 'notice')).toBe(true)
+    expect(groupEnabled([], 'notice')).toBe(false)
+  })
+
+  it('switches every kind in a group and keeps each leadDays', () => {
+    expect(groupUpdates(prefs, 'deadline', true)).toEqual([
+      { kind: 'STAY_EXPIRY', enabled: true, leadDays: 30 },
+      { kind: 'CHECKLIST_DEADLINE', enabled: true, leadDays: 7 },
+      { kind: 'TAX', enabled: true, leadDays: 7 },
+    ])
+    expect(groupUpdates(prefs, 'notice', false)).toEqual([
+      { kind: 'NOTICE_CHANGED', enabled: false, leadDays: 0 },
+    ])
+  })
+
+  it.each([
+    ['EVENT', '12', '/events/12'],
+    ['EVENT', 'abc', undefined],
+    ['EVENT', null, undefined],
+    ['CHECKLIST', 'CL-01', '/home'],
+    ['LIFE_CHANGE_TASK', 'LC-01-1', '/home'],
+    ['RULE', 'RUL-03', '/rules'],
+    ['SCHEDULE', '5', '/calendar'],
+    ['CALENDAR', null, '/calendar'],
+    ['SOMETHING_NEW', 'x', undefined],
+    [null, null, undefined],
+  ])('opens %s %s at %s', (linkType, linkCode, path) => {
+    expect(notificationPath({ linkType, linkCode })).toBe(path)
+  })
+
+  it('shows no badge at 0 and caps it at 99+', () => {
+    expect(unreadBadge(undefined)).toBeUndefined()
+    expect(unreadBadge(0)).toBeUndefined()
+    expect(unreadBadge(2)).toBe('2')
+    expect(unreadBadge(120)).toBe('99+')
+  })
+})

@@ -43,6 +43,13 @@ export interface MockState {
     string,
     Partial<Record<LifeChangeCode, LifeChangeResponse>>
   >
+  /** member email → notification id → read time */
+  notificationReads: Record<string, Record<number, string>>
+  /** member email → kind → saved preference */
+  notificationPrefs: Record<
+    string,
+    Record<string, { enabled: boolean; leadDays: number }>
+  >
 }
 
 export interface MockConversation {
@@ -144,6 +151,8 @@ function seedState(): MockState {
     reviews: {},
     checklist: {},
     lifeChanges: {},
+    notificationReads: {},
+    notificationPrefs: {},
   }
 }
 
@@ -154,6 +163,8 @@ function loadState(): MockState {
       const state = JSON.parse(saved) as MockState
       state.checklist ??= {}
       state.lifeChanges ??= {}
+      state.notificationReads ??= {}
+      state.notificationPrefs ??= {}
       return state
     }
   } catch {

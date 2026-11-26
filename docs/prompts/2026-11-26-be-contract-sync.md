@@ -37,7 +37,11 @@
 | 정적 검사·테스트·빌드 | `npm run check`         | 타입·린트·포맷·Vitest 156개·프로덕션 빌드 통과. 번들 크기 경고 출력. |
 | BE 계약 대조          | BE DTO·서비스 코드 읽기 | 사유 패턴, 길이 제한, RULE 체크 거절, ko 저장 시 재번역 동작 확인.   |
 
-미검증: 실제 BE 연동 신고 접수, 모바일 화면 촬영. MSW의 관리자 문구 핸들러는 ko 저장 시 재번역을 흉내 내지 않는다.
+모바일 화면: Chrome 360×800, MSW 목업에서 Playwright로 촬영했다. 신고 2000자 초과 오류(en), 접수 성공(en, 요청 본문 reason=CONTENT 확인), 관리자 한국어 편집 안내, 체크리스트 삭제 항목 안내(ko·vi). 체크리스트 404는 PUT 요청 코드를 없는 코드로 바꿔 목업이 GUIDE_NOT_FOUND를 돌려주게 해 재현했다.
+
+- [신고 길이 오류](assets/2026-11-26-be-contract-sync-report-too-long-en.png) · [신고 접수](assets/2026-11-26-be-contract-sync-report-received-en.png) · [관리자 안내](assets/2026-11-26-be-contract-sync-admin-guide-ko.png) · [체크리스트 ko](assets/2026-11-26-be-contract-sync-checklist-item-gone-ko.png) · [체크리스트 vi](assets/2026-11-26-be-contract-sync-checklist-item-gone-vi.png)
+
+미검증: 실제 BE 연동 신고 접수. MSW의 관리자 문구 핸들러는 ko 저장 시 재번역을 흉내 내지 않는다.
 
 ## 남은 작업
 

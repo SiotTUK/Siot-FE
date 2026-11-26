@@ -1,31 +1,38 @@
+import { useEffect, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigation } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
-import { MobileFrame, PageBody, PageLoader } from '@/shared/ui/mobile-frame'
+import { PageBody, PageLoader } from '@/shared/ui/mobile-frame'
 import { FormError, Stack } from '@/shared/ui/page'
-import styles from './route-feedback.module.css'
+import type { DeferredScreen } from './deferred-module'
 
-export function InitialRouteLoading() {
+export function DeferredPage({ screen }: { screen: DeferredScreen }) {
   const { t } = useTranslation()
-  return (
-    <MobileFrame>
-      <PageLoader label={t('common.loading')} />
-    </MobileFrame>
+  const [page, setPage] = useState<ComponentType | 'failed' | null>(
+    screen.getLoaded,
   )
+
+  useEffect(() => {
+    let active = true
+    void screen.load().then(
+      (Component) => {
+        if (active) setPage(() => Component)
+      },
+      () => {
+        if (active) setPage('failed')
+      },
+    )
+    return () => {
+      active = false
+    }
+  }, [screen])
+
+  if (page === null) return <PageLoader label={t('common.loading')} />
+  if (page === 'failed') return <RouteLoadFailure />
+  const Component = page
+  return <Component />
 }
 
-export function RouteNavigationLoading() {
-  const { t } = useTranslation()
-  const { state } = useNavigation()
-  if (state !== 'loading') return null
-  return (
-    <div className={styles.pending}>
-      <PageLoader label={t('common.loading')} />
-    </div>
-  )
-}
-
-export function RouteLoadFailure() {
+function RouteLoadFailure() {
   const { t } = useTranslation()
   return (
     <PageBody>

@@ -24,15 +24,23 @@
 }
 /* 40px tap area, but the 20px icon lines up 16px from its neighbor (Figma). */
 .iconButton {
-  display: grid;
-  place-items: center;
-  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  min-width: 40px;
   height: 40px;
   margin-inline: -10px;
-  padding: 0;
+  padding: 0 10px;
   border: 0;
   border-radius: var(--radius-8);
   background: none;
+  color: var(--primary);
+  text-decoration: none;
+}
+.badge {
+  font: var(--text-caption);
+  font-weight: 600;
   color: var(--primary);
 }
 .iconButton svg {

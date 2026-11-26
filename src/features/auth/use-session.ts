@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { scheduleQueryKey } from '@/features/calendar/api'
 import { checklistKeys } from '@/features/checklist/api'
 import { eventKeys } from '@/features/events/api'
@@ -59,6 +59,13 @@ function returnPath(from: string | undefined) {
   return from
 }
 
+/** M-08·M-10: return to the protected screen after login, after onboarding. */
+export function guestRedirectPath(member: MemberResponse, from?: string) {
+  return (
+    (member.onboarded ? returnPath(from) : undefined) ?? homePathFor(member)
+  )
+}
+
 async function refreshCsrfQuietly() {
   // The session (and its CSRF token) changes on login/logout.
   // If this fails, apiRequest refreshes on the next CSRF_TOKEN_INVALID.
@@ -80,13 +87,10 @@ function savedLanguageHandler(queryClient: QueryClient, memberId: number) {
   }
 }
 
-/** Called after login or signup succeeds (session cookie is set). */
+/** Updates the session after login or signup. GuestOnly handles the redirect. */
 export function useStartSession() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
-  const location = useLocation()
   const { i18n } = useTranslation()
-  const from = returnPath(sessionState(location.state).from)
 
   return useCallback(
     async (member: MemberResponse) => {
@@ -110,12 +114,8 @@ export function useStartSession() {
         queryClient.setQueryData(meQueryKey, member)
         void i18n.changeLanguage(member.language)
       }
-      // M-08: back to the screen before login. Onboarding still comes first.
-      navigate(member.onboarded && from ? from : homePathFor(member), {
-        replace: true,
-      })
     },
-    [from, i18n, navigate, queryClient],
+    [i18n, queryClient],
   )
 }
 

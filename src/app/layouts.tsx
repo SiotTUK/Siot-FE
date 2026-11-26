@@ -9,6 +9,7 @@ import { LanguageSelect } from '@/shared/ui/language-select'
 import { MobileFrame } from '@/shared/ui/mobile-frame'
 import { BellIcon } from '@/shared/ui/icons'
 import { TopBar, TopBarIconButton } from '@/shared/ui/top-bar'
+import { RouteNavigationLoading } from './route-feedback'
 
 export function RootLayout() {
   return (
@@ -16,6 +17,7 @@ export function RootLayout() {
       <MemberLanguageSync />
       <ScrollRestoration />
       <Outlet />
+      <RouteNavigationLoading />
     </MobileFrame>
   )
 }

@@ -1,0 +1,17 @@
+.pending {
+  position: fixed;
+  inset: var(--space-16) 0 auto;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pending > div {
+  flex: 0 1 auto;
+  flex-direction: row;
+  padding: var(--space-8) var(--space-16);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}

@@ -1,11 +1,6 @@
+import type { ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { GuestOnly, RequireMember } from '@/features/auth/route-guards'
-import {
-  AdminGuidesPage,
-  AdminHomePage,
-  AdminMembersPage,
-  AdminReviewsPage,
-} from '@/pages/admin/admin-pages'
 import {
   LoginPage,
   PasswordResetPage,
@@ -13,7 +8,6 @@ import {
   SignupPage,
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
-import { ChatHistoryPage, ChatPage } from '@/pages/chat/chat-pages'
 import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
@@ -22,13 +16,33 @@ import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
-import { RuleDetailPage, RulesPage } from '@/pages/rules/rule-pages'
 import {
   MainLayout,
   OnboardingLayout,
   RootLayout,
   TopBarLayout,
 } from './layouts'
+import { InitialRouteLoading, RouteLoadFailure } from './route-feedback'
+
+const loadAdminPages = () => import('@/pages/admin/admin-pages')
+const loadChatPages = () => import('@/pages/chat/chat-pages')
+const loadRulePages = () => import('@/pages/rules/rule-pages')
+
+function lazyPage<Page extends string>(
+  load: () => Promise<Record<Page, ComponentType>>,
+  page: Page,
+) {
+  return {
+    async lazy() {
+      try {
+        return { Component: (await load())[page] }
+      } catch {
+        // Resolve the route so its layout and guards can show the recovery UI.
+        return { Component: RouteLoadFailure }
+      }
+    },
+  }
+}
 
 /**
  * Logged out: language, signup, login and password reset only.
@@ -37,6 +51,7 @@ import {
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
+    HydrateFallback: InitialRouteLoading,
     children: [
       {
         element: <GuestOnly />,
@@ -84,17 +99,26 @@ export const router = createBrowserRouter([
               { path: '/home', element: <HomePage /> },
               { path: '/calendar', element: <CalendarPage /> },
               { path: '/events', element: <EventsPage /> },
-              { path: '/rules', element: <RulesPage /> },
+              { path: '/rules', ...lazyPage(loadRulePages, 'RulesPage') },
               { path: '/me', element: <MePage /> },
             ],
           },
           { path: '/events/:eventId', element: <EventDetailPage /> },
-          { path: '/rules/:code', element: <RuleDetailPage /> },
+          {
+            path: '/rules/:code',
+            ...lazyPage(loadRulePages, 'RuleDetailPage'),
+          },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.
-          { path: '/chat/history', element: <ChatHistoryPage /> },
-          { path: '/chat/:conversationId?', element: <ChatPage /> },
+          {
+            path: '/chat/history',
+            ...lazyPage(loadChatPages, 'ChatHistoryPage'),
+          },
+          {
+            path: '/chat/:conversationId?',
+            ...lazyPage(loadChatPages, 'ChatPage'),
+          },
         ],
       },
       {
@@ -102,10 +126,10 @@ export const router = createBrowserRouter([
         path: '/admin',
         element: <RequireMember when="admin" />,
         children: [
-          { index: true, element: <AdminHomePage /> },
-          { path: 'members', element: <AdminMembersPage /> },
-          { path: 'reviews', element: <AdminReviewsPage /> },
-          { path: 'guides', element: <AdminGuidesPage /> },
+          { index: true, ...lazyPage(loadAdminPages, 'AdminHomePage') },
+          { path: 'members', ...lazyPage(loadAdminPages, 'AdminMembersPage') },
+          { path: 'reviews', ...lazyPage(loadAdminPages, 'AdminReviewsPage') },
+          { path: 'guides', ...lazyPage(loadAdminPages, 'AdminGuidesPage') },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

@@ -1,12 +1,15 @@
 import { expect, it } from 'vitest'
 import { eventDetailBackPath } from './event-routes'
 
-it.each(['/chat/42', '/home', '/events?page=2', '/calendar?month=2026-12'])(
-  'returns to %s from event details',
-  (path) => {
-    expect(eventDetailBackPath(path)).toBe(path)
-  },
-)
+it.each([
+  '/chat/42',
+  '/home',
+  '/notifications',
+  '/events?page=2',
+  '/calendar?month=2026-12',
+])('returns to %s from event details', (path) => {
+  expect(eventDetailBackPath(path)).toBe(path)
+})
 
 it.each([
   undefined,

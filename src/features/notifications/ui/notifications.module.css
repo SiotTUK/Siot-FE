@@ -1,0 +1,80 @@
+/* Figma M09: white card, badge "생활 마감 · 오늘", then the message. */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+  width: 100%;
+  padding: var(--space-16);
+  border: 0;
+  border-radius: var(--radius-16);
+  background: var(--card);
+  text-align: left;
+}
+a.card {
+  color: inherit;
+  text-decoration: none;
+}
+button.card:hover,
+a.card:hover {
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.badge {
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-caption);
+  font-weight: 600;
+  color: var(--primary);
+}
+.card[data-read='true'] .badge {
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+.title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  font: var(--text-body);
+  font-weight: 600;
+  color: var(--foreground);
+}
+.card[data-read='true'] .title {
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+/* Unread mark before the message */
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateY(-2px);
+}
+.body {
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+/* M09 알림 설정 card */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.settingsTitle {
+  margin-bottom: var(--space-4);
+  font: var(--text-label);
+  font-weight: 700;
+  color: var(--foreground);
+}
+.settingsNote {
+  margin-top: var(--space-4);
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}

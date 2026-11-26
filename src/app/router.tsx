@@ -21,6 +21,7 @@ import { LanguagePage } from '@/pages/language-page'
 import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
+import { NotificationsPage } from '@/pages/notifications/notifications-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
 import { RuleDetailPage, RulesPage } from '@/pages/rules/rule-pages'
 import {
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
               { path: '/calendar', element: <CalendarPage /> },
               { path: '/events', element: <EventsPage /> },
               { path: '/rules', element: <RulesPage /> },
+              { path: '/notifications', element: <NotificationsPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },

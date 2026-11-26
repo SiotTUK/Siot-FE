@@ -20,5 +20,25 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-16);
+}
+/* 40px tap area, but the 20px icon lines up 16px from its neighbor (Figma). */
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-inline: -10px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: none;
+  color: var(--primary);
+}
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+}
+.iconButton:disabled {
+  color: var(--placeholder);
 }

@@ -81,6 +81,30 @@ p {
   margin: 0;
   overflow-wrap: anywhere;
 }
+/*
+ * Line breaks that follow the sentence: Korean wraps between words (어절),
+ * not inside them. Chinese keeps breaking between characters. Very long
+ * strings (URLs) still wrap through overflow-wrap.
+ */
+:lang(ko) {
+  word-break: keep-all;
+}
+/* Even headings; no lone word on the last line of a paragraph. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p,
+li,
+dd,
+summary {
+  text-wrap: pretty;
+}
+/* Phone numbers and similar codes stay on one line (see KeepTogether). */
+.nowrap {
+  white-space: nowrap;
+}
 :focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 2px;

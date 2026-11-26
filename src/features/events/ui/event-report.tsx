@@ -35,6 +35,7 @@ export function EventReport({
     defaultValues: { quotedText: '', reason: '' },
   })
   const submit = useMutation({
+    networkMode: 'always',
     retry: false,
     onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
     mutationFn: ({

@@ -117,6 +117,7 @@ export function TextAreaField({
 
 export function SelectField({
   label,
+  error,
   options,
   className,
   ref,
@@ -126,7 +127,7 @@ export function SelectField({
   ref?: Ref<HTMLSelectElement>
 }) {
   return (
-    <Field {...{ label, className }}>
+    <Field {...{ label, error, className }}>
       {(control) => (
         <select {...select} {...control} ref={ref}>
           {options.map((option) => (

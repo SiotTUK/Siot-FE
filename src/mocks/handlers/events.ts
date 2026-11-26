@@ -6,7 +6,7 @@ import type {
 } from '@/features/events/api'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
-import { currentMember, error, unauthorized } from '../db'
+import { body, currentMember, error, unauthorized } from '../db'
 
 const sampleText = {
   ko: {
@@ -169,5 +169,27 @@ export const eventHandlers = [
     return event
       ? HttpResponse.json({ data: event })
       : error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
+  }),
+  http.post('*/api/reports', async ({ request }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const report = await body(request)
+    if (
+      typeof report.reason !== 'string' ||
+      !report.reason.trim() ||
+      report.reason.length > 50
+    )
+      return error(400, 'INVALID_INPUT', '신고 사유를 다시 확인해 주세요.')
+    if (
+      !mockEvents(member.language).some(
+        ({ eventId }) => report.eventId === eventId,
+      )
+    )
+      return error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
+
+    return HttpResponse.json(
+      { data: { reportId: 1, status: 'RECEIVED' } },
+      { status: 201 },
+    )
   }),
 ]

@@ -7,6 +7,8 @@ type ChoiceCardProps = {
   selected: boolean
   /** radio = single choice (F01, F02, F04), checkbox = multiple (F05). */
   indicator?: 'radio' | 'checkbox'
+  /** Tinted icon on the left; the indicator then moves right (F06a). */
+  icon?: ReactNode
   lang?: string
   onClick: () => void
 }
@@ -16,6 +18,7 @@ export function ChoiceCard({
   description,
   selected,
   indicator = 'radio',
+  icon,
   lang,
   onClick,
 }: ChoiceCardProps) {
@@ -24,10 +27,17 @@ export function ChoiceCard({
       type="button"
       className={styles.card}
       data-selected={selected}
+      data-icon={icon ? true : undefined}
       aria-pressed={selected}
       onClick={onClick}
     >
-      <span className={styles[indicator]} aria-hidden="true" />
+      {icon ? (
+        <span className={styles.icon} aria-hidden="true">
+          {icon}
+        </span>
+      ) : (
+        <span className={styles[indicator]} aria-hidden="true" />
+      )}
       <span className={styles.text}>
         {/* `lang` marks the title only; the description is in the screen language. */}
         <span className={styles.title} lang={lang}>
@@ -37,6 +47,7 @@ export function ChoiceCard({
           <span className={styles.description}>{description}</span>
         )}
       </span>
+      {icon && <span className={styles[indicator]} aria-hidden="true" />}
     </button>
   )
 }

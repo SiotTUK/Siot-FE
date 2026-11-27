@@ -1,39 +1,47 @@
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { currentLanguage } from '@/shared/i18n'
-import { formatMonthDay } from '@/shared/i18n/format'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
 import { deadlineText } from '../checklist'
-import styles from './checklist.module.css'
+import { GuideDetail } from './guide-detail'
+import styles from './task-row.module.css'
 
 /**
- * One checklist item (H1·H2 card): checkbox, badge, title, summary, law,
- * the server's D-day text and "해당 없음". INFO items have no checkbox.
+ * Figma v2 home task row: checkbox, (life-change tag) title, one short line
+ * and the D-day chip. Tapping the text opens the guide (GuideDetail) and
+ * "해당 없음". INFO items have no checkbox.
  */
-export function ChecklistCard({
+export function TaskRow({
   item,
+  tag,
   busy,
   onToggleDone,
   onToggleNotApplicable,
 }: {
   item: ChecklistItemResponse
+  /** Short life-change name ("이사") for a life-change task. */
+  tag?: string
   busy: boolean
   onToggleDone: () => void
   onToggleNotApplicable: () => void
 }) {
   const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
+  const detailId = useId()
   const checkable = item.itemType !== 'INFO'
   const notApplicable = item.status === 'NOT_APPLICABLE'
   const overdue = item.status === 'OVERDUE'
   const dDayText = deadlineText(item, t('checklist.pastDeadline'))
+  const brief = [item.badge, item.place].filter(Boolean).join(' · ')
+  const line = brief || item.summary
 
   return (
     <article
-      className={styles.card}
+      className={styles.row}
       data-status={item.status}
       data-highlighted={item.highlighted}
     >
-      {checkable && (
+      {checkable ? (
         <input
           type="checkbox"
           className={styles.check}
@@ -42,41 +50,32 @@ export function ChecklistCard({
           aria-label={`${item.title} ${t('checklist.done')}`}
           onChange={onToggleDone}
         />
+      ) : (
+        <span aria-hidden="true" />
       )}
-      <div className={styles.body}>
-        <div className={styles.tags}>
-          {item.badge && <Tag>{item.badge}</Tag>}
+      <button
+        type="button"
+        className={styles.main}
+        aria-expanded={open}
+        aria-controls={detailId}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <span className={styles.titleLine}>
+          {tag && <Tag tone="main">{tag}</Tag>}
           {item.hasNoticeChanged && (
-            <Tag tone="main">{t('checklist.noticeChanged')}</Tag>
+            <Tag tone="warning">{t('checklist.noticeChanged')}</Tag>
           )}
-        </div>
-        <h3 className={styles.title}>{item.title}</h3>
-        {item.summary && <p className={styles.text}>{item.summary}</p>}
-        {item.variantBodies.map((body) => (
-          <p key={body} className={styles.text}>
-            {body}
-          </p>
-        ))}
-        {item.applyStartsOn && (
-          <p className={styles.meta}>
-            {t('checklist.applyStarts', {
-              date: formatMonthDay(item.applyStartsOn, currentLanguage()),
-            })}
-          </p>
-        )}
-        {item.law && <p className={styles.meta}>{item.law}</p>}
-        {overdue && (
-          <p className={styles.overdue} role="note">
-            {t('checklist.overdue')}
-          </p>
-        )}
-      </div>
-      <div className={styles.side}>
-        {dDayText && (
-          <span className={styles.dDay} data-overdue={overdue}>
-            {dDayText}
-          </span>
-        )}
+          <strong className={styles.title}>{item.title}</strong>
+        </span>
+        {line && <span className={styles.line}>{line}</span>}
+      </button>
+      {dDayText && (
+        <span className={styles.dDay} data-overdue={overdue}>
+          {dDayText}
+        </span>
+      )}
+      <div id={detailId} className={styles.detail} hidden={!open}>
+        <GuideDetail item={item} />
         {checkable && (
           <button
             type="button"

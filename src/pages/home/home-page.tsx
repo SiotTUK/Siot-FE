@@ -1,44 +1,79 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
-import {
-  ChecklistProgress,
-  ChecklistSection,
-} from '@/features/checklist/ui/home-checklist'
+import type { ChecklistItemResponse } from '@/features/checklist/api'
+import { homeHero } from '@/features/checklist/checklist'
+import { useChecklist } from '@/features/checklist/use-checklist'
+import { ChecklistSection } from '@/features/checklist/ui/home-checklist'
+import { HomeHero } from '@/features/checklist/ui/home-hero'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
-import { LifeChangePicker } from '@/features/life-changes/ui/life-change-picker'
+import { lifeChangeOf } from '@/features/life-changes/life-changes'
+import { LifeChangeTile } from '@/features/life-changes/ui/life-change-tile'
 import { situationSummary } from '@/features/onboarding/summary'
+import type { MemberResponse } from '@/shared/api/types'
+import { currentLanguage } from '@/shared/i18n'
+import { ActionTile } from '@/shared/ui/action-tile'
+import { CameraIcon } from '@/shared/ui/icons'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, Notice, Tag } from '@/shared/ui/page'
+import { Tag } from '@/shared/ui/page'
+import { TextLink } from '@/shared/ui/text-link'
 import styles from './home-page.module.css'
 
 /**
- * H1/H2 personalized home: checklist progress and items (server-computed
- * deadlines), my situation and life changes.
+ * Figma v2 맞춤 홈. H1 (a deadline within 30 days): hero, my situation, my
+ * tasks, 생활 변화, bill translation, events. H2 (nothing urgent): events
+ * come before "다음 할 일". The order is fixed on entry (see HomeContent).
  */
 export function HomePage() {
-  const { t } = useTranslation()
   const { data: me } = useMe()
-  const situation = me ? situationSummary(t, me) : undefined
-  const comingSoon = <Tag>{t('home.comingSoon')}</Tag>
-
   return (
     <PageBody className={styles.body}>
-      {me && <ChecklistProgress memberId={me.id} />}
-      {situation && (
-        <Notice tone="note" title={situation.title}>
-          {situation.detail}
-        </Notice>
-      )}
-      {me && <ChecklistSection key={`checklist:${me.id}`} memberId={me.id} />}
-      <div className={styles.row} data-tone="info">
-        <div>
-          <strong>{t('home.billTitle')}</strong>
-          <Muted>{t('home.billLabel')}</Muted>
-        </div>
-        {comingSoon}
-      </div>
-      {me && <EventRecommendations memberId={me.id} showAllLink />}
-      {me && <LifeChangePicker key={`life-change:${me.id}`} memberId={me.id} />}
+      {me && <HomeContent key={me.id} member={me} />}
     </PageBody>
+  )
+}
+
+function HomeContent({ member }: { member: MemberResponse }) {
+  const { t } = useTranslation()
+  const checklist = useChecklist(member.id, currentLanguage())
+  // The H1/H2 order is decided once, when the checklist first loads on entry.
+  // Checking items only updates the hero card; the list the member is
+  // tapping doesn't jump below the events until the next visit.
+  const [calmOnEntry, setCalmOnEntry] = useState<boolean>()
+  if (checklist.data && calmOnEntry === undefined)
+    setCalmOnEntry(homeHero(checklist.data.items).kind === 'calm')
+  const calm = calmOnEntry ?? false
+  const situation = situationSummary(t, member)
+  const tagFor = (item: ChecklistItemResponse) => {
+    const code = lifeChangeOf(item)
+    return code && t(`lifeChanges.types.${code}.short`)
+  }
+
+  const tasks = (
+    <ChecklistSection memberId={member.id} calm={calm} tagFor={tagFor} />
+  )
+  const events = <EventRecommendations memberId={member.id} showAllLink />
+
+  return (
+    <>
+      {checklist.data && <HomeHero checklist={checklist.data} />}
+      <div className={styles.situation}>
+        <p>{[situation.title, situation.detail].filter(Boolean).join(' · ')}</p>
+        <TextLink to="/me">{t('home.change')} ›</TextLink>
+      </div>
+      {calm ? events : tasks}
+      {calm && tasks}
+      <div className={styles.tiles}>
+        <LifeChangeTile memberId={member.id} />
+        <ActionTile
+          tone="warning"
+          icon={<CameraIcon />}
+          title={t('home.billTitle')}
+          description={t('home.billLabel')}
+          trailing={<Tag>{t('home.comingSoon')}</Tag>}
+        />
+      </div>
+      {!calm && events}
+    </>
   )
 }

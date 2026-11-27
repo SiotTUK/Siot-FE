@@ -1,0 +1,88 @@
+/* Figma v2 home task row, inside the white task list card. */
+.row {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  column-gap: var(--space-12);
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--background);
+}
+.row[data-highlighted='true'] .title {
+  color: var(--primary);
+}
+.row[data-status='DONE'] .title {
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+}
+.row[data-status='NOT_APPLICABLE'] .main {
+  opacity: 0.5;
+}
+.check {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--foreground);
+  text-align: start;
+}
+.titleLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.title {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.line {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+.dDay {
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-8);
+  background: var(--warning-bg);
+  font: var(--text-caption);
+  font-weight: 700;
+  color: var(--warning);
+  white-space: nowrap;
+}
+.dDay[data-overdue='true'] {
+  background: var(--destructive-bg);
+  color: var(--destructive);
+}
+.detail {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+.detail[hidden] {
+  display: none;
+}
+.textButton {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+}

@@ -1,6 +1,7 @@
 import {
   CancelledError,
   useMutation,
+  useMutationState,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -26,11 +27,24 @@ export function useChecklist(memberId: number, language: Language) {
   })
 }
 
-/** Update the card optimistically, then refresh the member's active checklist. */
+/**
+ * Update the card optimistically, then refresh the member's active checklist.
+ * Only the items being saved are locked (`isSaving`), so the other
+ * checkboxes don't flash grey on every tap.
+ */
 export function useMarkChecklistItem(memberId: number, language: Language) {
   const queryClient = useQueryClient()
   const key = checklistKeys.summary(memberId, language)
+  const mutationKey = ['checklist-mark', memberId]
+  const saving = new Set(
+    useMutationState({
+      filters: { mutationKey, status: 'pending' },
+      select: (mutation) =>
+        checklistItemKey((mutation.state.variables as MarkInput).item),
+    }),
+  )
   const { mutate, isPending, isError, error } = useMutation({
+    mutationKey,
     mutationFn: ({
       item,
       mark,
@@ -99,7 +113,12 @@ export function useMarkChecklistItem(memberId: number, language: Language) {
       )
     },
     onSettled: (_data, _error, _input, context) => {
-      if (context?.isSessionCurrent())
+      // Refetch after the last save only, so an early response can't undo
+      // another item's optimistic check for a moment.
+      if (
+        context?.isSessionCurrent() &&
+        queryClient.isMutating({ mutationKey }) === 1
+      )
         return queryClient.invalidateQueries({
           queryKey: checklistKeys.member(context.memberId),
         })
@@ -108,6 +127,8 @@ export function useMarkChecklistItem(memberId: number, language: Language) {
 
   return {
     isPending,
+    isSaving: (item: ChecklistItemResponse) =>
+      saving.has(checklistItemKey(item)),
     isError,
     error,
     mutate: (input: MarkInput) =>

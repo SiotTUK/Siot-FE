@@ -1,69 +1,37 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { currentLanguage } from '@/shared/i18n'
-import { formatMonthDay } from '@/shared/i18n/format'
-import { FormError, Muted, Section, Stack, Tag } from '@/shared/ui/page'
+import { ChevronRightIcon } from '@/shared/ui/icons'
+import { FormError, Muted, Section } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import type { ChecklistItemResponse } from '../api'
 import {
   checklistItemKey,
-  deadlineText,
   groupItems,
   keepOrder,
   markErrorMessage,
   nextMark,
-  pickDeadlineAlert,
+  openRequiredCount,
 } from '../checklist'
 import { useChecklist, useMarkChecklistItem } from '../use-checklist'
-import { ChecklistCard } from './checklist-card'
+import { TaskRow } from './task-row'
 import styles from './checklist.module.css'
 
-/** Home top: "나에게 필요한 할 일 N개", progress and the nearest-deadline alert. */
-export function ChecklistProgress({ memberId }: { memberId: number }) {
-  const { t } = useTranslation()
-  const language = currentLanguage()
-  const { data } = useChecklist(memberId, language)
-  if (!data) return null
-  const alert = pickDeadlineAlert(data.items)
-  return (
-    <>
-      <div className={styles.progress}>
-        <h1>
-          {t('checklist.progressTitle', { count: data.totalRequiredCount })}
-        </h1>
-        <div className={styles.progressRow}>
-          <progress
-            max={100}
-            value={data.progressPercentage}
-            aria-label={t('checklist.progressDone', {
-              done: data.completedRequiredCount,
-              total: data.totalRequiredCount,
-            })}
-          />
-          <strong>
-            {t('checklist.progressDone', {
-              done: data.completedRequiredCount,
-              total: data.totalRequiredCount,
-            })}
-          </strong>
-        </div>
-      </div>
-      {alert && (
-        <div className={styles.alert} role="status">
-          <Tag tone="warning">{t('checklist.alertTag')}</Tag>
-          {t('checklist.alert', {
-            title: alert.title,
-            dDay: deadlineText(alert, t('checklist.pastDeadline')) ?? '',
-            date: formatMonthDay(alert.deadline, language),
-          })}
-        </div>
-      )}
-    </>
-  )
-}
-
-/** "내 체크리스트" cards, then optional "생활 준비" folded. */
-export function ChecklistSection({ memberId }: { memberId: number }) {
+/**
+ * Figma v2 home task list in one white card: "나에게 필요한 할 일 N" (H1) or
+ * "다음 할 일" (H2), then "생활 준비 (선택) N개 더" folded.
+ */
+export function ChecklistSection({
+  memberId,
+  calm = false,
+  tagFor,
+}: {
+  memberId: number
+  /** H2 (nothing urgent): titled "다음 할 일". */
+  calm?: boolean
+  /** Short life-change name for a life-change task row ("이사"). */
+  tagFor?: (item: ChecklistItemResponse) => string | undefined
+}) {
   const { t } = useTranslation()
   const language = currentLanguage()
   const checklist = useChecklist(memberId, language)
@@ -81,11 +49,12 @@ export function ChecklistSection({ memberId }: { memberId: number }) {
   }
   const { main, optional } = groupItems(items)
 
-  const card = (item: ChecklistItemResponse) => (
+  const row = (item: ChecklistItemResponse) => (
     <li key={checklistItemKey(item)}>
-      <ChecklistCard
+      <TaskRow
         item={item}
-        busy={mark.isPending}
+        tag={tagFor?.(item)}
+        busy={mark.isSaving(item)}
         onToggleDone={() =>
           mark.mutate({ item, mark: nextMark(item, 'toggleDone') })
         }
@@ -97,40 +66,40 @@ export function ChecklistSection({ memberId }: { memberId: number }) {
   )
 
   return (
-    <Section title={t('checklist.title')}>
+    <Section
+      title={
+        calm
+          ? t('checklist.nextTitle')
+          : t('checklist.needTitle', { count: openRequiredCount(items) })
+      }
+    >
       <QueryState query={checklist}>
         {mark.isError && (
           <FormError message={markErrorMessage(t, mark.error)} />
         )}
-        {main.length === 0 && optional.length === 0 && (
+        {main.length === 0 && optional.length === 0 ? (
           <Muted>{t('checklist.empty')}</Muted>
-        )}
-        <Stack as="ul" gap={10}>
-          {main.map(card)}
-        </Stack>
-        {optional.length > 0 && (
-          <div className={styles.optional}>
-            <button
-              type="button"
-              aria-expanded={showOptional}
-              onClick={() => setShowOptional((value) => !value)}
-            >
-              <span>
-                {t('checklist.optional', {
-                  done: optional.filter((item) => item.status === 'DONE')
-                    .length,
-                  total: optional.length,
-                })}
-              </span>
-              <span>
-                {t(showOptional ? 'checklist.collapse' : 'checklist.expand')}{' '}
-                {showOptional ? '▲' : '▼'}
-              </span>
-            </button>
-            {showOptional && (
-              <Stack as="ul" gap={10}>
-                {optional.map(card)}
-              </Stack>
+        ) : (
+          <div className={styles.list}>
+            <ul>
+              {main.map(row)}
+              {showOptional && optional.map(row)}
+            </ul>
+            {optional.length > 0 && (
+              <button
+                type="button"
+                className={styles.more}
+                aria-expanded={showOptional}
+                onClick={() => setShowOptional((value) => !value)}
+              >
+                {showOptional
+                  ? t('checklist.lessOptional')
+                  : t('checklist.moreOptional', { count: optional.length })}
+                <ChevronRightIcon
+                  className={styles.moreIcon}
+                  data-open={showOptional}
+                />
+              </button>
             )}
           </div>
         )}

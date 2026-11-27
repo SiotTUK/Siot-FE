@@ -1,18 +1,30 @@
 .body {
-  gap: 16px;
+  gap: 20px;
   padding-top: 16px;
 }
-.row {
+/* "처음 입국 · 일하러 왔어요 · 입국 2026-08-20   변경 ›" */
+.situation {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
-  border-radius: var(--radius-16);
-  background: var(--card);
-  font-size: 14px;
-}
-.row[data-tone='info'] {
-  border: 1px solid var(--secondary);
+  gap: var(--space-12);
+  margin-top: -12px;
+  padding: 10px var(--space-16);
+  border-radius: var(--radius-8);
   background: var(--secondary);
+  font: var(--text-caption);
+  color: var(--foreground);
+}
+.situation p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.situation a {
+  flex: none;
+  font-size: 13px;
+}
+.tiles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
 }

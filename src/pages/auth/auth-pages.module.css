@@ -1,0 +1,18 @@
+/* Figma v2 M02a–d: content starts 16px under the header. */
+.body {
+  padding-top: var(--space-16);
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.link {
+  align-self: flex-start;
+  font-size: 15px;
+  color: var(--primary);
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}

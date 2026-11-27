@@ -50,7 +50,7 @@ export function ResetRequestForm() {
           {t('resetRequest.submit')}
         </Button>
         {submit.isSuccess && (
-          <Notice tone="success" title={`✓ ${t('resetRequest.sentTitle')}`}>
+          <Notice tone="note" title={`✓ ${t('resetRequest.sentTitle')}`}>
             {t('resetRequest.sentBody')}
           </Notice>
         )}

@@ -2,6 +2,15 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 
 export const authMessages = defineMessages({
   ko: {
+    authTips: {
+      haero: '해로',
+      toro: '토로',
+      signup: '반가워요! 이메일로 가입하고 시흥 생활을 시작해요',
+      login: '다시 만나서 반가워요! 오늘도 시흥 생활 도와줄게요',
+      expiredTitle: '링크가 만료됐어요',
+      expiredBody:
+        '30분이 지났거나 이미 쓴 링크예요. 재설정 메일을 다시 요청해 주세요.',
+    },
     signup: {
       emailAvailable: '가입할 수 있는 이메일이에요',
       title: '회원가입',
@@ -22,8 +31,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '다시 입력',
       notice: '가입하면 바로 나의 상황을 고르는 화면으로 넘어가요.',
       submit: '가입하기',
-      haveAccount: '이미 회원이에요?',
-      login: '로그인',
     },
     passwordRules: {
       allowedCharacters: '영문 · 숫자 · 특수문자만',
@@ -66,7 +73,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '다시 입력',
       submit: '비밀번호 바꾸기',
       footer: '바꾸면 로그인 화면으로 돌아가요',
-      invalid: '링크가 만료됐어요. 다시 요청해 주세요.',
       requestAgain: '재설정 링크 다시 받기',
     },
     emailVerification: {
@@ -125,6 +131,15 @@ export const authMessages = defineMessages({
     },
   },
   en: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup: 'Welcome! Sign up with your email and start your life in Siheung',
+      login: 'Good to see you again! Let me help with life in Siheung today',
+      expiredTitle: 'This link has expired',
+      expiredBody:
+        'It is over 30 minutes old or was already used. Please request a new reset email.',
+    },
     signup: {
       emailAvailable: 'You can sign up with this email',
       title: 'Sign up',
@@ -147,8 +162,6 @@ export const authMessages = defineMessages({
       notice:
         'After signing up, you will go straight to choosing your situation.',
       submit: 'Sign up',
-      haveAccount: 'Already a member?',
-      login: 'Log in',
     },
     passwordRules: {
       allowedCharacters: 'Letters, numbers and symbols only',
@@ -193,7 +206,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: 'Enter it again',
       submit: 'Change password',
       footer: 'After changing it, you will return to the login screen',
-      invalid: 'This link has expired. Please request a new one.',
       requestAgain: 'Get a new reset link',
     },
     emailVerification: {
@@ -254,6 +266,14 @@ export const authMessages = defineMessages({
     },
   },
   zh: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup: '欢迎！用邮箱注册，开始在始兴的生活吧',
+      login: '很高兴再次见到您！今天也来帮您在始兴生活',
+      expiredTitle: '链接已过期',
+      expiredBody: '已超过30分钟或链接已使用过。请重新申请重置邮件。',
+    },
     signup: {
       emailAvailable: '该邮箱可以注册',
       title: '注册',
@@ -274,8 +294,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '再次输入',
       notice: '注册后将直接进入选择您情况的页面。',
       submit: '注册',
-      haveAccount: '已经是会员？',
-      login: '登录',
     },
     passwordRules: {
       allowedCharacters: '仅限英文字母、数字和特殊字符',
@@ -318,7 +336,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '再次输入',
       submit: '更改密码',
       footer: '更改后将返回登录页面',
-      invalid: '链接已过期。请重新申请。',
       requestAgain: '重新获取重置链接',
     },
     emailVerification: {
@@ -370,6 +387,17 @@ export const authMessages = defineMessages({
     },
   },
   vi: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup:
+        'Chào mừng bạn! Đăng ký bằng email và bắt đầu cuộc sống ở Siheung nhé',
+      login:
+        'Rất vui gặp lại bạn! Hôm nay mình cũng sẽ giúp bạn sống ở Siheung',
+      expiredTitle: 'Liên kết đã hết hạn',
+      expiredBody:
+        'Đã quá 30 phút hoặc liên kết đã được dùng. Vui lòng yêu cầu lại email đặt lại mật khẩu.',
+    },
     signup: {
       emailAvailable: 'Bạn có thể đăng ký bằng email này',
       title: 'Đăng ký',
@@ -392,8 +420,6 @@ export const authMessages = defineMessages({
       notice:
         'Sau khi đăng ký, bạn sẽ chuyển ngay sang màn hình chọn tình trạng của mình.',
       submit: 'Đăng ký',
-      haveAccount: 'Bạn đã là thành viên?',
-      login: 'Đăng nhập',
     },
     passwordRules: {
       allowedCharacters: 'Chỉ chữ cái, chữ số và ký tự đặc biệt',
@@ -437,7 +463,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: 'Nhập lại',
       submit: 'Đổi mật khẩu',
       footer: 'Sau khi đổi, bạn sẽ quay lại màn hình đăng nhập',
-      invalid: 'Liên kết đã hết hạn. Hãy yêu cầu lại.',
       requestAgain: 'Nhận lại liên kết đặt lại',
     },
     emailVerification: {

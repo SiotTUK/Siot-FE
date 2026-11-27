@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { ApiError } from '@/shared/api/client'
 import { errorKey, useMessage } from '@/shared/i18n/error-message'
 import { Button, ButtonLink } from '@/shared/ui/button'
-import { FormError, Muted, Stack } from '@/shared/ui/page'
+import { FormError, Muted, Notice, Stack } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import { fieldForErrorCode, refinePasswordPair } from '../password-rules'
 import {
@@ -40,7 +40,9 @@ function ExpiredLink() {
   const { t } = useTranslation()
   return (
     <Stack>
-      <FormError message={t('newPassword.invalid')} />
+      <Notice tone="note" title={t('authTips.expiredTitle')}>
+        {t('authTips.expiredBody')}
+      </Notice>
       <ButtonLink to="/password-reset/request">
         {t('newPassword.requestAgain')}
       </ButtonLink>

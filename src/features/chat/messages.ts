@@ -3,7 +3,6 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const chatMessages = defineMessages({
   ko: {
     chat: {
-      title: '웰컴시흥 도우미',
       back: '홈으로',
       history: '기록',
       newChat: '새 대화',
@@ -49,7 +48,6 @@ export const chatMessages = defineMessages({
   },
   en: {
     chat: {
-      title: 'Welcome Siheung Helper',
       back: 'Home',
       history: 'History',
       newChat: 'New chat',
@@ -96,7 +94,6 @@ export const chatMessages = defineMessages({
   },
   zh: {
     chat: {
-      title: '欢迎来到始兴 助手',
       back: '首页',
       history: '记录',
       newChat: '新对话',
@@ -142,7 +139,6 @@ export const chatMessages = defineMessages({
   },
   vi: {
     chat: {
-      title: 'Trợ lý Welcome Siheung',
       back: 'Trang chủ',
       history: 'Lịch sử',
       newChat: 'Hỏi mới',

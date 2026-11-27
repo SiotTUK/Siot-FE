@@ -41,7 +41,7 @@ export const calendarMessages = defineMessages({
       kindSaved: '찜한 행사',
       monthCount: '{{month}} 일정 {{count}}개',
       savedBadge: '찜',
-      tip: '행사 목록에서 ♥를 누르면 달력에 담겨요. 내 체크리스트 마감일도 자동으로 들어와요',
+      tip: '행사 목록에서 ♥를 누르면 $t(nav.calendar)에 담겨요. 내 체크리스트 마감일도 자동으로 들어와요',
     },
   },
   en: {
@@ -84,7 +84,7 @@ export const calendarMessages = defineMessages({
       kindSaved: 'Saved events',
       monthCount: '{{month}}: {{count}} schedules',
       savedBadge: 'Saved',
-      tip: 'Tap ♥ on an event to add it here. Your checklist deadlines show up automatically too',
+      tip: 'Tap ♥ on an event to add it to $t(nav.calendar). Your checklist deadlines show up automatically too',
     },
   },
   zh: {
@@ -127,7 +127,7 @@ export const calendarMessages = defineMessages({
       kindSaved: '收藏的活动',
       monthCount: '{{month}}日程 {{count}} 个',
       savedBadge: '收藏',
-      tip: '在活动列表点 ♥ 就会加入日历。清单的截止日期也会自动加入',
+      tip: '在活动列表点 ♥ 就会加入$t(nav.calendar)。清单的截止日期也会自动加入',
     },
   },
   vi: {
@@ -171,7 +171,7 @@ export const calendarMessages = defineMessages({
       kindSaved: 'Sự kiện đã lưu',
       monthCount: '{{month}}: {{count}} lịch',
       savedBadge: 'Đã lưu',
-      tip: 'Nhấn ♥ ở danh sách sự kiện để thêm vào lịch. Hạn trong danh sách việc cần làm cũng tự động có ở đây',
+      tip: 'Nhấn ♥ ở danh sách sự kiện để thêm vào $t(nav.calendar). Hạn trong danh sách việc cần làm cũng tự động có ở đây',
     },
   },
 })

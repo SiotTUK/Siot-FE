@@ -28,7 +28,7 @@ export const checklistMessages = defineMessages({
       contact: '문의 · ☎{{contact}}',
       noGuide:
         '자세한 방법은 아직 준비 중이에요. 모르면 문의처나 토로에게 물어보세요.',
-      askToro: '토로에게 물어보기',
+      askToro: '$t(nav.chat)에 질문하기',
       viewDetail: '기한과 준비물 보기',
       translationPending: '번역 준비 중',
       reasons: {
@@ -62,7 +62,7 @@ export const checklistMessages = defineMessages({
         contact: '문의',
         source: '출처',
         sourceLink: '공식 안내 보기',
-        askChat: '질문하기',
+        askChat: '$t(nav.chat)에 질문하기',
         askDraft: '‘{{title}}’ 할 일에 대해 알려 주세요.',
         markDone: '완료로 표시',
         undoDone: '완료 취소',
@@ -114,7 +114,7 @@ export const checklistMessages = defineMessages({
       contact: 'Contact · ☎{{contact}}',
       noGuide:
         'Step-by-step guidance is still being prepared. If you’re not sure, call the contact or ask Toro.',
-      askToro: 'Ask Toro',
+      askToro: 'Ask the $t(nav.chat)',
       viewDetail: 'View deadline & documents',
       translationPending: 'Translation coming soon',
       reasons: {
@@ -148,7 +148,7 @@ export const checklistMessages = defineMessages({
         contact: 'Inquiries',
         source: 'Source',
         sourceLink: 'View official guide',
-        askChat: 'Ask questions',
+        askChat: 'Ask the $t(nav.chat)',
         askDraft: 'Tell me about the task “{{title}}”.',
         markDone: 'Mark as done',
         undoDone: 'Undo completed',
@@ -199,7 +199,7 @@ export const checklistMessages = defineMessages({
       fee: '手续费 · {{fee}}',
       contact: '咨询 · ☎{{contact}}',
       noGuide: '详细办理方法还在准备中。不清楚的话请咨询联系方式或问问 Toro。',
-      askToro: '问问 Toro',
+      askToro: '向$t(nav.chat)提问',
       viewDetail: '查看期限与材料',
       translationPending: '翻译准备中',
       reasons: {
@@ -233,7 +233,7 @@ export const checklistMessages = defineMessages({
         contact: '咨询',
         source: '来源',
         sourceLink: '查看官方指南',
-        askChat: '在线提问',
+        askChat: '向$t(nav.chat)提问',
         askDraft: '请介绍一下“{{title}}”这项事务。',
         markDone: '标记为完成',
         undoDone: '取消完成',
@@ -285,7 +285,7 @@ export const checklistMessages = defineMessages({
       contact: 'Liên hệ · ☎{{contact}}',
       noGuide:
         'Hướng dẫn chi tiết đang được chuẩn bị. Nếu chưa rõ, hãy gọi số liên hệ hoặc hỏi Toro.',
-      askToro: 'Hỏi Toro',
+      askToro: '$t(nav.chat)',
       viewDetail: 'Xem hạn và giấy tờ',
       translationPending: 'Đang chuẩn bị bản dịch',
       reasons: {
@@ -319,7 +319,7 @@ export const checklistMessages = defineMessages({
         contact: 'Liên hệ',
         source: 'Nguồn',
         sourceLink: 'Xem hướng dẫn chính thức',
-        askChat: 'Hỏi trợ lý',
+        askChat: '$t(nav.chat)',
         askDraft: 'Hãy cho tôi biết về việc “{{title}}”.',
         markDone: 'Đánh dấu đã xong',
         undoDone: 'Hủy hoàn thành',

@@ -95,6 +95,13 @@ export function reasonOf(item: ChecklistItemResponse) {
   return undefined
 }
 
+/**
+ * "번역 준비 중" (BE #30): only the server's `translated` flag decides, never
+ * a guess from the text. A missing flag (older BE) shows nothing.
+ */
+export const translationPending = (item: ChecklistItemResponse) =>
+  item.translated === false
+
 /** What the checkbox and "해당 없음" buttons send for an item. */
 export function nextMark(
   item: ChecklistItemResponse,

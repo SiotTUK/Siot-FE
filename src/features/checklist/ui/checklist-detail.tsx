@@ -9,7 +9,7 @@ import { PageBody } from '@/shared/ui/mobile-frame'
 import { Tag } from '@/shared/ui/page'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText, detailBackPath } from '../checklist'
+import { deadlineText, detailBackPath, translationPending } from '../checklist'
 import { ChecklistReport } from './checklist-report'
 import styles from './checklist-detail.module.css'
 
@@ -109,6 +109,9 @@ export function ChecklistDetail({
               <Tag tone="main">{t('checklist.detail.required')}</Tag>
             )}
             {item.badge && <Tag>{item.badge}</Tag>}
+            {translationPending(item) && (
+              <Tag tone="warning">{t('checklist.translationPending')}</Tag>
+            )}
             {dDayText && (
               <span className={styles.dDay} data-overdue={overdue}>
                 {dDayText}

@@ -17,6 +17,7 @@ import {
   pickDeadlineAlert,
   pickNextItem,
   reasonOf,
+  translationPending,
 } from './checklist'
 
 const item = (over: Partial<ChecklistItemResponse>): ChecklistItemResponse => ({
@@ -106,6 +107,24 @@ describe('checklist screen rules', () => {
     expect(
       reasonOf(item({ code: 'CL-08', category: 'FAMILY' })),
     ).toBeUndefined()
+  })
+
+  it('shows "번역 준비 중" only when the server says translated is false', () => {
+    // Korean fallback, or only the CL-04 condition text in Korean (BE #30).
+    expect(
+      translationPending(item({ contentLanguage: 'ko', translated: false })),
+    ).toBe(true)
+    expect(
+      translationPending(item({ contentLanguage: 'en', translated: false })),
+    ).toBe(true)
+    expect(
+      translationPending(item({ contentLanguage: null, translated: false })),
+    ).toBe(true)
+    expect(
+      translationPending(item({ contentLanguage: 'en', translated: true })),
+    ).toBe(false)
+    // An older response without the flag shows nothing.
+    expect(translationPending(item({}))).toBe(false)
   })
 
   it('finds the life change of a life-change task only', () => {

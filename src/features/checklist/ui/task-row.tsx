@@ -3,7 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText, lifeChangeOf, reasonOf } from '../checklist'
+import {
+  deadlineText,
+  lifeChangeOf,
+  reasonOf,
+  translationPending,
+} from '../checklist'
 import { GuideDetail } from './guide-detail'
 import styles from './task-row.module.css'
 
@@ -71,6 +76,9 @@ export function TaskRow({
       >
         <span className={styles.titleLine}>
           {tag && <Tag tone="main">{tag}</Tag>}
+          {translationPending(item) && (
+            <Tag>{t('checklist.translationPending')}</Tag>
+          )}
           {item.hasNoticeChanged && (
             <Tag tone="warning">{t('checklist.noticeChanged')}</Tag>
           )}

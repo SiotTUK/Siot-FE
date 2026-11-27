@@ -261,3 +261,11 @@
   justify-items: start;
   gap: var(--space-8);
 }
+
+.taxLink {
+  justify-self: start;
+  font: var(--text-caption);
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+}

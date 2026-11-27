@@ -51,6 +51,12 @@
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
 }
+@media (min-width: 481px) {
+  :root {
+    /* Keep the centered app frame in place as page scrollbars appear or disappear. */
+    scrollbar-gutter: stable both-edges;
+  }
+}
 * {
   box-sizing: border-box;
 }

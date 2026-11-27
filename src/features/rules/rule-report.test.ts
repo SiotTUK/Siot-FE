@@ -42,8 +42,7 @@ describe('rule report (정보 오류 신고)', () => {
           quotedText: '1661-2642',
           reason: 'content',
           guideCode: 'order-noise',
-          targetTitleSnapshot: '층간소음',
-          language: 'ko',
+          language: 'vi',
         },
         current,
       ),
@@ -52,8 +51,11 @@ describe('rule report (정보 오류 신고)', () => {
       guideCode: 'order-noise',
       reason: 'CONTENT',
       quotedText: '1661-2642',
+      language: 'vi',
     })
     expect(sent).not.toHaveProperty('eventId')
+    // No title: the BE stores the Korean title for admins.
+    expect(sent).not.toHaveProperty('targetTitleSnapshot')
   })
 
   it('is accepted by the mock for a known rule and rejected for an unknown one', async () => {
@@ -61,7 +63,6 @@ describe('rule report (정보 오류 신고)', () => {
     const report = {
       quotedText: '문구',
       reason: 'other' as const,
-      targetTitleSnapshot: '',
       language: 'ko' as const,
     }
     await expect(
@@ -70,6 +71,15 @@ describe('rule report (정보 오류 신고)', () => {
     await expect(
       submitRuleReport({ ...report, guideCode: 'no-such-rule' }, current),
     ).rejects.toMatchObject({ status: 404, code: 'GUIDE_NOT_FOUND' })
+  })
+
+  it('shows GUIDE_NOT_FOUND in every language (a rule removed on the BE)', async () => {
+    const { default: i18n } = await import('@/shared/i18n')
+    for (const language of ['ko', 'en', 'zh', 'vi'])
+      expect(
+        i18n.getResource(language, 'translation', 'errors.GUIDE_NOT_FOUND'),
+        language,
+      ).toEqual(expect.any(String))
   })
 
   it('requires the quoted text and a reason', () => {

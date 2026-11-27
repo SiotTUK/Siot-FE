@@ -269,3 +269,11 @@
   color: var(--primary);
   text-decoration: none;
 }
+
+/* D-day and 내 일정·확인 필요 on the right of a schedule row (#34). */
+.badges {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-4);
+  flex: none;
+}

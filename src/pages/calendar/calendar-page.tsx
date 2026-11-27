@@ -5,7 +5,9 @@ import { useMe } from '@/features/auth/use-session'
 import type { ScheduleResponse } from '@/features/calendar/api'
 import {
   calendarEntries,
+  dDayLabel,
   getCalendarWeek,
+  httpUrl,
   isScheduledOn,
 } from '@/features/calendar/calendar'
 import {
@@ -14,7 +16,8 @@ import {
   lastCalendarMonth,
   readCalendarLocation,
 } from '@/features/calendar/calendar-location'
-import { taxDetailPath } from '@/features/calendar/taxes'
+import { scheduleDetailPath, taxDetailPath } from '@/features/calendar/taxes'
+import { useNextSchedule } from '@/features/calendar/use-next-schedule'
 import { useMonthlySchedules } from '@/features/calendar/use-monthly-schedules'
 import {
   useEventCalendar,
@@ -111,6 +114,16 @@ function MonthlyCalendar({
     },
     { query: eventsQuery, key: 'events', error: 'calendar.eventError' },
   ] as const
+  const loaded = sources.every(({ query }) => query.isSuccess)
+  const emptyMonth = loaded && !selectedDate && all.length === 0
+  // #34: an empty month shows the next schedule ("다음 할 일 · 12월"). Saved
+  // events alone have no next schedule to show.
+  const next = useNextSchedule(
+    memberId,
+    monthPrefix,
+    language,
+    emptyMonth && kind !== 'saved',
+  )
 
   function selectDate(date: string | null) {
     setParams(calendarSearch(monthPrefix, date), {
@@ -337,12 +350,26 @@ function MonthlyCalendar({
               ),
             )}
           </ul>
-        ) : sources.every(({ query }) => query.isSuccess) ? (
+        ) : emptyMonth || (selectedDate && loaded) ? (
           <Muted>
             {t(selectedDate ? 'calendar.emptyDay' : 'calendar.emptyMonth')}
           </Muted>
         ) : null}
       </Section>
+      {emptyMonth && next && (
+        <Section
+          title={t('calendar.nextTodo', {
+            month: new Intl.DateTimeFormat(language, {
+              month: 'long',
+              timeZone: 'UTC',
+            }).format(new Date(`${next.startsOn}T00:00:00Z`)),
+          })}
+        >
+          <ul className={styles.schedules}>
+            <ScheduleItem schedule={next} day={next.startsOn} />
+          </ul>
+        </Section>
+      )}
       <MascotTip mascot="haero">{t('calendar.tip')}</MascotTip>
     </PageBody>
   )
@@ -379,6 +406,28 @@ function ScheduleItem({
   day: string
 }) {
   const { t } = useTranslation()
+  // Past schedules keep their dates only; a "기한 지남" chip on every old row is noise.
+  const dDay =
+    schedule.dDay != null && schedule.dDay >= 0
+      ? dDayLabel(t, schedule.dDay)
+      : null
+  // BE #29: personal TAX_CAR·TAX_PROPERTY have no scheduleId, so the tax
+  // detail opens by taxScheduleId. Other common schedules open the schedule
+  // detail (#34); personal ones (stay expiry) have none.
+  const detail =
+    schedule.taxScheduleId != null
+      ? {
+          to: taxDetailPath(schedule.taxScheduleId),
+          label: 'calendar.tax.open',
+        }
+      : schedule.scheduleId != null
+        ? {
+            to: scheduleDetailPath(schedule.scheduleId),
+            label: 'calendar.schedule.open',
+          }
+        : null
+  // The detail screen links the official page itself.
+  const source = detail ? null : httpUrl(schedule.sourceUrl)
   return (
     <li className={styles.schedule} data-highlighted={schedule.highlighted}>
       <DayBlock date={day} />
@@ -388,22 +437,35 @@ function ScheduleItem({
         {schedule.targetDescription && (
           <Muted>{schedule.targetDescription}</Muted>
         )}
-        {/* BE #29: personal TAX_CAR·TAX_PROPERTY have no scheduleId, so the detail opens by taxScheduleId. */}
-        {schedule.taxScheduleId != null && (
-          <Link
-            className={styles.taxLink}
-            to={taxDetailPath(schedule.taxScheduleId)}
-          >
-            {t('calendar.tax.open')} ›
+        {detail && (
+          <Link className={styles.taxLink} to={detail.to}>
+            {t(detail.label)} ›
           </Link>
         )}
+        {source && (
+          <a
+            className={styles.taxLink}
+            href={source}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('calendar.sourceLink')} ↗
+          </a>
+        )}
       </div>
-      {(schedule.highlighted || schedule.personal) && (
-        <Tag tone={schedule.highlighted ? 'warning' : 'main'}>
-          {t(
-            schedule.highlighted ? 'calendar.highlighted' : 'calendar.personal',
+      {(dDay || schedule.highlighted || schedule.personal) && (
+        <div className={styles.badges}>
+          {dDay && <Tag tone="warning">{dDay}</Tag>}
+          {(schedule.highlighted || schedule.personal) && (
+            <Tag tone={schedule.highlighted ? 'warning' : 'main'}>
+              {t(
+                schedule.highlighted
+                  ? 'calendar.highlighted'
+                  : 'calendar.personal',
+              )}
+            </Tag>
           )}
-        </Tag>
+        </div>
       )}
     </li>
   )

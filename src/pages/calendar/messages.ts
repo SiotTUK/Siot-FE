@@ -17,6 +17,14 @@ export const calendarMessages = defineMessages({
       personal: '내 일정',
       highlighted: '확인 필요',
       period: '{{start}} ~ {{end}}',
+      schedule: {
+        screenTitle: '일정 상세',
+        open: '자세히 보기',
+        period: '기간',
+        notFound: '일정을 찾을 수 없어요.',
+      },
+      sourceLink: '공식 안내 보기',
+      nextTodo: '다음 할 일 · {{month}}',
       tax: {
         screenTitle: '세금 상세',
         open: '세금 상세 보기',
@@ -60,6 +68,14 @@ export const calendarMessages = defineMessages({
       personal: 'My schedule',
       highlighted: 'Needs attention',
       period: '{{start}} to {{end}}',
+      schedule: {
+        screenTitle: 'Schedule details',
+        open: 'See details',
+        period: 'Period',
+        notFound: 'We could not find this schedule.',
+      },
+      sourceLink: 'Official guide',
+      nextTodo: 'Next to do · {{month}}',
       tax: {
         screenTitle: 'Tax details',
         open: 'See tax details',
@@ -103,6 +119,14 @@ export const calendarMessages = defineMessages({
       personal: '我的日程',
       highlighted: '请留意',
       period: '{{start}}至{{end}}',
+      schedule: {
+        screenTitle: '日程详情',
+        open: '查看详情',
+        period: '期间',
+        notFound: '找不到该日程。',
+      },
+      sourceLink: '查看官方说明',
+      nextTodo: '下一项待办 · {{month}}',
       tax: {
         screenTitle: '税费详情',
         open: '查看税费详情',
@@ -147,6 +171,14 @@ export const calendarMessages = defineMessages({
       personal: 'Lịch của tôi',
       highlighted: 'Cần lưu ý',
       period: '{{start}} đến {{end}}',
+      schedule: {
+        screenTitle: 'Chi tiết lịch',
+        open: 'Xem chi tiết',
+        period: 'Thời gian',
+        notFound: 'Không tìm thấy lịch này.',
+      },
+      sourceLink: 'Xem hướng dẫn chính thức',
+      nextTodo: 'Việc tiếp theo · {{month}}',
       tax: {
         screenTitle: 'Chi tiết thuế',
         open: 'Xem chi tiết thuế',

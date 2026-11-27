@@ -1,10 +1,13 @@
+import type { TFunction } from 'i18next'
 import { describe, expect, it } from 'vitest'
+import { ApiError } from '@/shared/api/client'
 import type { ChecklistItemResponse } from './api'
 import {
   checklistItemKey,
   deadlineText,
   groupItems,
   keepOrder,
+  markErrorMessage,
   nextMark,
   optimisticStatus,
   pickDeadlineAlert,
@@ -156,5 +159,28 @@ describe('checklist screen rules', () => {
     expect(target.noticeChangedAt).toBe('2026-11-03T09:00:00Z')
     expect(target.docs).toHaveLength(2)
     expect(target.guideId).toBe(101)
+  })
+})
+
+describe('markErrorMessage', () => {
+  const t = ((key: string) => key) as unknown as TFunction
+  it('explains an item deleted after the list loaded', () => {
+    expect(
+      markErrorMessage(
+        t,
+        new ApiError(404, {
+          code: 'GUIDE_NOT_FOUND',
+          message: '항목을 찾을 수 없습니다.',
+        }),
+      ),
+    ).toBe('checklist.itemGone')
+  })
+  it('keeps the shared message for other errors', () => {
+    expect(
+      markErrorMessage(
+        t,
+        new ApiError(400, { code: 'INVALID_INPUT', message: 'x' }),
+      ),
+    ).toBe('errors.INVALID_INPUT')
   })
 })

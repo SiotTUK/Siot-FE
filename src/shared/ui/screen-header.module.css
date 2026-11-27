@@ -32,6 +32,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* No ‹ before it (first screen): line the title up with the page content. */
+.title:first-child {
+  padding-left: var(--space-12);
+}
 .actions {
   display: flex;
   align-items: center;
@@ -50,24 +54,4 @@
   color: var(--muted-foreground);
   text-decoration: none;
   white-space: nowrap;
-}
-.progress {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: 6px;
-  margin: var(--space-4) var(--space-4) 0 var(--space-12);
-}
-.progress span {
-  height: 4px;
-  border-radius: 2px;
-  background: var(--secondary);
-}
-.progress span[data-done='true'] {
-  background: var(--primary);
-}
-.step {
-  margin: var(--space-16) 0 0 var(--space-12);
-  font: var(--text-label);
-  font-size: 14px;
-  color: var(--primary);
 }

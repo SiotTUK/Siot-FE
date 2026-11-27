@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useChangeLanguage } from '@/features/auth/use-session'
+import { questionMaxLength } from '@/features/chat/api'
+import { isEventId } from '@/features/events/event-routes'
 import { useSuggestions } from '@/features/chat/use-chat'
 import { useChatConversation } from '@/features/chat/use-chat-conversation'
 import { ChatComposer } from '@/features/chat/ui/chat-composer'
@@ -24,14 +26,22 @@ import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
  */
 export function ChatPage() {
   const { t } = useTranslation()
-  const location = useLocation()
-  const [searchParams] = useSearchParams()
   const param = useParams().conversationId
   const id = param === undefined ? undefined : Number(param)
   const invalidId = id !== undefined && !(Number.isSafeInteger(id) && id > 0)
-  const initialDraft =
-    searchParams.get('q') ?? (location.state as { q?: string } | null)?.q ?? ''
-  const chat = useChatConversation(invalidId ? undefined : id, initialDraft)
+  const { key, state } = useLocation()
+  const eventId = isEventId(state?.eventQuestionId)
+    ? state.eventQuestionId
+    : undefined
+  const eventQuestion =
+    id === undefined && eventId && typeof state?.eventQuestionDraft === 'string'
+      ? {
+          key,
+          eventId,
+          draft: state.eventQuestionDraft.slice(0, questionMaxLength),
+        }
+      : undefined
+  const chat = useChatConversation(invalidId ? undefined : id, eventQuestion)
   const changeLanguage = useChangeLanguage()
   const suggestions = useSuggestions(currentLanguage())
   const endRef = useRef<HTMLDivElement>(null)
@@ -46,7 +56,10 @@ export function ChatPage() {
     <ChatLayout
       header={
         <ScreenHeader
-          back={{ label: t('chat.back'), to: '/home' }}
+          back={{
+            label: t('chat.back'),
+            to: eventId ? `/events/${eventId}` : '/home',
+          }}
           title={t('chat.title')}
           actions={
             <>

@@ -1,22 +1,17 @@
+/* Figma v2 F01: mascots on top, heading, other-language subtitle, cards. */
 .language {
-  padding-top: 88px;
-}
-.brand {
-  margin-bottom: 16px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary);
+  gap: var(--space-16);
+  padding-top: var(--space-16);
 }
 .subTitle {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.35;
+  font: var(--text-body);
+  color: var(--muted-foreground);
 }
-.center {
+.footer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  text-align: center;
+  gap: var(--space-16);
+  margin-top: var(--space-8);
 }
 .notFound {
   justify-content: center;

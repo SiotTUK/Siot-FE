@@ -19,6 +19,7 @@ import { NotificationsPage } from '@/pages/notifications/notifications-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
 import { deferredModule, type DeferredScreen } from './deferred-module'
 import {
+  AuthLayout,
   MainLayout,
   OnboardingLayout,
   RootLayout,
@@ -46,22 +47,21 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        element: <GuestOnly />,
+        // F01 has the top bar; M02a–d have their own back header (Figma v2).
+        element: <AuthLayout />,
         children: [
-          { path: '/', element: <LanguagePage /> },
           {
-            element: <TopBarLayout />,
+            element: <GuestOnly />,
             children: [
+              {
+                element: <TopBarLayout />,
+                children: [{ path: '/', element: <LanguagePage /> }],
+              },
               { path: '/signup', element: <SignupPage /> },
               { path: '/login', element: <LoginPage /> },
             ],
           },
-        ],
-      },
-      {
-        // Reachable from the reset mail regardless of session state.
-        element: <TopBarLayout />,
-        children: [
+          // Reachable from the reset mail regardless of session state.
           {
             path: '/password-reset/request',
             element: <PasswordResetRequestPage />,

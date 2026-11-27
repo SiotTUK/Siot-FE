@@ -1,4 +1,7 @@
 import { http, HttpResponse } from 'msw'
+import type { GuideTranslationResponse } from '@/features/admin/api'
+import { ruleEntries } from '@/features/rules/content'
+import { isLanguage } from '@/shared/i18n'
 import {
   body,
   currentMember,
@@ -145,9 +148,11 @@ export const adminHandlers = [
     const denied = requireAdmin()
     if (denied) return denied
     const code = String(params.code)
-    if (!/^(CL|LC)-/.test(code))
+    if (!isGuideCode(code))
       return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
-    const saved = state.guides[`${code}:${String(params.language)}`]
+    const language = String(params.language)
+    const saved =
+      state.guides[`${code}:${language}`] ?? ruleTranslation(code, language)
     return saved
       ? HttpResponse.json({ data: saved })
       : error(
@@ -163,7 +168,7 @@ export const adminHandlers = [
       const denied = requireAdmin()
       if (denied) return denied
       const code = String(params.code)
-      if (!/^(CL|LC)-/.test(code))
+      if (!isGuideCode(code))
         return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
       const input = await body(request)
       if (typeof input.title !== 'string' || !input.title.trim())
@@ -196,6 +201,41 @@ export const adminHandlers = [
     },
   ),
 ]
+
+/**
+ * Checklist (CL-01), life change task (LC-01-1) and living rule (waste-food)
+ * codes. Matched exactly, because the BE looks codes up case-sensitively.
+ */
+function isGuideCode(code: string) {
+  return (
+    /^(CL|LC)-/.test(code) || ruleEntries.some((rule) => rule.code === code)
+  )
+}
+
+/** The BE seeds every rule in all four languages; build it from FE content. */
+function ruleTranslation(
+  code: string,
+  language: string,
+): GuideTranslationResponse | undefined {
+  const rule = ruleEntries.find((entry) => entry.code === code)
+  if (!rule || !isLanguage(language)) return undefined
+  return {
+    code,
+    language,
+    title: rule.title[language],
+    summary: rule.summary[language],
+    content: null,
+    badge: null,
+    place: null,
+    docs: [],
+    fee: null,
+    law: null,
+    penalty: null,
+    sourceName: null,
+    noticeChangedAt: null,
+    updatedAt: '2026-11-26T00:00:00Z',
+  }
+}
 
 function requireAdmin() {
   const member = currentMember()

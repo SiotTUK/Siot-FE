@@ -4,6 +4,7 @@ import {
   firstPasswordError,
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
+import type { EventLeadDays } from '@/features/events/api'
 import type { LifeChangeResponse } from '@/features/life-changes/api'
 import type { LifeChangeCode } from '@/features/life-changes/life-changes'
 import type { MessageResponse } from '@/features/chat/api'
@@ -45,6 +46,10 @@ export interface MockState {
   >
   /** member email → notification id → read time */
   notificationReads: Record<string, Record<number, string>>
+  eventSubscriptions: Record<
+    number,
+    Record<string, { enabled: boolean; leadDays: EventLeadDays }>
+  >
   /** member email → kind → saved preference */
   notificationPrefs: Record<
     string,
@@ -152,6 +157,7 @@ function seedState(): MockState {
     checklist: {},
     lifeChanges: {},
     notificationReads: {},
+    eventSubscriptions: {},
     notificationPrefs: {},
   }
 }
@@ -164,6 +170,7 @@ function loadState(): MockState {
       state.checklist ??= {}
       state.lifeChanges ??= {}
       state.notificationReads ??= {}
+      state.eventSubscriptions ??= {}
       state.notificationPrefs ??= {}
       return state
     }

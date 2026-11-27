@@ -1,7 +1,8 @@
 /* Figma "design-system" tokens (웰컴시흥 디자인 시스템). */
 :root {
-  --primary: #1769dc;
-  --primary-hover: #1554af;
+  /* Color/Brand: the team unified it to #018eda (2026-11-27). */
+  --primary: #018eda;
+  --primary-hover: #0172ae;
   --secondary: #e8f3ff;
   --foreground: #191f28;
   --muted-foreground: #4e5968;

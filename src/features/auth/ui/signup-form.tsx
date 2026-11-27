@@ -9,7 +9,7 @@ import { currentLanguage } from '@/shared/i18n'
 import { errorKey, useMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
 import { TextField } from '@/shared/ui/field'
-import { FormError, Notice, Stack } from '@/shared/ui/page'
+import { FormError, Muted, Stack } from '@/shared/ui/page'
 import {
   checkEmailAvailability,
   confirmSignupCode,
@@ -203,11 +203,11 @@ export function SignupForm() {
           }
         />
         <PasswordFields form={form} email={verifiedEmail ?? email} showRules />
-        <Notice>{t('signup.notice')}</Notice>
         <FormError message={msg(errors.root?.server?.message)} />
         <Button type="submit" loading={submit.isPending}>
           {t('signup.submit')}
         </Button>
+        <Muted>{t('signup.notice')}</Muted>
       </Stack>
     </form>
   )

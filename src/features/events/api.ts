@@ -1,5 +1,7 @@
 import { apiRequest } from '@/shared/api/client'
 import type { Language, PageResponse } from '@/shared/api/types'
+import { eventListQuery, type EventListFilters } from './event-filters'
+import { emptyEventListPage, fetchActiveEventPage } from './event-list-page'
 
 export interface EventSummary {
   eventId: number
@@ -40,13 +42,36 @@ export interface EventCalendarItem {
   translated: boolean
 }
 
+export const eventLeadDays = [1, 3, 7] as const
+export type EventLeadDays = (typeof eventLeadDays)[number]
+
+export interface EventSubscriptionStatus {
+  subscribed: boolean
+  leadDays: EventLeadDays | null
+}
+
+interface EventSubscriptionResponse {
+  eventId: number
+  userId: number
+  enabled: boolean
+  updatedAt: string
+  leadDays: EventLeadDays
+}
+
 export const eventKeys = {
   all: ['events'] as const,
   member: (memberId: number) => [...eventKeys.all, memberId] as const,
   recommendations: (memberId: number) =>
     [...eventKeys.member(memberId), 'recommendations'] as const,
-  list: (memberId: number, page: number) =>
-    [...eventKeys.member(memberId), 'list', page] as const,
+  lists: (memberId: number) => [...eventKeys.member(memberId), 'list'] as const,
+  list: (
+    memberId: number,
+    page: number,
+    filters: EventListFilters,
+    today: string,
+  ) => [...eventKeys.lists(memberId), filters, today, page] as const,
+  subscription: (memberId: number, eventId: string) =>
+    [...eventKeys.member(memberId), 'subscription', eventId] as const,
   calendar: (memberId: number, year: number, month: number) =>
     [...eventKeys.member(memberId), 'calendar', year, month] as const,
   detail: (memberId: number, eventId: string) =>
@@ -60,10 +85,32 @@ export function fetchEventRecommendations(signal?: AbortSignal) {
   })
 }
 
-export function fetchEvents(page: number, signal?: AbortSignal) {
-  return apiRequest<PageResponse<EventSummary>>(`/api/events?page=${page}`, {
-    signal,
-  })
+export function fetchEvents(
+  page: number,
+  filters: EventListFilters,
+  today: string,
+  signal?: AbortSignal,
+) {
+  const fetchPage = (pageNumber: number, query = filters) =>
+    apiRequest<PageResponse<EventSummary>>(
+      `/api/events?${eventListQuery(pageNumber, query)}`,
+      { signal },
+    )
+
+  if (filters.status === 'ended') return fetchPage(page)
+  if (filters.status === 'scheduled') {
+    return filters.to && filters.to <= today
+      ? Promise.resolve(emptyEventListPage(page))
+      : fetchActiveEventPage(page, today, 'scheduled', fetchPage)
+  }
+
+  // A future period can still overlap a currently running event.
+  if (filters.from && filters.from > today)
+    return fetchActiveEventPage(page, today, 'ongoing', fetchPage)
+
+  // The non-past endpoint already checks the end date. Cap the start date at today.
+  const to = filters.to && filters.to < today ? filters.to : today
+  return fetchPage(page, { ...filters, to })
 }
 
 export function fetchEventDetail(eventId: string, signal?: AbortSignal) {
@@ -79,4 +126,29 @@ export function fetchEventCalendar(
     `/api/events/calendar?year=${year}&month=${month}`,
     { signal },
   )
+}
+
+export function fetchEventSubscription(eventId: string, signal?: AbortSignal) {
+  return apiRequest<EventSubscriptionStatus>(
+    `/api/events/${eventId}/subscriptions`,
+    {
+      signal,
+    },
+  )
+}
+
+export async function saveEventSubscription(
+  eventId: string,
+  leadDays: EventLeadDays | null,
+  isRequestCurrent: () => boolean,
+): Promise<EventSubscriptionStatus> {
+  const path = `/api/events/${eventId}/subscriptions` as const
+  const result = await apiRequest<EventSubscriptionResponse>(
+    leadDays === null ? path : `${path}?leadDays=${leadDays}`,
+    { method: leadDays === null ? 'DELETE' : 'POST', isRequestCurrent },
+  )
+  return {
+    subscribed: result.enabled,
+    leadDays: result.enabled ? result.leadDays : null,
+  }
 }

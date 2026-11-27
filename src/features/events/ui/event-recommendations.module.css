@@ -13,6 +13,9 @@
 }
 
 .carousel > li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-8);
   min-inline-size: 0;
   scroll-snap-align: start;
 }

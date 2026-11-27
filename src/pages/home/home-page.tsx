@@ -29,7 +29,7 @@ export function HomePage() {
           {situation.detail}
         </Notice>
       )}
-      {me && <ChecklistSection key={me.id} memberId={me.id} />}
+      {me && <ChecklistSection key={`checklist:${me.id}`} memberId={me.id} />}
       <div className={styles.row} data-tone="info">
         <div>
           <strong>{t('home.billTitle')}</strong>
@@ -38,7 +38,7 @@ export function HomePage() {
         {comingSoon}
       </div>
       {me && <EventRecommendations memberId={me.id} showAllLink />}
-      {me && <LifeChangePicker key={me.id} memberId={me.id} />}
+      {me && <LifeChangePicker key={`life-change:${me.id}`} memberId={me.id} />}
     </PageBody>
   )
 }

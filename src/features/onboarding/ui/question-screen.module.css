@@ -1,0 +1,4 @@
+/* Figma v2 F02~F06: content starts 16px under the header. */
+.body {
+  padding-top: var(--space-16);
+}

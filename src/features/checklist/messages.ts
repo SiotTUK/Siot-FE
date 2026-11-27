@@ -38,6 +38,7 @@ export const checklistMessages = defineMessages({
         source: '출처',
         sourceLink: '공식 안내 보기',
         askChat: '질문하기',
+        askDraft: '‘{{title}}’ 할 일에 대해 알려 주세요.',
         markDone: '완료로 표시',
         undoDone: '완료 취소',
         notFound: '해당 할 일을 찾을 수 없어요',
@@ -57,6 +58,7 @@ export const checklistMessages = defineMessages({
         submit: '신고 접수',
         received: '신고가 접수되었습니다. 검토 후 반영하겠습니다.',
       },
+      itemGone: '이 항목은 더 이상 없어요. 목록을 새로 불러왔어요.',
     },
   },
   en: {
@@ -97,6 +99,7 @@ export const checklistMessages = defineMessages({
         source: 'Source',
         sourceLink: 'View official guide',
         askChat: 'Ask questions',
+        askDraft: 'Tell me about the task “{{title}}”.',
         markDone: 'Mark as done',
         undoDone: 'Undo completed',
         notFound: 'Task not found',
@@ -116,6 +119,8 @@ export const checklistMessages = defineMessages({
         submit: 'Submit report',
         received: 'Your report was received.',
       },
+      itemGone:
+        'This item is no longer available. The list has been refreshed.',
     },
   },
   zh: {
@@ -155,6 +160,7 @@ export const checklistMessages = defineMessages({
         source: '来源',
         sourceLink: '查看官方指南',
         askChat: '在线提问',
+        askDraft: '请介绍一下“{{title}}”这项事务。',
         markDone: '标记为完成',
         undoDone: '取消完成',
         notFound: '未找到该事项',
@@ -174,6 +180,7 @@ export const checklistMessages = defineMessages({
         submit: '提交报告',
         received: '已收到您的报告。',
       },
+      itemGone: '该项目已不存在。已重新加载列表。',
     },
   },
   vi: {
@@ -214,6 +221,7 @@ export const checklistMessages = defineMessages({
         source: 'Nguồn',
         sourceLink: 'Xem hướng dẫn chính thức',
         askChat: 'Hỏi trợ lý',
+        askDraft: 'Hãy cho tôi biết về việc “{{title}}”.',
         markDone: 'Đánh dấu đã xong',
         undoDone: 'Hủy hoàn thành',
         notFound: 'Không tìm thấy việc cần làm',
@@ -233,6 +241,7 @@ export const checklistMessages = defineMessages({
         submit: 'Gửi báo cáo',
         received: 'Đã tiếp nhận báo cáo của bạn.',
       },
+      itemGone: 'Mục này không còn nữa. Danh sách đã được tải lại.',
     },
   },
 })

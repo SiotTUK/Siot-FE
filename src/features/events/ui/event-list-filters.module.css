@@ -1,0 +1,19 @@
+.filters {
+  display: grid;
+  gap: var(--space-12);
+}
+
+.period {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-8);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.reset {
+  justify-self: start;
+}

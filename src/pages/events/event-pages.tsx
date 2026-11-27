@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Navigate,
@@ -13,19 +14,28 @@ import {
   formatEventDates,
   formatEventTimes,
 } from '@/features/events/event-display'
+import {
+  isDateRangeValid,
+  parseEventFilters,
+  withEventFilters,
+} from '@/features/events/event-filters'
 import { eventDetailBackPath, isEventId } from '@/features/events/event-routes'
 import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
+import { EventListFilters } from '@/features/events/ui/event-list-filters'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
+import { EventSubscription } from '@/features/events/ui/event-subscription'
 import { EventReport } from '@/features/events/ui/event-report'
 import { useEventDetail, useEvents } from '@/features/events/use-events'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
-import { Button } from '@/shared/ui/button'
+import { Button, ButtonLink } from '@/shared/ui/button'
+import { TextField } from '@/shared/ui/field'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
+import { FormError, Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
+import { shareEvent } from '@/features/events/share-event'
 import styles from './event-pages.module.css'
 
 export function EventsPage() {
@@ -55,23 +65,44 @@ function EventList({ memberId }: { memberId: number }) {
     requestedPage <= 2_147_483_647
       ? requestedPage
       : 0
-  const query = useEvents(memberId, page)
+  const filters = parseEventFilters(params)
+  const rangeValid = isDateRangeValid(filters)
+  const query = useEvents(memberId, page, filters)
   const data = query.data
   const lastPage = data ? Math.max(0, data.totalPages - 1) : page
+  const rangeRejected =
+    query.error instanceof ApiError &&
+    query.error.status === 400 &&
+    query.error.code === 'INVALID_INPUT' &&
+    Boolean(filters.from || filters.to)
+
+  const pageParams = (nextPage: number) => {
+    const nextParams = new URLSearchParams(params)
+    if (nextPage === 0) nextParams.delete('page')
+    else nextParams.set('page', String(nextPage))
+    return nextParams
+  }
+
+  const filterArea = (
+    <EventListFilters
+      filters={filters}
+      onChange={(next) =>
+        setParams(withEventFilters(params, next), { preventScrollReset: true })
+      }
+    />
+  )
 
   if (query.isSuccess && page > lastPage) {
-    const nextParams = new URLSearchParams(params)
-    if (lastPage === 0) nextParams.delete('page')
-    else nextParams.set('page', String(lastPage))
     return (
       <Section title={t('events.all')}>
+        {filterArea}
         <EventQueryNotice
           pending
           fetching={query.isFetching}
           retry={() => void query.refetch()}
         />
         {!query.isFetching && (
-          <Navigate replace to={{ search: nextParams.toString() }} />
+          <Navigate replace to={{ search: pageParams(lastPage).toString() }} />
         )}
       </Section>
     )
@@ -79,7 +110,10 @@ function EventList({ memberId }: { memberId: number }) {
 
   return (
     <Section title={t('events.all')}>
-      {query.isPending || query.isError ? (
+      {filterArea}
+      {!rangeValid ? null : rangeRejected ? (
+        <FormError message={t('events.invalidRange')} />
+      ) : query.isPending || query.isError ? (
         <EventQueryNotice
           pending={query.isPending}
           fetching={query.isFetching}
@@ -94,16 +128,18 @@ function EventList({ memberId }: { memberId: number }) {
           ))}
         </ul>
       ) : (
-        <Muted>{t('events.empty')}</Muted>
+        <Muted>
+          {filters.from || filters.to
+            ? t('events.emptyFiltered')
+            : t(`events.emptyStatus.${filters.status}`)}
+        </Muted>
       )}
-      {data && (page > 0 || data.hasNext) && (
+      {rangeValid && data && (page > 0 || data.hasNext) && (
         <div className={styles.pager}>
           <Button
             variant="secondary"
             disabled={page === 0}
-            onClick={() =>
-              setParams(page === 1 ? {} : { page: String(page - 1) })
-            }
+            onClick={() => setParams(pageParams(page - 1))}
           >
             {t('events.previous')}
           </Button>
@@ -113,7 +149,7 @@ function EventList({ memberId }: { memberId: number }) {
           <Button
             variant="secondary"
             disabled={!data.hasNext}
-            onClick={() => setParams({ page: String(page + 1) })}
+            onClick={() => setParams(pageParams(page + 1))}
           >
             {t('events.next')}
           </Button>
@@ -144,7 +180,11 @@ export function EventDetailPage() {
       <PageBody className={styles.detail}>
         {isEventId(eventId) ? (
           member && (
-            <EventDetailContent memberId={member.id} eventId={eventId} />
+            <EventDetailContent
+              key={`${member.id}:${eventId}`}
+              memberId={member.id}
+              eventId={eventId}
+            />
           )
         ) : (
           <Muted>{t('events.notFound')}</Muted>
@@ -178,11 +218,14 @@ function EventDetailContent({
   return (
     <>
       <EventDetails event={query.data} />
-      <EventReport
-        key={`${memberId}:${eventId}`}
+      <EventSubscription
         event={query.data}
         memberId={memberId}
+        initiallySubscribed={query.data.subscribed}
+        alignActionsEnd
       />
+      <EventActions event={query.data} />
+      <EventReport event={query.data} memberId={memberId} />
     </>
   )
 }
@@ -190,6 +233,7 @@ function EventDetailContent({
 function EventDetails({ event }: { event: EventDetail }) {
   const { t } = useTranslation()
   const language = currentLanguage()
+  const machineTranslated = event.translated && event.language !== 'ko'
   const dates = formatEventDates(event, language)
   const times = formatEventTimes(event, language)
   const applicationUrl = eventLink(event.applicationUrl)
@@ -208,10 +252,13 @@ function EventDetails({ event }: { event: EventDetail }) {
       <div className={styles.cover} aria-hidden="true">
         <EventImage url={event.thumbnailUrl} />
       </div>
-      {(event.multicultural || !event.translated) && (
+      {(event.multicultural || !event.translated || machineTranslated) && (
         <div className={styles.tags}>
           {event.multicultural && (
             <Tag tone="main">{t('events.multicultural')}</Tag>
+          )}
+          {machineTranslated && (
+            <Tag tone="main">{t('events.translationAutomatic')}</Tag>
           )}
           {!event.translated && (
             <Tag tone="warning">{t('events.translationPending')}</Tag>
@@ -269,6 +316,49 @@ function EventDetails({ event }: { event: EventDetail }) {
             </a>
           )}
         </div>
+      )}
+    </>
+  )
+}
+
+function EventActions({ event }: { event: EventDetail }) {
+  const { t } = useTranslation()
+  const path = `/events/${event.eventId}`
+  const url = new URL(path, window.location.origin).href
+  const [shareStatus, setShareStatus] =
+    useState<Awaited<ReturnType<typeof shareEvent>>>()
+  return (
+    <>
+      <div className={styles.links}>
+        <Button
+          variant="secondary"
+          onClick={async () =>
+            setShareStatus(await shareEvent(event.title, url, navigator))
+          }
+        >
+          {t('events.share')}
+        </Button>
+        <ButtonLink
+          variant="secondary"
+          to="/chat"
+          state={{
+            eventQuestionId: String(event.eventId),
+            eventQuestionDraft: t('events.askDraft', { title: event.title }),
+          }}
+        >
+          {t('events.ask')}
+        </ButtonLink>
+      </div>
+      {shareStatus === 'copied' && (
+        <div role="status">{t('events.shareCopied')}</div>
+      )}
+      {shareStatus === 'manual' && (
+        <TextField
+          label={t('events.shareManual')}
+          readOnly
+          value={url}
+          onFocus={(e) => e.target.select()}
+        />
       )}
     </>
   )

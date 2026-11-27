@@ -8,7 +8,8 @@ export interface ChecklistItemResponse {
   /** CL-01, LC-01-1 ... */
   code: string
   title: string
-  kind: 'CHECKLIST' | 'LIFE_CHANGE_TASK' | 'RULE'
+  /** 생활수칙(RULE) is not part of the checklist and cannot be checked off. */
+  kind: 'CHECKLIST' | 'LIFE_CHANGE_TASK'
   itemType: 'REQUIRED' | 'INFO' | 'OPTIONAL'
   /** e.g. "입국 후 90일 이내" */
   badge: string | null

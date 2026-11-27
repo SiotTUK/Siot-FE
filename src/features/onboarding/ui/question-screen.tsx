@@ -134,7 +134,7 @@ export function QuestionScreen({ question }: { question: Question }) {
             />
           )}
           {tip && (
-            <MascotTip mascot={tip} name={t(`authTips.${tip}`)}>
+            <MascotTip mascot={tip}>
               {t(`onboarding.tips.${textKey}`)}
             </MascotTip>
           )}

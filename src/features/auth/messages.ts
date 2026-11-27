@@ -3,8 +3,6 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const authMessages = defineMessages({
   ko: {
     authTips: {
-      haero: '해로',
-      toro: '토로',
       signup: '반가워요! 이메일로 가입하고 시흥 생활을 시작해요',
       login: '다시 만나서 반가워요! 오늘도 시흥 생활 도와줄게요',
       expiredTitle: '링크가 만료됐어요',
@@ -132,8 +130,6 @@ export const authMessages = defineMessages({
   },
   en: {
     authTips: {
-      haero: 'Haero',
-      toro: 'Toro',
       signup: 'Welcome! Sign up with your email and start your life in Siheung',
       login: 'Good to see you again! Let me help with life in Siheung today',
       expiredTitle: 'This link has expired',
@@ -267,8 +263,6 @@ export const authMessages = defineMessages({
   },
   zh: {
     authTips: {
-      haero: 'Haero',
-      toro: 'Toro',
       signup: '欢迎！用邮箱注册，开始在始兴的生活吧',
       login: '很高兴再次见到您！今天也来帮您在始兴生活',
       expiredTitle: '链接已过期',
@@ -388,8 +382,6 @@ export const authMessages = defineMessages({
   },
   vi: {
     authTips: {
-      haero: 'Haero',
-      toro: 'Toro',
       signup:
         'Chào mừng bạn! Đăng ký bằng email và bắt đầu cuộc sống ở Siheung nhé',
       login:

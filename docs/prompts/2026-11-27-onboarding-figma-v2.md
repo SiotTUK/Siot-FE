@@ -29,3 +29,9 @@ Figma "웰컴시흥 · 주요 화면 UI"의 "온보딩" 묶음(F02 사용자 유
 - 목업에서 온보딩을 처음부터 끝까지 진행해 저장(onboarded, NEW·WORK·CAR)하고 홈으로 가는 것을 확인했다.
 - 내 정보 → 입국일·거주 정보 고치기 화면이 바뀌지 않은 것(안내 카드 유지, 마스코트 없음)을 확인했다.
 - 스크린샷: [F02](assets/2026-11-27-onboarding-figma-v2-f02-type.png), [F03](assets/2026-11-27-onboarding-figma-v2-f03-entry-date.png), [F04](assets/2026-11-27-onboarding-figma-v2-f04-purpose.png), [F05](assets/2026-11-27-onboarding-figma-v2-f05-residence.png), [F06](assets/2026-11-27-onboarding-figma-v2-f06-stay-expiry.png)
+
+## 2026-11-27 후속: PR #75 셀프 리뷰 — 마스코트 이름을 공통 문구로
+
+- 요약: 사용자가 PR #75 리뷰를 요청했다. 온보딩이 마스코트 이름을 로그인 기능 문구(`authTips.haero`·`authTips.toro`)에서 가져와, 그 키를 지우면 온보딩이 깨질 수 있다고 짚었고 사용자가 고치자고 했다.
+- 반영: 이름을 공통 문구 `common.mascots.haero`·`common.mascots.toro`(4개 언어)로 옮기고, `MascotTip`이 이름을 직접 넣는다. 쓰는 쪽은 `mascot`만 넘긴다(회원가입·로그인·온보딩). `authTips.haero`·`authTips.toro`는 지웠다.
+- 검증: `npm run check` 통과(Vitest 227개). 목업에서 회원가입(해로)·로그인(토로)·F03(토로)·F05(해로)·F06(해로) 이름이 맞게 나오는 것을 확인했다.

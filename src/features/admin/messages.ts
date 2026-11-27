@@ -45,6 +45,8 @@ export const adminMessages = defineKoreanMessages({
     language: '문구 언어',
     load: '불러오기',
     newTranslation: '이 언어의 문구가 아직 없어요. 저장하면 새로 만들어요.',
+    koreanRegenerates:
+      '한국어 문구를 저장하면 영어·중국어·베트남어 문구를 자동 번역으로 다시 만들어요. 다른 언어에서 직접 고친 내용은 덮어써져요.',
     fieldTitle: '제목',
     fieldSummary: '요약',
     fieldContent: '본문',

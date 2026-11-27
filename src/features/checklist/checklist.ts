@@ -1,3 +1,6 @@
+import type { TFunction } from 'i18next'
+import { ApiError } from '@/shared/api/client'
+import { errorMessage } from '@/shared/i18n/error-message'
 import type { ChecklistItemResponse, ChecklistMark } from './api'
 
 /** Home-screen threshold from the checklist rules ("30일 규칙"). */
@@ -76,4 +79,14 @@ export function keepOrder(fresh: ChecklistItemResponse[], shownKeys: string[]) {
   const rank = (item: ChecklistItemResponse) =>
     position.get(checklistItemKey(item)) ?? Number.MAX_SAFE_INTEGER
   return [...fresh].sort((a, b) => rank(a) - rank(b))
+}
+
+/**
+ * Error text for a failed check. GUIDE_NOT_FOUND means an admin deleted the
+ * item after the list loaded; the mutation refetches the list afterwards.
+ */
+export function markErrorMessage(t: TFunction, error: unknown) {
+  return error instanceof ApiError && error.code === 'GUIDE_NOT_FOUND'
+    ? t('checklist.itemGone')
+    : errorMessage(t, error)
 }

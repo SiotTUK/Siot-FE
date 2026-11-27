@@ -233,12 +233,16 @@ export const eventHandlers = [
     const member = currentMember()
     if (!member) return unauthorized()
     const report = await body(request)
+    // Same checks as BE ContentReportRequest (COM-01).
     if (
-      typeof report.reason !== 'string' ||
-      !report.reason.trim() ||
-      report.reason.length > 50
+      !['TRANSLATION', 'CONTENT', 'OTHER'].includes(String(report.reason)) ||
+      typeof report.quotedText !== 'string' ||
+      !report.quotedText.trim() ||
+      report.quotedText.length > 2000 ||
+      (typeof report.targetTitleSnapshot === 'string' &&
+        report.targetTitleSnapshot.length > 255)
     )
-      return error(400, 'INVALID_INPUT', '신고 사유를 다시 확인해 주세요.')
+      return error(400, 'INVALID_INPUT', '입력값이 올바르지 않습니다.')
     if (
       !mockEvents(member.language).some(
         ({ eventId }) => report.eventId === eventId,

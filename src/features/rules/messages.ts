@@ -3,6 +3,8 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const ruleMessages = defineMessages({
   ko: {
     rules: {
+      ask: '이 내용 질문하기',
+      askDraft: '‘{{title}}’에 대해 더 알려 주세요.',
       title: '생활 수칙',
       detail: '생활 수칙',
       search: '생활 수칙 검색',
@@ -56,6 +58,8 @@ export const ruleMessages = defineMessages({
   },
   en: {
     rules: {
+      ask: 'Ask about this',
+      askDraft: 'Tell me more about “{{title}}”.',
       title: 'Living rules',
       detail: 'Living rules',
       search: 'Search living rules',
@@ -109,6 +113,8 @@ export const ruleMessages = defineMessages({
   },
   zh: {
     rules: {
+      ask: '询问此内容',
+      askDraft: '请再详细介绍一下“{{title}}”。',
       title: '生活须知',
       detail: '生活须知',
       search: '搜索生活须知',
@@ -162,6 +168,8 @@ export const ruleMessages = defineMessages({
   },
   vi: {
     rules: {
+      ask: 'Hỏi về nội dung này',
+      askDraft: 'Hãy cho tôi biết thêm về “{{title}}”.',
       title: 'Quy tắc sinh hoạt',
       detail: 'Quy tắc sinh hoạt',
       search: 'Tìm quy tắc sinh hoạt',

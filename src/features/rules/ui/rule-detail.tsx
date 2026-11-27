@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next'
+import { chatEntryState } from '@/features/chat/chat-entry'
+import { ButtonLink } from '@/shared/ui/button'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { KeepTogether } from '@/shared/ui/keep-together'
 import { Muted, Notice } from '@/shared/ui/page'
@@ -71,6 +73,19 @@ export function RuleDetail({ code }: { code: string }) {
           })}
         </p>
       </Notice>
+
+      {/* CB-06: the member edits the draft and sends it in the chat. */}
+      <ButtonLink
+        variant="secondary"
+        className={styles.ask}
+        to="/chat"
+        state={chatEntryState(
+          { type: 'rule', id: rule.code },
+          t('rules.askDraft', { title: rule.title }),
+        )}
+      >
+        {t('rules.ask')}
+      </ButtonLink>
     </>
   )
 }

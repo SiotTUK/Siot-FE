@@ -16,6 +16,7 @@ import {
   sendFeedback,
   type MessageResponse,
 } from './api'
+import { forgetConversation } from './chat-entry'
 
 export function useSuggestions(language: Language) {
   return useQuery({
@@ -90,6 +91,7 @@ export function useDeleteConversation() {
   return useMutation({
     mutationFn: deleteConversation,
     onSuccess: (_, conversationId) => {
+      forgetConversation(conversationId)
       queryClient.removeQueries({ queryKey: chatKeys.messages(conversationId) })
       void queryClient.invalidateQueries({
         queryKey: chatKeys.conversations(),

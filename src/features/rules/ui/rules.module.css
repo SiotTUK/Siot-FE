@@ -259,3 +259,7 @@ details[open] > summary .triangle {
   font: var(--text-body);
   overflow-wrap: anywhere;
 }
+.ask {
+  width: 100%;
+  min-height: 48px;
+}

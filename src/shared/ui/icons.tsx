@@ -147,3 +147,28 @@ export const SettingsIcon = (props: SVGProps<SVGSVGElement>) => (
     <circle cx="18" cy="18" r="2" />
   </Icon>
 )
+
+export const HomeIcon = () => (
+  <Icon>
+    <path d="M3 10l9-7 9 7v10H3zM9 20v-6h6v6" />
+  </Icon>
+)
+
+export const BookOpenIcon = () => (
+  <Icon>
+    <path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1v14" />
+  </Icon>
+)
+
+export const ChatIcon = () => (
+  <Icon>
+    <path d="M7 4h10a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4h-7l-5 4v-4.5A4 4 0 0 1 3 13V8a4 4 0 0 1 4-4zM8 10.5h8" />
+  </Icon>
+)
+
+export const UserIcon = () => (
+  <Icon>
+    <circle cx="12" cy="7" r="4" />
+    <path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2" />
+  </Icon>
+)

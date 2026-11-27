@@ -91,7 +91,7 @@ function ChatScreen() {
             label: t('chat.back'),
             to: chatTopicPath(topic),
           }}
-          title={t('chat.title')}
+          title={t('nav.chat')}
           actions={
             <>
               <HeaderAction to="/chat/history">
@@ -186,7 +186,7 @@ export function ChatHistoryPage() {
     <ChatLayout
       header={
         <ScreenHeader
-          back={{ label: t('chat.title'), to: '/chat' }}
+          back={{ label: t('nav.chat'), to: '/chat' }}
           title={t('chat.historyTitle')}
           actions={
             <HeaderAction to="/chat" onClick={() => forgetConversation()}>

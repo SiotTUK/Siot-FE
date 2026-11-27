@@ -14,7 +14,7 @@ const telHref = (number: string) => `tel:${number.replace(/[^\d+]/g, '')}`
 /**
  * One chat entry (Figma v2). `mine`: the question as a full-width light
  * card (M08b). `avatar`: a 토로 greeting bubble (M08a). `answer`: the
- * answer card headed "토로 · 웰컴시흥 도우미" (M08b).
+ * answer card headed "토로 · 챗봇" (M08b).
  */
 export function ChatBubble({
   mine,
@@ -51,7 +51,7 @@ export function ChatBubble({
           {answer && (
             <p className={styles.speaker}>
               <img src={toro} alt="" width={24} height={24} />
-              {t('common.mascots.toro')} · {t('chat.title')}
+              {t('common.mascots.toro')} · {t('nav.chat')}
             </p>
           )}
           {children}
@@ -83,7 +83,7 @@ export function ChatIntro({
       <div className={styles.intro}>
         <img src={toro} alt="" width={72} height={72} />
         <strong>
-          {t('common.mascots.toro')} · {t('chat.title')}
+          {t('common.mascots.toro')} · {t('nav.chat')}
         </strong>
         <p>{t('chat.intro')}</p>
         {language}

@@ -11,6 +11,21 @@ import { Stack } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './auth-pages.module.css'
 
+/** Auth screens a ‹ back may return to (set by the links between them). */
+const authPaths = ['/', '/signup', '/login', '/password-reset/request']
+
+/**
+ * ‹ goes back to the auth screen whose link opened this one (login →
+ * "회원가입" → ‹ returns to login), else to `fallback`. Not history.back():
+ * a redirect to /login (expired session) would step back into a member page.
+ */
+function useBackPath(fallback: string) {
+  const state = useLocation().state as { back?: unknown } | null
+  return typeof state?.back === 'string' && authPaths.includes(state.back)
+    ? state.back
+    : fallback
+}
+
 /**
  * Figma v2 M02a–d: ‹ back + title header, an optional mascot tip, the form,
  * then text links ("처음이신가요? 회원가입") on the left.
@@ -29,10 +44,12 @@ function AuthScreen({
   children: ReactNode
 }) {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
+  const backPath = useBackPath(back)
   return (
     <>
       <ScreenHeader
-        back={{ label: t('common.back'), to: back }}
+        back={{ label: t('common.back'), to: backPath }}
         title={title}
       />
       <PageBody className={styles.body}>
@@ -42,7 +59,12 @@ function AuthScreen({
           {links.length > 0 && (
             <div className={styles.links}>
               {links.map((link) => (
-                <Link key={link.to} to={link.to} className={styles.link}>
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  state={{ back: pathname }}
+                  className={styles.link}
+                >
                   {link.text} {link.label}
                 </Link>
               ))}

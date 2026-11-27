@@ -31,8 +31,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '다시 입력',
       notice: '가입하면 바로 나의 상황을 고르는 화면으로 넘어가요.',
       submit: '가입하기',
-      haveAccount: '이미 회원이에요?',
-      login: '로그인',
     },
     passwordRules: {
       allowedCharacters: '영문 · 숫자 · 특수문자만',
@@ -75,7 +73,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '다시 입력',
       submit: '비밀번호 바꾸기',
       footer: '바꾸면 로그인 화면으로 돌아가요',
-      invalid: '링크가 만료됐어요. 다시 요청해 주세요.',
       requestAgain: '재설정 링크 다시 받기',
     },
     emailVerification: {
@@ -165,8 +162,6 @@ export const authMessages = defineMessages({
       notice:
         'After signing up, you will go straight to choosing your situation.',
       submit: 'Sign up',
-      haveAccount: 'Already a member?',
-      login: 'Log in',
     },
     passwordRules: {
       allowedCharacters: 'Letters, numbers and symbols only',
@@ -211,7 +206,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: 'Enter it again',
       submit: 'Change password',
       footer: 'After changing it, you will return to the login screen',
-      invalid: 'This link has expired. Please request a new one.',
       requestAgain: 'Get a new reset link',
     },
     emailVerification: {
@@ -300,8 +294,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '再次输入',
       notice: '注册后将直接进入选择您情况的页面。',
       submit: '注册',
-      haveAccount: '已经是会员？',
-      login: '登录',
     },
     passwordRules: {
       allowedCharacters: '仅限英文字母、数字和特殊字符',
@@ -344,7 +336,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: '再次输入',
       submit: '更改密码',
       footer: '更改后将返回登录页面',
-      invalid: '链接已过期。请重新申请。',
       requestAgain: '重新获取重置链接',
     },
     emailVerification: {
@@ -429,8 +420,6 @@ export const authMessages = defineMessages({
       notice:
         'Sau khi đăng ký, bạn sẽ chuyển ngay sang màn hình chọn tình trạng của mình.',
       submit: 'Đăng ký',
-      haveAccount: 'Bạn đã là thành viên?',
-      login: 'Đăng nhập',
     },
     passwordRules: {
       allowedCharacters: 'Chỉ chữ cái, chữ số và ký tự đặc biệt',
@@ -474,7 +463,6 @@ export const authMessages = defineMessages({
       passwordConfirmPlaceholder: 'Nhập lại',
       submit: 'Đổi mật khẩu',
       footer: 'Sau khi đổi, bạn sẽ quay lại màn hình đăng nhập',
-      invalid: 'Liên kết đã hết hạn. Hãy yêu cầu lại.',
       requestAgain: 'Nhận lại liên kết đặt lại',
     },
     emailVerification: {

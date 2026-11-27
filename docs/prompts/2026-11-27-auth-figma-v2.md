@@ -38,3 +38,9 @@ Figma "웰컴시흥 · 주요 화면 UI"의 "시작 · 회원가입" 묶음(F01 
 - `npm run check` 통과(Vitest 227개).
 - 390×844 목업 화면에서 다섯 화면을 Figma와 나란히 비교했다. 스크린샷: [F01](assets/2026-11-27-auth-figma-v2-f01-language.png), [M02b](assets/2026-11-27-auth-figma-v2-m02b-signup.png), [M02a](assets/2026-11-27-auth-figma-v2-m02a-login.png), [M02c](assets/2026-11-27-auth-figma-v2-m02c-reset-request.png), [M02d](assets/2026-11-27-auth-figma-v2-m02d-new-password.png).
 - Figma와 다르게 둔 것: 글꼴(앱 전체가 Pretendard, Figma는 Noto Sans KR), 공통 `ScreenHeader`의 제목 크기·아래 선(다른 화면과 같은 컴포넌트).
+
+## 2026-11-27 후속: PR #64 셀프 리뷰의 사소한 두 가지
+
+- 요약: 사용자가 PR #64 리뷰를 요청했다. AI가 글자 대비(P2), 뒤로가기 목적지, 쓰지 않는 문구 키를 짚었고, 사용자가 사소한 두 가지만 먼저 고치자고 했다. 글자 대비는 아직 그대로다.
+- 반영: 화면 사이 링크가 출발 화면을 `state.back`으로 넘기고, ‹는 그 화면(언어 선택·회원가입·로그인·재설정 요청 중 하나일 때만)으로 돌아간다. 없으면 전처럼 정해진 화면으로 간다. 브라우저 뒤로가기(`history.back`)는 만료된 세션으로 /login에 온 경우 회원 화면으로 돌아갈 수 있어 쓰지 않았다. 이번 변경으로 쓰지 않게 된 `signup.haveAccount`·`signup.login`·`newPassword.invalid`를 4개 언어에서 지웠다.
+- 검증: `npm run check` 통과(Vitest 227개). 목업에서 회원가입·로그인을 바로 열면 ‹가 언어 선택(`/`)으로, 로그인 → 회원가입 링크로 오면 ‹가 로그인으로, 로그인 → 재설정 요청과 새 비밀번호 화면은 ‹가 로그인으로 가는 것을 확인했다.

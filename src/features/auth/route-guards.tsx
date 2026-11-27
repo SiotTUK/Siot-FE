@@ -6,6 +6,7 @@ import { hasStoredLanguage } from '@/shared/i18n'
 import { PageBody, PageLoader } from '@/shared/ui/mobile-frame'
 import { QueryState } from '@/shared/ui/query-state'
 import {
+  guestRedirectPath,
   homePathFor,
   sessionState,
   type SessionLocationState,
@@ -19,9 +20,10 @@ import {
 export function GuestOnly() {
   const { t } = useTranslation()
   const { data: me, isPending } = useMe()
-  const { signedOut } = sessionState(useLocation().state)
+  const { from, signedOut } = sessionState(useLocation().state)
   if (isPending) return <PageLoader label={t('common.loading')} />
-  if (me && !signedOut) return <Navigate to={homePathFor(me)} replace />
+  if (me && !signedOut)
+    return <Navigate to={guestRedirectPath(me, from)} replace />
   return <Outlet />
 }
 

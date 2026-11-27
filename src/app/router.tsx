@@ -1,19 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { GuestOnly, RequireMember } from '@/features/auth/route-guards'
 import {
-  AdminGuidesPage,
-  AdminHomePage,
-  AdminMembersPage,
-  AdminReviewsPage,
-} from '@/pages/admin/admin-pages'
-import {
   LoginPage,
   PasswordResetPage,
   PasswordResetRequestPage,
   SignupPage,
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
-import { ChatHistoryPage, ChatPage } from '@/pages/chat/chat-pages'
 import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
@@ -23,13 +16,25 @@ import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
 import { NotificationsPage } from '@/pages/notifications/notifications-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
-import { RuleDetailPage, RulesPage } from '@/pages/rules/rule-pages'
+import { deferredModule, type DeferredScreen } from './deferred-module'
 import {
   MainLayout,
   OnboardingLayout,
   RootLayout,
   TopBarLayout,
 } from './layouts'
+import { DeferredPage } from './route-feedback'
+
+const adminScreen = deferredModule(() => import('@/pages/admin/admin-pages'))
+const chatScreen = deferredModule(() => import('@/pages/chat/chat-pages'))
+const ruleScreen = deferredModule(() => import('@/pages/rules/rule-pages'))
+
+function deferredPage<Page extends string>(
+  screen: (page: Page) => DeferredScreen,
+  page: NoInfer<Page>,
+) {
+  return <DeferredPage key={page} screen={screen(page)} />
+}
 
 /**
  * Logged out: language, signup, login and password reset only.
@@ -85,18 +90,30 @@ export const router = createBrowserRouter([
               { path: '/home', element: <HomePage /> },
               { path: '/calendar', element: <CalendarPage /> },
               { path: '/events', element: <EventsPage /> },
-              { path: '/rules', element: <RulesPage /> },
+              {
+                path: '/rules',
+                element: deferredPage(ruleScreen, 'RulesPage'),
+              },
               { path: '/notifications', element: <NotificationsPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },
           { path: '/events/:eventId', element: <EventDetailPage /> },
-          { path: '/rules/:code', element: <RuleDetailPage /> },
+          {
+            path: '/rules/:code',
+            element: deferredPage(ruleScreen, 'RuleDetailPage'),
+          },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.
-          { path: '/chat/history', element: <ChatHistoryPage /> },
-          { path: '/chat/:conversationId?', element: <ChatPage /> },
+          {
+            path: '/chat/history',
+            element: deferredPage(chatScreen, 'ChatHistoryPage'),
+          },
+          {
+            path: '/chat/:conversationId?',
+            element: deferredPage(chatScreen, 'ChatPage'),
+          },
         ],
       },
       {
@@ -104,10 +121,19 @@ export const router = createBrowserRouter([
         path: '/admin',
         element: <RequireMember when="admin" />,
         children: [
-          { index: true, element: <AdminHomePage /> },
-          { path: 'members', element: <AdminMembersPage /> },
-          { path: 'reviews', element: <AdminReviewsPage /> },
-          { path: 'guides', element: <AdminGuidesPage /> },
+          { index: true, element: deferredPage(adminScreen, 'AdminHomePage') },
+          {
+            path: 'members',
+            element: deferredPage(adminScreen, 'AdminMembersPage'),
+          },
+          {
+            path: 'reviews',
+            element: deferredPage(adminScreen, 'AdminReviewsPage'),
+          },
+          {
+            path: 'guides',
+            element: deferredPage(adminScreen, 'AdminGuidesPage'),
+          },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

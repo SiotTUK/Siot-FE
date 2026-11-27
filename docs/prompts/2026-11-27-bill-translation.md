@@ -68,7 +68,30 @@
 - Chrome 에뮬레이션과 로컬 MSW로 360×800·390×844·400×799와 네 언어를 조합한 12개 환경의 168개 상태를 확인한다. 고지서 업로드·결과·최근 기록·알림, 관련 안내에서 홈 체크리스트로 이동, 선택 항목 펼침·포커스와 삭제된 항목 404를 검증한다.
 - 행사 구독과 고지서 기록이 이전 형식의 목업 세션을 읽은 뒤 함께 생성되고, 새로고침 후 함께 복원되며, 고지서 삭제가 행사 구독에 영향을 주지 않음을 확인한다. 실기기 및 실제 BE·Gemini는 미검증이다.
 
+### 2026-11-27 PR 전 main 재통합
+
+- 범위는 `origin/main` `f47443a` 병합, 자동 검사, 목업 흐름 확인, BE `e05365f` 계약 대조다. 실사진 QA와 BE·Docker·Gemini 실행은 제외한다. 기존 실사진 14건으로 충분하다는 것은 사용자의 결정이다.
+- 생활수칙, 체크리스트, 검색칸, `query-state`는 고지서 기능과 무관해 main 코드를 그대로 쓴다. 앞선 통합에서 추가한 홈의 `?guide=` 스크롤·포커스와 `QueryState`의 `formatError`는 제외한다.
+- 관련 안내는 main의 `/home/checklist/:code`로 연결한다. 결과 조회의 404 문구는 고지서 메시지의 `errors.BILL_TRANSLATION_NOT_FOUND`로 등록한다. 홈 진입은 main의 `ActionTile`에 링크를 연결하고, 쓰지 않게 된 `bill.entry` 문구를 지운다.
+- `npm run check`는 Vitest 38개 파일 311개 테스트를 포함해 통과한다. 같은 환경에서 `origin/main`은 299개다. 500 kB 초과 청크 경고는 `origin/main` 빌드에도 표시된다.
+- Chrome 390×844 에뮬레이션, 한국어, MSW, 합성 이미지로 홈 진입, 업로드, 결과, 최근 기록, 알림 스위치(터치·키보드·새로고침 후 유지)를 확인한다. 관련 안내는 `CAR` 거주 정보가 있는 목업 회원에서 상세가 열린다. 해당 정보가 없는 회원에게는 ‘할 일 없음’ 화면이 표시된다. 168개 상태는 다시 검증하지 않는다.
+- 스크린샷: [홈](assets/2026-11-27-bill-main-sync-01-home.png), [업로드](assets/2026-11-27-bill-main-sync-02-upload.png), [최근 기록](assets/2026-11-27-bill-main-sync-03-recent.png), [결과와 알림 스위치](assets/2026-11-27-bill-main-sync-04-result-reminder.png)
+- 계약 대조에서 BE의 마감 알림 `linkType=BILL_TRANSLATION`을 FE `notificationPath`가 처리하지 않는 것을 확인한다. 이번 통합에서는 수정하지 않는다.
+
+### 2026-11-27 알림 링크와 관련 안내 보완
+
+- 재통합 결과는 병합 커밋 [`0fb4e48`](https://github.com/SiotTUK/Siot-FE/commit/0fb4e4891472981ec0fc725bb33e8539d61079c5), 보완은 [`26c55fb`](https://github.com/SiotTUK/Siot-FE/commit/26c55fb23445a71f82172cb1798239610668f16e)에 반영한다.
+- AI가 알림 링크 누락의 수정을 제안하고, 사용자가 관련 안내 이동 보완과 함께 이번 PR에서 처리하기로 결정한다.
+- `linkType=BILL_TRANSLATION` 알림은 `/translations/bills/:id`로 연결한다. `linkCode`가 null이면(번역 삭제) 최근 번역이 있는 `/translations/bills`로 연결한다. 양의 정수가 아닌 값도 같게 처리한다.
+- 관련 안내는 `title`이 null이면 숨긴다. `CHECKLIST`·`LIFE_CHANGE_TASK`는 회원 체크리스트에 항목이 있을 때만 표시하며, 조회 중이거나 실패해도 숨긴다. 보이는 안내가 없으면 영역 전체를 숨긴다. `RelatedBillGuide.title` 타입은 `string | null`이다.
+- `npm run check`는 Vitest 39개 파일 318개 테스트를 포함해 통과한다. 500 kB 초과 청크 경고는 그대로다.
+- Chrome 390×844, 한국어, MSW로 확인한다. 목업 알림에는 고지서 알림 예시가 없어, 촬영 브라우저에서만 기존 알림 응답 2건을 BE의 `BILL_DUE` 형식으로 바꾼다. 저장소 코드는 바꾸지 않는다. 알림을 누르면 읽음 처리 후 결과 화면이 열리고, `linkCode`가 null이면 최근 번역 화면이 열린다. 관련 안내는 `CAR`가 없는 목업 회원에게 숨겨지고, 있는 회원에게는 상세까지 열린다.
+- 스크린샷: [알림에서 연 번역 결과](assets/2026-11-27-bill-main-sync-05-from-notification.png). 앞의 ‘결과와 알림 스위치’ 캡처는 보완 전 화면이라 `CAR`가 없는 회원에게도 관련 안내가 보인다.
+- BE 차이 중 파일 시작 바이트 검사, 검사 순서, 기한이 없을 때의 `summary.due`는 목업 전용 차이로 두고 수정하지 않는다.
+- 실사진 QA의 인식 정확도 문제와 503은 BE 별도 이슈(미생성)로 다룬다.
+
 ## 남은 작업
 
+- 인식 정확도와 503을 다루는 BE 이슈를 생성하고 연결한다.
 - 일정·세금 상세 링크는 [Siot-FE #34](https://github.com/SiotTUK/Siot-FE/issues/34)의 상세 경로가 필요하다.
 - 문서 종류 정정 API는 별도 협의가 필요하다.

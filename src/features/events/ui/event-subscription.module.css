@@ -1,4 +1,5 @@
 .panel {
+  position: relative;
   display: grid;
   gap: var(--space-8);
   padding: var(--space-12);
@@ -11,4 +12,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-8);
+}
+
+.actions[data-align-end] {
+  justify-content: flex-end;
 }

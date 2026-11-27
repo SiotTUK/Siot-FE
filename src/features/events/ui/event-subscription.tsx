@@ -13,10 +13,12 @@ export function EventSubscription({
   event,
   memberId,
   initiallySubscribed = false,
+  alignActionsEnd = false,
 }: {
   event: EventSummary
   memberId: number
   initiallySubscribed?: boolean
+  alignActionsEnd?: boolean
 }) {
   const { t } = useTranslation()
   const { status, pending, error, save } = useEventSubscription(
@@ -31,9 +33,7 @@ export function EventSubscription({
 
   return (
     <section className={styles.panel} aria-label={t('events.reminder.title')}>
-      <strong>
-        {t(subscribed ? 'events.reminder.on' : 'events.reminder.title')}
-      </strong>
+      <strong>{t('events.reminder.title')}</strong>
       {status.isPending ? (
         <div role="status">{t('common.loading')}</div>
       ) : status.isError && !status.data ? (
@@ -48,31 +48,40 @@ export function EventSubscription({
           {ended ? (
             <Muted>{t('events.reminder.ended')}</Muted>
           ) : (
-            <>
-              <SelectField
-                label={t('events.reminder.timing')}
-                value={leadDays}
-                disabled={pending}
-                options={eventLeadDays.map((day) => ({
-                  value: String(day),
-                  label: t(`events.reminder.day${day}`),
-                }))}
-                onChange={(e) =>
-                  setChoice(
-                    eventLeadDays.find((day) => day === Number(e.target.value)),
-                  )
-                }
-              />
-              <Muted>
-                {t(
-                  event.timeUnknown || !event.startsAt
-                    ? 'events.reminder.dateOnly'
-                    : 'events.reminder.policy',
-                )}
-              </Muted>
-            </>
+            <SelectField
+              label={t('events.reminder.timing')}
+              hideLabel
+              value={leadDays}
+              disabled={pending}
+              options={eventLeadDays.map((day) => ({
+                value: String(day),
+                label: t(`events.reminder.day${day}`),
+              }))}
+              onChange={(e) =>
+                setChoice(
+                  eventLeadDays.find((day) => day === Number(e.target.value)),
+                )
+              }
+            />
           )}
-          <div className={styles.actions}>
+          {pending && (
+            <div role="status" className="visually-hidden">
+              {t('common.loading')}
+            </div>
+          )}
+          {error && (
+            <div role="alert">
+              {t(
+                error instanceof ApiError && error.code === 'EVENT_NOT_FOUND'
+                  ? 'events.notFound'
+                  : 'events.reminder.saveError',
+              )}
+            </div>
+          )}
+          <div
+            className={styles.actions}
+            data-align-end={alignActionsEnd || undefined}
+          >
             {!ended && (
               <Button
                 variant="secondary"
@@ -82,9 +91,7 @@ export function EventSubscription({
                 onClick={() => save(leadDays, () => setChoice(undefined))}
               >
                 {t(
-                  subscribed
-                    ? 'events.reminder.change'
-                    : 'events.reminder.title',
+                  subscribed ? 'events.reminder.save' : 'events.reminder.title',
                 )}
               </Button>
             )}
@@ -98,16 +105,6 @@ export function EventSubscription({
               </Button>
             )}
           </div>
-          {pending && <div role="status">{t('common.loading')}</div>}
-          {error && (
-            <div role="alert">
-              {t(
-                error instanceof ApiError && error.code === 'EVENT_NOT_FOUND'
-                  ? 'events.notFound'
-                  : 'events.reminder.saveError',
-              )}
-            </div>
-          )}
         </>
       )}
     </section>

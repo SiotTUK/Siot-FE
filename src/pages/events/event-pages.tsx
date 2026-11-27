@@ -190,6 +190,7 @@ function EventDetailContent({
         event={query.data}
         memberId={memberId}
         initiallySubscribed={query.data.subscribed}
+        alignActionsEnd
       />
       <EventActions event={query.data} />
       <EventReport event={query.data} memberId={memberId} />

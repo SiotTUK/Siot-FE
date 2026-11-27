@@ -38,8 +38,28 @@ export function billDaysLeft(date: string, now?: Date) {
   return (Date.parse(date) - Date.parse(koreaToday(now))) / 86_400_000
 }
 
-export function billGuidePath({ code, kind }: RelatedBillGuide) {
-  if (kind === 'CHECKLIST' || kind === 'LIFE_CHANGE_TASK') {
+const opensChecklist = ({ kind }: RelatedBillGuide) =>
+  kind === 'CHECKLIST' || kind === 'LIFE_CHANGE_TASK'
+
+/**
+ * Guides that can be linked: they have a title, and a checklist item is in the
+ * member's checklist (hidden until it is loaded), so no link ends in "not found".
+ */
+export function visibleBillGuides(
+  guides: RelatedBillGuide[],
+  checklistItems: { code: string }[] | undefined,
+) {
+  return guides.filter(
+    (guide): guide is RelatedBillGuide & { title: string } =>
+      guide.title !== null &&
+      (!opensChecklist(guide) ||
+        !!checklistItems?.some((item) => item.code === guide.code)),
+  )
+}
+
+export function billGuidePath(guide: RelatedBillGuide) {
+  const { code } = guide
+  if (opensChecklist(guide)) {
     return `/home/checklist/${encodeURIComponent(code)}`
   }
   return '/rules?category=tax'

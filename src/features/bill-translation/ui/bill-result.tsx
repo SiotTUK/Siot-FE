@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { useChecklist } from '@/features/checklist/use-checklist'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { ButtonLink } from '@/shared/ui/button'
@@ -19,6 +20,7 @@ import {
   billErrorMessage,
   billGuidePath,
   billTranslationPath,
+  visibleBillGuides,
 } from '../bill-translation'
 import { useBill, useBillReminder } from '../use-bill-translations'
 import styles from './bill.module.css'
@@ -46,6 +48,8 @@ function ResultDetails({
   const { t } = useTranslation()
   const language = currentLanguage()
   const reminder = useBillReminder(memberId, id)
+  const checklist = useChecklist(memberId, language)
+  const guides = visibleBillGuides(result.relatedGuides, checklist.data?.items)
   const date = result.dueDate
     ? formatCalendarDate(result.dueDate, language)
     : null
@@ -138,10 +142,10 @@ function ResultDetails({
           </ul>
         </details>
       )}
-      {result.relatedGuides.length > 0 && (
+      {guides.length > 0 && (
         <Section title={t('bill.guides')}>
           <ul className={styles.list}>
-            {result.relatedGuides.map((guide) => (
+            {guides.map((guide) => (
               <li key={guide.code}>
                 <Link to={billGuidePath(guide)}>{guide.title}</Link>
               </li>

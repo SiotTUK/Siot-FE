@@ -8,7 +8,7 @@ export type RetakeReason = 'BLURRY' | 'CROPPED' | 'NOT_A_BILL'
 export interface RelatedBillGuide {
   code: string
   kind: 'CHECKLIST' | 'RULE' | 'LIFE_CHANGE_TASK'
-  title: string
+  title: string | null
 }
 
 export interface BillTranslation {

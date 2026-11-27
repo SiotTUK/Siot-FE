@@ -36,6 +36,13 @@ export interface BillTranslation {
   summarySource: 'AI' | 'SERVER' | null
   warnings: { code: string; message: string }[]
   relatedGuides: RelatedBillGuide[]
+  /**
+   * TAX_CAR · TAX_PROPERTY · TAX_RESIDENT from the tax type, null for other
+   * bills. Older responses may leave it out.
+   */
+  taxKind?: string | null
+  /** Common tax schedule whose period holds the due date; null → by kind. */
+  taxScheduleId?: number | null
   firstPageOnly: boolean
   pageCount: number
   id: number | null

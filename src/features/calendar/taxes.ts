@@ -14,3 +14,7 @@ export function pickTaxRound(rounds: TaxDetailResponse[]) {
 
 export const taxDetailPath = (scheduleId: number) =>
   `/calendar/taxes/${scheduleId}`
+
+/** CAL-03 detail of a common schedule that is not a tax (#34). */
+export const scheduleDetailPath = (scheduleId: number) =>
+  `/calendar/schedules/${scheduleId}`

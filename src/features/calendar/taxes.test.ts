@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { TaxDetailResponse } from './api'
-import { pickTaxRound, taxDetailPath } from './taxes'
+import { pickTaxRound, scheduleDetailPath, taxDetailPath } from './taxes'
 
 const round = (scheduleId: number, dDay: number | null): TaxDetailResponse => ({
   scheduleId,
@@ -36,5 +36,6 @@ describe('tax detail links', () => {
 
   it('builds the detail path from the schedule id', () => {
     expect(taxDetailPath(10)).toBe('/calendar/taxes/10')
+    expect(scheduleDetailPath(7)).toBe('/calendar/schedules/7')
   })
 })

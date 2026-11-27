@@ -50,6 +50,8 @@ export const taxKeys = {
   all: ['taxes'] as const,
   detail: (scheduleId: number, language: Language) =>
     [...taxKeys.all, 'detail', scheduleId, language] as const,
+  schedule: (scheduleId: number, language: Language) =>
+    [...taxKeys.all, 'schedule', scheduleId, language] as const,
   byKind: (kind: string, language: Language) =>
     [...taxKeys.all, 'kind', kind, language] as const,
 }
@@ -93,6 +95,36 @@ export function fetchMonthlySchedules(
     language,
   })
   return apiRequest<ScheduleResponse[]>(`/api/schedules/monthly?${search}`, {
+    signal,
+  })
+}
+
+/**
+ * CAL-03 schedule detail (GET /api/schedules/{id}). The BE answers with the
+ * same shape as the tax detail, for any common schedule (#34).
+ */
+export function fetchScheduleDetail(
+  scheduleId: number,
+  language: Language,
+  signal?: AbortSignal,
+) {
+  return apiRequest<TaxDetailResponse>(
+    `/api/schedules/${scheduleId}?language=${language}`,
+    { signal },
+  )
+}
+
+/**
+ * CAL-01 common schedules of a year by start date, with the member's own
+ * schedules added like the monthly API (SiotTUK/Siot-BE#28).
+ */
+export function fetchYearlySchedules(
+  year: number,
+  language: Language,
+  signal?: AbortSignal,
+) {
+  const search = new URLSearchParams({ year: String(year), language })
+  return apiRequest<ScheduleResponse[]>(`/api/schedules/yearly?${search}`, {
     signal,
   })
 }

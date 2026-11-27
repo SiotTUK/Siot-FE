@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
+import { dDayLabel, httpUrl } from '@/features/calendar/calendar'
 import { useTaxDetail } from '@/features/calendar/use-taxes'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
@@ -11,12 +12,26 @@ import { QueryState } from '@/shared/ui/query-state'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './tax-detail-page.module.css'
 
+type Source = 'tax' | 'schedule'
+
 /**
  * CAL-03 세금 상세 (GET /api/schedules/taxes/{id}). Opened from a calendar
- * schedule's `taxScheduleId` or a tax rule (BE #29). Rows without a value are
- * hidden, the contact too.
+ * schedule's `taxScheduleId`, a tax rule (BE #29) or a translated tax bill.
+ * Rows without a value are hidden, the contact too.
  */
 export function TaxDetailPage() {
+  return <DetailPage source="tax" />
+}
+
+/**
+ * CAL-03 일정 상세 (GET /api/schedules/{id}, #34): a common schedule that is
+ * not a tax. Same response and layout as the tax detail.
+ */
+export function ScheduleDetailPage() {
+  return <DetailPage source="schedule" />
+}
+
+function DetailPage({ source }: { source: Source }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const id = Number(useParams().scheduleId)
@@ -25,38 +40,38 @@ export function TaxDetailPage() {
   return (
     <>
       <ScreenHeader
-        title={t('calendar.tax.screenTitle')}
+        title={t(`calendar.${source}.screenTitle`)}
         back={{ label: t('common.back'), onClick: () => void navigate(-1) }}
       />
       <PageBody className={styles.body}>
         {valid ? (
-          <TaxDetail scheduleId={id} />
+          <TaxDetail scheduleId={id} source={source} />
         ) : (
-          <Muted>{t('calendar.tax.notFound')}</Muted>
+          <Muted>{t(`calendar.${source}.notFound`)}</Muted>
         )}
       </PageBody>
     </>
   )
 }
 
-function TaxDetail({ scheduleId }: { scheduleId: number }) {
+function TaxDetail({
+  scheduleId,
+  source,
+}: {
+  scheduleId: number
+  source: Source
+}) {
   const { t } = useTranslation()
   const language = currentLanguage()
-  const query = useTaxDetail(scheduleId, language)
+  const query = useTaxDetail(scheduleId, language, source)
   if (query.error instanceof ApiError && query.error.status === 404)
-    return <Muted>{t('calendar.tax.notFound')}</Muted>
+    return <Muted>{t(`calendar.${source}.notFound`)}</Muted>
 
   const tax = query.data
   const start = tax && formatCalendarDate(tax.startsOn, language)
   const end = tax?.endsOn && formatCalendarDate(tax.endsOn, language)
-  const dDay =
-    tax?.dDay == null
-      ? null
-      : tax.dDay < 0
-        ? t('calendar.tax.past')
-        : tax.dDay === 0
-          ? t('calendar.tax.dDayToday')
-          : t('calendar.tax.dDay', { count: tax.dDay })
+  const dDay = dDayLabel(t, tax?.dDay)
+  const link = httpUrl(tax?.sourceUrl)
 
   return (
     <QueryState query={query}>
@@ -74,7 +89,7 @@ function TaxDetail({ scheduleId }: { scheduleId: number }) {
             {tax.summary && <p>{tax.summary}</p>}
           </div>
           <dl className={styles.facts}>
-            <Fact label={t('calendar.tax.period')}>
+            <Fact label={t(`calendar.${source}.period`)}>
               {end && end !== start
                 ? t('calendar.period', { start, end })
                 : start}
@@ -103,14 +118,15 @@ function TaxDetail({ scheduleId }: { scheduleId: number }) {
             <Fact label={t('calendar.tax.contact')}>{tax.contact}</Fact>
           </dl>
           {tax.content && <p className={styles.content}>{tax.content}</p>}
-          {tax.sourceUrl && (
+          {link && (
             <a
               className={styles.pay}
-              href={tax.sourceUrl}
+              href={link}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t('calendar.tax.pay')} ↗
+              {t(source === 'tax' ? 'calendar.tax.pay' : 'calendar.sourceLink')}{' '}
+              ↗
             </a>
           )}
         </>

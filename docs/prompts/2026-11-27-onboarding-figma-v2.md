@@ -45,3 +45,4 @@ Figma "웰컴시흥 · 주요 화면 UI"의 "온보딩" 묶음(F02 사용자 유
   - `MascotImage pose="duo" | "toro" | "hug"`: 언어 선택·F02·F06의 마스코트 그림. 크기와 장식용 처리(`alt=""`)를 한 곳에서 정한다.
 - 검증: `npm run check` 통과(Vitest 227개). 목업에서 언어 선택·로그인·생활 수칙·F02·F06을 바꾸기 전후로 찍어 비교했고, 다섯 장 모두 픽셀까지 같았다(모양 변화 없음).
 - 하지 않은 것: 관리자 회원 검색(다른 담당 영역)은 `SearchField`로 바꾸지 않았다. 홈 진행률(`<progress>`)·생활 수칙 FAQ(`<details>`)는 Figma의 Progress·Accordion과 모양이 달라 이번에 공용으로 합치지 않았다.
+- PR 메모: PR #75가 이 커밋을 올리기 직전(이전 커밋 `6075ec9`까지)에 merge돼, 공용 컴포넌트 정리는 최신 main에서 만든 `refactor/shared-ui-figma` 브랜치의 별도 PR로 올렸다. PR #75의 제목·본문도 merge된 내용에 맞게 되돌렸다.

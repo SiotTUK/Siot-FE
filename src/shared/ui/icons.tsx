@@ -57,3 +57,19 @@ export const TranslateIcon = (props: SVGProps<SVGSVGElement>) => (
     <path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6" />
   </Icon>
 )
+
+/** 생활 변화: a house with an arrow going out. */
+export const LifeChangeIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M3 11 10 5l7 6" />
+    <path d="M5 10v9h10" />
+    <path d="M15 15h7m-3-3 3 3-3 3" />
+  </Icon>
+)
+
+export const CameraIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+    <circle cx="12" cy="13" r="3.5" />
+  </Icon>
+)

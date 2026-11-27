@@ -5,11 +5,14 @@ import type { ChecklistItemResponse } from './api'
 import {
   checklistItemKey,
   deadlineText,
+  detailBackPath,
   groupItems,
+  homeHero,
   keepOrder,
   lifeChangeOf,
   markErrorMessage,
   nextMark,
+  openRequiredCount,
   optimisticStatus,
   pickDeadlineAlert,
   pickNextItem,
@@ -109,6 +112,37 @@ describe('checklist screen rules', () => {
     ])
     expect(alert?.code).toBe('CL-01')
     expect(pickDeadlineAlert([item({ dDay: 31 })])).toBeUndefined()
+  })
+
+  it('picks the home hero: urgent within 30 days, else calm with the next deadline', () => {
+    expect(
+      homeHero([
+        item({ code: 'CL-05', dDay: 117, deadline: '2027-03-10' }),
+        item({ code: 'CL-01', dDay: 5, deadline: '2026-11-18' }),
+      ]),
+    ).toMatchObject({ kind: 'urgent', item: { code: 'CL-01' } })
+    expect(
+      homeHero([
+        item({ code: 'CL-05', dDay: 117, deadline: '2027-03-10' }),
+        item({ code: 'CL-06', dDay: 200, deadline: '2027-06-15' }),
+        item({ code: 'CL-04' }),
+      ]),
+    ).toMatchObject({ kind: 'calm', next: { code: 'CL-05' } })
+    expect(
+      homeHero([item({ code: 'CL-01', dDay: 40, status: 'DONE' })]),
+    ).toEqual({ kind: 'calm', next: undefined })
+  })
+
+  it('counts required items still to do', () => {
+    expect(
+      openRequiredCount([
+        item({ code: 'A' }),
+        item({ code: 'B', status: 'OVERDUE' }),
+        item({ code: 'C', status: 'DONE' }),
+        item({ code: 'D', status: 'NOT_APPLICABLE' }),
+        item({ code: 'E', itemType: 'OPTIONAL' }),
+      ]),
+    ).toBe(2)
   })
 
   it('counts a passed deadline as the most urgent', () => {
@@ -215,5 +249,16 @@ describe('markErrorMessage', () => {
         new ApiError(400, { code: 'INVALID_INPUT', message: 'x' }),
       ),
     ).toBe('errors.INVALID_INPUT')
+  })
+})
+
+describe('detailBackPath', () => {
+  it('returns to the screen that opened the detail, else home', () => {
+    expect(detailBackPath({ back: '/home/life-changes/LC-01' })).toBe(
+      '/home/life-changes/LC-01',
+    )
+    expect(detailBackPath(null)).toBe('/home')
+    expect(detailBackPath({ back: 'https://example.com' })).toBe('/home')
+    expect(detailBackPath({ back: 42 })).toBe('/home')
   })
 })

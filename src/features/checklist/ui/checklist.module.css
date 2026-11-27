@@ -1,200 +1,36 @@
-/* Progress card (H1·H2 top) */
-.progress {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-  padding: var(--space-16);
-  border-radius: var(--radius-16);
-  background: var(--secondary);
-}
-.progress h1 {
-  font: var(--text-heading);
-}
-.progressRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  font: var(--text-label);
-  font-weight: 700;
-  color: var(--primary);
-  white-space: nowrap;
-}
-.progressRow progress {
-  flex: 1;
-  height: 8px;
-  border: 0;
-  border-radius: 4px;
-  overflow: hidden;
-  appearance: none;
-  background: var(--card);
-}
-.progressRow progress::-webkit-progress-bar {
-  background: var(--card);
-}
-.progressRow progress::-webkit-progress-value {
-  background: var(--primary);
-}
-.progressRow progress::-moz-progress-bar {
-  background: var(--primary);
-}
-.alert {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-16);
-  background: var(--warning-bg);
-  font: var(--text-caption);
-  font-size: 14px;
-  color: var(--foreground);
-}
-
-/* H2 calm card: nothing due within 30 days. */
-.calm {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-16);
+/* Home task list (Figma v2): rows in one white card. */
+.list {
+  padding: 0 var(--space-16);
   border-radius: var(--radius-16);
   background: var(--card);
 }
-.calm span {
-  font: var(--text-caption);
-  color: var(--primary);
-}
-.calm strong {
-  font: var(--text-heading);
-}
-
-/* Item card: design-system Card (white on the grey screen). */
-.card {
-  display: flex;
-  gap: var(--space-12);
-  padding: var(--space-16);
-  border: 1px solid transparent;
-  border-radius: var(--radius-16);
-  background: var(--card);
-}
-.card[data-highlighted='true'] {
-  border-color: var(--primary);
-}
-.card[data-status='DONE'] .title {
-  color: var(--muted-foreground);
-  text-decoration: line-through;
-}
-.card[data-status='NOT_APPLICABLE'] .body {
-  opacity: 0.5;
-}
-.check {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  margin-top: 30px;
-  accent-color: var(--primary);
-}
-.body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.titleLink {
-  text-decoration: none;
-  color: inherit;
-}
-.titleLink:hover .title {
-  color: var(--primary);
-  text-decoration: underline;
-}
-.title {
-  font: var(--text-label);
-  font-weight: 700;
-  color: var(--foreground);
-}
-.viewDetail {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 2px;
-  font: var(--text-caption);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--primary);
-  text-decoration: none;
-}
-.viewDetail:hover {
-  text-decoration: underline;
-}
-.text {
-  font: var(--text-caption);
-  font-size: 14px;
-  color: var(--muted-foreground);
-  overflow-wrap: anywhere;
-}
-.meta {
-  font: var(--text-caption);
-  color: var(--muted-foreground);
-}
-.overdue {
-  font: var(--text-caption);
-  color: var(--destructive);
-}
-.side {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 6px;
-}
-.dDay {
-  padding: 2px var(--space-8);
-  border-radius: var(--radius-8);
-  background: var(--secondary);
-  font: var(--text-caption);
-  font-weight: 700;
-  color: var(--primary);
-  white-space: nowrap;
-}
-.dDay[data-overdue='true'] {
-  background: var(--destructive-bg);
-  color: var(--destructive);
-}
-.textButton {
-  min-height: 32px;
-  padding: 0;
-  border: 0;
-  background: none;
-  font-size: 12px;
-  color: var(--muted-foreground);
-  text-decoration: underline;
-}
-
-/* Optional "생활 준비" group */
-.optional {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.optional > button {
+.more {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: var(--control-height);
-  padding: 0 var(--space-16);
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
   border: 0;
-  border-radius: var(--radius-16);
-  background: var(--card);
-  font: var(--text-label);
-  font-weight: 700;
-  color: var(--foreground);
+  background: none;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
 }
-.optional > button span:last-child {
-  font-size: 13px;
-  color: var(--primary);
+.moreIcon {
+  width: 16px;
+  height: 16px;
+}
+.moreIcon[data-open='true'] {
+  transform: rotate(-90deg);
+}
+.list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list ul > li:last-child > * {
+  border-bottom: 0;
+}
+.list ul + .more {
+  border-top: 1px solid var(--background);
 }

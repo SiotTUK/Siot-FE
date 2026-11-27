@@ -16,16 +16,24 @@ const poses = {
 /**
  * A centered, decorative mascot picture (`alt=""`; the text around it
  * carries the meaning). For a mascot with a message use MascotTip.
+ * `height` draws it smaller (e.g. inside the home hero card).
  */
-export function MascotImage({ pose }: { pose: keyof typeof poses }) {
-  const { src, width, height } = poses[pose]
+export function MascotImage({
+  pose,
+  height,
+}: {
+  pose: keyof typeof poses
+  height?: number
+}) {
+  const size = poses[pose]
+  const scale = height ? height / size.height : 1
   return (
     <img
       className={styles.image}
-      src={src}
+      src={size.src}
       alt=""
-      width={width}
-      height={height}
+      width={Math.round(size.width * scale)}
+      height={Math.round(size.height * scale)}
     />
   )
 }

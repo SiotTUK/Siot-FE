@@ -41,7 +41,8 @@ export function Button({
 export function ButtonLink({
   variant = 'primary',
   className,
+  block,
   ...props
-}: LinkProps & { variant?: Variant }) {
-  return <Link {...props} className={classes(variant, className)} />
+}: LinkProps & { variant?: Variant; block?: boolean }) {
+  return <Link {...props} className={classes(variant, className, block)} />
 }

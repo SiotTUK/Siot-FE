@@ -133,3 +133,6 @@
     transition: none;
   }
 }
+.firstSkip {
+  align-self: center;
+}

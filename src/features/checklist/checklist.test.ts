@@ -5,6 +5,7 @@ import type { ChecklistItemResponse } from './api'
 import {
   checklistItemKey,
   deadlineText,
+  detailBackPath,
   groupItems,
   homeHero,
   keepOrder,
@@ -248,5 +249,16 @@ describe('markErrorMessage', () => {
         new ApiError(400, { code: 'INVALID_INPUT', message: 'x' }),
       ),
     ).toBe('errors.INVALID_INPUT')
+  })
+})
+
+describe('detailBackPath', () => {
+  it('returns to the screen that opened the detail, else home', () => {
+    expect(detailBackPath({ back: '/home/life-changes/LC-01' })).toBe(
+      '/home/life-changes/LC-01',
+    )
+    expect(detailBackPath(null)).toBe('/home')
+    expect(detailBackPath({ back: 'https://example.com' })).toBe('/home')
+    expect(detailBackPath({ back: 42 })).toBe('/home')
   })
 })

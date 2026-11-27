@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { chatEntryState } from '@/features/chat/chat-entry'
 import { currentLanguage } from '@/shared/i18n'
 import { formatMonthDay } from '@/shared/i18n/format'
@@ -9,7 +9,7 @@ import { PageBody } from '@/shared/ui/mobile-frame'
 import { Tag } from '@/shared/ui/page'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText } from '../checklist'
+import { deadlineText, detailBackPath } from '../checklist'
 import { ChecklistReport } from './checklist-report'
 import styles from './checklist-detail.module.css'
 
@@ -26,6 +26,7 @@ export function ChecklistDetail({
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const back = detailBackPath(useLocation().state)
   const language = currentLanguage()
   const [copied, setCopied] = useState(false)
 
@@ -74,7 +75,7 @@ export function ChecklistDetail({
   return (
     <>
       <ScreenHeader
-        back={{ label: t('common.back'), to: '/home' }}
+        back={{ label: t('common.back'), to: back }}
         title={t('checklist.detail.screenTitle')}
         actions={
           <HeaderAction onClick={() => void handleShare()}>

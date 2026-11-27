@@ -82,7 +82,7 @@ export function TaskRow({
         </span>
       )}
       <div id={detailId} className={styles.detail} hidden={!open}>
-        <GuideDetail item={item} />
+        <GuideDetail item={item} placeShown={Boolean(brief && item.place)} />
         <Link
           to={`/home/checklist/${encodeURIComponent(item.code)}`}
           className={styles.detailLink}

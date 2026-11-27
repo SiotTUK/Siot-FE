@@ -191,7 +191,15 @@ function TaskOverview({
             <FormError message={markErrorMessage(t, mark.error)} />
           )}
           {tasks.length === 0 && <Muted>{t('lifeChanges.noTasks')}</Muted>}
-          {first && <FirstTask key={checklistItemKey(first)} item={first} />}
+          {first && (
+            <FirstTask
+              key={checklistItemKey(first)}
+              item={first}
+              back={`/home/life-changes/${code}`}
+              busy={busy || mark.isSaving(first)}
+              onNotApplicable={() => toggle(first, 'toggleNotApplicable')}
+            />
+          )}
           {others.length > 0 && (
             <section className={styles.others}>
               <h2>
@@ -228,9 +236,20 @@ function TaskOverview({
 
 /**
  * The yellow "먼저 하세요" card: due date, place and "방법 보기", which opens
- * the checklist detail screen (M07a) where it can also be marked done.
+ * the checklist detail screen (M07a, "‹" comes back here) where it can be
+ * marked done, and "해당 없음".
  */
-function FirstTask({ item }: { item: ChecklistItemResponse }) {
+function FirstTask({
+  item,
+  back,
+  busy,
+  onNotApplicable,
+}: {
+  item: ChecklistItemResponse
+  back: string
+  busy: boolean
+  onNotApplicable: () => void
+}) {
   const { t } = useTranslation()
   const language = currentLanguage()
   const where = [
@@ -258,9 +277,20 @@ function FirstTask({ item }: { item: ChecklistItemResponse }) {
         </div>
         <MascotImage pose="toro" height={96} />
       </div>
-      <ButtonLink to={`/home/checklist/${encodeURIComponent(item.code)}`}>
+      <ButtonLink
+        to={`/home/checklist/${encodeURIComponent(item.code)}`}
+        state={{ back }}
+      >
         {t('lifeChanges.howTo')}
       </ButtonLink>
+      <Button
+        variant="text"
+        className={styles.firstSkip}
+        disabled={busy}
+        onClick={onNotApplicable}
+      >
+        {t('checklist.notApplicable')}
+      </Button>
     </section>
   )
 }

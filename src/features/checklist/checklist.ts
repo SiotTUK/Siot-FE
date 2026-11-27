@@ -135,3 +135,13 @@ export function markErrorMessage(t: TFunction, error: unknown) {
     ? t('checklist.itemGone')
     : errorMessage(t, error)
 }
+
+/**
+ * Where "‹" on the checklist detail goes: the screen that opened it (F06b
+ * passes its path as link state), otherwise home — also for notifications
+ * and shared links, which carry no state.
+ */
+export function detailBackPath(state: unknown): string {
+  const back = (state as { back?: unknown } | null)?.back
+  return typeof back === 'string' && back.startsWith('/home/') ? back : '/home'
+}

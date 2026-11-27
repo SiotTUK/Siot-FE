@@ -6,7 +6,9 @@ import {
   checklistItemKey,
   deadlineText,
   detailBackPath,
+  dueSoon,
   groupItems,
+  hasWarning,
   homeHero,
   keepOrder,
   lifeChangeOf,
@@ -18,6 +20,7 @@ import {
   pickNextItem,
   reasonOf,
   translationPending,
+  warningText,
 } from './checklist'
 
 const item = (over: Partial<ChecklistItemResponse>): ChecklistItemResponse => ({
@@ -294,5 +297,68 @@ describe('detailBackPath', () => {
     expect(detailBackPath(null)).toBe('/home')
     expect(detailBackPath({ back: 'https://example.com' })).toBe('/home')
     expect(detailBackPath({ back: 42 })).toBe('/home')
+  })
+})
+
+describe('CHK-08 warnings (#50)', () => {
+  const registrationDue = {
+    code: 'CL-01',
+    dDay: 20,
+    warning: true,
+    warningType: 'REGISTRATION_DUE',
+    warningMessage: 'Your foreigner registration deadline is within 30 days.',
+  }
+
+  it('warns only on items still to do', () => {
+    expect(hasWarning(item(registrationDue))).toBe(true)
+    // The BE keeps REGISTRATION_DUE on a completed CL-01.
+    expect(hasWarning(item({ ...registrationDue, status: 'DONE' }))).toBe(false)
+    expect(
+      hasWarning(item({ ...registrationDue, status: 'NOT_APPLICABLE' })),
+    ).toBe(false)
+    expect(hasWarning(item({ dDay: 20 }))).toBe(false)
+  })
+
+  it('uses the server warning text, if any', () => {
+    expect(warningText(item(registrationDue))).toBe(
+      registrationDue.warningMessage,
+    )
+    expect(
+      warningText(item({ ...registrationDue, warningMessage: null })),
+    ).toBeUndefined()
+    expect(
+      warningText(item({ ...registrationDue, status: 'DONE' })),
+    ).toBeUndefined()
+  })
+
+  it('marks due-soon rows but leaves overdue ones to the red D-day chip', () => {
+    expect(dueSoon(item(registrationDue))).toBe(true)
+    expect(
+      dueSoon(
+        item({
+          dDay: -3,
+          status: 'OVERDUE',
+          warning: true,
+          warningType: 'OVERDUE',
+        }),
+      ),
+    ).toBe(false)
+  })
+
+  it('alerts a warned item before a nearer deadline the server does not warn about', () => {
+    const alert = pickDeadlineAlert([
+      item({ code: 'CL-09', dDay: 5, deadline: '2026-12-01' }),
+      item({ ...registrationDue, deadline: '2026-12-16' }),
+    ])
+    expect(alert?.code).toBe('CL-01')
+  })
+
+  it('falls back to the nearest deadline within 30 days without warnings', () => {
+    expect(
+      pickDeadlineAlert([
+        item({ ...registrationDue, status: 'DONE' }),
+        item({ code: 'CL-09', dDay: 14, deadline: '2026-12-10' }),
+      ])?.code,
+    ).toBe('CL-09')
   })
 })

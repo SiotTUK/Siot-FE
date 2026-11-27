@@ -185,6 +185,45 @@ function changeSeeds(member: MockMember): Seed[] {
   )
 }
 
+/** BE `ChecklistWarning` messages (CHK-08), in the member's language. */
+const warningMessages = {
+  OVERDUE: {
+    ko: '마감 기한이 초과되었습니다. 즉시 확인 후 조치하세요.',
+    en: 'The deadline has passed. Please check and take action right away.',
+    zh: '已超过截止期限。请立即确认并处理。',
+    vi: 'Đã quá hạn. Vui lòng kiểm tra và xử lý ngay.',
+  },
+  REGISTRATION_DUE: {
+    ko: '외국인등록 기한이 30일 이내로 임박했습니다. 기한 초과 시 과태료 및 불이익이 발생합니다.',
+    en: 'Your foreigner registration deadline is within 30 days. Missing it can lead to a fine and other disadvantages.',
+    zh: '外国人登录期限已不足30天。逾期将被处以罚款并可能产生其他不利影响。',
+    vi: 'Hạn đăng ký người nước ngoài còn dưới 30 ngày. Quá hạn có thể bị phạt tiền và chịu bất lợi khác.',
+  },
+  RESIDENCE_REPORT_DUE: {
+    ko: '체류지 변경 신고 마감(전입 후 15일 이내) 기한이 7일 이내로 임박했습니다. 기한 초과 시 과태료가 부과됩니다.',
+    en: 'The deadline to report your change of residence (within 15 days of moving) is within 7 days. Missing it results in a fine.',
+    zh: '居留地变更申报期限（迁入后15日内）已不足7天。逾期将被处以罚款。',
+    vi: 'Hạn khai báo thay đổi nơi cư trú (trong vòng 15 ngày sau khi chuyển đến) còn dưới 7 ngày. Quá hạn sẽ bị phạt tiền.',
+  },
+} as const
+
+/**
+ * Same rule as the BE ChecklistService (CHK-08). Like the BE, a completed
+ * CL-01·CL-02 within 30 days still gets REGISTRATION_DUE.
+ */
+function warningOf(
+  code: string,
+  status: ChecklistItemResponse['status'],
+  dDay: number | null,
+): keyof typeof warningMessages | null {
+  if (status === 'OVERDUE') return 'OVERDUE'
+  if ((code === 'CL-01' || code === 'CL-02') && dDay !== null && dDay <= 30)
+    return 'REGISTRATION_DUE'
+  if (code === 'LC-01-1' && dDay !== null && dDay <= 7)
+    return 'RESIDENCE_REPORT_DUE'
+  return null
+}
+
 function items(member: MockMember): ChecklistItemResponse[] {
   const marks = state.checklist[member.email] ?? {}
   const allSeeds = [...seeds(member), ...changeSeeds(member)]
@@ -193,6 +232,7 @@ function items(member: MockMember): ChecklistItemResponse[] {
     const dDay = seed.deadline ? daysUntil(seed.deadline) : null
     const mark = marks[`${seed.code}:${periodKey}`]
     const status = mark ?? (dDay !== null && dDay < 0 ? 'OVERDUE' : 'TODO')
+    const warningType = warningOf(seed.code, status, dDay)
     return {
       kind: 'CHECKLIST',
       badge: null,
@@ -228,6 +268,11 @@ function items(member: MockMember): ChecklistItemResponse[] {
       dDay,
       status,
       completed: status === 'DONE',
+      warning: warningType !== null,
+      warningType,
+      warningMessage: warningType
+        ? warningMessages[warningType][member.language]
+        : null,
     }
   })
   // Same order as the BE ChecklistService: completed last, then items without

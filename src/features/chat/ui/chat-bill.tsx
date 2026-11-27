@@ -17,6 +17,7 @@ import { formatCalendarDate } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { Card, Muted, Stack } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
+import { chatBillSummary } from '../chat-bill-summary'
 import type { ChatBillTurn } from '../use-chat-bill'
 import { ChatBubble } from './chat-message'
 import styles from './chat.module.css'
@@ -92,12 +93,14 @@ function ResultSummary({
   const language = currentLanguage()
   const unknown = t('bill.unknown')
   const dDay = billDDayLabel(t, result.dueDate)
+  const summary = chatBillSummary(t, result, language)
   const howToPay =
     result.summary?.howToPay?.trim() ||
     result.paymentMethods.filter((method) => method.trim()).join(', ')
   return (
     <div className={`${billStyles.theme} ${styles.billResult}`}>
       <Stack gap={12}>
+        {summary && <p>{summary}</p>}
         <dl className={billStyles.facts}>
           <div>
             <dt>{t('bill.amount')}</dt>

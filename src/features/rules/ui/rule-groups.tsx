@@ -2,9 +2,8 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChipGroup } from '@/shared/ui/chip-group'
-import { TextField } from '@/shared/ui/field'
-import { SearchIcon } from '@/shared/ui/icons'
 import { Muted, Section, Stack } from '@/shared/ui/page'
+import { SearchField } from '@/shared/ui/search-field'
 import {
   groupByCategory,
   ruleCategories,
@@ -46,20 +45,15 @@ export function RuleBrowser() {
 
   return (
     <>
-      <div className={styles.search}>
-        <SearchIcon className={styles.searchIcon} />
-        <TextField
-          label={t('rules.search')}
-          hideLabel
-          type="search"
-          placeholder={t('rules.searchPlaceholder')}
-          value={query}
-          onChange={(event) => {
-            setQuery(event.target.value)
-            updateParam('q', event.target.value)
-          }}
-        />
-      </div>
+      <SearchField
+        label={t('rules.search')}
+        placeholder={t('rules.searchPlaceholder')}
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value)
+          updateParam('q', event.target.value)
+        }}
+      />
       {!searching && (
         <ChipGroup<Filter>
           ref={categoryChips}

@@ -1,37 +1,37 @@
-import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { KeepTogether } from '@/shared/ui/keep-together'
 import styles from './rules.module.css'
 
+/** How many questions M06 shows as "자주 묻는 질문 TOP 5". */
+export const faqTopCount = 5
+
 /**
- * 자주 묻는 질문 TOP 5: one bordered card, a "Q." row per question that
- * opens its answer. Native <details> keeps keyboard support.
+ * Figma v2 M06 "자주 묻는 질문": one card, a numbered row per question that
+ * opens the rule it answers (›). The full list (`/rules/faq`) also shows
+ * each short answer under its question.
  */
 export function RuleFaqList({
   faqs,
+  withAnswers = false,
 }: {
   faqs: { question: string; answer: string; rule: string }[]
+  withAnswers?: boolean
 }) {
-  const { t } = useTranslation()
   return (
-    <div className={styles.faqList}>
+    <ol className={styles.faqList}>
       {faqs.map((faq, index) => (
-        <details key={faq.question} className={styles.faq} open={index === 0}>
-          <summary>
-            <span>
-              <span aria-hidden="true">Q. </span>
-              {faq.question}
-            </span>
-            <span className={styles.triangle} aria-hidden="true" />
-          </summary>
-          <p>
-            <KeepTogether text={faq.answer} />
-          </p>
+        <li key={faq.question}>
           <Link to={`/rules/${faq.rule}`} state={{ from: 'rules' }}>
-            {t('rules.more')}
+            <span className={styles.rank} data-top={index < 3}>
+              {index + 1}
+            </span>
+            <span className={styles.question}>
+              {faq.question}
+              {withAnswers && <small>{faq.answer}</small>}
+            </span>
+            <span aria-hidden="true">›</span>
           </Link>
-        </details>
+        </li>
       ))}
-    </div>
+    </ol>
   )
 }

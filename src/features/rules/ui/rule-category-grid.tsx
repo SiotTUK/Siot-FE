@@ -6,7 +6,7 @@ import styles from './rules.module.css'
 
 /**
  * Figma v2 M06 "분야별 안내": 3×2 tiles (tinted icon, name, topics). A tile
- * opens that category's list (`?category=`); browser back returns here.
+ * opens that category's screen (`/rules/category/:category`).
  */
 export function RuleCategoryGrid() {
   const { t } = useTranslation()
@@ -15,7 +15,8 @@ export function RuleCategoryGrid() {
       {ruleCategories.map((category) => (
         <li key={category}>
           <Link
-            to={`?category=${category}`}
+            to={`/rules/category/${category}`}
+            state={{ from: 'rules' }}
             className={styles.tile}
             data-category={category}
           >

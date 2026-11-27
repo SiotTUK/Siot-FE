@@ -1,34 +1,31 @@
 import { useTranslation } from 'react-i18next'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Navigate, useSearchParams } from 'react-router-dom'
 import { MascotTip } from '@/shared/ui/mascot-tip'
-import { Muted, Section, Stack } from '@/shared/ui/page'
+import { Muted, Section } from '@/shared/ui/page'
 import { SearchField } from '@/shared/ui/search-field'
-import { TextLink } from '@/shared/ui/text-link'
-import {
-  groupByCategory,
-  ruleCategories,
-  searchRules,
-  type Rule,
-} from '../rules'
+import { ruleCategories, searchRules, type Rule } from '../rules'
 import { useRules } from '../use-rules'
-import { RuleCategoryCard } from './rule-category-card'
+import { RuleCard } from './rule-card'
 import { RuleCategoryGrid } from './rule-category-grid'
 import { RuleFaqList } from './rule-faq-list'
 import styles from './rules.module.css'
 
 /**
  * M06 생활 수칙 (Figma v2): search, 분야별 안내 tiles, FAQ TOP 5 and a 토로
- * tip. A tile opens that category's list (`?category=`); typing searches.
+ * tip. A tile opens `/rules/category/:category`; typing searches.
  */
 export function RuleBrowser() {
   const { t } = useTranslation()
   const { rules, faqs } = useRules()
   const [params, setParams] = useSearchParams()
   const query = params.get('q') ?? ''
-  const category = ruleCategories.find(
+  const searching = query.trim().length > 0
+  // Older links used `/rules?category=waste`; send them to the category screen.
+  const oldCategory = ruleCategories.find(
     (value) => value === params.get('category'),
   )
-  const searching = query.trim().length > 0
+  if (oldCategory)
+    return <Navigate to={`/rules/category/${oldCategory}`} replace />
 
   function updateQuery(value: string) {
     const next = new URLSearchParams(params)
@@ -47,15 +44,6 @@ export function RuleBrowser() {
       />
       {searching ? (
         <SearchResults rules={searchRules(rules, query)} />
-      ) : category ? (
-        <Stack gap={16}>
-          <TextLink to="/rules">‹ {t('rules.allCategories')}</TextLink>
-          {groupByCategory(
-            rules.filter((rule) => rule.category === category),
-          ).map((group) => (
-            <RuleCategoryCard key={group.category} group={group} />
-          ))}
-        </Stack>
       ) : (
         <>
           <Section title={t('rules.byCategory')}>
@@ -78,16 +66,10 @@ function SearchResults({ rules }: { rules: Rule[] }) {
       {rules.length === 0 ? (
         <Muted>{t('rules.noResults')}</Muted>
       ) : (
-        <ul className={`${styles.rows} ${styles.resultList}`}>
+        <ul className={styles.cards}>
           {rules.map((rule) => (
             <li key={rule.code}>
-              <Link to={`/rules/${rule.code}`} state={{ from: 'rules' }}>
-                <span>
-                  {rule.title}
-                  <small>{rule.summary}</small>
-                </span>
-                <span aria-hidden="true">›</span>
-              </Link>
+              <RuleCard rule={rule} />
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import { ruleEntries, ruleFaqs, rulesCheckedOn } from './content'
 import {
   groupByCategory,
   localizeRule,
+  parseContacts,
   safeUrl,
   searchRules,
   type Localized,
@@ -93,5 +94,55 @@ describe('rule content', () => {
     expect(ruleFaqs).toHaveLength(5)
     const codes = new Set(ruleEntries.map((item) => item.code))
     for (const faq of ruleFaqs) expect(codes.has(faq.rule), faq.rule).toBe(true)
+  })
+
+  it('finds a callable number in every contact, in every language', () => {
+    for (const item of ruleEntries) {
+      const contact = item.facts?.contact
+      if (!contact) continue
+      for (const language of Object.keys(languages) as (keyof Localized)[]) {
+        const found = parseContacts(contact[language])
+        expect(found.length, `${item.code} ${language}`).toBeGreaterThan(0)
+        for (const { tel } of found)
+          expect(tel, item.code).toMatch(/^\d{4,11}$/)
+      }
+    }
+  })
+})
+
+describe('rule contacts and tags', () => {
+  it('splits a contact into name, number and note', () => {
+    expect(
+      parseContacts('층간소음 이웃사이센터 1661-2642 (평일 09:00~18:00)'),
+    ).toEqual([
+      {
+        name: '층간소음 이웃사이센터',
+        phone: '1661-2642',
+        tel: '16612642',
+        note: '(평일 09:00~18:00)',
+      },
+    ])
+    expect(
+      parseContacts('다누리콜센터 1577-1366 / 시흥시 가족센터 031-319-7997'),
+    ).toMatchObject([
+      { name: '다누리콜센터', tel: '15771366' },
+      { name: '시흥시 가족센터', tel: '0313197997' },
+    ])
+    expect(parseContacts('1345')).toMatchObject([
+      { name: '', phone: '1345', tel: '1345' },
+    ])
+    expect(parseContacts('시흥시청 누리집')).toEqual([])
+  })
+
+  it('tags a rule with a fine only when its penalty mentions 과태료', () => {
+    expect(
+      localizeRule(entry({ facts: { penalty: text('과태료 10만 원') } }), 'en')
+        .fine,
+    ).toBe(true)
+    expect(
+      localizeRule(entry({ facts: { penalty: text('봉투 수거 안 됨') } }), 'ko')
+        .fine,
+    ).toBe(false)
+    expect(localizeRule(entry({}), 'ko').fine).toBe(false)
   })
 })

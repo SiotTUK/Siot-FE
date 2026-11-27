@@ -1,10 +1,14 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { ruleCategories } from '@/features/rules/rules'
+import { useRule } from '@/features/rules/use-rules'
+import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
 import { RuleDetail } from '@/features/rules/ui/rule-detail'
 import { RuleBrowser } from '@/features/rules/ui/rule-groups'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, PageHeading } from '@/shared/ui/page'
-import { ScreenHeader } from '@/shared/ui/screen-header'
+import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './rule-pages.module.css'
 
 /** M06 생활 수칙: search, 분야별 안내 tiles, FAQ TOP 5 and a 토로 tip. */
@@ -18,24 +22,72 @@ export function RulesPage() {
   )
 }
 
-export function RuleDetailPage() {
+/** ‹ goes back when the screen was opened from inside 생활 수칙, else to the list. */
+function useRulesBack() {
   const { t } = useTranslation()
-  const { code } = useParams()
   const { state } = useLocation()
   const navigate = useNavigate()
+  return {
+    label: t('common.back'),
+    onClick: () => {
+      if (state?.from === 'rules') void navigate(-1)
+      else void navigate('/rules', { replace: true })
+    },
+  }
+}
+
+/** Figma v2 "생활 수칙 · 분야" at `/rules/category/:category`. */
+export function RuleCategoryPage() {
+  const { t } = useTranslation()
+  const back = useRulesBack()
+  const param = useParams().category
+  const category = ruleCategories.find((value) => value === param)
+  if (!category) return <Navigate to="/rules" replace />
+  return (
+    <>
+      <ScreenHeader back={back} title={t(`rules.groups.${category}`)} />
+      <PageBody className={styles.body}>
+        <RuleCategoryView category={category} />
+      </PageBody>
+    </>
+  )
+}
+
+/** Figma v2 "생활 수칙 · 상세": ‹ rule title · 공유. */
+export function RuleDetailPage() {
+  const { t } = useTranslation()
+  const back = useRulesBack()
+  const { code } = useParams()
+  const rule = useRule(code ?? '')
+  const [copied, setCopied] = useState(false)
+
+  const share = async () => {
+    const url = window.location.href
+    try {
+      if (navigator.share) await navigator.share({ title: rule?.title, url })
+      else {
+        await navigator.clipboard.writeText(url)
+        setCopied(true)
+      }
+    } catch {
+      // Closing the share sheet rejects; nothing to tell the user.
+    }
+  }
+
   return (
     <>
       <ScreenHeader
-        title={t('rules.detail')}
-        back={{
-          label: t('common.back'),
-          onClick: () => {
-            if (state?.from === 'rules') void navigate(-1)
-            else void navigate('/rules', { replace: true })
-          },
-        }}
+        back={back}
+        title={rule?.title ?? t('rules.detail')}
+        actions={
+          rule && (
+            <HeaderAction onClick={() => void share()}>
+              {copied ? t('rules.shareCopied') : t('rules.share')}
+            </HeaderAction>
+          )
+        }
       />
-      <PageBody className={styles.body}>
+      <PageBody className={styles.detailBody}>
         {code ? (
           <RuleDetail code={code} />
         ) : (

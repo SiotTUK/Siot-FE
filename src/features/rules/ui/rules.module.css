@@ -1,4 +1,4 @@
-/* Figma v2 M06 category colors: tinted icon box per 분야. */
+/* Figma v2 category colors: tinted icon box per 분야. */
 [data-category='order'] {
   --category-bg: #e3f3f7;
   --category-fg: #0172ae;
@@ -33,8 +33,13 @@
   background: var(--category-bg);
   color: var(--category-fg);
 }
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
 
-/* 분야별 안내: 3×2 tiles */
+/* M06 분야별 안내: 3×2 tiles */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -72,7 +77,7 @@
   overflow-wrap: anywhere;
 }
 
-/* 자주 묻는 질문 TOP 5: one card, numbered rows with › */
+/* M06 자주 묻는 질문 TOP 5: one card, numbered rows with › */
 .faqList {
   margin: 0;
   padding: var(--space-4) var(--space-16);
@@ -116,133 +121,245 @@
   min-width: 0;
 }
 
-/* One category's list (from a tile): head + divided rows */
-.category {
-  border-radius: var(--radius-16);
-  background: var(--card);
-  overflow: hidden;
-}
+/* 생활 수칙 · 분야: category card, count, rule cards */
 .categoryHead {
   display: flex;
   align-items: center;
   gap: var(--space-12);
   padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.categoryHead .tileIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-16);
 }
 .categoryText {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-4);
 }
 .categoryText strong {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-heading);
+  font-size: 18px;
   color: var(--foreground);
 }
 .categoryText small {
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
-
-/* Divided rule rows with › (category list and search results) */
-.rows {
+.count {
+  font: var(--text-label);
+  color: var(--muted-foreground);
+}
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.rows li {
-  border-top: 1px solid var(--border);
-}
-.rows a {
+.ruleCard {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-12);
-  min-height: 48px;
-  padding: var(--space-12) var(--space-16);
-  font: var(--text-label);
-  font-weight: 400;
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
   color: var(--foreground);
   text-decoration: none;
 }
-.rows a > span[aria-hidden] {
+.ruleCard:hover {
+  box-shadow: 0 0 0 1px var(--border);
+}
+.ruleIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-8);
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+.ruleText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.ruleText strong {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.ruleText small {
+  display: -webkit-box;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.chevron {
   flex: none;
   color: var(--placeholder);
   font-size: 18px;
 }
-.rows a:hover {
-  background: var(--background);
-}
-.resultList {
-  border-radius: var(--radius-16);
-  background: var(--card);
-  overflow: hidden;
-}
-.resultList li:first-child {
-  border-top: 0;
-}
-.resultList small {
-  display: block;
-  margin-top: 2px;
-  font: var(--text-caption);
-  color: var(--muted-foreground);
-}
 
-/* Detail: M07a hero card */
-.hero {
+/* 생활 수칙 · 상세 */
+.detailHead {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-  padding: var(--space-16);
-  border-radius: var(--radius-16);
-  background: var(--primary);
-  color: var(--card);
 }
-.hero h2 {
+.detailTitle {
   font: var(--text-title);
   overflow-wrap: anywhere;
 }
-.hero p {
-  font: var(--text-caption);
-  font-size: 15px;
+.detailSummary {
+  font: var(--text-body);
+  color: var(--muted-foreground);
 }
-.heroMeta {
-  font-weight: 600;
-}
-.panel {
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
   margin: 0;
   padding: var(--space-16);
   border-radius: var(--radius-16);
   background: var(--card);
+  list-style: none;
 }
-.points {
+.steps li {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+  font: var(--text-body);
+  font-size: 15px;
+}
+.stepNumber {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  font: var(--text-caption);
+  font-weight: 700;
+  color: var(--card);
+}
+.know {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-8);
   margin: 0;
-  padding-left: 1.2em;
-  font: var(--text-body);
+}
+.know div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-12);
+  border-radius: var(--radius-16);
+  background: var(--secondary);
+}
+.know div[data-key='penalty'] {
+  background: var(--destructive-bg);
+}
+.know div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+.know dt {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.know dd {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.contact p {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.contact strong {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.contact small {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+.refs {
+  padding: var(--space-4) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.ref {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-12) 0;
+}
+.ref + .ref {
+  border-top: 1px solid var(--border);
+}
+.ref summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+  list-style: none;
+}
+.ref summary::-webkit-details-marker {
+  display: none;
+}
+.ref small {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+.ref strong {
+  font: var(--text-label);
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
 .sources {
-  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-8) 0 0;
   padding: 0;
   list-style: none;
+  font: var(--text-caption);
 }
 .sources a {
   font-weight: 600;
 }
-.facts {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-.facts dt {
-  font: var(--text-caption);
-  color: var(--muted-foreground);
-}
-.facts dd {
-  margin: 0;
-  font: var(--text-body);
-  overflow-wrap: anywhere;
+/* Bottom buttons stay on screen while the detail scrolls. */
+.bottomBar {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  margin: 0 calc(var(--gutter) * -1) calc(var(--space-32) * -1);
+  padding: var(--space-12) var(--gutter);
+  border-top: 1px solid var(--border);
+  background: var(--card);
 }

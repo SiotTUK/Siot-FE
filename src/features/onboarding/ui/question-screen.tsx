@@ -59,10 +59,9 @@ export function QuestionScreen({ question }: { question: Question }) {
     const request = toOnboardingRequest(updated)
     if (request)
       save.mutate(request, {
-        onSuccess: () => {
-          navigate('/home', { replace: true })
-          clear()
-        },
+        // The saved member is onboarded, so the onboarding route guard moves
+        // on: to the screen opened before signup or login (#68), else home.
+        onSuccess: clear,
       })
   }
   const skipValue = kind === 'multi' ? [] : null

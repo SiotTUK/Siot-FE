@@ -12,6 +12,11 @@ import {
   type SessionLocationState,
   useMe,
 } from './use-session'
+import {
+  clearReturnPath,
+  peekReturnPath,
+  rememberReturnPath,
+} from './return-path'
 
 /**
  * `/`, `/signup`, `/login`: logged-in members go to onboarding or home.
@@ -21,6 +26,11 @@ export function GuestOnly() {
   const { t } = useTranslation()
   const { data: me, isPending } = useMe()
   const { from, signedOut } = sessionState(useLocation().state)
+  const toOnboarding = Boolean(me && !signedOut && !me.onboarded)
+  // #68: signup and members who have not onboarded return here after F06.
+  useEffect(() => {
+    if (me && toOnboarding) rememberReturnPath(me.id, from)
+  }, [me, toOnboarding, from])
   if (isPending) return <PageLoader label={t('common.loading')} />
   if (me && !signedOut)
     return <Navigate to={guestRedirectPath(me, from)} replace />
@@ -45,6 +55,16 @@ export function RequireMember({ when }: { when: keyof typeof allowed }) {
   const query = useMe()
   const location = useLocation()
   const me = query.data
+  const path = location.pathname + location.search
+  const toOnboarding = Boolean(me && when === 'onboarded' && !me.onboarded)
+  // F06 saved: this guard moves the member on, so the screen kept for after
+  // onboarding is used once and then forgotten.
+  const onboardingDone = Boolean(me && when === 'onboarding' && me.onboarded)
+  // #68: a member who has not onboarded opened a screen; come back after F06.
+  useEffect(() => {
+    if (me && toOnboarding) rememberReturnPath(me.id, path)
+    if (onboardingDone) clearReturnPath()
+  }, [me, toOnboarding, onboardingDone, path])
   if (me === undefined)
     return (
       <PageBody>
@@ -53,9 +73,7 @@ export function RequireMember({ when }: { when: keyof typeof allowed }) {
     )
   if (!me) {
     // M-10: after login, come back here.
-    const state: SessionLocationState = {
-      from: location.pathname + location.search,
-    }
+    const state: SessionLocationState = { from: path }
     return (
       <Navigate
         to={hasStoredLanguage() ? '/login' : '/'}
@@ -64,7 +82,10 @@ export function RequireMember({ when }: { when: keyof typeof allowed }) {
       />
     )
   }
-  if (!allowed[when](me)) return <Navigate to={homePathFor(me)} replace />
+  if (!allowed[when](me)) {
+    const target = onboardingDone ? peekReturnPath(me.id) : undefined
+    return <Navigate to={target ?? homePathFor(me)} replace />
+  }
   return <Outlet />
 }
 

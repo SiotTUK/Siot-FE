@@ -219,6 +219,9 @@ function items(member: MockMember): ChecklistItemResponse[] {
       noticeChangedAt: null,
       hasNoticeChanged: false,
       applyStartsOn: null,
+      // BE seed has Korean text only (BE #30): other languages fall back to it.
+      contentLanguage: 'ko',
+      translated: member.language === 'ko',
       ...seed,
       highlighted: seed.code === 'CL-05' && dDay !== null && dDay <= 30,
       periodKey,

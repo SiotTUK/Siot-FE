@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
+import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { chatEntryState } from '@/features/chat/chat-entry'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
@@ -117,6 +118,8 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
               </p>
             </div>
           )}
+
+      <TaxDetailLink ruleCode={rule.code} />
 
       <div className={styles.refs}>
         {law && (

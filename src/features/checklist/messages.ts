@@ -30,6 +30,7 @@ export const checklistMessages = defineMessages({
         '자세한 방법은 아직 준비 중이에요. 모르면 문의처나 토로에게 물어보세요.',
       askToro: '토로에게 물어보기',
       viewDetail: '기한과 준비물 보기',
+      translationPending: '번역 준비 중',
       reasons: {
         CAR: '자차가 있어서 보여요',
         KIDS: '자녀가 있어서 보여요',
@@ -115,6 +116,7 @@ export const checklistMessages = defineMessages({
         'Step-by-step guidance is still being prepared. If you’re not sure, call the contact or ask Toro.',
       askToro: 'Ask Toro',
       viewDetail: 'View deadline & documents',
+      translationPending: 'Translation coming soon',
       reasons: {
         CAR: 'Shown because you have a car',
         KIDS: 'Shown because you have children',
@@ -199,6 +201,7 @@ export const checklistMessages = defineMessages({
       noGuide: '详细办理方法还在准备中。不清楚的话请咨询联系方式或问问 Toro。',
       askToro: '问问 Toro',
       viewDetail: '查看期限与材料',
+      translationPending: '翻译准备中',
       reasons: {
         CAR: '因为你有车而显示',
         KIDS: '因为你有孩子而显示',
@@ -284,6 +287,7 @@ export const checklistMessages = defineMessages({
         'Hướng dẫn chi tiết đang được chuẩn bị. Nếu chưa rõ, hãy gọi số liên hệ hoặc hỏi Toro.',
       askToro: 'Hỏi Toro',
       viewDetail: 'Xem hạn và giấy tờ',
+      translationPending: 'Đang chuẩn bị bản dịch',
       reasons: {
         CAR: 'Hiện vì bạn có ô tô',
         KIDS: 'Hiện vì bạn có con',

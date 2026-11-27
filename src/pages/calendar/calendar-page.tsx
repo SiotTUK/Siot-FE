@@ -14,6 +14,7 @@ import {
   lastCalendarMonth,
   readCalendarLocation,
 } from '@/features/calendar/calendar-location'
+import { taxDetailPath } from '@/features/calendar/taxes'
 import { useMonthlySchedules } from '@/features/calendar/use-monthly-schedules'
 import {
   useEventCalendar,
@@ -386,6 +387,15 @@ function ScheduleItem({
         <CalendarPeriod startsOn={schedule.startsOn} endsOn={schedule.endsOn} />
         {schedule.targetDescription && (
           <Muted>{schedule.targetDescription}</Muted>
+        )}
+        {/* BE #29: personal TAX_CAR·TAX_PROPERTY have no scheduleId, so the detail opens by taxScheduleId. */}
+        {schedule.taxScheduleId != null && (
+          <Link
+            className={styles.taxLink}
+            to={taxDetailPath(schedule.taxScheduleId)}
+          >
+            {t('calendar.tax.open')} ›
+          </Link>
         )}
       </div>
       {(schedule.highlighted || schedule.personal) && (

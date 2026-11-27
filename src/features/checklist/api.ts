@@ -51,6 +51,18 @@ export interface ChecklistItemResponse {
   warningMessage?: string | null
   warningType?: string | null
   sourcePages?: string | null
+  /**
+   * Language of the item text (title, summary, content, badge, place, docs,
+   * fee, law, penalty, sourceName). null = no Korean source either (title is
+   * the item code). BE #30.
+   */
+  contentLanguage?: Language | null
+  /**
+   * false → shown in Korean (or missing), or only the CL-04 condition text
+   * fell back to Korean: show "번역 준비 중". Warnings and categoryLabel are
+   * always in the requested language. Older responses may leave it out.
+   */
+  translated?: boolean
 }
 
 export interface ChecklistSummaryResponse {

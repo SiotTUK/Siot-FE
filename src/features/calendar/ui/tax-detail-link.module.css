@@ -1,0 +1,25 @@
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--secondary);
+  color: var(--foreground);
+  text-decoration: none;
+}
+.link > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.link strong {
+  font: var(--text-label);
+  font-weight: 700;
+  color: var(--primary);
+}
+.link small {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}

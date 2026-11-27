@@ -12,6 +12,69 @@ export interface ScheduleResponse {
   sourceUrl: string | null
   personal: boolean
   highlighted: boolean
+  /** Days left to the end (or start) date, Korea time. Server-computed. */
+  dDay?: number | null
+  /**
+   * Common tax schedule to open in the tax detail (BE #29): its own id for a
+   * common tax, the matching round for a personal TAX_CAR·TAX_PROPERTY.
+   * null → no detail. Older responses may leave it out.
+   */
+  taxScheduleId?: number | null
+}
+
+/** CAL-03 tax detail (GET /api/schedules/taxes/{id}). */
+export interface TaxDetailResponse {
+  scheduleId: number
+  guideId: number | null
+  /** TAX_CAR, TAX_PROPERTY, TAX_RESIDENT ... */
+  kind: string
+  title: string
+  startsOn: string
+  endsOn: string | null
+  targetDescription: string | null
+  sourceUrl: string | null
+  summary: string | null
+  content: string | null
+  place: string | null
+  docs: string[] | null
+  fee: string | null
+  law: string | null
+  penalty: string | null
+  /** Office and number in the requested language (BE #29); null → hide. */
+  contact: string | null
+  sourcePages: string | null
+  dDay: number | null
+}
+
+export const taxKeys = {
+  all: ['taxes'] as const,
+  detail: (scheduleId: number, language: Language) =>
+    [...taxKeys.all, 'detail', scheduleId, language] as const,
+  byKind: (kind: string, language: Language) =>
+    [...taxKeys.all, 'kind', kind, language] as const,
+}
+
+export function fetchTaxDetail(
+  scheduleId: number,
+  language: Language,
+  signal?: AbortSignal,
+) {
+  return apiRequest<TaxDetailResponse>(
+    `/api/schedules/taxes/${scheduleId}?language=${language}`,
+    { signal },
+  )
+}
+
+/** Common tax schedules of one kind, by start date (GET /api/schedules/taxes?kind=). */
+export function fetchTaxSchedules(
+  kind: string,
+  language: Language,
+  signal?: AbortSignal,
+) {
+  const search = new URLSearchParams({ kind, language })
+  return apiRequest<TaxDetailResponse[]>(`/api/schedules/taxes?${search}`, {
+    signal,
+  })
 }
 
 export const scheduleQueryKey = ['schedules'] as const

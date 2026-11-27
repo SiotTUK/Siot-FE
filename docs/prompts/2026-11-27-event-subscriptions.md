@@ -1,7 +1,7 @@
 # 행사 알림 신청과 행사 상세 보완
 
 - 작성일 2026-11-27
-- 관련 이슈 및 PR [FE #32](https://github.com/SiotTUK/Siot-FE/issues/32), [FE PR #25](https://github.com/SiotTUK/Siot-FE/pull/25), [BE PR #17](https://github.com/SiotTUK/Siot-BE/pull/17), [BE PR #28](https://github.com/SiotTUK/Siot-BE/pull/28)
+- 관련 이슈 및 PR [FE #32](https://github.com/SiotTUK/Siot-FE/issues/32), [FE PR #25](https://github.com/SiotTUK/Siot-FE/pull/25), [FE PR #62](https://github.com/SiotTUK/Siot-FE/pull/62), [BE PR #17](https://github.com/SiotTUK/Siot-BE/pull/17), [BE PR #28](https://github.com/SiotTUK/Siot-BE/pull/28)
 
 ## 목적
 
@@ -33,3 +33,11 @@ BE 저장소에서 실제 요청·응답과 알림 동작을 확인하고 로컬
 | 실제 알림      | 관리자 일정 변경 후 회원 2명 비교   | 구독 회원 1건·해제 회원 0건, 읽음·배지 갱신·같은 행사 복귀 확인 |
 
 미검증 항목은 배포 환경 및 예약 알림의 실제 발송 시각이다.
+
+## 2026-11-27 알림 패널과 목록 화면 수정
+
+- 추천 카드와 행사 상세의 패널 제목을 ‘알림 받기’로 통일한다. 발송 안내와 선택 메뉴 위 라벨을 화면에서 빼고, 화면 낭독기용 이름을 유지한다.
+- 버튼 이름을 ‘저장’과 ‘해제’로 줄이고 상세 패널 오른쪽 아래에 배치한다. 구독 시점을 새로 선택한 후 ‘저장’을 눌러 반영한다.
+- 알림 카드의 종류와 날짜를 각각 배지로 표시한다. 제목 아래의 본문은 제거하고, 제목과 미읽음 표시를 유지한다.
+- Chrome 390×844에서 네 언어의 화면과 알림 구독 조작을 확인했다. 로컬 실제 BE에서 일정 변경 알림의 배지, 읽음 처리, 같은 행사로 이동하는 흐름을 확인했다.
+- 리뷰할 때 두 화면 변경을 별개 커밋으로 확인할 수 있게 한다. PR에는 홈 추천 카드, 행사 상세, 미읽음 알림, 읽은 알림을 각 행에 한 장씩 배치한다.

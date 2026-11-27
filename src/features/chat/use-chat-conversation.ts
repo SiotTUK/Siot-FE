@@ -9,9 +9,17 @@ import { useAsk, useFeedback, useMessages } from './use-chat'
  * on its way, and the draft. The conversation is created with the first
  * question, then the URL switches to it without remounting the page.
  */
-export function useChatConversation(conversationId: number | undefined) {
+export function useChatConversation(
+  conversationId: number | undefined,
+  eventQuestion?: { key: string; draft: string; eventId: string },
+) {
   const navigate = useNavigate()
-  const [draft, setDraft] = useState('')
+  const [draft, setDraft] = useState(eventQuestion?.draft ?? '')
+  const [draftKey, setDraftKey] = useState(eventQuestion?.key)
+  if (eventQuestion && draftKey !== eventQuestion.key) {
+    setDraftKey(eventQuestion.key)
+    setDraft(eventQuestion.draft)
+  }
   const [sending, setSending] = useState<string>()
   const [createdId, setCreatedId] = useState<number>()
   const activeId = conversationId ?? createdId
@@ -29,7 +37,10 @@ export function useChatConversation(conversationId: number | undefined) {
       {
         onSuccess: ({ conversationId: id }) => {
           if (conversationId !== undefined) return
-          navigate(`/chat/${id}`, { replace: true })
+          navigate(`/chat/${id}`, {
+            replace: true,
+            state: eventQuestion && { eventQuestionId: eventQuestion.eventId },
+          })
           // The URL carries the id now; a later "/chat" must start fresh.
           setCreatedId(undefined)
         },

@@ -1,12 +1,22 @@
 import { http, HttpResponse } from 'msw'
+import { eventLeadDays } from '@/features/events/api'
 import type {
   EventCalendarItem,
   EventDetail,
   EventRecommendation,
 } from '@/features/events/api'
+import { isIsoDate } from '@/features/events/event-filters'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
-import { body, currentMember, error, unauthorized } from '../db'
+import { body, currentMember, error, persist, state, unauthorized } from '../db'
+
+// Events that already ended, for "지난 행사 보기" (past=true).
+const pastTitles: Record<Language, string[]> = {
+  ko: ['가을 다문화 축제', '외국인 주민 생활 설명회'],
+  en: ['Autumn multicultural festival', 'Life in Siheung briefing'],
+  zh: ['秋季多文化节', '外国居民生活说明会'],
+  vi: ['Lễ hội đa văn hóa mùa thu', 'Buổi giới thiệu đời sống tại Siheung'],
+}
 
 const sampleText = {
   ko: {
@@ -79,7 +89,7 @@ export function mockEvents(language: Language) {
   const dateIn = (days: number) =>
     new Date(today + days * 86_400_000).toISOString().slice(0, 10)
 
-  return text.titles.map<EventDetail>((title, index) => ({
+  const upcoming = text.titles.map<EventDetail>((title, index) => ({
     eventId: index + 1,
     title,
     venue: text.venues[index],
@@ -99,9 +109,95 @@ export function mockEvents(language: Language) {
     sourceUrl: 'https://www.siheung.go.kr/',
     subscribed: false,
   }))
+  const past = pastTitles[language].map<EventDetail>((title, index) => ({
+    ...upcoming[index],
+    eventId: upcoming.length + index + 1,
+    title,
+    startsOn: dateIn(index === 0 ? -40 : -20),
+    endsOn: dateIn(index === 0 ? -38 : -20),
+    multicultural: index === 0,
+    applicationUrl: null,
+  }))
+  return [...upcoming, ...past]
+}
+
+/** GET /api/events conditions from EVE-10: past and an overlapping period. */
+export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
+  const today = koreaToday()
+  const past = params.get('past') === 'true'
+  const from = params.get('from')
+  const to = params.get('to')
+  return events
+    .filter(({ startsOn, endsOn }) => {
+      const start = startsOn ?? endsOn
+      const end = endsOn ?? startsOn
+      if (!start || !end) return false
+      if (past ? end >= today : end < today) return false
+      return (!from || end >= from) && (!to || start <= to)
+    })
+    .sort((a, b) =>
+      past
+        ? (b.endsOn ?? b.startsOn ?? '').localeCompare(
+            a.endsOn ?? a.startsOn ?? '',
+          )
+        : (a.startsOn ?? a.endsOn ?? '').localeCompare(
+            b.startsOn ?? b.endsOn ?? '',
+          ),
+    )
+}
+
+const subscriptionPath = '*/api/events/:eventId/subscriptions'
+
+function saveSubscription(eventId: string, request: Request, enabled: boolean) {
+  const member = currentMember()
+  if (!member) return unauthorized()
+  const event = mockEvents(member.language).find(
+    (item) => String(item.eventId) === eventId,
+  )
+  if (!event) return error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
+  const requested = new URL(request.url).searchParams.get('leadDays')
+  const selected = eventLeadDays.find((days) => String(days) === requested)
+  const lastDay = event.endsOn ?? event.startsOn
+  if (
+    enabled &&
+    ((requested !== null && selected === undefined) ||
+      (lastDay && lastDay < koreaToday()))
+  ) {
+    return error(400, 'INVALID_INPUT', '알림 설정을 다시 확인해 주세요.')
+  }
+  const subscriptions = (state.eventSubscriptions[member.id] ??= {})
+  const leadDays = selected ?? subscriptions[eventId]?.leadDays ?? 1
+  subscriptions[eventId] = { enabled, leadDays }
+  persist()
+  return HttpResponse.json({
+    data: {
+      eventId: event.eventId,
+      userId: member.id,
+      enabled,
+      leadDays,
+      updatedAt: new Date().toISOString(),
+    },
+  })
 }
 
 export const eventHandlers = [
+  http.get(subscriptionPath, ({ params }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const saved = state.eventSubscriptions[member.id]?.[String(params.eventId)]
+    return HttpResponse.json({
+      data: {
+        subscribed: saved?.enabled ?? false,
+        leadDays: saved?.enabled ? saved.leadDays : null,
+      },
+    })
+  }),
+  http.post(subscriptionPath, ({ params, request }) =>
+    saveSubscription(String(params.eventId), request, true),
+  ),
+  http.delete(subscriptionPath, ({ params, request }) =>
+    saveSubscription(String(params.eventId), request, false),
+  ),
   http.get('*/api/events/recommendations', () => {
     const member = currentMember()
     if (!member) return unauthorized()
@@ -116,15 +212,22 @@ export const eventHandlers = [
   http.get('*/api/events', ({ request }) => {
     const member = currentMember()
     if (!member) return unauthorized()
-    const page = Number(new URL(request.url).searchParams.get('page') ?? '0')
-    const events = mockEvents(member.language)
+    const params = new URL(request.url).searchParams
+    const page = Number(params.get('page') ?? '0')
+    const from = params.get('from')
+    const to = params.get('to')
+    if ((from && !isIsoDate(from)) || (to && !isIsoDate(to)))
+      return error(400, 'INVALID_INPUT', '날짜 형식은 yyyy-MM-dd 입니다.')
+    if (from && to && from > to)
+      return error(400, 'INVALID_INPUT', 'from 은 to 보다 늦을 수 없습니다.')
+    const events = listMockEvents(mockEvents(member.language), params)
     return HttpResponse.json({
       data: {
         content: page === 0 ? events : [],
         page,
         size: 20,
         totalElements: events.length,
-        totalPages: 1,
+        totalPages: events.length ? 1 : 0,
         hasNext: false,
       },
     })
@@ -167,19 +270,30 @@ export const eventHandlers = [
       (item) => String(item.eventId) === params.eventId,
     )
     return event
-      ? HttpResponse.json({ data: event })
+      ? HttpResponse.json({
+          data: {
+            ...event,
+            subscribed:
+              state.eventSubscriptions[member.id]?.[String(event.eventId)]
+                ?.enabled ?? false,
+          },
+        })
       : error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
   }),
   http.post('*/api/reports', async ({ request }) => {
     const member = currentMember()
     if (!member) return unauthorized()
     const report = await body(request)
+    // Same checks as BE ContentReportRequest (COM-01).
     if (
-      typeof report.reason !== 'string' ||
-      !report.reason.trim() ||
-      report.reason.length > 50
+      !['TRANSLATION', 'CONTENT', 'OTHER'].includes(String(report.reason)) ||
+      typeof report.quotedText !== 'string' ||
+      !report.quotedText.trim() ||
+      report.quotedText.length > 2000 ||
+      (typeof report.targetTitleSnapshot === 'string' &&
+        report.targetTitleSnapshot.length > 255)
     )
-      return error(400, 'INVALID_INPUT', '신고 사유를 다시 확인해 주세요.')
+      return error(400, 'INVALID_INPUT', '입력값이 올바르지 않습니다.')
     if (
       !mockEvents(member.language).some(
         ({ eventId }) => report.eventId === eventId,

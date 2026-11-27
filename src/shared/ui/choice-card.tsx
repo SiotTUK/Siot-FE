@@ -25,12 +25,14 @@ export function ChoiceCard({
       className={styles.card}
       data-selected={selected}
       aria-pressed={selected}
-      lang={lang}
       onClick={onClick}
     >
       <span className={styles[indicator]} aria-hidden="true" />
       <span className={styles.text}>
-        <span className={styles.title}>{title}</span>
+        {/* `lang` marks the title only; the description is in the screen language. */}
+        <span className={styles.title} lang={lang}>
+          {title}
+        </span>
         {description && (
           <span className={styles.description}>{description}</span>
         )}

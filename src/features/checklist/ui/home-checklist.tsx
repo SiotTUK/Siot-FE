@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { currentLanguage } from '@/shared/i18n'
-import { errorMessage } from '@/shared/i18n/error-message'
 import { formatMonthDay } from '@/shared/i18n/format'
 import { FormError, Muted, Section, Stack, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
@@ -11,6 +10,7 @@ import {
   deadlineText,
   groupItems,
   keepOrder,
+  markErrorMessage,
   nextMark,
   pickDeadlineAlert,
 } from '../checklist'
@@ -124,7 +124,9 @@ export function ChecklistSection({
     <div id="checklist" ref={checklistStart} tabIndex={-1}>
       <Section title={t('checklist.title')}>
         <QueryState query={checklist}>
-          {mark.isError && <FormError message={errorMessage(t, mark.error)} />}
+          {mark.isError && (
+            <FormError message={markErrorMessage(t, mark.error)} />
+          )}
           {main.length === 0 && optional.length === 0 && (
             <Muted>{t('checklist.empty')}</Muted>
           )}

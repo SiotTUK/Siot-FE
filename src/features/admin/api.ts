@@ -82,8 +82,9 @@ export const adminKeys = {
     [...adminKeys.all, 'members', email, role] as const,
   reviews: (type: ReviewType, reviewed: boolean | undefined) =>
     [...adminKeys.all, 'reviews', type, reviewed ?? 'any'] as const,
+  guideAll: (code: string) => [...adminKeys.all, 'guide', code] as const,
   guide: (code: string, language: Language) =>
-    [...adminKeys.all, 'guide', code, language] as const,
+    [...adminKeys.guideAll(code), language] as const,
 }
 
 function query(params: Record<string, string | number | boolean | undefined>) {

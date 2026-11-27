@@ -35,7 +35,7 @@ export function HomePage() {
       )}
       {me && (
         <ChecklistSection
-          key={`${me.id}:${guide ?? ''}`}
+          key={`checklist:${me.id}:${guide ?? ''}`}
           memberId={me.id}
           guideCode={guide}
         />
@@ -54,7 +54,7 @@ export function HomePage() {
         </ButtonLink>
       </div>
       {me && <EventRecommendations memberId={me.id} showAllLink />}
-      {me && <LifeChangePicker key={me.id} memberId={me.id} />}
+      {me && <LifeChangePicker key={`life-change:${me.id}`} memberId={me.id} />}
     </PageBody>
   )
 }

@@ -120,6 +120,7 @@ export function SelectField({
   error,
   options,
   className,
+  hideLabel,
   ref,
   ...select
 }: Own<SelectHTMLAttributes<HTMLSelectElement>> & {
@@ -127,7 +128,7 @@ export function SelectField({
   ref?: Ref<HTMLSelectElement>
 }) {
   return (
-    <Field {...{ label, error, className }}>
+    <Field {...{ label, error, className, hideLabel }}>
       {(control) => (
         <select {...select} {...control} ref={ref}>
           {options.map((option) => (

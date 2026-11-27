@@ -9,6 +9,7 @@ import { BottomNav } from '@/shared/ui/bottom-nav'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { MobileFrame } from '@/shared/ui/mobile-frame'
 import { TopBar } from '@/shared/ui/top-bar'
+import authTheme from './auth-theme.module.css'
 
 export function RootLayout() {
   return (
@@ -17,6 +18,15 @@ export function RootLayout() {
       <ScrollRestoration />
       <Outlet />
     </MobileFrame>
+  )
+}
+
+/** Start/signup screens (F01, M02a–d) with the Figma v2 colors. */
+export function AuthLayout() {
+  return (
+    <div className={authTheme.theme}>
+      <Outlet />
+    </div>
   )
 }
 

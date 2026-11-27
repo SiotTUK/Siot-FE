@@ -1,0 +1,41 @@
+/* Figma "웰컴시흥/MascotTip" (358×98): mascot tint, name, body text. */
+.tip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+}
+.tip[data-mascot='haero'] {
+  --tip-bg: #e6f6f6; /* Mascot/Haero Tint */
+  --tip-name: var(--primary);
+}
+.tip[data-mascot='toro'] {
+  --tip-bg: #fff6da; /* Mascot/Toro Tint */
+  --tip-name: #489550; /* Mascot/Toro Deep */
+}
+.tip {
+  background: var(--tip-bg);
+}
+.image {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  /* The source art has wide empty margins; enlarge it inside its own box. */
+  transform: scale(1.6);
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font: var(--text-body);
+  font-size: 15px;
+  color: var(--foreground);
+}
+.name {
+  font: var(--text-label);
+  font-size: 13px;
+  color: var(--tip-name);
+}

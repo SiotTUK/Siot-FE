@@ -64,14 +64,16 @@ function NotificationCard({
   const when = 'relative' in day ? t(`notifications.${day.relative}`) : day.date
   const content = (
     <>
-      <span className={styles.badge}>
-        {t(`notifications.groups.${notificationGroup(item.kind)}`)} · {when}
+      <span className={styles.badges}>
+        <span className={styles.badge}>
+          {t(`notifications.groups.${notificationGroup(item.kind)}`)}
+        </span>
+        <span className={styles.badge}>{when}</span>
       </span>
       <span className={styles.title}>
         {!item.read && <span className={styles.dot} aria-hidden="true" />}
         {item.title}
       </span>
-      {item.body && <span className={styles.body}>{item.body}</span>}
       {!item.read && (
         <span className="visually-hidden">{t('notifications.unreadMark')}</span>
       )}

@@ -38,7 +38,7 @@ export function HomePage() {
         {comingSoon}
       </div>
       {me && <EventRecommendations memberId={me.id} showAllLink />}
-      {me && <LifeChangePicker key={me.id} memberId={me.id} />}
+      {me && <LifeChangePicker key={`life-change:${me.id}`} memberId={me.id} />}
     </PageBody>
   )
 }

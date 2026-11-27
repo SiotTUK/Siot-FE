@@ -12,7 +12,7 @@ import {
 import styles from './event-list-filters.module.css'
 
 /**
- * EVE-10 list filter area: upcoming/past switch and a date range.
+ * EVE-10 list filter area: event status and a date range.
  * Region (#33) and category (#37) filters join this area and its reset.
  */
 export function EventListFilters({
@@ -31,11 +31,12 @@ export function EventListFilters({
       <ChipGroup
         label={t('events.filters.status')}
         options={[
-          { value: 'upcoming', label: t('events.filters.upcoming') },
-          { value: 'past', label: t('events.filters.past') },
+          { value: 'ongoing', label: t('events.filters.ongoing') },
+          { value: 'scheduled', label: t('events.filters.scheduled') },
+          { value: 'ended', label: t('events.filters.ended') },
         ]}
-        value={filters.past ? 'past' : 'upcoming'}
-        onChange={(value) => onChange({ ...filters, past: value === 'past' })}
+        value={filters.status}
+        onChange={(status) => onChange({ ...filters, status })}
       />
       <fieldset className={styles.period}>
         <legend className="visually-hidden">

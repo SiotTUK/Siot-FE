@@ -22,18 +22,24 @@ describe('isIsoDate', () => {
 })
 
 describe('parseEventFilters', () => {
-  it('reads past and the date range from the URL', () => {
+  it('keeps legacy past links working with the date range', () => {
     expect(
       parseEventFilters(
         new URLSearchParams('past=true&from=2026-12-01&to=2026-12-31'),
       ),
-    ).toEqual({ past: true, from: '2026-12-01', to: '2026-12-31' })
+    ).toEqual({ status: 'ended', from: '2026-12-01', to: '2026-12-31' })
+  })
+
+  it('reads the scheduled status from the URL', () => {
+    expect(
+      parseEventFilters(new URLSearchParams('status=scheduled')).status,
+    ).toBe('scheduled')
   })
 
   it('drops malformed values', () => {
     expect(
       parseEventFilters(new URLSearchParams('past=1&from=tomorrow&to=')),
-    ).toEqual({ past: false, from: null, to: null })
+    ).toEqual({ status: 'ongoing', from: null, to: null })
   })
 })
 
@@ -45,33 +51,39 @@ describe('isDateRangeValid', () => {
     ['2026-12-01', '2026-12-01'],
     ['2026-12-01', '2026-12-31'],
   ])('allows from %s to %s', (from, to) => {
-    expect(isDateRangeValid({ past: false, from, to })).toBe(true)
+    expect(isDateRangeValid({ status: 'ongoing', from, to })).toBe(true)
   })
 
   it('rejects from later than to', () => {
     expect(
-      isDateRangeValid({ past: false, from: '2026-12-31', to: '2026-12-01' }),
+      isDateRangeValid({
+        status: 'ongoing',
+        from: '2026-12-31',
+        to: '2026-12-01',
+      }),
     ).toBe(false)
   })
 })
 
 it('reports whether any filter is set', () => {
-  expect(hasEventFilters({ past: false, from: null, to: null })).toBe(false)
-  expect(hasEventFilters({ past: true, from: null, to: null })).toBe(true)
-  expect(hasEventFilters({ past: false, from: null, to: '2026-12-01' })).toBe(
-    true,
+  expect(hasEventFilters({ status: 'ongoing', from: null, to: null })).toBe(
+    false,
   )
+  expect(hasEventFilters({ status: 'ended', from: null, to: null })).toBe(true)
+  expect(
+    hasEventFilters({ status: 'ongoing', from: null, to: '2026-12-01' }),
+  ).toBe(true)
 })
 
 describe('withEventFilters', () => {
   it('sets the filters, keeps other params and resets the page', () => {
     const next = withEventFilters(
-      new URLSearchParams('page=3&region=SIHEUNG&to=2026-12-01'),
-      { past: true, from: '2026-11-01', to: null },
+      new URLSearchParams('page=3&past=true&region=SIHEUNG&to=2026-12-01'),
+      { status: 'ended', from: '2026-11-01', to: null },
     )
     expect(Object.fromEntries(next)).toEqual({
       region: 'SIHEUNG',
-      past: 'true',
+      status: 'ended',
       from: '2026-11-01',
     })
   })
@@ -79,14 +91,18 @@ describe('withEventFilters', () => {
 
 describe('eventListQuery', () => {
   it('sends only the page by default', () => {
-    expect(eventListQuery(0, { past: false, from: null, to: null })).toBe(
+    expect(eventListQuery(0, { status: 'ongoing', from: null, to: null })).toBe(
       'page=0',
     )
   })
 
   it('sends past and the date range', () => {
     expect(
-      eventListQuery(2, { past: true, from: '2026-12-01', to: '2026-12-31' }),
+      eventListQuery(2, {
+        status: 'ended',
+        from: '2026-12-01',
+        to: '2026-12-31',
+      }),
     ).toBe('page=2&past=true&from=2026-12-01&to=2026-12-31')
   })
 })

@@ -1,6 +1,7 @@
 import { apiRequest } from '@/shared/api/client'
 import type { Language, PageResponse } from '@/shared/api/types'
 import { eventListQuery, type EventListFilters } from './event-filters'
+import { emptyEventListPage, fetchActiveEventPage } from './event-list-page'
 
 export interface EventSummary {
   eventId: number
@@ -63,8 +64,12 @@ export const eventKeys = {
   recommendations: (memberId: number) =>
     [...eventKeys.member(memberId), 'recommendations'] as const,
   lists: (memberId: number) => [...eventKeys.member(memberId), 'list'] as const,
-  list: (memberId: number, page: number, filters: EventListFilters) =>
-    [...eventKeys.lists(memberId), filters, page] as const,
+  list: (
+    memberId: number,
+    page: number,
+    filters: EventListFilters,
+    today: string,
+  ) => [...eventKeys.lists(memberId), filters, today, page] as const,
   subscription: (memberId: number, eventId: string) =>
     [...eventKeys.member(memberId), 'subscription', eventId] as const,
   calendar: (memberId: number, year: number, month: number) =>
@@ -83,12 +88,29 @@ export function fetchEventRecommendations(signal?: AbortSignal) {
 export function fetchEvents(
   page: number,
   filters: EventListFilters,
+  today: string,
   signal?: AbortSignal,
 ) {
-  return apiRequest<PageResponse<EventSummary>>(
-    `/api/events?${eventListQuery(page, filters)}`,
-    { signal },
-  )
+  const fetchPage = (pageNumber: number, query = filters) =>
+    apiRequest<PageResponse<EventSummary>>(
+      `/api/events?${eventListQuery(pageNumber, query)}`,
+      { signal },
+    )
+
+  if (filters.status === 'ended') return fetchPage(page)
+  if (filters.status === 'scheduled') {
+    return filters.to && filters.to <= today
+      ? Promise.resolve(emptyEventListPage(page))
+      : fetchActiveEventPage(page, today, 'scheduled', fetchPage)
+  }
+
+  // A future period can still overlap a currently running event.
+  if (filters.from && filters.from > today)
+    return fetchActiveEventPage(page, today, 'ongoing', fetchPage)
+
+  // The non-past endpoint already checks the end date. Cap the start date at today.
+  const to = filters.to && filters.to < today ? filters.to : today
+  return fetchPage(page, { ...filters, to })
 }
 
 export function fetchEventDetail(eventId: string, signal?: AbortSignal) {

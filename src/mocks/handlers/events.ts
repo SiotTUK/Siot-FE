@@ -137,8 +137,12 @@ export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
     })
     .sort((a, b) =>
       past
-        ? (b.endsOn ?? '').localeCompare(a.endsOn ?? '')
-        : (a.startsOn ?? '').localeCompare(b.startsOn ?? ''),
+        ? (b.endsOn ?? b.startsOn ?? '').localeCompare(
+            a.endsOn ?? a.startsOn ?? '',
+          )
+        : (a.startsOn ?? a.endsOn ?? '').localeCompare(
+            b.startsOn ?? b.endsOn ?? '',
+          ),
     )
 }
 

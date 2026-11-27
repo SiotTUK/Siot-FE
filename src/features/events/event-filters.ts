@@ -1,12 +1,14 @@
-/** EVE-10 list conditions this screen sends: past events and a date range. */
+export type EventStatus = 'ongoing' | 'scheduled' | 'ended'
+
+/** EVE-10 list controls stored in the URL. */
 export interface EventListFilters {
-  past: boolean
+  status: EventStatus
   from: string | null
   to: string | null
 }
 
 export const defaultEventFilters: EventListFilters = {
-  past: false,
+  status: 'ongoing',
   from: null,
   to: null,
 }
@@ -25,8 +27,14 @@ export function isIsoDate(value: unknown): value is string {
 export function parseEventFilters(params: URLSearchParams): EventListFilters {
   const from = params.get('from')
   const to = params.get('to')
+  const status = params.get('status')
   return {
-    past: params.get('past') === 'true',
+    status:
+      status === 'ongoing' || status === 'scheduled' || status === 'ended'
+        ? status
+        : params.get('past') === 'true'
+          ? 'ended'
+          : defaultEventFilters.status,
     from: isIsoDate(from) ? from : null,
     to: isIsoDate(to) ? to : null,
   }
@@ -38,7 +46,11 @@ export function isDateRangeValid({ from, to }: EventListFilters) {
 }
 
 export function hasEventFilters(filters: EventListFilters) {
-  return filters.past || filters.from !== null || filters.to !== null
+  return (
+    filters.status !== defaultEventFilters.status ||
+    filters.from !== null ||
+    filters.to !== null
+  )
 }
 
 /**
@@ -51,8 +63,9 @@ export function withEventFilters(
 ) {
   const next = new URLSearchParams(params)
   next.delete('page')
-  if (filters.past) next.set('past', 'true')
-  else next.delete('past')
+  next.delete('past')
+  if (filters.status === defaultEventFilters.status) next.delete('status')
+  else next.set('status', filters.status)
   for (const key of ['from', 'to'] as const) {
     const value = filters[key]
     if (value) next.set(key, value)
@@ -64,7 +77,7 @@ export function withEventFilters(
 /** Query string for GET /api/events. Defaults are left out. */
 export function eventListQuery(page: number, filters: EventListFilters) {
   const query = new URLSearchParams({ page: String(page) })
-  if (filters.past) query.set('past', 'true')
+  if (filters.status === 'ended') query.set('past', 'true')
   if (filters.from) query.set('from', filters.from)
   if (filters.to) query.set('to', filters.to)
   return query.toString()

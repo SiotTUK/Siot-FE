@@ -86,7 +86,9 @@ function EventList({ memberId }: { memberId: number }) {
   const filterArea = (
     <EventListFilters
       filters={filters}
-      onChange={(next) => setParams(withEventFilters(params, next))}
+      onChange={(next) =>
+        setParams(withEventFilters(params, next), { preventScrollReset: true })
+      }
     />
   )
 
@@ -129,9 +131,7 @@ function EventList({ memberId }: { memberId: number }) {
         <Muted>
           {filters.from || filters.to
             ? t('events.emptyFiltered')
-            : filters.past
-              ? t('events.emptyPast')
-              : t('events.empty')}
+            : t(`events.emptyStatus.${filters.status}`)}
         </Muted>
       )}
       {rangeValid && data && (page > 0 || data.hasNext) && (

@@ -41,6 +41,67 @@ export function pickDeadlineAlert(items: ChecklistItemResponse[]) {
     .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
 }
 
+/**
+ * Home hero (Figma v2 H1/H2). `urgent`: the open item due within 30 days (or
+ * overdue) with the nearest deadline. Otherwise `calm` ("지금 급한 할 일은
+ * 없어요") with the next open item that has a later deadline, if any.
+ */
+export function homeHero(
+  items: ChecklistItemResponse[],
+):
+  | { kind: 'urgent'; item: ChecklistItemResponse }
+  | { kind: 'calm'; next?: ChecklistItemResponse } {
+  const urgent = pickDeadlineAlert(items)
+  if (urgent) return { kind: 'urgent', item: urgent }
+  return { kind: 'calm', next: pickNextItem(items) }
+}
+
+/** Required items still to do (the "나에게 필요한 할 일 N" count). */
+export function openRequiredCount(items: ChecklistItemResponse[]) {
+  return items.filter((item) => item.itemType === 'REQUIRED' && open(item))
+    .length
+}
+
+/**
+ * H2 "다음 할 일": the open item whose server deadline comes first. The home
+ * switches to H2 when `pickDeadlineAlert` finds nothing within 30 days.
+ */
+export function pickNextItem(items: ChecklistItemResponse[]) {
+  return items
+    .filter((item) => open(item) && item.dDay !== null && item.deadline)
+    .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
+}
+
+/**
+ * Life change a task belongs to (LC-01-1 → LC-01), for the chip in front of
+ * its title (Figma v2 H1 "이사").
+ */
+export function lifeChangeOf(item: ChecklistItemResponse) {
+  if (item.kind !== 'LIFE_CHANGE_TASK') return undefined
+  return /^(LC-\d{2})-/.exec(item.code)?.[1]
+}
+
+/**
+ * Why a life-change task shows up (Figma v2 F06b "자차가 있어서 보여요"),
+ * from the server category: CAR tasks need a car, EDUCATION tasks a child at
+ * school (BE seed: LC-01-3 CAR, LC-01-4 EDUCATION). Skipped on the car and
+ * school life changes themselves, where every task has that reason.
+ */
+export function reasonOf(item: ChecklistItemResponse) {
+  const lifeChange = lifeChangeOf(item)
+  if (!lifeChange) return undefined
+  if (item.category === 'CAR' && lifeChange !== 'LC-04') return 'CAR'
+  if (item.category === 'EDUCATION' && lifeChange !== 'LC-03') return 'KIDS'
+  return undefined
+}
+
+/**
+ * "번역 준비 중" (BE #30): only the server's `translated` flag decides, never
+ * a guess from the text. A missing flag (older BE) shows nothing.
+ */
+export const translationPending = (item: ChecklistItemResponse) =>
+  item.translated === false
+
 /** What the checkbox and "해당 없음" buttons send for an item. */
 export function nextMark(
   item: ChecklistItemResponse,
@@ -61,6 +122,11 @@ export function optimisticStatus(
 
 export const checklistItemKey = (item: ChecklistItemResponse) =>
   `${item.code}:${item.periodKey}`
+
+/** CL-xx checklist item code format. */
+export function isChecklistCode(value: unknown): value is string {
+  return typeof value === 'string' && /^CL-\d+$/.test(value)
+}
 
 export function deadlineText(
   item: ChecklistItemResponse,
@@ -89,4 +155,14 @@ export function markErrorMessage(t: TFunction, error: unknown) {
   return error instanceof ApiError && error.code === 'GUIDE_NOT_FOUND'
     ? t('checklist.itemGone')
     : errorMessage(t, error)
+}
+
+/**
+ * Where "‹" on the checklist detail goes: the screen that opened it (F06b
+ * passes its path as link state), otherwise home — also for notifications
+ * and shared links, which carry no state.
+ */
+export function detailBackPath(state: unknown): string {
+  const back = (state as { back?: unknown } | null)?.back
+  return typeof back === 'string' && back.startsWith('/home/') ? back : '/home'
 }

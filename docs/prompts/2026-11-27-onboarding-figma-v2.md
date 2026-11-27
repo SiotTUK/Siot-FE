@@ -35,3 +35,14 @@ Figma "웰컴시흥 · 주요 화면 UI"의 "온보딩" 묶음(F02 사용자 유
 - 요약: 사용자가 PR #75 리뷰를 요청했다. 온보딩이 마스코트 이름을 로그인 기능 문구(`authTips.haero`·`authTips.toro`)에서 가져와, 그 키를 지우면 온보딩이 깨질 수 있다고 짚었고 사용자가 고치자고 했다.
 - 반영: 이름을 공통 문구 `common.mascots.haero`·`common.mascots.toro`(4개 언어)로 옮기고, `MascotTip`이 이름을 직접 넣는다. 쓰는 쪽은 `mascot`만 넘긴다(회원가입·로그인·온보딩). `authTips.haero`·`authTips.toro`는 지웠다.
 - 검증: `npm run check` 통과(Vitest 227개). 목업에서 회원가입(해로)·로그인(토로)·F03(토로)·F05(해로)·F06(해로) 이름이 맞게 나오는 것을 확인했다.
+
+## 2026-11-27 후속: Figma 공통 컴포넌트와 비교해 공용 컴포넌트 정리
+
+- 요약: 사용자가 Figma를 보고 만들 공용 컴포넌트가 있으면 만들어 달라고 했다. AI가 Figma "공통 컴포넌트"·"서비스 패턴"·"상태별 사용 예시"를 `src/shared/ui`와 비교했다. Button·Field·Checkbox·RadioGroup·ChoiceCard·Card·Badge(`Tag`)·Alert(`Notice`)·선택기(`LanguageSelect`)는 이미 있었다. 지금 코드에 같은 모양이 여러 곳에 흩어진 것만 공용으로 만들고, 아직 쓰는 화면이 없는 Tabs·첨부 파일 행·처리 상태 카드는 만들지 않았다(쓰는 화면을 만들 때 같이 만든다).
+- 반영:
+  - `SearchField`(Figma "기록 검색", 돋보기가 안에 있는 검색칸): 생활 수칙 검색에 쓰고, 기능 쪽 CSS를 지웠다.
+  - `TextLink`(문장 전체가 브랜드 색 링크): 로그인·재설정 화면 링크와 언어 선택 화면의 "이미 회원이에요? 로그인"에 쓰고, 두 곳의 같은 CSS를 지웠다.
+  - `MascotImage pose="duo" | "toro" | "hug"`: 언어 선택·F02·F06의 마스코트 그림. 크기와 장식용 처리(`alt=""`)를 한 곳에서 정한다.
+- 검증: `npm run check` 통과(Vitest 227개). 목업에서 언어 선택·로그인·생활 수칙·F02·F06을 바꾸기 전후로 찍어 비교했고, 다섯 장 모두 픽셀까지 같았다(모양 변화 없음).
+- 하지 않은 것: 관리자 회원 검색(다른 담당 영역)은 `SearchField`로 바꾸지 않았다. 홈 진행률(`<progress>`)·생활 수칙 FAQ(`<details>`)는 Figma의 Progress·Accordion과 모양이 달라 이번에 공용으로 합치지 않았다.
+- PR 메모: PR #75가 이 커밋을 올리기 직전(이전 커밋 `6075ec9`까지)에 merge돼, 공용 컴포넌트 정리는 최신 main에서 만든 `refactor/shared-ui-figma` 브랜치의 별도 PR로 올렸다. PR #75의 제목·본문도 merge된 내용에 맞게 되돌렸다.

@@ -24,13 +24,9 @@ import { useBill, useBillReminder } from '../use-bill-translations'
 import styles from './bill.module.css'
 
 export function BillResult({ memberId, id }: { memberId: number; id: number }) {
-  const { t } = useTranslation()
   const query = useBill(memberId, id)
   return (
-    <QueryState
-      query={query}
-      formatError={(error) => billErrorMessage(t, error)}
-    >
+    <QueryState query={query}>
       {query.data && (
         <ResultDetails memberId={memberId} id={id} result={query.data} />
       )}

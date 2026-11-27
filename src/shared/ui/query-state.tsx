@@ -5,10 +5,11 @@ import type {
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PageResponse } from '../api/types'
-import { errorMessage } from '../i18n/error-message'
+import { errorKey, errorMessage } from '../i18n/error-message'
 import { Button } from './button'
 import { PageLoader } from './mobile-frame'
-import { FormError, Muted, Stack } from './page'
+import { Muted, Stack } from './page'
+import { StatusCard } from './status-card'
 
 type QueryLike = {
   isPending: boolean
@@ -18,35 +19,39 @@ type QueryLike = {
   refetch: () => unknown
 }
 
-/** Loading → error with retry → content. Shared by every screen that reads data. */
+/**
+ * Loading → error with retry → content. Shared by every screen that reads
+ * data. The error is the Figma v2 M13 card: "연결이 잠깐 끊겼어요" when the
+ * network is down, otherwise the server's message under a generic title.
+ */
 export function QueryState({
   query,
   children,
   keepContentOnError = false,
-  formatError,
 }: {
   query: QueryLike
   children: ReactNode
   keepContentOnError?: boolean
-  formatError?: (error: unknown) => string
 }) {
   const { t } = useTranslation()
   if (query.isPending) return <PageLoader label={t('common.loading')} />
+  const offline = query.isError && errorKey(query.error) === 'errors.NETWORK'
   const error = query.isError ? (
-    <Stack gap={12}>
-      <FormError
-        message={
-          formatError ? formatError(query.error) : errorMessage(t, query.error)
-        }
-      />
-      <Button
-        variant="secondary"
-        loading={query.isFetching}
-        onClick={() => void query.refetch()}
-      >
-        {t('common.retry')}
-      </Button>
-    </Stack>
+    <StatusCard
+      role="alert"
+      mascot="toro"
+      title={t(offline ? 'common.connectionLost' : 'common.loadFailed')}
+      description={errorMessage(t, query.error)}
+      action={
+        <Button
+          variant="secondary"
+          loading={query.isFetching}
+          onClick={() => void query.refetch()}
+        >
+          {t('common.retry')}
+        </Button>
+      }
+    />
   ) : null
   if (!keepContentOnError && error) return error
   return (
@@ -65,7 +70,8 @@ export function InfiniteList<T>({
   renderItem,
 }: {
   query: UseInfiniteQueryResult<InfiniteData<PageResponse<T>>>
-  empty: string
+  /** Text, or a whole empty screen (Figma v2 M13 EmptyState). */
+  empty: ReactNode
   getKey: (item: T) => string | number
   renderItem: (item: T) => ReactNode
 }) {
@@ -74,7 +80,11 @@ export function InfiniteList<T>({
   return (
     <QueryState query={query}>
       {items.length === 0 ? (
-        <Muted>{empty}</Muted>
+        typeof empty === 'string' ? (
+          <Muted>{empty}</Muted>
+        ) : (
+          empty
+        )
       ) : (
         <Stack as="ul" gap={10}>
           {items.map((item) => (

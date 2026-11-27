@@ -10,6 +10,11 @@ export const chatMessages = defineMessages({
       greeting:
         '안녕하세요! 시흥 생활에 대해 물어보세요. 공식 자료를 근거로 답하고 근거 문서를 함께 보여 드려요.',
       suggestions: '추천 질문',
+      intro: '공식 자료로 답하고 출처를 함께 보여 줘요',
+      answerLanguage: '답변 언어',
+      greetingHello: '안녕하세요! 저는 토로예요.',
+      greetingAsk: '시흥 생활에서 궁금한 걸 편하게 물어보세요.',
+      relatedOpen: '{{title}} 자세히 보기',
       privacy: '개인정보(여권·외국인등록번호)는 입력하지 마세요.',
       inputLabel: '질문',
       placeholder: '궁금한 것을 입력하세요',
@@ -51,6 +56,11 @@ export const chatMessages = defineMessages({
       greeting:
         'Hello! Ask anything about living in Siheung. We answer from official materials and show you the sources.',
       suggestions: 'Suggested questions',
+      intro: 'Answers come from official materials, with sources',
+      answerLanguage: 'Answer language',
+      greetingHello: 'Hello! I am Toro.',
+      greetingAsk: 'Ask me anything about living in Siheung.',
+      relatedOpen: 'See {{title}}',
       privacy:
         'Do not enter personal data (passport or residence card numbers).',
       inputLabel: 'Question',
@@ -93,6 +103,11 @@ export const chatMessages = defineMessages({
       greeting:
         '您好！请询问在始兴生活的问题。我们会根据官方资料回答，并一起显示依据文件。',
       suggestions: '推荐问题',
+      intro: '根据官方资料回答，并附上出处',
+      answerLanguage: '回答语言',
+      greetingHello: '你好！我是 Toro。',
+      greetingAsk: '关于在始兴的生活，有什么想问的都可以问我。',
+      relatedOpen: '查看{{title}}详情',
       privacy: '请勿输入个人信息（护照号、外国人登录证号）。',
       inputLabel: '问题',
       placeholder: '请输入您的问题',
@@ -134,6 +149,11 @@ export const chatMessages = defineMessages({
       greeting:
         'Xin chào! Hãy hỏi về cuộc sống ở Siheung. Chúng tôi trả lời dựa trên tài liệu chính thức và hiển thị nguồn kèm theo.',
       suggestions: 'Câu hỏi gợi ý',
+      intro: 'Trả lời theo tài liệu chính thức, kèm nguồn',
+      answerLanguage: 'Ngôn ngữ trả lời',
+      greetingHello: 'Xin chào! Mình là Toro.',
+      greetingAsk: 'Hãy hỏi mình bất cứ điều gì về cuộc sống ở Siheung.',
+      relatedOpen: 'Xem chi tiết {{title}}',
       privacy:
         'Không nhập thông tin cá nhân (số hộ chiếu, số thẻ đăng ký người nước ngoài).',
       inputLabel: 'Câu hỏi',

@@ -3,12 +3,6 @@
   gap: var(--space-16);
   padding-top: var(--space-16);
 }
-.mascots {
-  align-self: center;
-  width: 169px;
-  height: 140px;
-  object-fit: contain;
-}
 .subTitle {
   font: var(--text-body);
   color: var(--muted-foreground);
@@ -19,17 +13,6 @@
   gap: var(--space-16);
   margin-top: var(--space-8);
 }
-.footerLink {
-  align-self: flex-start;
-  font-size: 15px;
-  color: var(--primary);
-  text-decoration: none;
-}
-.footerLink:hover {
-  text-decoration: underline;
-}
 .notFound {
   justify-content: center;
-  gap: 16px;
-  text-align: center;
 }

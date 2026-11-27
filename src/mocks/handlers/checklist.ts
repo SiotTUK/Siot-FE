@@ -36,6 +36,18 @@ function seeds(member: MockMember): Seed[] {
       badge: '입국 후 90일 이내',
       summary:
         '안산출입국·외국인사무소 (하이코리아 예약) · 이때 시흥 주소도 함께 신고',
+      place: '안산출입국·외국인사무소',
+      docs: ['여권', '신청서', '컬러 증명사진 1장', '체류지 입증 서류'],
+      fee: '30,000원',
+      penalty: '기한 초과 시 출입국관리법에 따라 과태료가 부과돼요.',
+      contact: '1345',
+      sourceUrl: 'https://www.hikorea.go.kr',
+      sourceName: '하이코리아 방문 예약',
+      content:
+        '대한민국에 90일을 초과하여 체류하려는 외국인은 입국한 날부터 90일 이내에 체류지 관할 출입국·외국인관서에 등록해야 합니다.',
+      guideId: 1,
+      noticeChangedAt: '2026-11-03T09:00:00Z',
+      hasNoticeChanged: true,
       law: f4 ? '재외동포법 제6조' : '출입국관리법 제31조',
       deadline: isoIn(5),
     })
@@ -106,64 +118,70 @@ function seeds(member: MockMember): Seed[] {
   return list
 }
 
-const changeTasks: Record<LifeChangeCode, { title: string; days?: number }[]> =
-  {
-    'LC-01': [
-      { title: '체류지 변경 신고', days: 15 },
-      { title: '거소 이전 신고', days: 14 },
-      { title: '자동차 주소 변경', days: 30 },
-      { title: '자녀 전학 안내' },
-      { title: '쓰레기 배출 요일 확인' },
-    ],
-    'LC-02': [
-      { title: '고용센터 사업장 변경' },
-      { title: '근무처 변경 신고', days: 15 },
-      { title: '시간제 취업 허가' },
-      { title: '건강보험 직장 변경' },
-    ],
-    'LC-03': [{ title: '학교 입학 신청' }],
-    'LC-04': [
-      { title: '중고차 이전등록', days: 15 },
-      { title: '자동차보험 가입' },
-    ],
-    'LC-05': [{ title: '아기 체류자격 신청', days: 90 }],
-    'LC-06': [{ title: '가족 외국인등록', days: 90 }],
-    'LC-07': [{ title: '재입국허가 확인' }],
-    'LC-08': [{ title: '외국인등록사항 변경 신고', days: 15 }],
-  }
+/** Titles, deadlines and BE seed categories (V2026_11_14_0430) per life change. */
+const changeTasks: Record<
+  LifeChangeCode,
+  { title: string; days?: number; category?: string }[]
+> = {
+  'LC-01': [
+    { title: '체류지 변경 신고', days: 15 },
+    { title: '거소 이전 신고', days: 14 },
+    { title: '자동차 주소 변경', days: 30, category: 'CAR' },
+    { title: '자녀 전학 안내', category: 'EDUCATION' },
+    { title: '쓰레기 배출 요일 확인' },
+  ],
+  'LC-02': [
+    { title: '고용센터 사업장 변경' },
+    { title: '근무처 변경 신고', days: 15 },
+    { title: '시간제 취업 허가' },
+    { title: '건강보험 직장 변경' },
+  ],
+  'LC-03': [{ title: '학교 입학 신청', category: 'EDUCATION' }],
+  'LC-04': [
+    { title: '중고차 이전등록', days: 15, category: 'CAR' },
+    { title: '자동차보험 가입', category: 'CAR' },
+  ],
+  'LC-05': [{ title: '아기 체류자격 신청', days: 90 }],
+  'LC-06': [{ title: '가족 외국인등록', days: 90 }],
+  'LC-07': [{ title: '재입국허가 확인' }],
+  'LC-08': [{ title: '외국인등록사항 변경 신고', days: 15 }],
+}
 
 function changeSeeds(member: MockMember): Seed[] {
   return Object.values(state.lifeChanges[member.email] ?? {}).flatMap(
     ({ lifeChangeCode, baseDate }) =>
-      changeTasks[lifeChangeCode].flatMap(({ title, days }, index) => {
-        const code = `${lifeChangeCode}-${index + 1}`
-        const f4 = member.residences.includes('F4')
-        if (
-          (code === 'LC-01-1' && f4) ||
-          (code === 'LC-01-2' && !f4) ||
-          (code === 'LC-01-3' && !member.residences.includes('CAR')) ||
-          (code === 'LC-01-4' && !member.residences.includes('KIDS')) ||
-          ((code === 'LC-02-1' || code === 'LC-02-2') &&
-            member.purpose !== 'WORK') ||
-          (code === 'LC-02-3' && member.purpose !== 'STUDY')
-        )
-          return []
-        return [
-          {
-            code,
-            title,
-            itemType: 'REQUIRED',
-            kind: 'LIFE_CHANGE_TASK',
-            periodKey: baseDate,
-            deadline:
-              days === undefined
-                ? null
-                : new Date(Date.parse(baseDate) + days * day)
-                    .toISOString()
-                    .slice(0, 10),
-          },
-        ]
-      }),
+      changeTasks[lifeChangeCode].flatMap(
+        ({ title, days, category }, index) => {
+          const code = `${lifeChangeCode}-${index + 1}`
+          const f4 = member.residences.includes('F4')
+          if (
+            (code === 'LC-01-1' && f4) ||
+            (code === 'LC-01-2' && !f4) ||
+            (code === 'LC-01-3' && !member.residences.includes('CAR')) ||
+            (code === 'LC-01-4' && !member.residences.includes('KIDS')) ||
+            ((code === 'LC-02-1' || code === 'LC-02-2') &&
+              member.purpose !== 'WORK') ||
+            (code === 'LC-02-3' && member.purpose !== 'STUDY')
+          )
+            return []
+          return [
+            {
+              code,
+              title,
+              itemType: 'REQUIRED',
+              kind: 'LIFE_CHANGE_TASK',
+              category: category ?? null,
+              periodKey: baseDate,
+              deadline:
+                days === undefined
+                  ? null
+                  : new Date(Date.parse(baseDate) + days * day)
+                      .toISOString()
+                      .slice(0, 10),
+            },
+          ]
+        },
+      ),
   )
 }
 
@@ -201,6 +219,9 @@ function items(member: MockMember): ChecklistItemResponse[] {
       noticeChangedAt: null,
       hasNoticeChanged: false,
       applyStartsOn: null,
+      // BE seed has Korean text only (BE #30): other languages fall back to it.
+      contentLanguage: 'ko',
+      translated: member.language === 'ko',
       ...seed,
       highlighted: seed.code === 'CL-05' && dDay !== null && dDay <= 30,
       periodKey,

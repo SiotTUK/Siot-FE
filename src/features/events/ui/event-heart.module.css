@@ -1,0 +1,19 @@
+/* ♥ on event cards: 40px tap target, red when saved. */
+.heart {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+.heart[aria-pressed='true'] {
+  color: var(--destructive);
+}
+.heart:disabled {
+  opacity: 0.6;
+}

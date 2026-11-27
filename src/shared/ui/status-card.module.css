@@ -1,0 +1,58 @@
+/* Figma v2 M13: white card, mascot left, bold title, caption, action below. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+.image {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.text strong {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.text p {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-32) var(--space-16);
+  text-align: center;
+}
+.emptyImage {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+.empty strong {
+  font: var(--text-heading);
+}
+.empty p {
+  margin: 0;
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
+}

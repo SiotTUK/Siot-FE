@@ -1,33 +1,133 @@
 import { describe, expect, it } from 'vitest'
-import { languages } from '@/shared/i18n'
-import { ruleEntries, ruleFaqs, rulesCheckedOn } from './content'
+import type { RuleFaqResponse, RuleResponse } from './api'
 import {
   groupByCategory,
-  localizeRule,
+  isRuleCode,
+  mentionsFine,
+  parseContacts,
   safeUrl,
   searchRules,
-  type Localized,
-  type RuleEntry,
+  toFaqItems,
+  toRule,
 } from './rules'
 
-const text = (ko: string): Localized => ({ ko, en: ko, zh: ko, vi: ko })
-const entry = (over: Partial<RuleEntry>): RuleEntry => ({
-  code: 'waste-bags',
-  category: 'waste',
-  title: text('종량제 봉투'),
-  summary: text('요약'),
-  points: [text('봉투에 담아 내놓아요')],
+const response = (over: Partial<RuleResponse> = {}): RuleResponse => ({
+  code: 'waste-food',
+  categoryKey: 'waste',
+  title: '음식물 쓰레기',
+  summary: '요약',
+  points: ['전용 용기에 버려요'],
+  when: null,
+  place: null,
+  fee: null,
+  penalty: null,
+  law: null,
+  contact: null,
   sources: [{ name: '시흥시', url: 'https://www.siheung.go.kr' }],
+  checkedOn: '2026-11-25',
+  translated: true,
+  taxKind: null,
   ...over,
 })
 
+describe('BE rule → screen rule', () => {
+  it('maps the BE fields to the facts in screen order and drops empty ones', () => {
+    const rule = toRule(
+      response({
+        contact: '시흥시 031-310-2254',
+        when: '매일',
+        place: '  ',
+        fee: '무료',
+        law: '폐기물관리법',
+      }),
+      'ko',
+    )
+    expect(rule.facts).toEqual([
+      { key: 'when', value: '매일' },
+      { key: 'fee', value: '무료' },
+      { key: 'law', value: '폐기물관리법' },
+      { key: 'contact', value: '시흥시 031-310-2254' },
+    ])
+    expect(rule).toMatchObject({
+      code: 'waste-food',
+      category: 'waste',
+      checkedOn: '2026-11-25',
+      translated: true,
+      taxKind: null,
+    })
+  })
+
+  it('keeps the place as "where" and the tax kind for the tax detail link', () => {
+    const rule = toRule(
+      response({ place: '주민센터', taxKind: 'TAX_CAR' }),
+      'en',
+    )
+    expect(rule.facts).toEqual([{ key: 'where', value: '주민센터' }])
+    expect(rule.taxKind).toBe('TAX_CAR')
+  })
+
+  it('leaves a category the screens do not know as null', () => {
+    expect(toRule(response({ categoryKey: null }), 'ko').category).toBeNull()
+    expect(toRule(response({ categoryKey: 'pets' }), 'ko').category).toBeNull()
+  })
+
+  it.each([
+    ['ko', '과태료 최대 10만 원', true],
+    ['ko', '범칙금 3만~5만원', true],
+    ['ko', '봉투 수거 안 됨', false],
+    ['en', 'Fine of up to 100,000 won', true],
+    ['en', 'A fine applies', true],
+    ['en', 'Refined sorting rules', false],
+    ['zh', '最高罚款10万韩元', true],
+    ['vi', 'Phạt tối đa 100.000 won', true],
+  ] as const)(
+    'tags a fine from the %s penalty "%s"',
+    (language, text, fine) => {
+      expect(mentionsFine(text, language)).toBe(fine)
+    },
+  )
+
+  it('reads an untranslated penalty as Korean', () => {
+    const rule = toRule(
+      response({ penalty: '과태료 10만 원', translated: false }),
+      'en',
+    )
+    expect(rule.fine).toBe(true)
+    expect(rule.translated).toBe(false)
+    expect(toRule(response(), 'ko').fine).toBe(false)
+  })
+
+  it('keeps FAQ rows that open a rule, in order', () => {
+    const faq = (over: Partial<RuleFaqResponse>): RuleFaqResponse => ({
+      sortOrder: 1,
+      question: 'Q',
+      answer: 'A',
+      ruleCode: 'waste-food',
+      ruleTitle: '음식물 쓰레기',
+      language: 'ko',
+      ...over,
+    })
+    expect(
+      toFaqItems([
+        faq({ question: 'Q1' }),
+        faq({ question: 'Q2', ruleCode: null }),
+        faq({ question: 'Q3', ruleCode: 'tax-car' }),
+      ]),
+    ).toEqual([
+      { question: 'Q1', answer: 'A', rule: 'waste-food' },
+      { question: 'Q3', answer: 'A', rule: 'tax-car' },
+    ])
+  })
+})
+
 describe('rule screen rules', () => {
-  it('groups in the Figma category order and skips empty ones', () => {
+  it('groups in the Figma category order and skips empty or unknown ones', () => {
     const rules = [
-      entry({ code: 'a', category: 'tax' }),
-      entry({ code: 'b', category: 'order' }),
-      entry({ code: 'c', category: 'tax' }),
-    ].map((item) => localizeRule(item, 'ko'))
+      response({ code: 'a', categoryKey: 'tax' }),
+      response({ code: 'b', categoryKey: 'order' }),
+      response({ code: 'c', categoryKey: 'tax' }),
+      response({ code: 'd', categoryKey: null }),
+    ].map((item) => toRule(item, 'ko'))
     expect(
       groupByCategory(rules).map((group) => [
         group.category,
@@ -39,19 +139,11 @@ describe('rule screen rules', () => {
     ])
   })
 
-  it('keeps only facts that exist in the language', () => {
-    const rule = localizeRule(
-      entry({ facts: { fee: text('무료'), contact: text('031') } }),
-      'en',
-    )
-    expect(rule.facts.map((fact) => fact.key)).toEqual(['fee', 'contact'])
-  })
-
   it('searches every word in title, summary and body', () => {
     const rules = [
-      entry({ code: 'a', title: text('음식물 쓰레기') }),
-      entry({ code: 'b', title: text('자동차세'), points: [text('6월')] }),
-    ].map((item) => localizeRule(item, 'ko'))
+      response({ code: 'a', title: '음식물 쓰레기' }),
+      response({ code: 'b', title: '자동차세', points: ['6월'] }),
+    ].map((item) => toRule(item, 'ko'))
     expect(searchRules(rules, '쓰레기').map((rule) => rule.code)).toEqual(['a'])
     expect(searchRules(rules, '자동차세 6월').map((r) => r.code)).toEqual(['b'])
     expect(searchRules(rules, '  ')).toHaveLength(2)
@@ -66,32 +158,42 @@ describe('rule screen rules', () => {
   ])('links only http(s) sources: %s', (value, expected) => {
     expect(safeUrl(value)).toBe(expected)
   })
+
+  it.each([
+    ['waste-food', true],
+    ['order-etiquette', true],
+    ['living-youth-transport', true],
+    ['Waste-Food', false],
+    ['../admin', false],
+    ['waste--food', false],
+    ['', false],
+    [42, false],
+  ])('accepts rule slugs for links: %s', (value, expected) => {
+    expect(isRuleCode(value)).toBe(expected)
+  })
 })
 
-describe('rule content', () => {
-  it('has unique codes and the check date', () => {
-    const codes = ruleEntries.map((item) => item.code)
-    expect(new Set(codes).size).toBe(codes.length)
-    expect(rulesCheckedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/)
-  })
-
-  it('fills every language and cites https official sources', () => {
-    const codes = Object.keys(languages) as (keyof typeof languages)[]
-    const all = (value: Localized) =>
-      codes.every((language) => value[language].trim().length > 0)
-    for (const item of ruleEntries) {
-      expect(all(item.title) && all(item.summary), item.code).toBe(true)
-      expect(item.points.every(all), item.code).toBe(true)
-      expect(Object.values(item.facts ?? {}).every(all), item.code).toBe(true)
-      expect(item.sources.length, item.code).toBeGreaterThan(0)
-      for (const source of item.sources)
-        expect(source.url, item.code).toMatch(/^https:\/\//)
-    }
-  })
-
-  it('has five FAQ answers that open an existing rule', () => {
-    expect(ruleFaqs).toHaveLength(5)
-    const codes = new Set(ruleEntries.map((item) => item.code))
-    for (const faq of ruleFaqs) expect(codes.has(faq.rule), faq.rule).toBe(true)
+describe('rule contacts', () => {
+  it('splits a contact into name, number and note', () => {
+    expect(
+      parseContacts('층간소음 이웃사이센터 1661-2642 (평일 09:00~18:00)'),
+    ).toEqual([
+      {
+        name: '층간소음 이웃사이센터',
+        phone: '1661-2642',
+        tel: '16612642',
+        note: '(평일 09:00~18:00)',
+      },
+    ])
+    expect(
+      parseContacts('다누리콜센터 1577-1366 / 시흥시 가족센터 031-319-7997'),
+    ).toMatchObject([
+      { name: '다누리콜센터', tel: '15771366' },
+      { name: '시흥시 가족센터', tel: '0313197997' },
+    ])
+    expect(parseContacts('1345')).toMatchObject([
+      { name: '', phone: '1345', tel: '1345' },
+    ])
+    expect(parseContacts('시흥시청 누리집')).toEqual([])
   })
 })

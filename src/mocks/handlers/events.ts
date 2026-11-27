@@ -6,6 +6,7 @@ import type {
   EventRecommendation,
 } from '@/features/events/api'
 import { isIsoDate } from '@/features/events/event-filters'
+import { ruleEntries } from '../data/rule-content'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { body, currentMember, error, persist, state, unauthorized } from '../db'
@@ -181,6 +182,29 @@ function saveSubscription(eventId: string, request: Request, enabled: boolean) {
 }
 
 export const eventHandlers = [
+  http.get('*/api/members/me/event-subscriptions', () => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const content = Object.entries(state.eventSubscriptions[member.id] ?? {})
+      .filter(([, saved]) => saved.enabled)
+      .map(([eventId, saved]) => ({
+        eventId: Number(eventId),
+        userId: member.id,
+        enabled: true,
+        leadDays: saved.leadDays,
+        updatedAt: new Date().toISOString(),
+      }))
+    return HttpResponse.json({
+      data: {
+        content,
+        page: 0,
+        size: 100,
+        totalElements: content.length,
+        totalPages: 1,
+        hasNext: false,
+      },
+    })
+  }),
   http.get(subscriptionPath, ({ params }) => {
     const member = currentMember()
     if (!member) return unauthorized()
@@ -294,7 +318,11 @@ export const eventHandlers = [
         report.targetTitleSnapshot.length > 255)
     )
       return error(400, 'INVALID_INPUT', '입력값이 올바르지 않습니다.')
-    if (
+    // A living rule is reported by its slug (BE guideCode, #14).
+    if (typeof report.guideCode === 'string') {
+      if (!ruleEntries.some(({ code }) => code === report.guideCode))
+        return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
+    } else if (
       !mockEvents(member.language).some(
         ({ eventId }) => report.eventId === eventId,
       )

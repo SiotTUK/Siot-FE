@@ -6,6 +6,7 @@ import {
   fetchEventDetail,
   fetchEventRecommendations,
   fetchEvents,
+  fetchSavedEventIds,
 } from './api'
 import { isDateRangeValid, type EventListFilters } from './event-filters'
 
@@ -30,10 +31,15 @@ export function useEvents(
   })
 }
 
-export function useEventDetail(memberId: number, eventId: string) {
+export function useEventDetail(
+  memberId: number,
+  eventId: string,
+  enabled = true,
+) {
   return useQuery({
     queryKey: eventKeys.detail(memberId, eventId),
     queryFn: ({ signal }) => fetchEventDetail(eventId, signal),
+    enabled,
   })
 }
 
@@ -46,4 +52,13 @@ export function useEventCalendar(
     queryKey: eventKeys.calendar(memberId, year, month),
     queryFn: ({ signal }) => fetchEventCalendar(year, month, signal),
   })
+}
+
+/** Saved (♥) event IDs for the cards. Errors leave every ♥ empty. */
+export function useSavedEventIds(memberId: number) {
+  const query = useQuery({
+    queryKey: eventKeys.saved(memberId),
+    queryFn: ({ signal }) => fetchSavedEventIds(signal),
+  })
+  return new Set(query.data ?? [])
 }

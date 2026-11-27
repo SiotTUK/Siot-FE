@@ -15,6 +15,8 @@ export const sharedMessages = defineMessages({
       pageLoadFailed: '화면을 불러오지 못했어요. 페이지를 새로고침해 주세요.',
       reloadPage: '새로고침',
       retry: '다시 시도',
+      connectionLost: '연결이 잠깐 끊겼어요',
+      loadFailed: '내용을 불러오지 못했어요',
       logout: '로그아웃',
       ruleMet: '지킴',
       ruleUnmet: '안 지킴',
@@ -27,12 +29,14 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: '입력한 내용을 다시 확인해 주세요',
+      GUIDE_NOT_FOUND:
+        '이 안내를 찾을 수 없어요. 내용이 바뀌었거나 지워졌을 수 있어요.',
       UNAUTHORIZED: '로그인이 필요해요. 다시 로그인해 주세요',
       FORBIDDEN: '이 기능을 사용할 권한이 없어요',
       CSRF_TOKEN_INVALID:
         '보안 확인이 만료됐어요. 페이지를 새로고침한 뒤 다시 시도해 주세요',
       INTERNAL_ERROR: '잠시 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요',
-      NETWORK: '인터넷 연결을 확인한 뒤 다시 시도해 주세요',
+      NETWORK: '인터넷 연결을 확인하고 다시 시도해 주세요.',
       UNKNOWN: '요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요',
     },
   },
@@ -50,6 +54,8 @@ export const sharedMessages = defineMessages({
       pageLoadFailed: 'Could not load this screen. Please reload the page.',
       reloadPage: 'Reload page',
       retry: 'Try again',
+      connectionLost: 'The connection dropped for a moment',
+      loadFailed: 'Could not load this',
       logout: 'Log out',
       ruleMet: 'met',
       ruleUnmet: 'not met',
@@ -62,6 +68,8 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: 'Please check what you entered',
+      GUIDE_NOT_FOUND:
+        'We could not find this guide. It may have been changed or removed.',
       UNAUTHORIZED: 'Please log in again',
       FORBIDDEN: 'You do not have permission to use this feature',
       CSRF_TOKEN_INVALID:
@@ -85,6 +93,8 @@ export const sharedMessages = defineMessages({
       pageLoadFailed: '无法加载此页面。请刷新后重试。',
       reloadPage: '刷新页面',
       retry: '重试',
+      connectionLost: '连接暂时中断了',
+      loadFailed: '无法加载内容',
       logout: '退出登录',
       ruleMet: '已满足',
       ruleUnmet: '未满足',
@@ -97,6 +107,7 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: '请重新确认输入的内容',
+      GUIDE_NOT_FOUND: '找不到该指南。内容可能已更改或删除。',
       UNAUTHORIZED: '需要登录。请重新登录',
       FORBIDDEN: '您没有使用此功能的权限',
       CSRF_TOKEN_INVALID: '安全验证已过期。请刷新页面后重试',
@@ -119,6 +130,8 @@ export const sharedMessages = defineMessages({
       pageLoadFailed: 'Không thể mở màn hình này. Vui lòng tải lại trang.',
       reloadPage: 'Tải lại trang',
       retry: 'Thử lại',
+      connectionLost: 'Kết nối vừa bị gián đoạn',
+      loadFailed: 'Không tải được nội dung',
       logout: 'Đăng xuất',
       ruleMet: 'đạt',
       ruleUnmet: 'chưa đạt',
@@ -131,6 +144,8 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: 'Hãy kiểm tra lại nội dung đã nhập',
+      GUIDE_NOT_FOUND:
+        'Không tìm thấy hướng dẫn này. Nội dung có thể đã thay đổi hoặc bị xóa.',
       UNAUTHORIZED: 'Cần đăng nhập. Hãy đăng nhập lại',
       FORBIDDEN: 'Bạn không có quyền sử dụng chức năng này',
       CSRF_TOKEN_INVALID:

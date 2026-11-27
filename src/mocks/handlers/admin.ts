@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import type { GuideTranslationResponse } from '@/features/admin/api'
-import { ruleEntries } from '@/features/rules/content'
+import { ruleEntries } from '../data/rule-content'
 import { isLanguage } from '@/shared/i18n'
 import {
   body,

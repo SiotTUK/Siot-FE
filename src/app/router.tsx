@@ -8,9 +8,12 @@ import {
   SignupPage,
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
+import { TaxDetailPage } from '@/pages/calendar/tax-detail-page'
 import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
+import { ChecklistDetailPage } from '@/pages/home/checklist-detail-page'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
+import { LifeChangeSelectPage } from '@/pages/home/life-change-select-page'
 import { LanguagePage } from '@/pages/language-page'
 import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
@@ -112,9 +115,20 @@ export const router = createBrowserRouter([
             element: deferredPage(billScreen, 'BillResultPage'),
           },
           {
+            path: '/rules/faq',
+            element: deferredPage(ruleScreen, 'RuleFaqPage'),
+          },
+          {
+            path: '/rules/category/:category',
+            element: deferredPage(ruleScreen, 'RuleCategoryPage'),
+          },
+          {
             path: '/rules/:code',
             element: deferredPage(ruleScreen, 'RuleDetailPage'),
           },
+          { path: '/home/life-changes', element: <LifeChangeSelectPage /> },
+          { path: '/home/checklist/:code', element: <ChecklistDetailPage /> },
+          { path: '/calendar/taxes/:scheduleId', element: <TaxDetailPage /> },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.

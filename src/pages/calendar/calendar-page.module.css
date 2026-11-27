@@ -1,26 +1,53 @@
 .body {
+  gap: var(--space-12);
   padding-top: var(--space-16);
+}
+
+/* Title with "‹ 2026년 11월 ›" on the right (Figma v2 M05). */
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+.titleRow > :first-child {
+  margin: 0;
 }
 
 .month {
   display: grid;
   gap: var(--space-12);
   padding: var(--space-16);
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: var(--radius-16);
   background: var(--card);
 }
 
 .monthNavigation {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-4);
+  white-space: nowrap;
 }
 
 .monthNavigation h2 {
-  font: var(--text-heading);
-  text-align: center;
+  font: var(--text-label);
+  font-weight: 700;
+}
+
+.monthNavigation button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted-foreground);
+}
+
+.monthNavigation button:disabled {
+  opacity: 0.35;
 }
 
 .previousIcon {
@@ -163,19 +190,51 @@
   list-style: none;
 }
 
+/* Row: day block, title and period, badge (Figma v2 M05). */
 .schedule {
-  display: grid;
-  gap: var(--space-4);
-  padding: var(--space-16);
-  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-16);
   background: var(--card);
   overflow-wrap: anywhere;
 }
 
-.schedule[data-highlighted='true'] {
+.schedule[data-highlighted='true'] .dayBlock {
   border-color: var(--warning);
-  background: var(--warning-bg);
+}
+
+.dayBlock {
+  display: grid;
+  justify-items: center;
+  flex: none;
+  min-width: 36px;
+  padding-right: var(--space-12);
+  border-right: 2px solid var(--primary);
+}
+
+.dayBlock strong {
+  font: var(--text-heading);
+}
+
+.dayBlock small {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.scheduleText {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.heart {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  color: var(--destructive);
 }
 
 .tags {
@@ -193,12 +252,20 @@
   text-decoration: underline;
 }
 
-.event > span {
-  justify-self: start;
+.event > span:last-child {
+  flex: none;
 }
 
 .sourceStatus {
   display: grid;
   justify-items: start;
   gap: var(--space-8);
+}
+
+.taxLink {
+  justify-self: start;
+  font: var(--text-caption);
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
 }

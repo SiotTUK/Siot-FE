@@ -1,13 +1,16 @@
+import { isChecklistCode } from '@/features/checklist/checklist'
 import { isEventId } from '@/features/events/event-routes'
 import { isLifeChangeCode } from '@/features/life-changes/life-changes'
+import { isRuleCode } from '@/features/rules/rules'
 import { formatMonthDay, koreaToday } from '@/shared/i18n/format'
 
 /**
  * Screen for a notification's link (NTF-04). Only screens that exist are
- * used: life change tasks open their life change page (home when the code is
- * unknown), checklist items open the home checklist, taxes and personal dates
- * open the calendar, rules open the rules list (BE RUL-xx codes are not FE
- * rule pages). Unknown links return undefined and the card only marks read.
+ * used: checklist items and life change tasks open their checklist detail
+ * (/home/checklist/:code), taxes and personal dates open the calendar,
+ * rules open their detail page when the slug is recognized (/rules when
+ * unknown). Unknown codes fall back to their main home/rules list.
+ * Unknown link types return undefined and the card only marks read.
  */
 export function notificationPath(link: {
   linkType: string | null
@@ -17,14 +20,17 @@ export function notificationPath(link: {
     case 'EVENT':
       return isEventId(link.linkCode) ? `/events/${link.linkCode}` : undefined
     case 'LIFE_CHANGE_TASK': {
-      // Task code LC-01-1 → its life change LC-01, whose page lists the tasks.
       const parent = link.linkCode?.split('-').slice(0, 2).join('-')
-      return isLifeChangeCode(parent) ? `/home/life-changes/${parent}` : '/home'
+      return isLifeChangeCode(parent) && link.linkCode?.includes('-')
+        ? `/home/checklist/${link.linkCode}`
+        : '/home'
     }
     case 'CHECKLIST':
-      return '/home'
+      return isChecklistCode(link.linkCode)
+        ? `/home/checklist/${link.linkCode}`
+        : '/home'
     case 'RULE':
-      return '/rules'
+      return isRuleCode(link.linkCode) ? `/rules/${link.linkCode}` : '/rules'
     case 'SCHEDULE':
     case 'CALENDAR':
       return '/calendar'

@@ -40,7 +40,7 @@ export function billDaysLeft(date: string, now?: Date) {
 
 export function billGuidePath({ code, kind }: RelatedBillGuide) {
   if (kind === 'CHECKLIST' || kind === 'LIFE_CHANGE_TASK') {
-    return `/home?guide=${encodeURIComponent(code)}#checklist`
+    return `/home/checklist/${encodeURIComponent(code)}`
   }
   return '/rules?category=tax'
 }

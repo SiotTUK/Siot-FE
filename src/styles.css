@@ -1,15 +1,15 @@
-/* Figma "design-system" tokens (웰컴시흥 디자인 시스템). */
+/* Figma "design-system · 해로토로 v2" tokens (웰컴시흥 디자인 시스템 · shadcn/ui). */
 :root {
   /* Color/Brand: the team unified it to #018eda (2026-11-27). */
   --primary: #018eda;
   --primary-hover: #0172ae;
-  --secondary: #e8f3ff;
-  --foreground: #191f28;
+  --secondary: #e3f3f7; /* Color/Tint */
+  --foreground: #1a1f27; /* Color/Ink */
   --muted-foreground: #4e5968;
   --border: #d1d6db;
-  --background: #f2f4f6;
+  --background: #f5f7f6; /* Color/Canvas */
   --card: #ffffff;
-  --destructive: #c73640;
+  --destructive: #c7363f; /* Color/Error */
   --translation: #6741d9;
   /* Not in the design system yet; confirm with the team. */
   --placeholder: #8b95a1;

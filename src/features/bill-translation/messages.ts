@@ -2,6 +2,9 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 
 export const billMessages = defineMessages({
   ko: {
+    errors: {
+      BILL_TRANSLATION_NOT_FOUND: '저장된 번역을 찾을 수 없어요.',
+    },
     bill: {
       title: '고지서 번역',
       screenTitle: '고지서·안내문 번역',
@@ -25,7 +28,6 @@ export const billMessages = defineMessages({
       reminderSeven: 'D-7 · 마감 7일 전 오전 9시 (한국 시간)',
       reminderOne: 'D-1 · 마감 1일 전 오전 9시 (한국 시간)',
       saved: '최근 번역에 저장됐어요.',
-      entry: '사진',
       uploadTitle: '받은 서류를 찍어 올리세요',
       formats: 'JPG·PNG 사진 또는 PDF를 올릴 수 있어요. 최대 10MB예요.',
       pick: '사진 찍기 / 파일 올리기',
@@ -111,6 +113,9 @@ export const billMessages = defineMessages({
     },
   },
   en: {
+    errors: {
+      BILL_TRANSLATION_NOT_FOUND: 'The saved translation could not be found.',
+    },
     bill: {
       title: 'Bill translation',
       screenTitle: 'Translate bills and notices',
@@ -135,7 +140,6 @@ export const billMessages = defineMessages({
       reminderSeven: 'D−7 · 7 days before the deadline at 9 a.m. Korea time',
       reminderOne: 'D−1 · 1 day before the deadline at 9 a.m. Korea time',
       saved: 'Saved to Recent translations.',
-      entry: 'Photo',
       uploadTitle: 'Take a photo of your document',
       formats: 'Upload a JPG or PNG photo or a PDF up to 10 MB.',
       pick: 'Take a photo or upload a file',
@@ -225,6 +229,9 @@ export const billMessages = defineMessages({
     },
   },
   zh: {
+    errors: {
+      BILL_TRANSLATION_NOT_FOUND: '未找到已保存的翻译。',
+    },
     bill: {
       title: '账单翻译',
       screenTitle: '账单和通知翻译',
@@ -246,7 +253,6 @@ export const billMessages = defineMessages({
       reminderSeven: 'D−7 · 截止前 7 天，韩国时间上午 9 点',
       reminderOne: 'D−1 · 截止前 1 天，韩国时间上午 9 点',
       saved: '已保存到“最近翻译”。',
-      entry: '拍照',
       uploadTitle: '拍照上传收到的文件',
       formats: '可上传 JPG、PNG 照片或 PDF，最大 10 MB。',
       pick: '拍照或上传文件',
@@ -325,6 +331,9 @@ export const billMessages = defineMessages({
     },
   },
   vi: {
+    errors: {
+      BILL_TRANSLATION_NOT_FOUND: 'Không tìm thấy bản dịch đã lưu.',
+    },
     bill: {
       title: 'Dịch hóa đơn',
       screenTitle: 'Dịch hóa đơn và thông báo',
@@ -349,7 +358,6 @@ export const billMessages = defineMessages({
       reminderSeven: 'D−7 · Trước hạn 7 ngày, lúc 9 giờ sáng theo giờ Hàn Quốc',
       reminderOne: 'D−1 · Trước hạn 1 ngày, lúc 9 giờ sáng theo giờ Hàn Quốc',
       saved: 'Đã lưu vào Bản dịch gần đây.',
-      entry: 'Chụp ảnh',
       uploadTitle: 'Chụp và tải giấy tờ lên',
       formats: 'Tải ảnh JPG, PNG hoặc tệp PDF tối đa 10 MB.',
       pick: 'Chụp ảnh hoặc tải tệp lên',

@@ -8,6 +8,7 @@ import { eventHandlers } from './handlers/events'
 import { lifeChangeHandlers } from './handlers/life-changes'
 import { memberHandlers } from './handlers/member'
 import { notificationHandlers } from './handlers/notifications'
+import { ruleHandlers } from './handlers/rules'
 
 export { mockResetToken, mockSignupCode, resetMockState } from './db'
 
@@ -21,6 +22,7 @@ export const handlers = [
   ...eventHandlers,
   ...lifeChangeHandlers,
   ...notificationHandlers,
+  ...ruleHandlers,
   ...chatHandlers,
   ...adminHandlers,
 ]

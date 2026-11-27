@@ -42,6 +42,27 @@ export interface ChecklistItemResponse {
   applyStartsOn: string | null
   /** CL-05 from 30 days before expiry. */
   highlighted: boolean
+  /** Item guide ID used for error reports (POST /api/reports). */
+  guideId?: number | null
+  /** Category code (IMMIGRATION, TAX, etc.). */
+  category?: string | null
+  categoryLabel?: string | null
+  warning?: boolean
+  warningMessage?: string | null
+  warningType?: string | null
+  sourcePages?: string | null
+  /**
+   * Language of the item text (title, summary, content, badge, place, docs,
+   * fee, law, penalty, sourceName). null = no Korean source either (title is
+   * the item code). BE #30.
+   */
+  contentLanguage?: Language | null
+  /**
+   * false → shown in Korean (or missing), or only the CL-04 condition text
+   * fell back to Korean: show "번역 준비 중". Warnings and categoryLabel are
+   * always in the requested language. Older responses may leave it out.
+   */
+  translated?: boolean
 }
 
 export interface ChecklistSummaryResponse {

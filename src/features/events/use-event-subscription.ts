@@ -45,6 +45,7 @@ export function useEventSubscription(memberId: number, eventId: string) {
         (detail) => detail && { ...detail, subscribed: saved.subscribed },
       )
       void client.invalidateQueries({ queryKey: eventKeys.lists(memberId) })
+      void client.invalidateQueries({ queryKey: eventKeys.saved(memberId) })
       void client.invalidateQueries({
         queryKey: eventKeys.recommendations(memberId),
       })

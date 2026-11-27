@@ -23,7 +23,11 @@ export function NotificationSettings({ memberId }: { memberId: number }) {
   const update = useUpdatePreferenceGroup(memberId)
 
   return (
-    <section className={styles.settings} aria-labelledby={titleId}>
+    <section
+      id="settings"
+      className={styles.settings}
+      aria-labelledby={titleId}
+    >
       <h2 id={titleId} className={styles.settingsTitle}>
         {t('notifications.settings.title')}
       </h2>

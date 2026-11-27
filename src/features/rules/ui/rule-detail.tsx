@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
 import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { chatEntryState } from '@/features/chat/chat-entry'
-import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { KeepTogether } from '@/shared/ui/keep-together'
 import { Muted, Section, Tag } from '@/shared/ui/page'
-import { useRuleTaxKind } from '../api'
-import { rulesCheckedOn } from '../content'
+import { QueryState } from '@/shared/ui/query-state'
+import { isRuleNotFound } from '../api'
 import { parseContacts, safeUrl, type Rule } from '../rules'
 import { useRule } from '../use-rules'
 import { RuleReport } from './rule-report'
@@ -19,16 +18,22 @@ import styles from './rules.module.css'
 const knowKeys = ['when', 'where', 'fee', 'penalty'] as const
 
 /**
- * Figma v2 "생활 수칙 · 상세" from the FE content: tags, title and summary,
+ * Figma v2 "생활 수칙 · 상세" from `GET /api/rules/{code}`: tags, title and summary,
  * "이렇게 하세요" (the checked statements, numbered), "알아 두세요" (when ·
  * where · cost · penalty), contacts with a call button, law and sources, and
  * the bottom buttons 정보 오류 신고 · 토로에게 질문하기.
  */
 export function RuleDetail({ code }: { code: string }) {
   const { t } = useTranslation()
-  const rule = useRule(code)
-  if (!rule) return <Muted>{t('rules.notFound')}</Muted>
-  return <RuleDetailBody rule={rule} />
+  const { query, rule } = useRule(code)
+  // A deleted or unknown code (old links, notifications) is not a load failure.
+  if (query.isError && isRuleNotFound(query.error))
+    return <Muted>{t('rules.notFound')}</Muted>
+  return (
+    <QueryState query={query}>
+      {rule && <RuleDetailBody rule={rule} />}
+    </QueryState>
+  )
 }
 
 function RuleDetailBody({ rule }: { rule: Rule }) {
@@ -37,8 +42,6 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
   const reportId = useId()
   const [reporting, setReporting] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
-  // BE #29: the rules API says which tax a rule is (null for other rules).
-  const taxKind = useRuleTaxKind(rule.code, currentLanguage())
   const fact = (key: string) => rule.facts.find((item) => item.key === key)
   const know = knowKeys.flatMap((key) => {
     const item = fact(key)
@@ -57,8 +60,13 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
     <>
       <div className={styles.detailHead}>
         <span className={styles.tags}>
-          <Tag tone="main">{t(`rules.groups.${rule.category}`)}</Tag>
+          {rule.category && (
+            <Tag tone="main">{t(`rules.groups.${rule.category}`)}</Tag>
+          )}
           {rule.fine && <Tag tone="danger">{t('rules.fineTag')}</Tag>}
+          {!rule.translated && (
+            <Tag tone="warning">{t('rules.translationPending')}</Tag>
+          )}
         </span>
         <h2 className={styles.detailTitle}>{rule.title}</h2>
         <p className={styles.detailSummary}>
@@ -123,7 +131,8 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
             </div>
           )}
 
-      <TaxDetailLink taxKind={taxKind} />
+      {/* BE #29: the rule says which tax it is (null for other rules). */}
+      <TaxDetailLink taxKind={rule.taxKind} />
 
       <div className={styles.refs}>
         {law && (
@@ -137,11 +146,13 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
             <small>
               {t('rules.sourcesCount', { count: rule.sources.length })}
             </small>
-            <strong>
-              {t('rules.checkedOn', {
-                date: formatCalendarDate(rulesCheckedOn, i18n.language),
-              })}
-            </strong>
+            {rule.checkedOn && (
+              <strong>
+                {t('rules.checkedOn', {
+                  date: formatCalendarDate(rule.checkedOn, i18n.language),
+                })}
+              </strong>
+            )}
           </summary>
           <ul className={styles.sources}>
             {rule.sources.map((source) => {

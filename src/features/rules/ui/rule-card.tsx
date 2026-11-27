@@ -7,7 +7,8 @@ import styles from './rules.module.css'
 
 /**
  * Figma v2 rule card (생활 수칙 · 분야): icon, title, summary and tags, ›.
- * Tags come from the content itself ("과태료 있음" when the penalty is a fine).
+ * Tags: "과태료·범칙금 있음" when the penalty is a fine, "번역 준비 중" when the text
+ * is the Korean original.
  */
 export function RuleCard({ rule }: { rule: Rule }) {
   const { t } = useTranslation()
@@ -23,9 +24,12 @@ export function RuleCard({ rule }: { rule: Rule }) {
       <span className={styles.ruleText}>
         <strong>{rule.title}</strong>
         <small>{rule.summary}</small>
-        {rule.fine && (
+        {(rule.fine || !rule.translated) && (
           <span className={styles.tags}>
-            <Tag tone="danger">{t('rules.fineTag')}</Tag>
+            {rule.fine && <Tag tone="danger">{t('rules.fineTag')}</Tag>}
+            {!rule.translated && (
+              <Tag tone="warning">{t('rules.translationPending')}</Tag>
+            )}
           </span>
         )}
       </span>

@@ -2,7 +2,10 @@ import { Icon } from '@/shared/ui/icons'
 import type { RuleCategory } from '../rules'
 import { CategoryIcon } from './category-icon'
 
-/** Line icon per rule (Figma v2 rule cards); unknown codes use the category icon. */
+/**
+ * Line icon per rule (Figma v2 rule cards); codes without one (rules the BE
+ * added later) use the category icon.
+ */
 const paths: Record<string, string> = {
   // speaker
   'order-noise':
@@ -59,10 +62,11 @@ export function RuleIcon({
   category,
 }: {
   code: string
-  category: RuleCategory
+  /** null: a category added by an admin, shown with the 생활 편의 icon. */
+  category: RuleCategory | null
 }) {
   const path = paths[code]
-  if (!path) return <CategoryIcon category={category} />
+  if (!path) return <CategoryIcon category={category ?? 'living'} />
   return (
     <Icon>
       <path d={path} />

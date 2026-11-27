@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { MascotTip } from '@/shared/ui/mascot-tip'
+import { QueryState } from '@/shared/ui/query-state'
 import { Muted, Section } from '@/shared/ui/page'
 import { SearchField } from '@/shared/ui/search-field'
 import { ruleCategories, searchRules, type Rule } from '../rules'
-import { useRules } from '../use-rules'
+import { useRuleFaqs, useRules } from '../use-rules'
 import { RuleCard } from './rule-card'
 import { RuleCategoryGrid } from './rule-category-grid'
 import { faqTopCount, RuleFaqList } from './rule-faq-list'
@@ -13,11 +14,13 @@ import styles from './rules.module.css'
 
 /**
  * M06 생활 수칙 (Figma v2): search, 분야별 안내 tiles, FAQ TOP 5 and a 토로
- * tip. A tile opens `/rules/category/:category`; typing searches.
+ * tip. A tile opens `/rules/category/:category`; typing searches the rules
+ * from `GET /api/rules` (the API has no search parameter, #42).
  */
 export function RuleBrowser() {
   const { t } = useTranslation()
-  const { rules, faqs } = useRules()
+  const { query: rulesQuery, rules } = useRules()
+  const { query: faqQuery, faqs } = useRuleFaqs()
   const [params, setParams] = useSearchParams()
   // The input keeps its own state. Reading it back from the URL lags behind
   // (router navigation runs in a transition), and the stale value resets the
@@ -50,7 +53,9 @@ export function RuleBrowser() {
         }}
       />
       {searching ? (
-        <SearchResults rules={searchRules(rules, query)} />
+        <QueryState query={rulesQuery}>
+          <SearchResults rules={searchRules(rules, query)} />
+        </QueryState>
       ) : (
         <>
           <Section title={t('rules.byCategory')}>
@@ -69,7 +74,9 @@ export function RuleBrowser() {
               </Link>
             }
           >
-            <RuleFaqList faqs={faqs.slice(0, faqTopCount)} />
+            <QueryState query={faqQuery}>
+              <RuleFaqList faqs={faqs.slice(0, faqTopCount)} />
+            </QueryState>
           </Section>
           <MascotTip mascot="toro">{t('rules.tip')}</MascotTip>
         </>

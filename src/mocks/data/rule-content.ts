@@ -1,11 +1,42 @@
-import type { Localized, RuleEntry, RuleFaq } from './rules'
+import type { RuleCategory } from '@/features/rules/rules'
+import type { Language } from '@/shared/api/types'
 
 /**
- * Fixed 생활 수칙 text (FE-only, team decision 2026-11-25).
- * Every statement was checked on the official page listed in `sources`
- * on the date below. Items that could not be confirmed were left out.
+ * Mock-only copy of the 생활 수칙 text the BE seeds (SiotTUK/Siot-BE#14,
+ * migration V2026_11_26_1610). The app reads the rules from the API
+ * (`GET /api/rules`, #42); MSW (`npm run dev:mock`) and tests serve this.
+ * Rules the BE added later (FE #73) are not copied here.
  */
 export const rulesCheckedOn = '2026-11-25'
+
+export type Localized = Record<Language, string>
+
+export const factKeys = [
+  'when',
+  'where',
+  'fee',
+  'penalty',
+  'law',
+  'contact',
+] as const
+export type FactKey = (typeof factKeys)[number]
+
+export interface RuleEntry {
+  code: string
+  category: RuleCategory
+  title: Localized
+  summary: Localized
+  points: Localized[]
+  facts?: Partial<Record<FactKey, Localized>>
+  /** Official pages the text was checked against (Korean page titles). */
+  sources: { name: string; url: string }[]
+}
+
+export interface RuleFaq {
+  question: Localized
+  answer: Localized
+  rule: string
+}
 
 const l = (ko: string, en: string, zh: string, vi: string): Localized => ({
   ko,

@@ -2,6 +2,7 @@ import type { TFunction } from 'i18next'
 import { describe, expect, it } from 'vitest'
 import type { RelatedBillGuide } from './api'
 import {
+  billBackPath,
   billDDayLabel,
   billGuidePath,
   formatBillAmount,
@@ -25,6 +26,20 @@ describe('bill summary display', () => {
     expect(formatBillAmount(0, 'ko')).toBe('₩0')
     expect(formatBillAmount(null, 'ko')).toBeNull()
   })
+})
+
+describe('back from a bill result', () => {
+  it('returns to the chat it was opened from', () => {
+    expect(billBackPath({ from: '/chat/12' })).toBe('/chat/12')
+    expect(billBackPath({ from: '/chat' })).toBe('/chat')
+  })
+
+  it.each([null, {}, { from: '/chat/0' }, { from: '/chat/history' }])(
+    'returns to the upload screen for %o',
+    (state) => {
+      expect(billBackPath(state)).toBe('/translations/bills')
+    },
+  )
 })
 
 const checklistGuide: RelatedBillGuide = {

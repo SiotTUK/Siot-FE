@@ -2,12 +2,22 @@ import type { TFunction } from 'i18next'
 import { ApiError } from '@/shared/api/client'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { koreaToday } from '@/shared/i18n/format'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import type { RelatedBillGuide } from './api'
 
 export const photoTypes = 'image/jpeg,image/png'
 export const pdfType = 'application/pdf'
 export const maxBillBytes = 10 * 1024 * 1024
 export const billTranslationPath = '/translations/bills'
+
+/**
+ * "‹" of a result opened from a chat card goes back to that chat (`/chat` for
+ * a new chat without a conversation yet), otherwise to the upload screen.
+ */
+export function billBackPath(state: unknown) {
+  const from = (state as { from?: unknown } | null)?.from
+  return from === '/chat' ? from : (chatBackPath(state) ?? billTranslationPath)
+}
 
 export function validateBillFile(file: File, accept: string) {
   if (!accept.split(',').includes(file.type) || file.size === 0)

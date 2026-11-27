@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
-import { billTranslationPath } from '@/features/bill-translation/bill-translation'
+import { billBackPath } from '@/features/bill-translation/bill-translation'
 import { BillResult } from '@/features/bill-translation/ui/bill-result'
 import { BillUpload } from '@/features/bill-translation/ui/bill-upload'
 import styles from '@/features/bill-translation/ui/bill.module.css'
@@ -18,12 +18,13 @@ export function BillResultPage() {
   const { data: member } = useMe()
   const { t } = useTranslation()
   const { id } = useParams()
+  const { state } = useLocation()
   const translationId = Number(id)
   return (
     <>
       <ScreenHeader
         title={t('bill.result')}
-        back={{ label: t('common.back'), to: billTranslationPath }}
+        back={{ label: t('common.back'), to: billBackPath(state) }}
       />
       <PageBody className={styles.body}>
         {member &&

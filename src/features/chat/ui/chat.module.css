@@ -294,6 +294,32 @@
   opacity: 0.45;
 }
 
+/* #29: the photo button left of the input. */
+.inputRow button.photo {
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 20px;
+}
+
+.billResult,
+.billPending {
+  white-space: normal;
+}
+.billDDay {
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-8);
+  background: var(--warning-bg);
+  font-weight: 700;
+}
+.billVerify {
+  margin: 0;
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-8);
+  background: var(--warning-bg);
+  font: var(--text-caption);
+  font-weight: 700;
+}
+
 /* History */
 .historyRow {
   display: flex;

@@ -38,6 +38,19 @@ export const chatMessages = defineMessages({
       delete: '삭제',
       deleteConfirm: '이 대화를 지울까요? 지우면 되돌릴 수 없어요.',
       notFound: '대화를 찾을 수 없어요',
+      bill: {
+        entry: '고지서 사진 번역',
+        chip: '고지서 사진 번역',
+        userCard: '사진 1장 · 이거 무슨 내용이에요?',
+        verify: '원본 금액·기한과 꼭 함께 확인하세요',
+        detail: '상세 보기',
+        noContext: '이어지는 질문에는 고지서 내용이 전달되지 않아요',
+        deleted: '삭제된 번역이에요.',
+        failed: '번역하지 못했어요',
+        retry: '다시 시도',
+        photoOnly:
+          'JPG·PNG 사진만 선택할 수 있어요. 비어 있지 않은 파일인지 확인해 주세요.',
+      },
     },
     errors: {
       CHAT_QUESTION_LENGTH: '질문은 1~1000자로 입력해 주세요',
@@ -84,6 +97,19 @@ export const chatMessages = defineMessages({
       delete: 'Delete',
       deleteConfirm: 'Delete this chat? This cannot be undone.',
       notFound: 'Chat not found',
+      bill: {
+        entry: 'Translate a bill photo',
+        chip: 'Translate a bill photo',
+        userCard: '1 photo · What does this say?',
+        verify: 'Always check the amount and due date against the original',
+        detail: 'See details',
+        noContext: 'Your next questions will not include what is in the bill',
+        deleted: 'This translation was deleted.',
+        failed: 'We could not translate it',
+        retry: 'Try again',
+        photoOnly:
+          'Only JPG or PNG photos can be selected. Check that the file is not empty.',
+      },
     },
     errors: {
       CHAT_QUESTION_LENGTH: 'Questions must be 1–1000 characters',
@@ -129,6 +155,18 @@ export const chatMessages = defineMessages({
       delete: '删除',
       deleteConfirm: '要删除这个对话吗？删除后无法恢复。',
       notFound: '找不到该对话',
+      bill: {
+        entry: '翻译缴费通知单照片',
+        chip: '翻译缴费通知单照片',
+        userCard: '1张照片 · 这是什么内容？',
+        verify: '请务必对照原件核对金额和期限',
+        detail: '查看详情',
+        noContext: '之后的提问不会附带通知单内容',
+        deleted: '该翻译已删除。',
+        failed: '翻译失败',
+        retry: '重试',
+        photoOnly: '只能选择 JPG 或 PNG 照片。请确认文件不是空的。',
+      },
     },
     errors: {
       CHAT_QUESTION_LENGTH: '问题请输入1~1000个字符',
@@ -175,6 +213,19 @@ export const chatMessages = defineMessages({
       delete: 'Xóa',
       deleteConfirm: 'Xóa cuộc trò chuyện này? Không thể khôi phục.',
       notFound: 'Không tìm thấy cuộc trò chuyện',
+      bill: {
+        entry: 'Dịch ảnh hóa đơn',
+        chip: 'Dịch ảnh hóa đơn',
+        userCard: '1 ảnh · Giấy này nói gì vậy?',
+        verify: 'Hãy luôn đối chiếu số tiền và hạn nộp với bản gốc',
+        detail: 'Xem chi tiết',
+        noContext: 'Các câu hỏi tiếp theo không kèm nội dung hóa đơn',
+        deleted: 'Bản dịch này đã bị xóa.',
+        failed: 'Không dịch được',
+        retry: 'Thử lại',
+        photoOnly:
+          'Chỉ chọn được ảnh JPG hoặc PNG. Hãy kiểm tra tệp không bị rỗng.',
+      },
     },
     errors: {
       CHAT_QUESTION_LENGTH: 'Câu hỏi phải có 1~1000 ký tự',

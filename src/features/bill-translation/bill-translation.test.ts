@@ -3,11 +3,101 @@ import { describe, expect, it } from 'vitest'
 import type { RelatedBillGuide } from './api'
 import {
   billBackPath,
+  billAmountLine,
   billDDayLabel,
+  billDueLine,
   billGuidePath,
   formatBillAmount,
+  trimBillParentheses,
   visibleBillGuides,
 } from './bill-translation'
+
+describe('repeated text in a bill result', () => {
+  it.each([
+    '2026-07-10',
+    '2026.7.10',
+    '2026. 7. 10.',
+    '2026/07/10',
+    '2026년 7월 10일',
+    '2026年7月10日',
+    'Jul 10, 2026',
+    'July 10, 2026.',
+    '납부 기한: 2026-07-10',
+    'Pay by: 2026-07-10',
+    '缴纳期限：2026-07-10',
+    'Hạn nộp: 2026-07-10',
+  ])('hides a due line with only the same date: %s', (line) => {
+    expect(billDueLine(line, '2026-07-10')).toBeUndefined()
+  })
+
+  it.each([
+    '2026-07-11',
+    '2026-07-10까지 내세요.',
+    'Pay by 2026-07-10.',
+    '2026-07-10 (금)',
+    '2026-07-10, after that 2026-07-31',
+    '납기 후 기한: 2026-07-10',
+    '납부 기한을 읽지 못했습니다.',
+  ])('keeps a due line that is not only that date: %s', (line) => {
+    expect(billDueLine(line, '2026-07-10')).toBe(line)
+  })
+
+  it.each([
+    '35,000원',
+    '35,000 won',
+    '35000 KRW',
+    '₩35,000.',
+    '35.000 won',
+    '납부 금액: 35,000원',
+    'Amount to pay: 35,000 won',
+    'Số tiền phải nộp: 35.000 won',
+  ])('hides an amount line with only the same amount: %s', (line) => {
+    expect(billAmountLine(line, 35000)).toBeUndefined()
+  })
+
+  it.each([
+    '35,000 won after due date',
+    '34,000 won',
+    '35,000 won (36,050 won after the deadline)',
+    '35,000원을 내세요.',
+    '납기 후 금액: 35,000원',
+    '35,000 USD',
+    '35,000.50 won',
+  ])('keeps an amount line that says more: %s', (line) => {
+    expect(billAmountLine(line, 35000)).toBe(line)
+  })
+
+  it('keeps a line when there is no value above it', () => {
+    expect(billDueLine('2026-07-10', null)).toBe('2026-07-10')
+    expect(billAmountLine('35,000 won', null)).toBe('35,000 won')
+  })
+
+  it.each([
+    ['카카오페이 (카카오페이)', '카카오페이'],
+    ['인터넷 지로（인터넷지로）', '인터넷 지로'],
+    ['Wetax (WETAX)', 'Wetax'],
+    [
+      '카카오페이 (카카오페이)나 인터넷지로 (인터넷지로)로 내세요.',
+      '카카오페이나 인터넷지로로 내세요.',
+    ],
+  ])('drops parentheses repeating the name: %s', (text, expected) => {
+    expect(trimBillParentheses(text)).toBe(expected)
+  })
+
+  it.each([
+    'Wetax (https://www.wetax.go.kr)',
+    'Wetax (www.wetax.go.kr)',
+    'ATM (07:00-23:30)',
+    'Bank counter (농협, 기업은행)',
+    'KakaoPay (카카오페이)',
+    '위택스 (Wetax)',
+    '카카오페이 (페이)',
+    'CD/ATM (CDATM)',
+    '(가상계좌)',
+  ])('keeps any other parentheses: %s', (text) => {
+    expect(trimBillParentheses(text)).toBe(text)
+  })
+})
 
 describe('bill summary display', () => {
   const t = ((key: string) => key) as unknown as TFunction

@@ -19,10 +19,14 @@ import type { BillTranslation } from '../api'
 import {
   billDaysLeft,
   billDDayLabel,
+  billAmountLine,
+  billDueLine,
   billErrorMessage,
   billGuidePath,
   billTranslationPath,
   formatBillAmount,
+  sameBillName,
+  trimBillParentheses,
   visibleBillGuides,
 } from '../bill-translation'
 import { useBill, useBillReminder } from '../use-bill-translations'
@@ -60,14 +64,25 @@ function ResultDetails({
   const dDay = billDDayLabel(t, result.dueDate)
   const amount = formatBillAmount(result.amount, language)
   const unknown = t('bill.unknown')
-  const paymentMethods = result.paymentMethods.filter(
-    (method) => method.trim() !== result.summary?.howToPay?.trim(),
-  )
+  const howToPay =
+    result.summary && trimBillParentheses(result.summary.howToPay)
+  const paymentMethods = result.paymentMethods
+    .map(trimBillParentheses)
+    .filter((method) => !howToPay || !sameBillName(method, howToPay))
   const rows = [
+    // The value is the Korean tax name, so this line is its translation.
     { key: 'what', summary: result.summary?.what, value: result.taxType },
-    { key: 'due', summary: result.summary?.due, value: date },
-    { key: 'amount', summary: result.summary?.amount, value: amount },
-    { key: 'how', summary: result.summary?.howToPay, value: null },
+    {
+      key: 'due',
+      summary: billDueLine(result.summary?.due, result.dueDate),
+      value: date,
+    },
+    {
+      key: 'amount',
+      summary: billAmountLine(result.summary?.amount, result.amount),
+      value: amount,
+    },
+    { key: 'how', summary: howToPay, value: null },
   ]
 
   return (

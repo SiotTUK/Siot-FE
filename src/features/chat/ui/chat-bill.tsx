@@ -6,6 +6,7 @@ import {
   billErrorMessage,
   billTranslationPath,
   formatBillAmount,
+  trimBillParentheses,
 } from '@/features/bill-translation/bill-translation'
 import { useBill } from '@/features/bill-translation/use-bill-translations'
 import { BillFailureCard } from '@/features/bill-translation/ui/bill-failure'
@@ -95,8 +96,8 @@ function ResultSummary({
   const dDay = billDDayLabel(t, result.dueDate)
   const summary = chatBillSummary(t, result, language)
   const howToPay =
-    result.summary?.howToPay?.trim() ||
-    result.paymentMethods.filter((method) => method.trim()).join(', ')
+    trimBillParentheses(result.summary?.howToPay ?? '') ||
+    result.paymentMethods.map(trimBillParentheses).filter(Boolean).join(', ')
   return (
     <div className={`${billStyles.theme} ${styles.billResult}`}>
       <Stack gap={12}>

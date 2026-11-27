@@ -14,7 +14,7 @@ export const ruleMessages = defineMessages({
         support: '상담 전화와 도움받을 수 있는 기관이에요',
       },
       ruleCount: '수칙 {{count}}개',
-      fineTag: '과태료 있음',
+      fineTag: '과태료·범칙금 있음',
       translationPending: '번역 준비 중',
       categoryTip: '이 분야에서 더 궁금한 건 토로에게 물어봐요',
       steps: '이렇게 하세요',

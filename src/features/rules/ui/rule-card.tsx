@@ -7,7 +7,7 @@ import styles from './rules.module.css'
 
 /**
  * Figma v2 rule card (생활 수칙 · 분야): icon, title, summary and tags, ›.
- * Tags: "과태료 있음" when the penalty is a fine, "번역 준비 중" when the text
+ * Tags: "과태료·범칙금 있음" when the penalty is a fine, "번역 준비 중" when the text
  * is the Korean original.
  */
 export function RuleCard({ rule }: { rule: Rule }) {

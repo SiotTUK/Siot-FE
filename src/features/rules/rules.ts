@@ -32,7 +32,7 @@ export interface Rule {
   points: string[]
   facts: { key: FactKey; value: string }[]
   sources: { name: string; url: string }[]
-  /** The penalty includes a fine (shown as a "과태료 있음" tag). */
+  /** The penalty includes a fine (shown as a "과태료·범칙금 있음" tag). */
   fine: boolean
   /** YYYY-MM-DD the text was checked against the sources. */
   checkedOn: string | null

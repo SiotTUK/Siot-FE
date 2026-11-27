@@ -4,11 +4,12 @@ import { currentLanguage } from '@/shared/i18n'
 import { formatMonthDay } from '@/shared/i18n/format'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText } from '../checklist'
+import { deadlineText, lifeChangeOf } from '../checklist'
 import styles from './checklist.module.css'
 
 /**
- * One checklist item (H1·H2 card): checkbox, badge, title, summary, law,
+ * One checklist item (H1·H2 card): checkbox, life-change chip, badge, title,
+ * summary, law,
  * the server's D-day text and "해당 없음". INFO items have no checkbox.
  */
 export function ChecklistCard({
@@ -16,17 +17,25 @@ export function ChecklistCard({
   busy,
   onToggleDone,
   onToggleNotApplicable,
+  showLifeChange = true,
 }: {
   item: ChecklistItemResponse
   busy: boolean
   onToggleDone: () => void
   onToggleNotApplicable: () => void
+  /** Off on the life change's own screen, where every task has the same chip. */
+  showLifeChange?: boolean
 }) {
   const { t } = useTranslation()
   const checkable = item.itemType !== 'INFO'
   const notApplicable = item.status === 'NOT_APPLICABLE'
   const overdue = item.status === 'OVERDUE'
   const dDayText = deadlineText(item, t('checklist.pastDeadline'))
+  const lifeChange = showLifeChange ? lifeChangeOf(item) : undefined
+  // Unknown life-change codes get no chip rather than a raw key.
+  const lifeChangeTag = lifeChange
+    ? t(`checklist.lifeChangeTag.${lifeChange}`, { defaultValue: '' })
+    : ''
 
   return (
     <article
@@ -46,6 +55,7 @@ export function ChecklistCard({
       )}
       <div className={styles.body}>
         <div className={styles.tags}>
+          {lifeChangeTag && <Tag tone="main">{lifeChangeTag}</Tag>}
           {item.badge && <Tag>{item.badge}</Tag>}
           {item.hasNoticeChanged && (
             <Tag tone="main">{t('checklist.noticeChanged')}</Tag>

@@ -16,3 +16,22 @@
   border: 1px solid var(--secondary);
   background: var(--secondary);
 }
+/* "나의 상황" row with 변경 › (Figma v2 H1·H2). */
+.situation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-16);
+  background: var(--secondary);
+  font: var(--text-caption);
+}
+.situation > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.situation a {
+  flex-shrink: 0;
+}

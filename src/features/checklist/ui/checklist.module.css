@@ -49,6 +49,23 @@
   color: var(--foreground);
 }
 
+/* H2 calm card: nothing due within 30 days. */
+.calm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+.calm span {
+  font: var(--text-caption);
+  color: var(--primary);
+}
+.calm strong {
+  font: var(--text-heading);
+}
+
 /* Item card: design-system Card (white on the grey screen). */
 .card {
   display: flex;

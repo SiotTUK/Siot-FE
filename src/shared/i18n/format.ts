@@ -26,6 +26,18 @@ export function formatMonthDay(
   }).format(date)
 }
 
+/** Calendar date (YYYY-MM-DD) as year and month, e.g. "2027년 3월". */
+export function formatYearMonth(value: string, language: string) {
+  const date = new Date(`${value}T00:00:00Z`)
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat(language, {
+        year: 'numeric',
+        month: 'long',
+        timeZone: 'UTC',
+      }).format(date)
+}
+
 /** A stored calendar date with its year, independent of the viewer's timezone. */
 export function formatCalendarDate(value: string, language: string) {
   const date = new Date(`${value}T00:00:00Z`)

@@ -2,15 +2,3 @@
 .body {
   padding-top: var(--space-16);
 }
-.toro {
-  align-self: center;
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
-}
-.hug {
-  align-self: center;
-  width: 134px;
-  height: 130px;
-  object-fit: contain;
-}

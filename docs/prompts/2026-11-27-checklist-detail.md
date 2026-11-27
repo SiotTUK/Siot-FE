@@ -39,11 +39,21 @@ Figma M07a(체크리스트 상세) 화면을 추가하여 홈 및 생활 변화�
 
 | 확인 항목                  | 방법                       | 결과                                                                                             |
 | -------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------ |
-| 타입·린트·포맷·테스트·빌드 | `npm run check`            | 전체 통과 (TypeScript, ESLint, Prettier, Vitest 25개 스위트 / 185개 테스트 통과, 운영 빌드 완료) |
+| 타입·린트·포맷·테스트·빌드 | `npm run check`            | 전체 통과 (TypeScript, ESLint, Prettier, Vitest 25개 스위트 / 189개 테스트 통과, 운영 빌드 완료) |
 | 오류 신고 검증             | `checklist-report.test.ts` | 인용문구 필수·사유 선택 유효성 검사 및 `POST /api/reports` 접수 통과                             |
 | 다국어 정합성              | TypeScript 빌드            | `defineMessages`를 통한 ko·en·zh·vi 4개 언어 키 일치 검증 통과                                   |
+| 알림 상세 이동 검증        | `notifications.test.ts`    | CHECKLIST/LIFE_CHANGE_TASK의 체크리스트 상세 이동 및 RULE 상세/목록 폴백 검증 통과               |
 
 미검증: 실기기(모바일 디바이스) Web Share 동작 확인, 실제 운영 DB 가이드 데이터 연동 확인.
+
+## 후속: 알림에서 식별 가능한 상세 화면 이동 (FE 로드맵 3차)
+
+- 요약: PR #25에서 홈이나 목록으로 일괄 이동하던 알림을, 이번에 구현된 체크리스트 상세 화면(`/home/checklist/:code`) 및 개별 생활수칙 화면(`/rules/:code`)으로 바로 연결한다. 코드가 없거나 인식할 수 없는 경우 기존의 홈·목록 이동을 유지한다.
+- 반영 내용:
+  - `src/features/checklist/checklist.ts`: `isChecklistCode` 판별 헬퍼 추가
+  - `src/features/rules/rules.ts`: `isRuleCode` 슬러그 판별 헬퍼 추가
+  - `src/features/notifications/notifications.ts`: `notificationPath`에서 `CHECKLIST` 및 `LIFE_CHANGE_TASK`는 유효한 코드일 때 `/home/checklist/${linkCode}`로 이동, `RULE`은 유효한 슬러그일 때 `/rules/${linkCode}`로 이동하도록 갱신 (유효하지 않거나 없는 코드는 `/home`, `/rules` 목록으로 폴백)
+  - `src/features/notifications/notifications.test.ts`: 단위 테스트 케이스 갱신 및 확장 (총 189개 테스트 통과)
 
 ## 남은 작업
 

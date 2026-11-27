@@ -17,9 +17,11 @@ import { SwitchField } from '@/shared/ui/switch-field'
 import type { BillTranslation } from '../api'
 import {
   billDaysLeft,
+  billDDayLabel,
   billErrorMessage,
   billGuidePath,
   billTranslationPath,
+  formatBillAmount,
   visibleBillGuides,
 } from '../bill-translation'
 import { useBill, useBillReminder } from '../use-bill-translations'
@@ -54,21 +56,8 @@ function ResultDetails({
     ? formatCalendarDate(result.dueDate, language)
     : null
   const days = result.dueDate ? billDaysLeft(result.dueDate) : null
-  const dDay =
-    days === null
-      ? null
-      : days === 0
-        ? t('bill.today')
-        : days < 0
-          ? t('bill.overdue')
-          : `D-${days}`
-  const amount =
-    result.amount === null
-      ? null
-      : new Intl.NumberFormat(language, {
-          style: 'currency',
-          currency: 'KRW',
-        }).format(result.amount)
+  const dDay = billDDayLabel(t, result.dueDate)
+  const amount = formatBillAmount(result.amount, language)
   const unknown = t('bill.unknown')
   const paymentMethods = result.paymentMethods.filter(
     (method) => method.trim() !== result.summary?.howToPay?.trim(),

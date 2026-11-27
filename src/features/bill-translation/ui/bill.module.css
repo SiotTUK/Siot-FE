@@ -1,3 +1,8 @@
+/*
+ * Colours of the bill parts. `.body` is the bill screens; put `.theme` around
+ * the same parts anywhere else, including inside a sheet.
+ */
+.theme,
 .body {
   --bill-action: #126f98;
   --bill-action-hover: #0e597b;
@@ -5,6 +10,9 @@
   --bill-hero: #ffb16f;
   --bill-hero-text: #44240e;
   --bill-privacy: #fff4da;
+}
+
+.body {
   gap: var(--space-16);
   padding-top: var(--space-16);
   overflow-wrap: anywhere;

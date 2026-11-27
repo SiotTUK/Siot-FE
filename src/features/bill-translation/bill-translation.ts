@@ -38,6 +38,23 @@ export function billDaysLeft(date: string, now?: Date) {
   return (Date.parse(date) - Date.parse(koreaToday(now))) / 86_400_000
 }
 
+/** "D-7", or the words for today and a passed deadline. */
+export function billDDayLabel(t: TFunction, date: string | null, now?: Date) {
+  if (!date) return null
+  const days = billDaysLeft(date, now)
+  if (days === 0) return t('bill.today')
+  return days < 0 ? t('bill.overdue') : `D-${days}`
+}
+
+export function formatBillAmount(amount: number | null, language: string) {
+  return amount === null
+    ? null
+    : new Intl.NumberFormat(language, {
+        style: 'currency',
+        currency: 'KRW',
+      }).format(amount)
+}
+
 const opensChecklist = ({ kind }: RelatedBillGuide) =>
   kind === 'CHECKLIST' || kind === 'LIFE_CHANGE_TASK'
 

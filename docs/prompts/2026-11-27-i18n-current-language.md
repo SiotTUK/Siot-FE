@@ -1,7 +1,7 @@
 # 새로고침하면 언어가 한국어로 판단되는 문제 수정
 
 - 작성일: 2026-11-27
-- 관련 이슈 / PR: 미생성
+- 관련 이슈 / PR: #84
 
 ## 목적
 
@@ -36,6 +36,14 @@
 | 실제 서버 새로고침         | 실제 서버(5173), 화면만 열어 봄 | 언어 선택 "English", 체크리스트 `language=en` 요청                             |
 
 스크린샷(목업, 390×844): [수정 전](assets/2026-11-27-i18n-current-language-before.png), [수정 후](assets/2026-11-27-i18n-current-language-en.png)
+
+## 2026-11-27 후속: 리뷰 반영
+
+- 요약: 사용자가 #84 리뷰를 요청했다. AI는 막는 문제는 없다고 보고, 사소한 제안 두 가지(언어 판단 기준을 하나로 맞추기, 기록의 PR 번호)를 냈다. 사용자가 둘 다 고치기로 했다.
+- 반영
+  - `currentLanguage()`가 `language`(`t()`가 쓰는 언어)를 먼저 보고, 지원하지 않는 값일 때만 `resolvedLanguage`, 그다음 `ko`를 쓴다. 생활 수칙의 `useScreenLanguage()`가 같은 이유(`resolvedLanguage`가 바꾼 직후 이전 언어로 남을 수 있음)로 `language`를 따로 읽던 것을 `currentLanguage()`로 합쳤다.
+  - 테스트: `resolvedLanguage`가 이전 언어(`ko`)로 남아 있어도 `language`(`vi`)를 돌려주는지 추가.
+  - 이 기록의 "관련 이슈 / PR"을 #84로 바꿨다.
 
 ## 남은 작업
 

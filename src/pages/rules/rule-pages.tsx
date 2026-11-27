@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ruleCategories } from '@/features/rules/rules'
-import { useRule, useRules } from '@/features/rules/use-rules'
+import { useRule, useRuleFaqs } from '@/features/rules/use-rules'
 import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
 import { RuleDetail } from '@/features/rules/ui/rule-detail'
 import { RuleFaqList } from '@/features/rules/ui/rule-faq-list'
 import { RuleBrowser } from '@/features/rules/ui/rule-groups'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, PageHeading } from '@/shared/ui/page'
+import { QueryState } from '@/shared/ui/query-state'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './rule-pages.module.css'
 
@@ -41,12 +42,14 @@ function useRulesBack() {
 export function RuleFaqPage() {
   const { t } = useTranslation()
   const back = useRulesBack()
-  const { faqs } = useRules()
+  const { query, faqs } = useRuleFaqs()
   return (
     <>
       <ScreenHeader back={back} title={t('rules.faqAllTitle')} />
       <PageBody className={styles.body}>
-        <RuleFaqList faqs={faqs} withAnswers />
+        <QueryState query={query}>
+          <RuleFaqList faqs={faqs} withAnswers />
+        </QueryState>
       </PageBody>
     </>
   )
@@ -74,7 +77,7 @@ export function RuleDetailPage() {
   const { t } = useTranslation()
   const back = useRulesBack()
   const { code } = useParams()
-  const rule = useRule(code ?? '')
+  const { rule } = useRule(code ?? '')
   const [copied, setCopied] = useState(false)
 
   const share = async () => {

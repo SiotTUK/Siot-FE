@@ -6,7 +6,7 @@ import type {
   EventRecommendation,
 } from '@/features/events/api'
 import { isIsoDate } from '@/features/events/event-filters'
-import { ruleEntries } from '@/features/rules/content'
+import { ruleEntries } from '../data/rule-content'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { body, currentMember, error, persist, state, unauthorized } from '../db'

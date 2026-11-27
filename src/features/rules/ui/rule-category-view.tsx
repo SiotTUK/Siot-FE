@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChipGroup } from '@/shared/ui/chip-group'
 import { MascotTip } from '@/shared/ui/mascot-tip'
 import { Stack } from '@/shared/ui/page'
+import { QueryState } from '@/shared/ui/query-state'
 import { ruleCategories, type RuleCategory } from '../rules'
 import { useRules } from '../use-rules'
 import { CategoryIcon } from './category-icon'
@@ -16,7 +17,8 @@ import styles from './rules.module.css'
 export function RuleCategoryView({ category }: { category: RuleCategory }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const rules = useRules().rules.filter((rule) => rule.category === category)
+  const { query, rules: all } = useRules()
+  const rules = all.filter((rule) => rule.category === category)
 
   return (
     <Stack gap={16}>
@@ -41,16 +43,18 @@ export function RuleCategoryView({ category }: { category: RuleCategory }) {
           <small>{t(`rules.descriptions.${category}`)}</small>
         </span>
       </div>
-      <h2 className={styles.count}>
-        {t('rules.ruleCount', { count: rules.length })}
-      </h2>
-      <ul className={styles.cards}>
-        {rules.map((rule) => (
-          <li key={rule.code}>
-            <RuleCard rule={rule} />
-          </li>
-        ))}
-      </ul>
+      <QueryState query={query}>
+        <h2 className={styles.count}>
+          {t('rules.ruleCount', { count: rules.length })}
+        </h2>
+        <ul className={styles.cards}>
+          {rules.map((rule) => (
+            <li key={rule.code}>
+              <RuleCard rule={rule} />
+            </li>
+          ))}
+        </ul>
+      </QueryState>
       <MascotTip mascot="toro">{t('rules.categoryTip')}</MascotTip>
     </Stack>
   )

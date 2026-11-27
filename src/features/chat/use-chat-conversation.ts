@@ -9,9 +9,12 @@ import { useAsk, useFeedback, useMessages } from './use-chat'
  * on its way, and the draft. The conversation is created with the first
  * question, then the URL switches to it without remounting the page.
  */
-export function useChatConversation(conversationId: number | undefined) {
+export function useChatConversation(
+  conversationId: number | undefined,
+  initialDraft = '',
+) {
   const navigate = useNavigate()
-  const [draft, setDraft] = useState('')
+  const [draft, setDraft] = useState(initialDraft)
   const [sending, setSending] = useState<string>()
   const [createdId, setCreatedId] = useState<number>()
   const activeId = conversationId ?? createdId

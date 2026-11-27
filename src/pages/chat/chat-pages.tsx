@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useChangeLanguage } from '@/features/auth/use-session'
 import { useSuggestions } from '@/features/chat/use-chat'
 import { useChatConversation } from '@/features/chat/use-chat-conversation'
@@ -24,10 +24,14 @@ import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
  */
 export function ChatPage() {
   const { t } = useTranslation()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
   const param = useParams().conversationId
   const id = param === undefined ? undefined : Number(param)
   const invalidId = id !== undefined && !(Number.isSafeInteger(id) && id > 0)
-  const chat = useChatConversation(invalidId ? undefined : id)
+  const initialDraft =
+    searchParams.get('q') ?? (location.state as { q?: string } | null)?.q ?? ''
+  const chat = useChatConversation(invalidId ? undefined : id, initialDraft)
   const changeLanguage = useChangeLanguage()
   const suggestions = useSuggestions(currentLanguage())
   const endRef = useRef<HTMLDivElement>(null)

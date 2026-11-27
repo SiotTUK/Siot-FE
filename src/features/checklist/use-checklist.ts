@@ -26,6 +26,23 @@ export function useChecklist(memberId: number, language: Language) {
   })
 }
 
+/** Look up a single checklist item by its code from the member's checklist. */
+export function useChecklistItem(
+  memberId: number,
+  language: Language,
+  code: string | undefined,
+) {
+  const query = useChecklist(memberId, language)
+  const item = code
+    ? query.data?.items.find((entry) => entry.code === code)
+    : undefined
+  return {
+    ...query,
+    item,
+    notFound: query.isSuccess && !query.isFetching && item === undefined,
+  }
+}
+
 /** Update the card optimistically, then refresh the member's active checklist. */
 export function useMarkChecklistItem(memberId: number, language: Language) {
   const queryClient = useQueryClient()

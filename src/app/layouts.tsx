@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next'
 import { Outlet, ScrollRestoration } from 'react-router-dom'
 import { MemberLanguageSync } from '@/features/auth/route-guards'
 import { useChangeLanguage, useMe } from '@/features/auth/use-session'
+import { NotificationBell } from '@/features/notifications/ui/notification-bell'
 import { OnboardingProvider } from '@/features/onboarding/onboarding-provider'
 import { currentLanguage } from '@/shared/i18n'
 import { BottomNav } from '@/shared/ui/bottom-nav'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { MobileFrame } from '@/shared/ui/mobile-frame'
-import { BellIcon } from '@/shared/ui/icons'
-import { TopBar, TopBarIconButton } from '@/shared/ui/top-bar'
+import { TopBar } from '@/shared/ui/top-bar'
 
 export function RootLayout() {
   return (
@@ -20,10 +20,7 @@ export function RootLayout() {
   )
 }
 
-/**
- * Screens with the M/TopBar. Member screens also get the notification bell,
- * disabled until the notification screen (NTF-04) is connected.
- */
+/** Screens with the M/TopBar. Member screens also get the notification bell. */
 export function TopBarLayout({ member = false }: { member?: boolean }) {
   const { t } = useTranslation()
   const changeLanguage = useChangeLanguage()
@@ -36,13 +33,7 @@ export function TopBarLayout({ member = false }: { member?: boolean }) {
           value={currentLanguage()}
           onChange={changeLanguage}
         />
-        {member && (
-          <TopBarIconButton
-            label={t('nav.notifications')}
-            icon={<BellIcon />}
-            disabledHint={t('home.comingSoon')}
-          />
-        )}
+        {member && <NotificationBell />}
       </TopBar>
       <Outlet />
     </>

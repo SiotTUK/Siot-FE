@@ -14,6 +14,7 @@ import { LanguagePage } from '@/pages/language-page'
 import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
 import { NotFoundPage } from '@/pages/not-found-page'
+import { NotificationsPage } from '@/pages/notifications/notifications-page'
 import { OnboardingPage } from '@/pages/onboarding/onboarding-page'
 import { deferredModule, type DeferredScreen } from './deferred-module'
 import {
@@ -93,6 +94,7 @@ export const router = createBrowserRouter([
                 path: '/rules',
                 element: deferredPage(ruleScreen, 'RulesPage'),
               },
+              { path: '/notifications', element: <NotificationsPage /> },
               { path: '/me', element: <MePage /> },
             ],
           },

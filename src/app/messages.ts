@@ -4,6 +4,7 @@ import { chatMessages } from '@/features/chat/messages'
 import { checklistMessages } from '@/features/checklist/messages'
 import { eventMessages } from '@/features/events/messages'
 import { lifeChangeMessages } from '@/features/life-changes/messages'
+import { notificationMessages } from '@/features/notifications/messages'
 import { onboardingMessages } from '@/features/onboarding/messages'
 import { ruleMessages } from '@/features/rules/messages'
 import { calendarMessages } from '@/pages/calendar/messages'
@@ -23,6 +24,7 @@ registerMessages(
   calendarMessages,
   eventMessages,
   ruleMessages,
+  notificationMessages,
   meMessages,
   chatMessages,
   adminMessages,

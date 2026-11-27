@@ -9,7 +9,6 @@ export const homeMessages = defineMessages({
     },
     nav: {
       label: '주요 메뉴',
-      notifications: '알림',
       home: '홈',
       calendar: '생활 달력',
       rules: '생활 수칙',
@@ -25,7 +24,6 @@ export const homeMessages = defineMessages({
     },
     nav: {
       label: 'Main menu',
-      notifications: 'Notifications',
       home: 'Home',
       calendar: 'Calendar',
       rules: 'Living rules',
@@ -41,7 +39,6 @@ export const homeMessages = defineMessages({
     },
     nav: {
       label: '主菜单',
-      notifications: '通知',
       home: '首页',
       calendar: '生活日历',
       rules: '生活须知',
@@ -57,7 +54,6 @@ export const homeMessages = defineMessages({
     },
     nav: {
       label: 'Menu chính',
-      notifications: 'Thông báo',
       home: 'Trang chủ',
       calendar: 'Lịch sinh hoạt',
       rules: 'Quy tắc sinh hoạt',

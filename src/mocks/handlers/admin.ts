@@ -237,7 +237,7 @@ function ruleTranslation(
   }
 }
 
-function requireAdmin() {
+export function requireAdmin() {
   const member = currentMember()
   if (!member) return unauthorized()
   if (member.role !== 'ADMIN')

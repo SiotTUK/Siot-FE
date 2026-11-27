@@ -5,6 +5,10 @@ import {
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
 import type { BillTranslation } from '@/features/bill-translation/api'
+import type {
+  DocumentResponse,
+  DocumentVersionResponse,
+} from '@/features/admin/documents'
 import type { EventLeadDays } from '@/features/events/api'
 import type { LifeChangeResponse } from '@/features/life-changes/api'
 import type { LifeChangeCode } from '@/features/life-changes/life-changes'
@@ -35,6 +39,9 @@ export interface MockState {
   conversations: Record<string, MockConversation>
   nextChatId: number
   bills: Record<string, BillTranslation[]>
+  /** ADM-02~04 chatbot source documents and their versions. */
+  documents: MockDocument[]
+  nextDocumentId: number
   nextBillId: number
   guides: Record<string, GuideTranslationResponse>
   reviews: Record<
@@ -140,6 +147,8 @@ function seedState(): MockState {
     nextChatId: 2,
     bills: {},
     nextBillId: 1,
+    documents: [seedDocument()],
+    nextDocumentId: 2,
     guides: {
       'CL-01:ko': {
         code: 'CL-01',
@@ -179,6 +188,8 @@ function loadState(): MockState {
       state.notificationPrefs ??= {}
       state.bills ??= {}
       state.nextBillId ??= 1
+      state.documents ??= [seedDocument()]
+      state.nextDocumentId ??= 2
       return state
     }
   } catch {
@@ -294,5 +305,42 @@ export function seedMessage(
     referral: null,
     helpful,
     createdAt: `2026-11-19T02:0${messageId}:00Z`,
+  }
+}
+
+export type MockDocument = Omit<
+  DocumentResponse,
+  'currentVersion' | 'latestVersion'
+> & { versions: DocumentVersionResponse[] }
+
+/** One indexed document, like a BE that already holds the city guide. */
+function seedDocument(): MockDocument {
+  return {
+    documentId: 1,
+    name: '시흥시 외국인주민 생활안내',
+    sourceUrl: 'https://www.siheung.go.kr/guide.pdf',
+    publishedOn: '2026-03-01',
+    active: true,
+    createdAt: '2026-11-20T00:00:00Z',
+    updatedAt: '2026-11-20T00:00:00Z',
+    versions: [
+      {
+        versionId: 1,
+        documentId: 1,
+        versionNo: 1,
+        originalFilename: 'guide-2026.pdf',
+        changeType: 'NEW',
+        changeSummary: null,
+        excludedPages: '51-52',
+        status: 'COMPLETED',
+        current: true,
+        failedStage: null,
+        failureReason: null,
+        chunkCount: 184,
+        uploadedBy: 2,
+        uploadedAt: '2026-11-20T00:00:00Z',
+        processedAt: '2026-11-20T00:05:00Z',
+      },
+    ],
   }
 }

@@ -14,3 +14,25 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* ADM-04 one document version. */
+.version {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.version p {
+  margin: 0;
+}
+.failure {
+  color: var(--destructive);
+}
+.link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+}

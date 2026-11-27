@@ -27,8 +27,12 @@ export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
     defaultValues: { email: '', password: '' },
   })
   const submit = useMutation({ mutationFn: login, onSuccess: startSession })
-  const onSubmit = handleSubmit((values) =>
-    submit.mutate({ email: values.email.trim(), password: values.password }),
+  const onSubmit = handleSubmit(
+    (values) =>
+      submit.mutate({ email: values.email.trim(), password: values.password }),
+    // Stopped here, so nothing reached the server: drop the previous server
+    // failure, or its "(1/5)" would read as if this try was counted.
+    () => submit.reset(),
   )
   const { errors, isSubmitted } = formState
   // "Wrong email or password" only makes sense after trying to log in, so an

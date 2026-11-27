@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import { ruleCategories } from '@/features/rules/rules'
 import { useRule, useRuleFaqs } from '@/features/rules/use-rules'
 import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
@@ -24,7 +25,10 @@ export function RulesPage() {
   )
 }
 
-/** ‹ goes back when the screen was opened from inside 생활 안내, else to the list. */
+/**
+ * ‹ goes back when the screen was opened from inside 생활 안내, to the
+ * conversation when opened from a chat related page (CB-10), else to the list.
+ */
 function useRulesBack() {
   const { t } = useTranslation()
   const { state } = useLocation()
@@ -32,7 +36,9 @@ function useRulesBack() {
   return {
     label: t('common.back'),
     onClick: () => {
+      const chat = chatBackPath(state)
       if (state?.from === 'rules') void navigate(-1)
+      else if (chat) void navigate(chat)
       else void navigate('/rules', { replace: true })
     },
   }

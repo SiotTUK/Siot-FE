@@ -1,4 +1,5 @@
 import type { TFunction } from 'i18next'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import { ApiError } from '@/shared/api/client'
 import { errorMessage } from '@/shared/i18n/error-message'
 import type { ChecklistItemResponse, ChecklistMark } from './api'
@@ -187,5 +188,7 @@ export function markErrorMessage(t: TFunction, error: unknown) {
  */
 export function detailBackPath(state: unknown): string {
   const back = (state as { back?: unknown } | null)?.back
-  return typeof back === 'string' && back.startsWith('/home/') ? back : '/home'
+  if (typeof back === 'string' && back.startsWith('/home/')) return back
+  // Opened from a chat related page (CB-10).
+  return chatBackPath(state) ?? '/home'
 }

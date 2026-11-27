@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import type { ChecklistItemResponse } from '@/features/checklist/api'
 import {
   checklistItemKey,
@@ -47,6 +48,8 @@ export function LifeChangeTasks({
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const chat = chatBackPath(state)
   const changes = useLifeChanges(memberId)
   const mutation = useChangeLifeChange(memberId, code)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -56,13 +59,17 @@ export function LifeChangeTasks({
 
   // Not registered (an old link): choose the date on F06a first.
   if (changes.data && !existing && !deleting)
-    return <Navigate to={edit} replace />
+    return <Navigate to={edit} replace state={state} />
 
   return (
     <>
       <ScreenHeader
         title={t(`lifeChanges.types.${code}.title`)}
-        back={{ label: t('lifeChanges.backHome'), to: '/home' }}
+        back={
+          chat
+            ? { label: t('common.back'), to: chat }
+            : { label: t('lifeChanges.backHome'), to: '/home' }
+        }
         actions={<HeaderAction to={edit}>{t('lifeChanges.edit')}</HeaderAction>}
       />
       <PageBody className={styles.taskPage}>

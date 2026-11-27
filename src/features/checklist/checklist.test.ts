@@ -298,6 +298,11 @@ describe('detailBackPath', () => {
     expect(detailBackPath({ back: 'https://example.com' })).toBe('/home')
     expect(detailBackPath({ back: 42 })).toBe('/home')
   })
+
+  it('returns to the conversation when opened from a chat link (CB-10)', () => {
+    expect(detailBackPath({ from: '/chat/7' })).toBe('/chat/7')
+    expect(detailBackPath({ from: '/chat/x' })).toBe('/home')
+  })
 })
 
 describe('CHK-08 warnings (#50)', () => {

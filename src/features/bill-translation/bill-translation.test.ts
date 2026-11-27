@@ -51,8 +51,33 @@ describe('repeated text in a bill result', () => {
     '납부 금액: 35,000원',
     'Amount to pay: 35,000 won',
     'Số tiền phải nộp: 35.000 won',
+    '35,000韩元',
+    '35,000元。',
+    '35.000 đồng',
+    '35.000 Đồng',
+    '35.000 VND',
   ])('hides an amount line with only the same amount: %s', (line) => {
     expect(billAmountLine(line, 35000)).toBeUndefined()
+  })
+
+  it.each([
+    '缴纳金额：32,000韩元',
+    '32.000 đồng',
+    'Số tiền phải nộp: 32.000 đồng',
+    // The same letters typed as separate accent marks.
+    '32.000 đồng'.normalize('NFD'),
+  ])('hides a Chinese or Vietnamese amount line: %s', (line) => {
+    expect(billAmountLine(line, 32000)).toBeUndefined()
+  })
+
+  it.each([
+    '缴纳金额：33,000韩元',
+    '32,000美元',
+    '逾期后缴纳32,000韩元',
+    '32.000 đồng sau hạn nộp',
+    '3.200 đồng',
+  ])('keeps a different Chinese or Vietnamese amount line: %s', (line) => {
+    expect(billAmountLine(line, 32000)).toBe(line)
   })
 
   it.each([

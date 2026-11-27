@@ -153,7 +153,7 @@ export function billAmountLine(
     text.slice(found.index + found[0].length),
   ]
     .join(' ')
-    .replace(/원|(?<!\p{L})(?:won|krw)(?!\p{L})/giu, ' ')
+    .replace(/원|韩元|元|(?<!\p{L})(?:won|krw|đồng|vnd)(?!\p{L})/giu, ' ')
   // Only units and signs such as ₩ may remain: no other letters or numbers.
   return /[\p{L}\p{N}]/u.test(rest) ? line : undefined
 }

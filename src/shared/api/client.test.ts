@@ -148,6 +148,103 @@ describe('API client contract', () => {
     expect(calls).toBe(1)
   })
 
+  it('sends JSON bodies as application/json', async () => {
+    browserEnvironment('XSRF-TOKEN=token')
+    server.use(
+      http.post(`${origin}/api/test`, async ({ request }) => {
+        expect(request.headers.get('content-type')).toBe('application/json')
+        expect(await request.json()).toEqual({ name: 'value' })
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    await apiRequest('/api/test', { method: 'POST', body: { name: 'value' } })
+  })
+})
+
+/** #44: multipart uploads (bill photos, admin documents) share the client. */
+describe('API client multipart (FormData)', () => {
+  const form = () => {
+    const body = new FormData()
+    body.append(
+      'file',
+      new File(['sample'], 'doc.pdf', { type: 'application/pdf' }),
+    )
+    body.append('title', '체류 안내')
+    return body
+  }
+
+  it('sends FormData as is and lets the browser set the boundary', async () => {
+    browserEnvironment('XSRF-TOKEN=token')
+    server.use(
+      http.post(`${origin}/api/test`, async ({ request }) => {
+        // A caller's JSON content type is dropped: the boundary must come from the body.
+        expect(request.headers.get('content-type')).toMatch(
+          /^multipart\/form-data; boundary=/,
+        )
+        expect(request.headers.get('accept')).toBe('application/json')
+        expect(request.headers.get('x-xsrf-token')).toBe('token')
+        const received = await request.formData()
+        const file = received.get('file') as File
+        expect([file.name, file.type, await file.text()]).toEqual([
+          'doc.pdf',
+          'application/pdf',
+          'sample',
+        ])
+        expect(received.get('title')).toBe('체류 안내')
+        return HttpResponse.json({ data: { id: 7 } })
+      }),
+    )
+    await expect(
+      apiRequest('/api/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: form(),
+      }),
+    ).resolves.toEqual({ id: 7 })
+    const init = vi.mocked(fetch).mock.calls[0][1]
+    expect(init?.body).toBeInstanceOf(FormData)
+    expect(init?.credentials).toBe('include')
+  })
+
+  it('does not send an upload whose signal is already aborted', async () => {
+    browserEnvironment('XSRF-TOKEN=token')
+    const upload = vi.fn(() => HttpResponse.json({ data: null }))
+    server.use(http.post(`${origin}/api/test`, upload))
+    const controller = new AbortController()
+    controller.abort()
+    await expect(
+      apiRequest('/api/test', {
+        method: 'POST',
+        body: form(),
+        signal: controller.signal,
+      }),
+    ).rejects.toMatchObject({ name: 'AbortError' })
+    expect(upload).not.toHaveBeenCalled()
+  })
+
+  it('turns a proxy 413 page into an ApiError', async () => {
+    browserEnvironment('XSRF-TOKEN=token')
+    server.use(
+      http.post(
+        `${origin}/api/test`,
+        () =>
+          new HttpResponse('<html>413 Request Entity Too Large</html>', {
+            status: 413,
+            statusText: 'Payload Too Large',
+          }),
+      ),
+    )
+    await expect(
+      apiRequest('/api/test', { method: 'POST', body: form() }),
+    ).rejects.toMatchObject({
+      name: 'ApiError',
+      status: 413,
+      code: 'HTTP_ERROR',
+    })
+  })
+})
+
+describe('API client errors', () => {
   it('normalizes a non-JSON gateway error', async () => {
     browserEnvironment()
     server.use(

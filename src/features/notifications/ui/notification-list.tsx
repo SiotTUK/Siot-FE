@@ -37,11 +37,10 @@ export function NotificationList({ memberId }: { memberId: number }) {
           <NotificationCard
             item={item}
             pending={
-              markRead.isPending && markRead.variables === item.notificationId
+              markRead.isPending &&
+              markRead.variables?.notificationId === item.notificationId
             }
-            onRead={(then) =>
-              markRead.mutate(item.notificationId, { onSuccess: then })
-            }
+            onRead={(then) => markRead.markRead(item.notificationId, then)}
           />
         )}
       />

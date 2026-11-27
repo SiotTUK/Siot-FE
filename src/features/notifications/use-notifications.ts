@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { captureSessionScope } from '@/features/auth/session-scope'
 import type { PageResponse } from '@/shared/api/types'
 import {
   fetchNotifications,
@@ -17,6 +18,14 @@ import {
   type NotificationPreference,
 } from './api'
 import { groupUpdates, type PreferenceGroup } from './notifications'
+
+/**
+ * Writes below carry the login session they started in (`isSessionCurrent`):
+ * the request stops if the session changed, the cache is only touched while
+ * it is still current, and the mutation context lets the global handler
+ * ignore a late UNAUTHORIZED from an ended session.
+ */
+type SessionScoped = { isSessionCurrent: () => boolean }
 
 export function usePreferences(memberId: number) {
   return useQuery({
@@ -32,18 +41,19 @@ export function usePreferences(memberId: number) {
 export function useUpdatePreferenceGroup(memberId: number) {
   const queryClient = useQueryClient()
   const key = notificationKeys.preferences(memberId)
-  return useMutation({
+  const mutation = useMutation({
+    onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
     mutationFn: async ({
       group,
       enabled,
-    }: {
-      group: PreferenceGroup
-      enabled: boolean
-    }) => {
+      isSessionCurrent,
+    }: SessionScoped & { group: PreferenceGroup; enabled: boolean }) => {
       const current =
         queryClient.getQueryData<NotificationPreference[]>(key) ?? []
       const results = await Promise.allSettled(
-        groupUpdates(current, group, enabled).map(updatePreference),
+        groupUpdates(current, group, enabled).map((pref) =>
+          updatePreference(pref, isSessionCurrent),
+        ),
       )
       const saved: NotificationPreference[] = []
       for (const result of results) {
@@ -52,7 +62,8 @@ export function useUpdatePreferenceGroup(memberId: number) {
       }
       return saved
     },
-    onSuccess: (saved) => {
+    onSuccess: (saved, { isSessionCurrent }) => {
+      if (!isSessionCurrent()) return
       queryClient.setQueryData<NotificationPreference[]>(key, (prefs) =>
         prefs?.map(
           (pref) => saved.find((item) => item.kind === pref.kind) ?? pref,
@@ -61,8 +72,21 @@ export function useUpdatePreferenceGroup(memberId: number) {
     },
     // Some kinds may have saved; read the server again. Returning the promise
     // keeps the mutation pending (switches locked) until the re-read is done.
-    onError: () => queryClient.invalidateQueries({ queryKey: key }),
+    onError: async (_error, { isSessionCurrent }) => {
+      if (isSessionCurrent())
+        await queryClient.invalidateQueries({ queryKey: key })
+    },
   })
+
+  return {
+    ...mutation,
+    save: (group: PreferenceGroup, enabled: boolean) =>
+      mutation.mutate({
+        group,
+        enabled,
+        isSessionCurrent: captureSessionScope(queryClient, memberId),
+      }),
+  }
 }
 
 export function useUnreadCount(memberId: number) {
@@ -85,9 +109,15 @@ export function useNotifications(memberId: number) {
 /** Marks one notification read, updates it in the list and refreshes the badge. */
 export function useMarkNotificationRead(memberId: number) {
   const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: markNotificationRead,
-    onSuccess: (updated) => {
+  const mutation = useMutation({
+    onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
+    mutationFn: ({
+      notificationId,
+      isSessionCurrent,
+    }: SessionScoped & { notificationId: number }) =>
+      markNotificationRead(notificationId, isSessionCurrent),
+    onSuccess: (updated, { isSessionCurrent }) => {
+      if (!isSessionCurrent()) return
       queryClient.setQueryData<InfiniteData<PageResponse<NotificationItem>>>(
         notificationKeys.list(memberId),
         (data) =>
@@ -106,4 +136,20 @@ export function useMarkNotificationRead(memberId: number) {
       })
     },
   })
+
+  return {
+    ...mutation,
+    /** `then` runs after the server saved it, only in the same session. */
+    markRead: (notificationId: number, then?: () => void) => {
+      const isSessionCurrent = captureSessionScope(queryClient, memberId)
+      mutation.mutate(
+        { notificationId, isSessionCurrent },
+        {
+          onSuccess: () => {
+            if (isSessionCurrent()) then?.()
+          },
+        },
+      )
+    },
+  }
 }

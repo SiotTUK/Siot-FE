@@ -5,6 +5,7 @@ import { scheduleQueryKey } from '@/features/calendar/api'
 import { checklistKeys } from '@/features/checklist/api'
 import { eventKeys } from '@/features/events/api'
 import { lifeChangeKeys } from '@/features/life-changes/api'
+import { notificationKeys } from '@/features/notifications/api'
 import { ApiError } from '../shared/api/client'
 
 /**
@@ -20,6 +21,7 @@ function onSessionExpired(error: unknown) {
     queryClient.removeQueries({ queryKey: scheduleQueryKey })
     queryClient.removeQueries({ queryKey: eventKeys.all })
     queryClient.removeQueries({ queryKey: lifeChangeKeys.all })
+    queryClient.removeQueries({ queryKey: notificationKeys.all })
   }
 }
 

@@ -72,16 +72,25 @@ export function fetchPreferences(signal?: AbortSignal) {
 
 /**
  * Send leadDays back as read: the BE stores 0 when it is missing.
+ * `isRequestCurrent` stops the write if the login session changed meanwhile.
  */
-export function updatePreference(preference: NotificationPreference) {
+export function updatePreference(
+  preference: NotificationPreference,
+  isRequestCurrent: () => boolean,
+) {
   return apiRequest<NotificationPreference>(`${base}/preferences`, {
     method: 'PUT',
     body: preference,
+    isRequestCurrent,
   })
 }
 
-export function markNotificationRead(notificationId: number) {
+export function markNotificationRead(
+  notificationId: number,
+  isRequestCurrent: () => boolean,
+) {
   return apiRequest<NotificationItem>(`${base}/${notificationId}/read`, {
     method: 'PATCH',
+    isRequestCurrent,
   })
 }

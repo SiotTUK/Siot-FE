@@ -44,9 +44,7 @@ export function NotificationSettings({ memberId }: { memberId: number }) {
               checked={state === 'on'}
               // Locked while saving and until the settings are read again.
               disabled={update.isPending || preferences.isFetching}
-              onChange={(event) =>
-                update.mutate({ group, enabled: event.target.checked })
-              }
+              onChange={(event) => update.save(group, event.target.checked)}
             />
           )
         })}

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ChipGroup } from '@/shared/ui/chip-group'
@@ -25,7 +25,10 @@ export function RuleBrowser() {
   const { rules, faqs } = useRules()
   const [params, setParams] = useSearchParams()
   const categoryChips = useRef<HTMLDivElement>(null)
-  const query = params.get('q') ?? ''
+  // The input keeps its own state. Reading it back from the URL lags behind
+  // (router navigation runs in a transition), and the stale value resets the
+  // input mid-composition, which breaks Korean IME input (이사 -> ㅇ이잇사).
+  const [query, setQuery] = useState(() => params.get('q') ?? '')
   const filter =
     ruleCategories.find((category) => category === params.get('category')) ??
     'all'
@@ -51,7 +54,10 @@ export function RuleBrowser() {
           type="search"
           placeholder={t('rules.searchPlaceholder')}
           value={query}
-          onChange={(event) => updateParam('q', event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value)
+            updateParam('q', event.target.value)
+          }}
         />
       </div>
       {!searching && (

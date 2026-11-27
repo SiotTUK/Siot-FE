@@ -22,7 +22,7 @@ import {
 } from '@/features/events/event-filters'
 import { eventDetailBackPath, isEventId } from '@/features/events/event-routes'
 import { EventCard } from '@/features/events/ui/event-card'
-import { EventImage } from '@/features/events/ui/event-image'
+import { EventPhoto } from '@/features/events/ui/event-photo'
 import { EventListFilters } from '@/features/events/ui/event-list-filters'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
@@ -298,9 +298,12 @@ function EventDetails({ event }: { event: EventDetail }) {
 
   return (
     <>
-      <div className={styles.cover} aria-hidden="true">
-        <EventImage url={event.thumbnailUrl} />
-      </div>
+      <EventPhoto
+        className={styles.cover}
+        url={event.thumbnailUrl}
+        title={event.title}
+        lang={event.language}
+      />
       <div className={styles.tags}>
         {event.categoryName && <Tag>{event.categoryName}</Tag>}
         {event.multicultural && (

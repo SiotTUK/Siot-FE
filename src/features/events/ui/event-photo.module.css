@@ -1,0 +1,65 @@
+/* Covers the cover block; the photo underneath keeps its own layout. */
+.open {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--space-12);
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+/* The cover is full-bleed, so the focus ring goes inside. */
+.open:focus-visible {
+  outline-offset: -3px;
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgb(25 31 40 / 60%);
+  color: var(--card);
+}
+
+.viewer {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: rgb(0 0 0 / 96%);
+}
+
+.viewer::backdrop {
+  background: transparent;
+}
+
+.full {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.close {
+  position: absolute;
+  top: var(--space-12);
+  right: var(--space-12);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(25 31 40 / 60%);
+  color: var(--card);
+}

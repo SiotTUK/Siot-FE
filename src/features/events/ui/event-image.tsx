@@ -2,7 +2,13 @@ import { useState } from 'react'
 import { eventLink } from '../event-display'
 import styles from './event-image.module.css'
 
-export function EventImage({ url }: { url?: string | null }) {
+export function EventImage({
+  url,
+  onLoad,
+}: {
+  url?: string | null
+  onLoad?: (src: string) => void
+}) {
   const [loaded, setLoaded] = useState<string>()
   const src = eventLink(url ?? null)
   if (!src) return null
@@ -15,7 +21,10 @@ export function EventImage({ url }: { url?: string | null }) {
       src={src}
       alt=""
       loading="lazy"
-      onLoad={() => setLoaded(src)}
+      onLoad={() => {
+        setLoaded(src)
+        onLoad?.(src)
+      }}
     />
   )
 }

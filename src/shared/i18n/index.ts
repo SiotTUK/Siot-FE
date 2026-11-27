@@ -51,8 +51,15 @@ export function takeLanguageChosenBeforeLogin(): Language | undefined {
   return isLanguage(chosen) ? chosen : undefined
 }
 
+/**
+ * The screen language. `resolvedLanguage` stays empty after startup until the
+ * language is changed once (the message bundles are added after `init`), so
+ * fall back to `language`. Otherwise a reload in English showed "한국어" in
+ * the picker and asked the server for Korean data.
+ */
 export function currentLanguage(): Language {
-  return isLanguage(i18n.resolvedLanguage) ? i18n.resolvedLanguage : 'ko'
+  if (isLanguage(i18n.resolvedLanguage)) return i18n.resolvedLanguage
+  return isLanguage(i18n.language) ? i18n.language : 'ko'
 }
 
 /** Features and pages add their own text (see app/messages.ts). */

@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import haeroToroHug from '@/shared/assets/mascot/haero-toro-hug.png'
+import toro from '@/shared/assets/mascot/toro.png'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { BottomArea, FormError, Muted, PageHeading } from '@/shared/ui/page'
+import { FormError, Muted, PageHeading, Stack } from '@/shared/ui/page'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
+import { StepProgress } from '@/shared/ui/step-progress'
 import { isIsoDate, toOnboardingRequest, type OnboardingDraft } from '../draft'
 import { useOnboardingDraft } from '../onboarding-context'
 import {
@@ -17,8 +21,20 @@ import {
 } from '../questions'
 import { useSaveOnboarding } from '../use-save-onboarding'
 import { AnswerInput } from './answer-input'
+import styles from './question-screen.module.css'
 
-/** One F02~F06 screen. The last answer saves all five at once (F06). */
+/** Figma v2 mascot tip per screen (by textKey); the others have none. */
+const tips: Partial<Record<string, 'haero' | 'toro'>> = {
+  entryDate: 'toro',
+  residence: 'haero',
+  stayExpiry: 'haero',
+}
+
+/**
+ * One F02~F06 screen (Figma v2): ‹ title header with 건너뛰기, `n / 4` step
+ * bar, question, answer, mascot, then the button right after the content.
+ * The last answer saves all five at once (F06).
+ */
 export function QuestionScreen({ question }: { question: Question }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -32,6 +48,7 @@ export function QuestionScreen({ question }: { question: Question }) {
   const previous = questionOrder[index - 1]
   const next = questionOrder[index + 1]
   const text = (key: string) => t(`onboarding.${textKey}.${key}`)
+  const tip = tips[textKey]
 
   /** Store the answer, then go on — or save everything after the last one. */
   const advance = (answer: OnboardingDraft[Question]) => {
@@ -60,6 +77,7 @@ export function QuestionScreen({ question }: { question: Question }) {
             onClick: () => navigate(onboardingPath(previous)),
           }
         }
+        title={t(`onboarding.headers.${textKey}`)}
         actions={
           step && (
             <HeaderAction
@@ -70,33 +88,56 @@ export function QuestionScreen({ question }: { question: Question }) {
             </HeaderAction>
           )
         }
-        progress={
-          step
-            ? {
-                current: step,
-                total: stepCount,
-                label: t('onboarding.step', {
-                  current: step,
-                  total: stepCount,
-                }),
-              }
-            : undefined
-        }
       />
-      <PageBody>
-        <PageHeading title={text('title')} description={text('description')} />
-        <AnswerInput
-          question={question}
-          value={value}
-          error={invalidDate ? t('validation.dateFormat') : undefined}
-          onChange={(answer) => {
-            setInvalidDate(false)
-            // Single choice moves on immediately (F02, F04).
-            if (kind === 'single') advance(answer)
-            else setValue(answer)
-          }}
-        />
-        <BottomArea>
+      <PageBody className={styles.body}>
+        <Stack gap={16}>
+          {step ? (
+            <StepProgress
+              current={step}
+              total={stepCount}
+              label={t('onboarding.step', { current: step, total: stepCount })}
+            />
+          ) : (
+            // F02: 토로 above the question.
+            <img
+              className={styles.toro}
+              src={toro}
+              alt=""
+              width={120}
+              height={120}
+            />
+          )}
+          <PageHeading
+            title={text('title')}
+            description={text('description')}
+          />
+          <AnswerInput
+            question={question}
+            value={value}
+            error={invalidDate ? t('validation.dateFormat') : undefined}
+            onboarding
+            onChange={(answer) => {
+              setInvalidDate(false)
+              // Single choice moves on immediately (F02, F04).
+              if (kind === 'single') advance(answer)
+              else setValue(answer)
+            }}
+          />
+          {question === 'stayExpiry' && (
+            // F06: 해로·토로 together before the last step.
+            <img
+              className={styles.hug}
+              src={haeroToroHug}
+              alt=""
+              width={134}
+              height={130}
+            />
+          )}
+          {tip && (
+            <MascotTip mascot={tip}>
+              {t(`onboarding.tips.${textKey}`)}
+            </MascotTip>
+          )}
           {kind === 'single' ? (
             <Muted>{t('onboarding.autoNext')}</Muted>
           ) : (
@@ -109,7 +150,7 @@ export function QuestionScreen({ question }: { question: Question }) {
               </Button>
             </>
           )}
-        </BottomArea>
+        </Stack>
       </PageBody>
     </>
   )

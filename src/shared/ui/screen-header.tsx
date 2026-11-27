@@ -6,18 +6,17 @@ type Back = { label: string } & ({ to: string } | { onClick: () => void })
 
 /**
  * Header of full-screen views (onboarding, chat, admin, edit screens):
- * ‹ back, optional title, actions on the right, optional `n / total` progress.
+ * ‹ back, optional title, actions on the right. Onboarding's `n / total`
+ * bar lives in the page body (StepProgress, Figma v2).
  */
 export function ScreenHeader({
   back,
   title,
   actions,
-  progress,
 }: {
   back?: Back
   title?: string
   actions?: ReactNode
-  progress?: { current: number; total: number; label: string }
 }) {
   return (
     <header className={styles.header}>
@@ -40,23 +39,6 @@ export function ScreenHeader({
         {title && <h1 className={styles.title}>{title}</h1>}
         <div className={styles.actions}>{actions}</div>
       </div>
-      {progress && (
-        <>
-          <div
-            className={styles.progress}
-            role="progressbar"
-            aria-valuemin={1}
-            aria-valuemax={progress.total}
-            aria-valuenow={progress.current}
-            aria-valuetext={progress.label}
-          >
-            {Array.from({ length: progress.total }, (_, index) => (
-              <span key={index} data-done={index < progress.current} />
-            ))}
-          </div>
-          <p className={styles.step}>{progress.label}</p>
-        </>
-      )}
     </header>
   )
 }

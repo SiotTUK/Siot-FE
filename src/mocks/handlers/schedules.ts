@@ -6,12 +6,16 @@ import { currentMember, unauthorized } from '../db'
 
 // The common schedule is a tax period like the ones admins enter in the BE
 // (calendar_schedule, kind TAX); the BE never sends a kind such as LIFE.
+// Its title comes from the linked guide (BE seed 'tax-resident'), because the
+// BE uses the raw kind as the title when guideId is null.
 const titles = {
-  ko: ['주민세(개인분) 납부', '체류기간 만료일'],
-  en: ['Resident tax payment', 'Stay expiry date'],
-  zh: ['居民税缴纳', '居留期满日'],
-  vi: ['Nộp thuế cư trú', 'Ngày hết hạn lưu trú'],
+  ko: ['주민세 (개인분)', '체류기간 만료일'],
+  en: ['Resident tax (individual)', 'Stay expiry date'],
+  zh: ['居民税（个人部分）', '居留期满日'],
+  vi: ['Thuế cư trú (cá nhân)', 'Ngày hết hạn lưu trú'],
 }
+/** Mock-only guide id; the FE does not read guideId. */
+const residentTaxGuideId = 101
 
 export const scheduleHandlers = [
   http.get('*/api/schedules/monthly', ({ request }) => {
@@ -28,9 +32,11 @@ export const scheduleHandlers = [
       titles[isLanguage(language) ? language : 'ko']
     const period = `${requestedYear}-${requestedMonth}`
     const schedules: ScheduleResponse[] = [
+      // Shown on the 5th–10th of every month so a common schedule is always
+      // visible in the mock; the real resident tax period is 16–31 August.
       {
         scheduleId: 1,
-        guideId: null,
+        guideId: residentTaxGuideId,
         kind: 'TAX',
         title: commonTitle,
         startsOn: `${period}-05`,

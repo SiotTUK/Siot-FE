@@ -29,14 +29,14 @@ export const eventMessages = defineMessages({
       share: '공유',
       shareCopied: '링크를 복사했어요.',
       shareManual: '아래 링크를 복사해 주세요.',
-      ask: '질문하기',
+      ask: '$t(nav.chat)에 질문하기',
       askDraft: '‘{{title}}’ 행사에 대해 알려 주세요.',
       intro: '소개',
       recommended: '나에게 추천',
       heart: {
         save: '찜하기',
         remove: '찜 해제',
-        saveToCalendar: '찜하고 달력에 담기',
+        saveToCalendar: '찜하고 $t(nav.calendar)에 담기',
         saveError: '찜하지 못했어요. 다시 시도해 주세요.',
       },
       alerts: {
@@ -77,7 +77,17 @@ export const eventMessages = defineMessages({
         from: '시작일',
         to: '종료일',
         invalidRange: '시작일은 종료일보다 늦을 수 없어요.',
+        category: '분류',
+        allCategories: '전체 분류',
         reset: '필터 초기화',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: '축제',
+        PERFORMANCE: '공연',
+        EXHIBITION: '전시',
+        EDUCATION: '교육·체험',
+        EVENT: '행사',
       },
       report: {
         open: '정보 오류 신고',
@@ -135,14 +145,14 @@ export const eventMessages = defineMessages({
       share: 'Share',
       shareCopied: 'Link copied.',
       shareManual: 'Copy the link below.',
-      ask: 'Ask about this event',
+      ask: 'Ask the $t(nav.chat) about this event',
       askDraft: 'Tell me about the event “{{title}}”.',
       intro: 'About',
       recommended: 'For you',
       heart: {
         save: 'Save',
         remove: 'Unsave',
-        saveToCalendar: 'Save to my calendar',
+        saveToCalendar: 'Save to $t(nav.calendar)',
         saveError: 'Could not save. Please try again.',
       },
       alerts: {
@@ -186,7 +196,17 @@ export const eventMessages = defineMessages({
         from: 'Start date',
         to: 'End date',
         invalidRange: 'The start date cannot be after the end date.',
+        category: 'Category',
+        allCategories: 'All categories',
         reset: 'Reset filters',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: 'Festival',
+        PERFORMANCE: 'Performance',
+        EXHIBITION: 'Exhibition',
+        EDUCATION: 'Education & experience',
+        EVENT: 'Event',
       },
       report: {
         open: 'Report an error',
@@ -244,14 +264,14 @@ export const eventMessages = defineMessages({
       share: '分享',
       shareCopied: '链接已复制。',
       shareManual: '请复制下方链接。',
-      ask: '询问此活动',
+      ask: '向$t(nav.chat)询问此活动',
       askDraft: '请介绍一下“{{title}}”活动。',
       intro: '介绍',
       recommended: '为你推荐',
       heart: {
         save: '收藏',
         remove: '取消收藏',
-        saveToCalendar: '收藏并加入日历',
+        saveToCalendar: '收藏并加入$t(nav.calendar)',
         saveError: '收藏失败，请重试。',
       },
       alerts: {
@@ -292,7 +312,17 @@ export const eventMessages = defineMessages({
         from: '开始日期',
         to: '结束日期',
         invalidRange: '开始日期不能晚于结束日期。',
+        category: '类别',
+        allCategories: '全部类别',
         reset: '重置筛选',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: '节庆',
+        PERFORMANCE: '演出',
+        EXHIBITION: '展览',
+        EDUCATION: '教育·体验',
+        EVENT: '活动',
       },
       report: {
         open: '报告错误',
@@ -350,14 +380,14 @@ export const eventMessages = defineMessages({
       share: 'Chia sẻ',
       shareCopied: 'Đã sao chép liên kết.',
       shareManual: 'Hãy sao chép liên kết bên dưới.',
-      ask: 'Hỏi về sự kiện',
+      ask: '$t(nav.chat) về sự kiện',
       askDraft: 'Hãy cho tôi biết về sự kiện “{{title}}”.',
       intro: 'Giới thiệu',
       recommended: 'Dành cho bạn',
       heart: {
         save: 'Lưu',
         remove: 'Bỏ lưu',
-        saveToCalendar: 'Lưu vào lịch',
+        saveToCalendar: 'Lưu vào $t(nav.calendar)',
         saveError: 'Không lưu được. Hãy thử lại.',
       },
       alerts: {
@@ -400,7 +430,17 @@ export const eventMessages = defineMessages({
         from: 'Ngày bắt đầu',
         to: 'Ngày kết thúc',
         invalidRange: 'Ngày bắt đầu không được muộn hơn ngày kết thúc.',
+        category: 'Thể loại',
+        allCategories: 'Tất cả thể loại',
         reset: 'Đặt lại bộ lọc',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: 'Lễ hội',
+        PERFORMANCE: 'Biểu diễn',
+        EXHIBITION: 'Triển lãm',
+        EDUCATION: 'Giáo dục & trải nghiệm',
+        EVENT: 'Sự kiện',
       },
       report: {
         open: 'Báo lỗi',

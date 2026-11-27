@@ -120,6 +120,10 @@ function fixture(
     relatedGuides: readable
       ? [{ code: 'CL-10', kind: 'CHECKLIST', title }]
       : [],
+    // Like the BE: the kind from the tax type, and no round because the mock
+    // has no common car tax schedule (only the resident tax, id 1).
+    taxKind: readable ? 'TAX_CAR' : null,
+    taxScheduleId: null,
     firstPageOnly,
     pageCount: firstPageOnly ? 2 : 1,
     id: null,

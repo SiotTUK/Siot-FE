@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import type { EventCalendarItem } from '@/features/events/api'
 import type { ScheduleResponse } from './api'
-import { calendarEntries, getCalendarWeek, isScheduledOn } from './calendar'
+import type { TFunction } from 'i18next'
+import {
+  calendarEntries,
+  dDayLabel,
+  getCalendarWeek,
+  httpUrl,
+  isScheduledOn,
+  nextSchedule,
+} from './calendar'
 
 const schedule: ScheduleResponse = {
   scheduleId: 1,
@@ -79,6 +87,8 @@ const event: EventCalendarItem = {
   startsOn: '2026-11-28',
   endsOn: '2026-12-02',
   region: 'SIHEUNG',
+  category: 'FESTIVAL',
+  categoryName: '축제',
   translated: true,
 }
 
@@ -178,5 +188,49 @@ describe('the combined calendar', () => {
       { scheduleCount: 4, eventCount: 0, hidden: 1 },
       { scheduleCount: 0, eventCount: 0, hidden: 0 },
     ])
+  })
+})
+
+describe('next schedule for an empty month (#34)', () => {
+  it('picks the first schedule starting after the month', () => {
+    const at = (startsOn: string, title: string) => ({
+      ...schedule,
+      startsOn,
+      endsOn: null,
+      title,
+    })
+    expect(
+      nextSchedule(
+        [
+          at('2026-12-16', 'car tax'),
+          at('2026-11-05', 'this month'),
+          at('2026-12-01', 'stay expiry'),
+        ],
+        '2026-11',
+      )?.title,
+    ).toBe('stay expiry')
+    expect(nextSchedule([at('2026-11-30', 'past')], '2026-11')).toBeUndefined()
+  })
+})
+
+describe('schedule labels', () => {
+  const t = ((key: string, options?: { count?: number }) =>
+    options?.count === undefined
+      ? key
+      : `${key}:${options.count}`) as unknown as TFunction
+
+  it('turns the server D-day into a label', () => {
+    expect(dDayLabel(t, 5)).toBe('calendar.tax.dDay:5')
+    expect(dDayLabel(t, 0)).toBe('calendar.tax.dDayToday')
+    expect(dDayLabel(t, -1)).toBe('calendar.tax.past')
+    expect(dDayLabel(t, null)).toBeNull()
+    expect(dDayLabel(t, undefined)).toBeNull()
+  })
+
+  it('links only http(s) addresses', () => {
+    expect(httpUrl('https://www.wetax.go.kr')).toBe('https://www.wetax.go.kr/')
+    expect(httpUrl('javascript:alert(1)')).toBeNull()
+    expect(httpUrl('not a url')).toBeNull()
+    expect(httpUrl(null)).toBeNull()
   })
 })

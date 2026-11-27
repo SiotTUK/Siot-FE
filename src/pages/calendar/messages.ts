@@ -17,6 +17,14 @@ export const calendarMessages = defineMessages({
       personal: '내 일정',
       highlighted: '확인 필요',
       period: '{{start}} ~ {{end}}',
+      schedule: {
+        screenTitle: '일정 상세',
+        open: '자세히 보기',
+        period: '기간',
+        notFound: '일정을 찾을 수 없어요.',
+      },
+      sourceLink: '공식 안내 보기',
+      nextTodo: '다음 할 일 · {{month}}',
       tax: {
         screenTitle: '세금 상세',
         open: '세금 상세 보기',
@@ -41,7 +49,7 @@ export const calendarMessages = defineMessages({
       kindSaved: '찜한 행사',
       monthCount: '{{month}} 일정 {{count}}개',
       savedBadge: '찜',
-      tip: '행사 목록에서 ♥를 누르면 달력에 담겨요. 내 체크리스트 마감일도 자동으로 들어와요',
+      tip: '행사 목록에서 ♥를 누르면 $t(nav.calendar)에 담겨요. 내 체크리스트 마감일도 자동으로 들어와요',
     },
   },
   en: {
@@ -60,6 +68,14 @@ export const calendarMessages = defineMessages({
       personal: 'My schedule',
       highlighted: 'Needs attention',
       period: '{{start}} to {{end}}',
+      schedule: {
+        screenTitle: 'Schedule details',
+        open: 'See details',
+        period: 'Period',
+        notFound: 'We could not find this schedule.',
+      },
+      sourceLink: 'Official guide',
+      nextTodo: 'Next to do · {{month}}',
       tax: {
         screenTitle: 'Tax details',
         open: 'See tax details',
@@ -84,7 +100,7 @@ export const calendarMessages = defineMessages({
       kindSaved: 'Saved events',
       monthCount: '{{month}}: {{count}} schedules',
       savedBadge: 'Saved',
-      tip: 'Tap ♥ on an event to add it here. Your checklist deadlines show up automatically too',
+      tip: 'Tap ♥ on an event to add it to $t(nav.calendar). Your checklist deadlines show up automatically too',
     },
   },
   zh: {
@@ -103,6 +119,14 @@ export const calendarMessages = defineMessages({
       personal: '我的日程',
       highlighted: '请留意',
       period: '{{start}}至{{end}}',
+      schedule: {
+        screenTitle: '日程详情',
+        open: '查看详情',
+        period: '期间',
+        notFound: '找不到该日程。',
+      },
+      sourceLink: '查看官方说明',
+      nextTodo: '下一项待办 · {{month}}',
       tax: {
         screenTitle: '税费详情',
         open: '查看税费详情',
@@ -127,7 +151,7 @@ export const calendarMessages = defineMessages({
       kindSaved: '收藏的活动',
       monthCount: '{{month}}日程 {{count}} 个',
       savedBadge: '收藏',
-      tip: '在活动列表点 ♥ 就会加入日历。清单的截止日期也会自动加入',
+      tip: '在活动列表点 ♥ 就会加入$t(nav.calendar)。清单的截止日期也会自动加入',
     },
   },
   vi: {
@@ -147,6 +171,14 @@ export const calendarMessages = defineMessages({
       personal: 'Lịch của tôi',
       highlighted: 'Cần lưu ý',
       period: '{{start}} đến {{end}}',
+      schedule: {
+        screenTitle: 'Chi tiết lịch',
+        open: 'Xem chi tiết',
+        period: 'Thời gian',
+        notFound: 'Không tìm thấy lịch này.',
+      },
+      sourceLink: 'Xem hướng dẫn chính thức',
+      nextTodo: 'Việc tiếp theo · {{month}}',
       tax: {
         screenTitle: 'Chi tiết thuế',
         open: 'Xem chi tiết thuế',
@@ -171,7 +203,7 @@ export const calendarMessages = defineMessages({
       kindSaved: 'Sự kiện đã lưu',
       monthCount: '{{month}}: {{count}} lịch',
       savedBadge: 'Đã lưu',
-      tip: 'Nhấn ♥ ở danh sách sự kiện để thêm vào lịch. Hạn trong danh sách việc cần làm cũng tự động có ở đây',
+      tip: 'Nhấn ♥ ở danh sách sự kiện để thêm vào $t(nav.calendar). Hạn trong danh sách việc cần làm cũng tự động có ở đây',
     },
   },
 })

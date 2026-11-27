@@ -26,18 +26,9 @@
   color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
-.icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  background: var(--border);
-}
 .active {
   color: var(--primary);
   font-weight: 700;
-}
-.active .icon {
-  background: var(--primary);
 }
 .disabled {
   color: var(--placeholder);

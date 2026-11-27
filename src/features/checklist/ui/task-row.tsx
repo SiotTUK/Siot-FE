@@ -5,6 +5,7 @@ import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
 import {
   deadlineText,
+  dueSoon,
   lifeChangeOf,
   reasonOf,
   translationPending,
@@ -76,6 +77,7 @@ export function TaskRow({
       >
         <span className={styles.titleLine}>
           {tag && <Tag tone="main">{tag}</Tag>}
+          {dueSoon(item) && <Tag tone="warning">{t('checklist.dueSoon')}</Tag>}
           {translationPending(item) && (
             <Tag>{t('checklist.translationPending')}</Tag>
           )}

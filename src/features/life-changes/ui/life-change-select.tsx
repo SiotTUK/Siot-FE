@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { formatCalendarDate, koreaToday } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
@@ -30,6 +31,9 @@ const isoDate = /^\d{4}-\d{2}-\d{2}$/
 export function LifeChangeSelect({ memberId }: { memberId: number }) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  // Opened from a chat related page (CB-10): keep the way back to the conversation.
+  const { state } = useLocation()
+  const chat = chatBackPath(state)
   const changes = useLifeChanges(memberId)
   const [params] = useSearchParams()
   const preset = params.get('code')
@@ -62,7 +66,7 @@ export function LifeChangeSelect({ memberId }: { memberId: number }) {
     if (!isoDate.test(date)) return setError(t('lifeChanges.invalidDate'))
     if (move && date > koreaToday())
       return setError(t('lifeChanges.futureMove'))
-    const tasks = () => navigate(`/home/life-changes/${code}`)
+    const tasks = () => navigate(`/home/life-changes/${code}`, { state })
     if (date === savedDate) return tasks()
     mutation.apply({ action: 'save', baseDate: date }, tasks)
   }
@@ -71,7 +75,11 @@ export function LifeChangeSelect({ memberId }: { memberId: number }) {
     <>
       <ScreenHeader
         title={t('lifeChanges.trigger')}
-        back={{ label: t('lifeChanges.backHome'), to: '/home' }}
+        back={
+          chat
+            ? { label: t('common.back'), to: chat }
+            : { label: t('lifeChanges.backHome'), to: '/home' }
+        }
       />
       <PageBody>
         <PageHeading

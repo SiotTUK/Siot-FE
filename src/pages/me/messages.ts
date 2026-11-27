@@ -5,6 +5,9 @@ export const meMessages = defineMessages({
     me: {
       title: '내 정보',
       email: '이메일',
+      emailUse: '알림 메일과 비밀번호 재설정 메일이 이 주소로 가요',
+      emailUseUnverified:
+        '인증하면 이 주소로 알림 메일과 비밀번호 재설정 메일을 받을 수 있어요',
       language: '언어',
       tip: '정보를 바꾸면 체크리스트를 다시 맞춰 줘요. 완료 기록은 그대로예요',
       notificationRow: '알림 설정',
@@ -25,6 +28,9 @@ export const meMessages = defineMessages({
     me: {
       title: 'My info',
       email: 'Email',
+      emailUse: 'Notification and password reset emails go to this address',
+      emailUseUnverified:
+        'Verify this address to get notification and password reset emails',
       language: 'Language',
       tip: 'Change your details and the checklist adjusts. What you finished stays done',
       notificationRow: 'Notifications',
@@ -45,6 +51,9 @@ export const meMessages = defineMessages({
     me: {
       title: '我的信息',
       email: '电子邮箱',
+      emailUse: '通知邮件和密码重置邮件会发送到此地址',
+      emailUseUnverified:
+        '完成验证后，即可通过此地址接收通知邮件和密码重置邮件',
       language: '语言',
       tip: '修改信息后，清单会重新调整。已完成的记录会保留',
       notificationRow: '通知设置',
@@ -64,6 +73,10 @@ export const meMessages = defineMessages({
     me: {
       title: 'Thông tin của tôi',
       email: 'Email',
+      emailUse:
+        'Email thông báo và email đặt lại mật khẩu sẽ được gửi đến địa chỉ này',
+      emailUseUnverified:
+        'Xác minh địa chỉ này để nhận email thông báo và email đặt lại mật khẩu',
       language: 'Ngôn ngữ',
       tip: 'Khi bạn đổi thông tin, danh sách việc cần làm sẽ được điều chỉnh. Việc đã xong vẫn giữ nguyên',
       notificationRow: 'Cài đặt thông báo',

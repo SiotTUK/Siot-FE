@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { returnState } from '@/features/auth/return-path'
 import { sessionState, useChangeLanguage } from '@/features/auth/use-session'
 import type { Language } from '@/shared/api/types'
 import { currentLanguage, isLanguage, languages } from '@/shared/i18n'
@@ -37,7 +38,10 @@ export function LanguagePage() {
   const navigate = useNavigate()
   const changeLanguage = useChangeLanguage()
   const current = isLanguage(i18n.language) ? i18n.language : currentLanguage()
-  const withdrawn = sessionState(useLocation().state).notice === 'withdrawn'
+  const { state } = useLocation()
+  const withdrawn = sessionState(state).notice === 'withdrawn'
+  // #68: the protected screen to return to after signup or login.
+  const carry = returnState(state)
   // "Choose your language · 选择语言 · Chọn ngôn ngữ" in the other languages.
   const others = codes.filter((code) => code !== current)
 
@@ -65,14 +69,14 @@ export function LanguagePage() {
             selected={language === current}
             onClick={() => {
               changeLanguage(language)
-              navigate('/signup')
+              navigate('/signup', { state: carry })
             }}
           />
         ))}
       </ChoiceList>
       <div className={styles.footer}>
         <Muted>{t('languagePage.autoNext')}</Muted>
-        <TextLink to="/login">
+        <TextLink to="/login" state={carry}>
           {t('languagePage.haveAccount')} {t('languagePage.login')}
         </TextLink>
       </div>

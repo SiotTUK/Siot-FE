@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import { ruleCategories } from '@/features/rules/rules'
 import { useRule, useRuleFaqs } from '@/features/rules/use-rules'
 import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
@@ -13,18 +14,21 @@ import { QueryState } from '@/shared/ui/query-state'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './rule-pages.module.css'
 
-/** M06 생활 수칙: search, 분야별 안내 tiles, FAQ TOP 5 and a 토로 tip. */
+/** M06 생활 안내: search, 분야별 안내 tiles, FAQ TOP 5 and a 토로 tip. */
 export function RulesPage() {
   const { t } = useTranslation()
   return (
     <PageBody className={styles.body}>
-      <PageHeading title={t('rules.title')} description={t('rules.subtitle')} />
+      <PageHeading title={t('nav.rules')} description={t('rules.subtitle')} />
       <RuleBrowser />
     </PageBody>
   )
 }
 
-/** ‹ goes back when the screen was opened from inside 생활 수칙, else to the list. */
+/**
+ * ‹ goes back when the screen was opened from inside 생활 안내, to the
+ * conversation when opened from a chat related page (CB-10), else to the list.
+ */
 function useRulesBack() {
   const { t } = useTranslation()
   const { state } = useLocation()
@@ -32,7 +36,9 @@ function useRulesBack() {
   return {
     label: t('common.back'),
     onClick: () => {
+      const chat = chatBackPath(state)
       if (state?.from === 'rules') void navigate(-1)
+      else if (chat) void navigate(chat)
       else void navigate('/rules', { replace: true })
     },
   }
@@ -55,7 +61,7 @@ export function RuleFaqPage() {
   )
 }
 
-/** Figma v2 "생활 수칙 · 분야" at `/rules/category/:category`. */
+/** Figma v2 category screen at `/rules/category/:category`. */
 export function RuleCategoryPage() {
   const { t } = useTranslation()
   const back = useRulesBack()
@@ -72,7 +78,7 @@ export function RuleCategoryPage() {
   )
 }
 
-/** Figma v2 "생활 수칙 · 상세": ‹ rule title · 공유. */
+/** Figma v2 guide detail: ‹ guide title · 공유. */
 export function RuleDetailPage() {
   const { t } = useTranslation()
   const back = useRulesBack()
@@ -97,7 +103,7 @@ export function RuleDetailPage() {
     <>
       <ScreenHeader
         back={back}
-        title={rule?.title ?? t('rules.detail')}
+        title={rule?.title ?? t('nav.rules')}
         actions={
           rule && (
             <HeaderAction onClick={() => void share()}>

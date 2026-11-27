@@ -5,7 +5,7 @@ import type {
 } from '@/features/calendar/api'
 import { isLanguage } from '@/shared/i18n'
 import { koreaToday } from '@/shared/i18n/format'
-import { currentMember, error, unauthorized } from '../db'
+import { currentMember, error, unauthorized, type MockMember } from '../db'
 
 // The common schedule is a tax period like the ones admins enter in the BE
 // (calendar_schedule, kind TAX); the BE never sends a kind such as LIFE.
@@ -78,53 +78,98 @@ export const scheduleHandlers = [
     if (!member) return unauthorized()
 
     const params = new URL(request.url).searchParams
-    const today = koreaToday()
-    const [year, month] = today.split('-')
-    const requestedMonth = (params.get('month') ?? month).padStart(2, '0')
-    const requestedYear = params.get('year') ?? year
-    const language = params.get('language')
-    const [commonTitle, personalTitle] =
-      titles[isLanguage(language) ? language : 'ko']
-    const period = `${requestedYear}-${requestedMonth}`
-    const schedules: ScheduleResponse[] = [
-      // Shown on the 5th–10th of every month so a common schedule is always
-      // visible in the mock; the real resident tax period is 16–31 August.
-      {
-        scheduleId: 1,
-        guideId: residentTaxGuideId,
-        kind: 'TAX',
-        title: commonTitle,
-        startsOn: `${period}-05`,
-        endsOn: `${period}-10`,
-        targetDescription: null,
-        sourceUrl: null,
-        personal: false,
-        highlighted: false,
-        taxScheduleId: 1,
-      },
-    ]
-    const expiry = member.stayExpiry
-    if (expiry?.startsWith(`${period}-`)) {
-      const highlightFrom = new Date(`${today}T00:00:00Z`)
-      highlightFrom.setUTCDate(highlightFrom.getUTCDate() + 30)
-      schedules.push({
-        scheduleId: null,
-        guideId: null,
-        kind: 'STAY_EXPIRY',
-        title: personalTitle,
-        startsOn: expiry,
-        endsOn: expiry,
-        targetDescription: null,
-        sourceUrl: null,
-        personal: true,
-        highlighted: expiry <= highlightFrom.toISOString().slice(0, 10),
-        taxScheduleId: null,
-      })
-    }
+    const [year, month] = koreaToday().split('-')
+    const period = `${params.get('year') ?? year}-${(params.get('month') ?? month).padStart(2, '0')}`
     return HttpResponse.json({
-      data: schedules.sort((first, second) =>
-        first.startsOn.localeCompare(second.startsOn),
-      ),
+      data: monthSchedules(member, period, params.get('language')),
     })
   }),
+  // CAL-01: by start date, the member's own schedules added (BE #28).
+  http.get('*/api/schedules/yearly', ({ request }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+
+    const params = new URL(request.url).searchParams
+    const year = params.get('year') ?? koreaToday().slice(0, 4)
+    const language = params.get('language')
+    return HttpResponse.json({
+      data: Array.from({ length: 12 }, (_, index) =>
+        monthSchedules(
+          member,
+          `${year}-${String(index + 1).padStart(2, '0')}`,
+          language,
+        ),
+      )
+        .flat()
+        .filter((schedule) => schedule.startsOn.startsWith(`${year}-`)),
+    })
+  }),
+  // CAL-03 schedule detail (#34): same answer as the tax detail. Declared
+  // after the named paths so it does not catch /monthly or /yearly.
+  http.get('*/api/schedules/:scheduleId', ({ params, request }) => {
+    if (!currentMember()) return unauthorized()
+    if (params.scheduleId !== '1')
+      return error(404, 'SCHEDULE_NOT_FOUND', '일정을 찾을 수 없습니다.')
+    const language = new URL(request.url).searchParams.get('language')
+    return HttpResponse.json({ data: residentTaxDetail(language) })
+  }),
 ]
+
+/** Days from today (Korea) to a date, like the BE `dDay`. */
+const daysUntil = (date: string) =>
+  Math.round(
+    (Date.parse(`${date}T00:00:00Z`) -
+      Date.parse(`${koreaToday()}T00:00:00Z`)) /
+      86_400_000,
+  )
+
+/** Mock monthly schedules of one YYYY-MM. */
+function monthSchedules(
+  member: MockMember,
+  period: string,
+  language: string | null,
+): ScheduleResponse[] {
+  const today = koreaToday()
+  const [commonTitle, personalTitle] =
+    titles[isLanguage(language) ? language : 'ko']
+  const schedules: ScheduleResponse[] = [
+    // Shown on the 5th–10th of every month so a common schedule is always
+    // visible in the mock; the real resident tax period is 16–31 August.
+    {
+      scheduleId: 1,
+      guideId: residentTaxGuideId,
+      kind: 'TAX',
+      title: commonTitle,
+      startsOn: `${period}-05`,
+      endsOn: `${period}-10`,
+      targetDescription: null,
+      sourceUrl: null,
+      personal: false,
+      highlighted: false,
+      dDay: daysUntil(`${period}-10`),
+      taxScheduleId: 1,
+    },
+  ]
+  const expiry = member.stayExpiry
+  if (expiry?.startsWith(`${period}-`)) {
+    const highlightFrom = new Date(`${today}T00:00:00Z`)
+    highlightFrom.setUTCDate(highlightFrom.getUTCDate() + 30)
+    schedules.push({
+      scheduleId: null,
+      guideId: null,
+      kind: 'STAY_EXPIRY',
+      title: personalTitle,
+      startsOn: expiry,
+      endsOn: expiry,
+      targetDescription: null,
+      sourceUrl: null,
+      personal: true,
+      highlighted: expiry <= highlightFrom.toISOString().slice(0, 10),
+      dDay: daysUntil(expiry),
+      taxScheduleId: null,
+    })
+  }
+  return schedules.sort((first, second) =>
+    first.startsOn.localeCompare(second.startsOn),
+  )
+}

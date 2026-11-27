@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { useChecklist } from '@/features/checklist/use-checklist'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
@@ -108,6 +109,11 @@ function ResultDetails({
           ))}
         </dl>
       </Card>
+      {/* CAL-03: the round the due date falls in, else one by tax kind. */}
+      <TaxDetailLink
+        taxKind={result.taxKind}
+        scheduleId={result.taxScheduleId}
+      />
       <Notice tone="note" title={t('bill.verifyOriginal')}>
         <p>{t('bill.disclaimer')}</p>
         {result.warnings.length > 0 && (

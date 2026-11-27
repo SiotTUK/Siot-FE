@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next'
 import type { EventCalendarItem } from '@/features/events/api'
 import type { ScheduleResponse } from './api'
 
@@ -111,5 +112,37 @@ export function getCalendarWeek(
     lines,
     laneCount: lanes.filter((occupied) => occupied.some(Boolean)).length,
     days,
+  }
+}
+
+/**
+ * "다음 할 일" (#34): the first schedule starting after `month` (YYYY-MM).
+ * A month without schedules has none overlapping it, so the start date is
+ * enough.
+ */
+export function nextSchedule(schedules: ScheduleResponse[], month: string) {
+  return schedules
+    .filter((schedule) => schedule.startsOn.slice(0, 7) > month)
+    .sort((a, b) => a.startsOn.localeCompare(b.startsOn))[0]
+}
+
+/** Server D-day as a label: D-5, D-Day or "기한 지남"; null without one. */
+export function dDayLabel(t: TFunction, dDay: number | null | undefined) {
+  if (dDay == null) return null
+  if (dDay < 0) return t('calendar.tax.past')
+  if (dDay === 0) return t('calendar.tax.dDayToday')
+  return t('calendar.tax.dDay', { count: dDay })
+}
+
+/** Only http(s) links from the server are shown as links. */
+export function httpUrl(value: string | null | undefined) {
+  if (!value) return null
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' || url.protocol === 'http:'
+      ? url.href
+      : null
+  } catch {
+    return null
   }
 }

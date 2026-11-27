@@ -5,7 +5,12 @@ import type {
   EventDetail,
   EventRecommendation,
 } from '@/features/events/api'
-import { isIsoDate } from '@/features/events/event-filters'
+import {
+  isEventCategory,
+  isIsoDate,
+  type EventCategory,
+} from '@/features/events/event-filters'
+import { eventMessages } from '@/features/events/messages'
 import { ruleEntries } from '../data/rule-content'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
@@ -84,6 +89,22 @@ const sampleText = {
   },
 }
 
+// Classes, science workshop, winter market, concert; then the past festival and briefing.
+const upcomingCategories: EventCategory[] = [
+  'EDUCATION',
+  'EDUCATION',
+  'FESTIVAL',
+  'PERFORMANCE',
+]
+const pastCategories: EventCategory[] = ['FESTIVAL', 'EVENT']
+
+function categoryFields(language: Language, category: EventCategory) {
+  return {
+    category,
+    categoryName: eventMessages[language].events.categories[category],
+  }
+}
+
 export function mockEvents(language: Language) {
   const text = sampleText[language]
   const today = Date.parse(`${koreaToday()}T00:00:00Z`)
@@ -100,6 +121,7 @@ export function mockEvents(language: Language) {
     endsAt: index === 1 ? null : '16:00:00',
     timeUnknown: index === 1,
     region: 'SIHEUNG',
+    ...categoryFields(language, upcomingCategories[index]),
     multicultural: index === 0 || index === 2,
     language,
     translated: true,
@@ -114,6 +136,7 @@ export function mockEvents(language: Language) {
     ...upcoming[index],
     eventId: upcoming.length + index + 1,
     title,
+    ...categoryFields(language, pastCategories[index]),
     startsOn: dateIn(index === 0 ? -40 : -20),
     endsOn: dateIn(index === 0 ? -38 : -20),
     multicultural: index === 0,
@@ -122,14 +145,16 @@ export function mockEvents(language: Language) {
   return [...upcoming, ...past]
 }
 
-/** GET /api/events conditions from EVE-10: past and an overlapping period. */
+/** GET /api/events conditions from EVE-10: past, category and an overlapping period. */
 export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
   const today = koreaToday()
   const past = params.get('past') === 'true'
   const from = params.get('from')
   const to = params.get('to')
+  const category = params.get('category')?.toUpperCase()
   return events
-    .filter(({ startsOn, endsOn }) => {
+    .filter(({ startsOn, endsOn, ...event }) => {
+      if (category && event.category !== category) return false
       const start = startsOn ?? endsOn
       const end = endsOn ?? startsOn
       if (!start || !end) return false
@@ -145,6 +170,11 @@ export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
             b.startsOn ?? b.endsOn ?? '',
           ),
     )
+}
+
+/** BE EventCategory.parse: blank means no filter, case is ignored, other values are 400. */
+function isMockCategory(value: string | null) {
+  return !value?.trim() || isEventCategory(value.trim().toUpperCase())
 }
 
 const subscriptionPath = '*/api/events/:eventId/subscriptions'
@@ -244,6 +274,8 @@ export const eventHandlers = [
       return error(400, 'INVALID_INPUT', '날짜 형식은 yyyy-MM-dd 입니다.')
     if (from && to && from > to)
       return error(400, 'INVALID_INPUT', 'from 은 to 보다 늦을 수 없습니다.')
+    if (!isMockCategory(params.get('category')))
+      return error(400, 'INVALID_INPUT', '카테고리 값이 올바르지 않습니다.')
     const events = listMockEvents(mockEvents(member.language), params)
     return HttpResponse.json({
       data: {
@@ -271,17 +303,33 @@ export const eventHandlers = [
       month > 12
     )
       return error(400, 'INVALID_INPUT', '유효한 연도와 월을 입력해 주세요.')
+    const category = params.get('category')
+    if (!isMockCategory(category))
+      return error(400, 'INVALID_INPUT', '카테고리 값이 올바르지 않습니다.')
 
     const first = new Date(Date.UTC(year, month - 1, 1))
       .toISOString()
       .slice(0, 10)
     const last = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10)
     const data = mockEvents(member.language).flatMap<EventCalendarItem>(
-      ({ eventId, title, startsOn, endsOn, region, translated }) => {
+      (event) => {
+        const { eventId, title, startsOn, endsOn, region, translated } = event
         const start = startsOn ?? endsOn
         const end = endsOn ?? startsOn
+        if (category && event.category !== category.toUpperCase()) return []
         return start && end && start <= last && end >= first
-          ? [{ eventId, title, startsOn, endsOn, region, translated }]
+          ? [
+              {
+                eventId,
+                title,
+                startsOn,
+                endsOn,
+                region,
+                category: event.category,
+                categoryName: event.categoryName,
+                translated,
+              },
+            ]
           : []
       },
     )

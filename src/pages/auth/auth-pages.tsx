@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { authLinkState, returnState } from '@/features/auth/return-path'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { NewPasswordForm } from '@/features/auth/ui/new-password-form'
 import { ResetRequestForm } from '@/features/auth/ui/reset-request-form'
@@ -45,12 +46,17 @@ function AuthScreen({
   children: ReactNode
 }) {
   const { t } = useTranslation()
-  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { pathname, state } = useLocation()
   const backPath = useBackPath(back)
   return (
     <>
       <ScreenHeader
-        back={{ label: t('common.back'), to: backPath }}
+        back={{
+          label: t('common.back'),
+          // #68: keep the screen to return to after login on the way back.
+          onClick: () => void navigate(backPath, { state: returnState(state) }),
+        }}
         title={title}
       />
       <PageBody className={styles.body}>
@@ -60,7 +66,11 @@ function AuthScreen({
           {links.length > 0 && (
             <div className={styles.links}>
               {links.map((link) => (
-                <TextLink key={link.to} to={link.to} state={{ back: pathname }}>
+                <TextLink
+                  key={link.to}
+                  to={link.to}
+                  state={authLinkState(pathname, state)}
+                >
                   {link.text} {link.label}
                 </TextLink>
               ))}

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { DocumentList } from '@/features/admin/ui/document-list'
 import { GuideEditor } from '@/features/admin/ui/guide-editor'
 import { MemberList } from '@/features/admin/ui/member-list'
 import { ReviewList } from '@/features/admin/ui/review-list'
@@ -36,6 +37,7 @@ const menus = [
   ['members', 'admin.menuMembers', 'admin.menuMembersDesc'],
   ['reviews', 'admin.menuReviews', 'admin.menuReviewsDesc'],
   ['guides', 'admin.menuGuides', 'admin.menuGuidesDesc'],
+  ['documents', 'admin.menuDocuments', 'admin.menuDocumentsDesc'],
 ] as const
 
 export function AdminHomePage() {
@@ -80,6 +82,16 @@ export function AdminGuidesPage() {
   return (
     <AdminScreen title={t('admin.menuGuides')} backTo="/admin">
       <GuideEditor />
+    </AdminScreen>
+  )
+}
+
+/** ADM-02~04, NTF-06 */
+export function AdminDocumentsPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen title={t('admin.menuDocuments')} backTo="/admin">
+      <DocumentList />
     </AdminScreen>
   )
 }

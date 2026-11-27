@@ -8,7 +8,10 @@ import {
   SignupPage,
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
-import { TaxDetailPage } from '@/pages/calendar/tax-detail-page'
+import {
+  ScheduleDetailPage,
+  TaxDetailPage,
+} from '@/pages/calendar/tax-detail-page'
 import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
 import { ChecklistDetailPage } from '@/pages/home/checklist-detail-page'
 import { HomePage } from '@/pages/home/home-page'
@@ -129,6 +132,10 @@ export const router = createBrowserRouter([
           { path: '/home/life-changes', element: <LifeChangeSelectPage /> },
           { path: '/home/checklist/:code', element: <ChecklistDetailPage /> },
           { path: '/calendar/taxes/:scheduleId', element: <TaxDetailPage /> },
+          {
+            path: '/calendar/schedules/:scheduleId',
+            element: <ScheduleDetailPage />,
+          },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.
@@ -143,7 +150,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        // ADM-01·08, CHK-06. The server still rejects non-admins with 403.
+        // ADM-01·02~04·08, CHK-06. The server still rejects non-admins with 403.
         path: '/admin',
         element: <RequireMember when="admin" />,
         children: [
@@ -159,6 +166,10 @@ export const router = createBrowserRouter([
           {
             path: 'guides',
             element: deferredPage(adminScreen, 'AdminGuidesPage'),
+          },
+          {
+            path: 'documents',
+            element: deferredPage(adminScreen, 'AdminDocumentsPage'),
           },
         ],
       },

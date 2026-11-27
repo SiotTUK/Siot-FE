@@ -9,7 +9,13 @@ import { PageBody } from '@/shared/ui/mobile-frame'
 import { Tag } from '@/shared/ui/page'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText, detailBackPath, translationPending } from '../checklist'
+import {
+  deadlineText,
+  detailBackPath,
+  detailBackState,
+  translationPending,
+  warningText,
+} from '../checklist'
 import { ChecklistReport } from './checklist-report'
 import styles from './checklist-detail.module.css'
 
@@ -29,13 +35,18 @@ export function ChecklistDetail({
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const back = detailBackPath(useLocation().state)
+  const { state } = useLocation()
+  const back = detailBackPath(state)
+  const backState = detailBackState(state)
   const language = currentLanguage()
   const [copied, setCopied] = useState(false)
 
   const overdue = item.status === 'OVERDUE'
   const isDone = item.status === 'DONE'
   const dDayText = deadlineText(item, t('checklist.pastDeadline'))
+  // #50: the server warning (CHK-08) in the requested language; the FE
+  // overdue text only for older responses without one.
+  const warning = warningText(item)
 
   const handleShare = async () => {
     const shareData = {
@@ -78,7 +89,7 @@ export function ChecklistDetail({
   return (
     <>
       <ScreenHeader
-        back={{ label: t('common.back'), to: back }}
+        back={{ label: t('common.back'), to: back, state: backState }}
         title={t('checklist.detail.screenTitle')}
         actions={
           <HeaderAction onClick={() => void handleShare()}>
@@ -132,15 +143,12 @@ export function ChecklistDetail({
             </p>
           ))}
 
-          {overdue && (
-            <p className={styles.overdueNotice} role="note">
-              {t('checklist.overdue')}
-            </p>
-          )}
-
-          {item.warning && item.warningMessage && (
-            <p className={styles.warningNotice} role="note">
-              {item.warningMessage}
+          {(warning || overdue) && (
+            <p
+              className={overdue ? styles.overdueNotice : styles.warningNotice}
+              role="note"
+            >
+              {warning ?? t('checklist.overdue')}
             </p>
           )}
         </section>

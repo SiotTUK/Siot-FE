@@ -8,6 +8,8 @@
   background: var(--secondary);
   color: var(--foreground);
   text-decoration: none;
+  /* Keyboard focus scrolls it above the rule screen's sticky bottom bar. */
+  scroll-margin-block: var(--space-16) 104px;
 }
 .link > span:first-child {
   display: flex;

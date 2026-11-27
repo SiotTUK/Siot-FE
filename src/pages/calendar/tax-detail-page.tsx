@@ -88,15 +88,18 @@ function TaxDetail({ scheduleId }: { scheduleId: number }) {
             </Fact>
             <Fact label={t('calendar.tax.fee')}>{tax.fee}</Fact>
             <Fact label={t('calendar.tax.penalty')}>{tax.penalty}</Fact>
-            <Fact label={t('calendar.tax.law')}>
-              {tax.law}
-              {tax.law && tax.sourcePages && (
-                <span className={styles.pages}>
-                  {' '}
-                  {t('calendar.tax.sourcePages', { pages: tax.sourcePages })}
-                </span>
-              )}
-            </Fact>
+            {/* Page numbers alone are not a law: hide the row without law text. */}
+            {tax.law && (
+              <Fact label={t('calendar.tax.law')}>
+                {tax.law}
+                {tax.sourcePages && (
+                  <span className={styles.pages}>
+                    {' '}
+                    {t('calendar.tax.sourcePages', { pages: tax.sourcePages })}
+                  </span>
+                )}
+              </Fact>
+            )}
             <Fact label={t('calendar.tax.contact')}>{tax.contact}</Fact>
           </dl>
           {tax.content && <p className={styles.content}>{tax.content}</p>}

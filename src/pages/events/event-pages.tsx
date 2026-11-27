@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Navigate,
@@ -18,14 +19,17 @@ import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
+import { EventSubscription } from '@/features/events/ui/event-subscription'
 import { EventReport } from '@/features/events/ui/event-report'
 import { useEventDetail, useEvents } from '@/features/events/use-events'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
-import { Button } from '@/shared/ui/button'
+import { Button, ButtonLink } from '@/shared/ui/button'
+import { TextField } from '@/shared/ui/field'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
+import { shareEvent } from '@/features/events/share-event'
 import styles from './event-pages.module.css'
 
 export function EventsPage() {
@@ -144,7 +148,11 @@ export function EventDetailPage() {
       <PageBody className={styles.detail}>
         {isEventId(eventId) ? (
           member && (
-            <EventDetailContent memberId={member.id} eventId={eventId} />
+            <EventDetailContent
+              key={`${member.id}:${eventId}`}
+              memberId={member.id}
+              eventId={eventId}
+            />
           )
         ) : (
           <Muted>{t('events.notFound')}</Muted>
@@ -178,11 +186,13 @@ function EventDetailContent({
   return (
     <>
       <EventDetails event={query.data} />
-      <EventReport
-        key={`${memberId}:${eventId}`}
+      <EventSubscription
         event={query.data}
         memberId={memberId}
+        initiallySubscribed={query.data.subscribed}
       />
+      <EventActions event={query.data} />
+      <EventReport event={query.data} memberId={memberId} />
     </>
   )
 }
@@ -190,6 +200,7 @@ function EventDetailContent({
 function EventDetails({ event }: { event: EventDetail }) {
   const { t } = useTranslation()
   const language = currentLanguage()
+  const machineTranslated = event.translated && event.language !== 'ko'
   const dates = formatEventDates(event, language)
   const times = formatEventTimes(event, language)
   const applicationUrl = eventLink(event.applicationUrl)
@@ -208,10 +219,13 @@ function EventDetails({ event }: { event: EventDetail }) {
       <div className={styles.cover} aria-hidden="true">
         <EventImage url={event.thumbnailUrl} />
       </div>
-      {(event.multicultural || !event.translated) && (
+      {(event.multicultural || !event.translated || machineTranslated) && (
         <div className={styles.tags}>
           {event.multicultural && (
             <Tag tone="main">{t('events.multicultural')}</Tag>
+          )}
+          {machineTranslated && (
+            <Tag tone="main">{t('events.translationAutomatic')}</Tag>
           )}
           {!event.translated && (
             <Tag tone="warning">{t('events.translationPending')}</Tag>
@@ -269,6 +283,49 @@ function EventDetails({ event }: { event: EventDetail }) {
             </a>
           )}
         </div>
+      )}
+    </>
+  )
+}
+
+function EventActions({ event }: { event: EventDetail }) {
+  const { t } = useTranslation()
+  const path = `/events/${event.eventId}`
+  const url = new URL(path, window.location.origin).href
+  const [shareStatus, setShareStatus] =
+    useState<Awaited<ReturnType<typeof shareEvent>>>()
+  return (
+    <>
+      <div className={styles.links}>
+        <Button
+          variant="secondary"
+          onClick={async () =>
+            setShareStatus(await shareEvent(event.title, url, navigator))
+          }
+        >
+          {t('events.share')}
+        </Button>
+        <ButtonLink
+          variant="secondary"
+          to="/chat"
+          state={{
+            eventQuestionId: String(event.eventId),
+            eventQuestionDraft: t('events.askDraft', { title: event.title }),
+          }}
+        >
+          {t('events.ask')}
+        </ButtonLink>
+      </div>
+      {shareStatus === 'copied' && (
+        <div role="status">{t('events.shareCopied')}</div>
+      )}
+      {shareStatus === 'manual' && (
+        <TextField
+          label={t('events.shareManual')}
+          readOnly
+          value={url}
+          onFocus={(e) => e.target.select()}
+        />
       )}
     </>
   )

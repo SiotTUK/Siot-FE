@@ -79,6 +79,9 @@ jobs:
 
       # Caddy 는 bind mount 로 폴더를 읽으므로 폴더를 바꿔치기(mv)하지 않고 안의 내용만 바꾼다.
       # 직전 버전은 frontend.old 에 남긴다 (롤백: Siot-BE docs/deployment.md)
+      # 순서: 새 assets 추가 → 나머지 파일 교체 → index.html 마지막.
+      # - 폴더를 비운 뒤 복사하면 그 사이 요청된 CSS·JS 가 없어 화면이 깨진다.
+      # - 예전 assets 는 14일 남긴다. 배포 전에 열어 둔 탭이 예전 화면 묶음(lazy chunk)을 불러온다.
       - name: Replace files on VM
         run: |
           gcloud compute ssh "$VM_NAME" --project "$GCP_PROJECT_ID" --zone "$VM_ZONE" --quiet --strict-host-key-checking=no --command "
@@ -89,8 +92,13 @@ jobs:
               test -f \$STAGE/index.html
               sudo rm -rf $DEPLOY_DIR.old
               sudo cp -a $DEPLOY_DIR $DEPLOY_DIR.old
-              sudo find $DEPLOY_DIR -mindepth 1 -delete
-              sudo cp -a \$STAGE/. $DEPLOY_DIR/
+              sudo mkdir -p $DEPLOY_DIR/assets
+              sudo cp -a \$STAGE/assets/. $DEPLOY_DIR/assets/
+              sudo find $DEPLOY_DIR -mindepth 1 -maxdepth 1 ! -name assets ! -name index.html -exec rm -rf {} +
+              sudo find \$STAGE -mindepth 1 -maxdepth 1 ! -name assets ! -name index.html -exec cp -a {} $DEPLOY_DIR/ \;
+              sudo cp -a \$STAGE/index.html $DEPLOY_DIR/.index.html.new
+              sudo mv -f $DEPLOY_DIR/.index.html.new $DEPLOY_DIR/index.html
+              sudo find $DEPLOY_DIR/assets -type f -mtime +14 -delete
               rm -rf \$STAGE \$TGZ
               echo 'Deployed frontend $GITHUB_SHA'
             "

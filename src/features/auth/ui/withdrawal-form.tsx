@@ -3,18 +3,19 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { ApiError } from '@/shared/api/client'
 import { errorKey, useMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
 import { ConfirmPanel } from '@/shared/ui/confirm-panel'
 import { TextField } from '@/shared/ui/field'
 import { FormError, Notice, Section, Stack } from '@/shared/ui/page'
+import { withdrawalSchema } from '../credential-schemas'
 import { useWithdraw } from '../use-session'
 
-const schema = z.object({
-  password: z.string().min(1, 'validation.passwordRequired'),
-})
+// Blank and over-long passwords are stopped here; the server would answer a
+// plain INVALID_INPUT instead of PASSWORD_INCORRECT.
+const schema = withdrawalSchema
 type Values = z.input<typeof schema>
 
 /** M-06·M-07: warning → password → in-page confirmation → delete at once. */

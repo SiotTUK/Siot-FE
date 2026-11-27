@@ -2,20 +2,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { useMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
 import { TextField } from '@/shared/ui/field'
 import { Notice, Stack } from '@/shared/ui/page'
 import { login } from '../api'
+import { loginSchema } from '../credential-schemas'
 import { loginErrorMessage } from '../login-error'
 import { useStartSession } from '../use-session'
 
-// Login only checks presence; the server answers LOGIN_FAILED for anything wrong.
-const schema = z.object({
-  email: z.string().trim().min(1, 'validation.emailRequired'),
-  password: z.string().min(1, 'validation.passwordRequired'),
-})
+// Blank and over-long values are stopped here: the server rejects them as a
+// plain INVALID_INPUT, not LOGIN_FAILED. Anything else wrong is LOGIN_FAILED.
+const schema = loginSchema
 type Values = z.input<typeof schema>
 
 /** M02a. Unknown email and wrong password share LOGIN_FAILED. */

@@ -2,15 +2,16 @@ import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
 import { pickDeadlineAlert } from '@/features/checklist/checklist'
 import {
-  ChecklistProgress,
   ChecklistSection,
+  HomeTopCard,
 } from '@/features/checklist/ui/home-checklist'
 import { useChecklist } from '@/features/checklist/use-checklist'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
-import { LifeChangePicker } from '@/features/life-changes/ui/life-change-picker'
+import { LifeChangeCard } from '@/features/life-changes/ui/life-change-card'
 import { situationSummary } from '@/features/onboarding/summary'
 import type { MemberResponse } from '@/shared/api/types'
 import { currentLanguage } from '@/shared/i18n'
+import { CameraIcon } from '@/shared/ui/icons'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, Tag } from '@/shared/ui/page'
 import { TextLink } from '@/shared/ui/text-link'
@@ -30,7 +31,8 @@ export function HomePage() {
 }
 
 /**
- * H1 by default. H2 (nothing due within 30 days): calm card on top, events
+ * Figma v2 H1: top card, my situation, checklist, life change and document
+ * cards, then events. H2 (nothing due within 30 days): calm top card, events
  * move up and the checklist shrinks to "다음 할 일".
  */
 function MemberHome({ me }: { me: MemberResponse }) {
@@ -42,7 +44,7 @@ function MemberHome({ me }: { me: MemberResponse }) {
 
   return (
     <>
-      <ChecklistProgress memberId={me.id} />
+      <HomeTopCard memberId={me.id} />
       <div className={styles.situation}>
         <div>
           {situation.title && <strong>{situation.title}</strong>}
@@ -54,7 +56,12 @@ function MemberHome({ me }: { me: MemberResponse }) {
       </div>
       {calm && events}
       <ChecklistSection memberId={me.id} calm={calm} />
-      <div className={styles.row} data-tone="info">
+      <LifeChangeCard memberId={me.id} />
+      {/* Bill translation (#28) is not built yet: the card says so. */}
+      <div className={styles.bill}>
+        <span className={styles.billIcon}>
+          <CameraIcon />
+        </span>
         <div>
           <strong>{t('home.billTitle')}</strong>
           <Muted>{t('home.billLabel')}</Muted>
@@ -62,7 +69,6 @@ function MemberHome({ me }: { me: MemberResponse }) {
         <Tag>{t('home.comingSoon')}</Tag>
       </div>
       {!calm && events}
-      <LifeChangePicker memberId={me.id} />
     </>
   )
 }

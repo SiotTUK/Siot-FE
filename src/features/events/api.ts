@@ -70,6 +70,8 @@ export const eventKeys = {
     filters: EventListFilters,
     today: string,
   ) => [...eventKeys.lists(memberId), filters, today, page] as const,
+  saved: (memberId: number) =>
+    [...eventKeys.member(memberId), 'saved'] as const,
   subscription: (memberId: number, eventId: string) =>
     [...eventKeys.member(memberId), 'subscription', eventId] as const,
   calendar: (memberId: number, year: number, month: number) =>
@@ -151,4 +153,16 @@ export async function saveEventSubscription(
     subscribed: result.enabled,
     leadDays: result.enabled ? result.leadDays : null,
   }
+}
+
+/**
+ * Events the member saved (♥ = subscribed), newest first. One page of 100
+ * covers the ♥ state on cards; GET /api/members/me/event-subscriptions.
+ */
+export async function fetchSavedEventIds(signal?: AbortSignal) {
+  const page = await apiRequest<PageResponse<EventSubscriptionResponse>>(
+    '/api/members/me/event-subscriptions?size=100',
+    { signal },
+  )
+  return page.content.filter((item) => item.enabled).map((item) => item.eventId)
 }

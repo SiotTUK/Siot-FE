@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { FormError } from '@/shared/ui/page'
 import { InfiniteList } from '@/shared/ui/query-state'
+import { EmptyState } from '@/shared/ui/status-card'
 import type { NotificationItem } from '../api'
 import {
   notificationDay,
@@ -31,7 +32,12 @@ export function NotificationList({ memberId }: { memberId: number }) {
       )}
       <InfiniteList
         query={notifications}
-        empty={t('notifications.empty')}
+        empty={
+          <EmptyState
+            title={t('notifications.emptyTitle')}
+            description={t('notifications.emptyDescription')}
+          />
+        }
         getKey={(item) => item.notificationId}
         renderItem={(item) => (
           <NotificationCard
@@ -64,11 +70,8 @@ function NotificationCard({
   const when = 'relative' in day ? t(`notifications.${day.relative}`) : day.date
   const content = (
     <>
-      <span className={styles.badges}>
-        <span className={styles.badge}>
-          {t(`notifications.groups.${notificationGroup(item.kind)}`)}
-        </span>
-        <span className={styles.badge}>{when}</span>
+      <span className={styles.badge}>
+        {t(`notifications.groups.${notificationGroup(item.kind)}`)} · {when}
       </span>
       <span className={styles.title}>
         {!item.read && <span className={styles.dot} aria-hidden="true" />}

@@ -1,25 +1,56 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, ButtonLink } from '@/shared/ui/button'
+import { ButtonLink } from '@/shared/ui/button'
 import { Muted, Section } from '@/shared/ui/page'
-import { useEventRecommendations } from '../use-events'
+import { useEventRecommendations, useSavedEventIds } from '../use-events'
 import { EventCard } from './event-card'
-import { EventSubscription } from './event-subscription'
 import { EventQueryNotice } from './event-query-notice'
 import styles from './event-recommendations.module.css'
 
+/**
+ * "나에게 맞는 행사". Home shows a carousel of cards (Figma v2 H1); the events
+ * screen shows the first recommendation as one large card (M12).
+ */
 export function EventRecommendations({
   memberId,
+  layout = 'carousel',
   showAllLink = false,
 }: {
   memberId: number
+  layout?: 'carousel' | 'featured'
   showAllLink?: boolean
 }) {
   const { t } = useTranslation()
   const query = useEventRecommendations(memberId)
+  const saved = useSavedEventIds(memberId)
   const recommendations = query.data
-  const [openEventId, setOpenEventId] = useState<number>()
+  const shown =
+    layout === 'featured' ? recommendations?.slice(0, 1) : recommendations
 
+  const content =
+    !recommendations && (query.isPending || query.isError) ? (
+      <EventQueryNotice
+        pending={query.isPending}
+        fetching={query.isFetching}
+        retry={() => void query.refetch()}
+      />
+    ) : shown?.length ? (
+      <ul className={styles[layout]}>
+        {shown.map(({ event }) => (
+          <li key={event.eventId}>
+            <EventCard
+              event={event}
+              memberId={memberId}
+              saved={saved.has(event.eventId)}
+              variant={layout}
+            />
+          </li>
+        ))}
+      </ul>
+    ) : layout === 'carousel' ? (
+      <Muted>{t('events.noRecommendations')}</Muted>
+    ) : null
+
+  if (layout === 'featured') return content
   return (
     <Section
       title={t('events.recommendations')}
@@ -31,41 +62,7 @@ export function EventRecommendations({
         )
       }
     >
-      {!recommendations && (query.isPending || query.isError) ? (
-        <EventQueryNotice
-          pending={query.isPending}
-          fetching={query.isFetching}
-          retry={() => void query.refetch()}
-        />
-      ) : recommendations?.length ? (
-        <ul className={styles.carousel}>
-          {recommendations.map(({ event, reasons }) => (
-            <li key={event.eventId}>
-              <EventCard event={event} reasons={reasons} />
-              <Button
-                variant="secondary"
-                aria-expanded={openEventId === event.eventId}
-                onClick={() =>
-                  setOpenEventId(
-                    openEventId === event.eventId ? undefined : event.eventId,
-                  )
-                }
-              >
-                {t('events.reminder.title')}
-              </Button>
-              {openEventId === event.eventId && (
-                <EventSubscription
-                  key={memberId}
-                  event={event}
-                  memberId={memberId}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <Muted>{t('events.noRecommendations')}</Muted>
-      )}
+      {content}
     </Section>
   )
 }

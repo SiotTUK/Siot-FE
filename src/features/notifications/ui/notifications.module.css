@@ -19,11 +19,6 @@ button.card:hover,
 a.card:hover {
   box-shadow: inset 0 0 0 1px var(--border);
 }
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-}
 .badge {
   padding: 2px var(--space-8);
   border-radius: var(--radius-8);

@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+// The hug art is transparent; haero-toro.png has the canvas color baked in.
+import haeroToro from '@/shared/assets/mascot/haero-toro-hug.png'
+import toro from '@/shared/assets/mascot/toro.png'
 import { currentLanguage } from '@/shared/i18n'
-import { formatMonthDay, formatYearMonth } from '@/shared/i18n/format'
+import { formatLongMonthDay, formatYearMonth } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
-import { FormError, Muted, Section, Stack, Tag } from '@/shared/ui/page'
+import { ChevronRightIcon } from '@/shared/ui/icons'
+import { FormError, Muted, Section } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import type { ChecklistItemResponse } from '../api'
 import {
@@ -21,73 +25,76 @@ import { ChecklistCard } from './checklist-card'
 import styles from './checklist.module.css'
 
 /**
- * Home top: "나에게 필요한 할 일 N개", progress and the nearest-deadline alert.
- * With nothing due within 30 days (H2), a calm card with the next month instead.
+ * Home top card (Figma v2). H1: the nearest deadline within 30 days in a
+ * blue card with progress and 토로. H2 (nothing due within 30 days): "지금
+ * 급한 할 일은 없어요" with the month of the next deadline.
  */
-export function ChecklistProgress({ memberId }: { memberId: number }) {
+export function HomeTopCard({ memberId }: { memberId: number }) {
   const { t } = useTranslation()
   const language = currentLanguage()
   const { data } = useChecklist(memberId, language)
   if (!data) return null
   const alert = pickDeadlineAlert(data.items)
+  const done = t('checklist.progressDone', {
+    done: data.completedRequiredCount,
+    total: data.totalRequiredCount,
+  })
+
+  if (!alert) {
+    const next = pickNextItem(data.items)
+    return (
+      <div className={styles.calm}>
+        <div>
+          {next?.deadline && (
+            <span>
+              {t('checklist.nextMonth', {
+                month: formatYearMonth(next.deadline, language),
+              })}
+            </span>
+          )}
+          <h1>{t('checklist.calmTitle')}</h1>
+        </div>
+        <img src={haeroToro} alt="" width={84} height={81} />
+      </div>
+    )
+  }
+
+  const overdue = alert.dDay !== null && alert.dDay < 0
   return (
-    <>
-      <div className={styles.progress}>
+    <div className={styles.top}>
+      <div className={styles.topText}>
+        <span>
+          {t('checklist.dueLine', {
+            title: alert.title,
+            dDay: deadlineText(alert, t('checklist.pastDeadline')) ?? '',
+          })}
+        </span>
         <h1>
-          {t('checklist.progressTitle', { count: data.totalRequiredCount })}
+          {overdue
+            ? t('checklist.overdueTitle')
+            : t('checklist.dueBy', {
+                date: alert.deadline
+                  ? formatLongMonthDay(alert.deadline, language)
+                  : '',
+              })}
         </h1>
         <div className={styles.progressRow}>
           <progress
             max={100}
             value={data.progressPercentage}
-            aria-label={t('checklist.progressDone', {
-              done: data.completedRequiredCount,
-              total: data.totalRequiredCount,
-            })}
+            aria-label={done}
           />
-          <strong>
-            {t('checklist.progressDone', {
-              done: data.completedRequiredCount,
-              total: data.totalRequiredCount,
-            })}
-          </strong>
+          <strong>{done}</strong>
         </div>
       </div>
-      {alert && (
-        <div className={styles.alert} role="status">
-          <Tag tone="warning">{t('checklist.alertTag')}</Tag>
-          {t('checklist.alert', {
-            title: alert.title,
-            dDay: deadlineText(alert, t('checklist.pastDeadline')) ?? '',
-            date: formatMonthDay(alert.deadline, language),
-          })}
-        </div>
-      )}
-      {!alert && <CalmCard item={pickNextItem(data.items)} />}
-    </>
-  )
-}
-
-/** H2 top: "지금 급한 할 일은 없어요" and the month of the next deadline. */
-function CalmCard({ item }: { item: ChecklistItemResponse | undefined }) {
-  const { t } = useTranslation()
-  return (
-    <div className={styles.calm}>
-      {item?.deadline && (
-        <span>
-          {t('checklist.nextMonth', {
-            month: formatYearMonth(item.deadline, currentLanguage()),
-          })}
-        </span>
-      )}
-      <strong>{t('checklist.calmTitle')}</strong>
+      <img src={toro} alt="" width={80} height={80} />
     </div>
   )
 }
 
 /**
- * "내 체크리스트" cards, then optional "생활 준비" folded. `calm` (H2: nothing
- * due within 30 days) shrinks it to the "다음 할 일" card, with "전체 보기".
+ * "나에게 필요한 할 일 N" rows in one card, then "생활 준비 (선택) N개 더 ›".
+ * `calm` (H2) shrinks it to the "다음 할 일" row, with "전체 보기".
  */
 export function ChecklistSection({
   memberId,
@@ -116,16 +123,13 @@ export function ChecklistSection({
   const next = calm ? pickNextItem(items) : undefined
   const compact = next !== undefined && !showAll
 
-  const card = (item: ChecklistItemResponse) => (
+  const row = (item: ChecklistItemResponse) => (
     <li key={checklistItemKey(item)}>
       <ChecklistCard
         item={item}
         busy={mark.isPending}
         onToggleDone={() =>
           mark.mutate({ item, mark: nextMark(item, 'toggleDone') })
-        }
-        onToggleNotApplicable={() =>
-          mark.mutate({ item, mark: nextMark(item, 'toggleNotApplicable') })
         }
       />
     </li>
@@ -140,56 +144,49 @@ export function ChecklistSection({
       {t(showAll ? 'checklist.showNext' : 'checklist.showAll')}
     </Button>
   )
+  const error = mark.isError && (
+    <FormError message={markErrorMessage(t, mark.error)} />
+  )
 
   if (compact)
     return (
       <Section title={t('checklist.nextTitle')} action={toggleAll}>
-        {mark.isError && (
-          <FormError message={markErrorMessage(t, mark.error)} />
-        )}
-        <Stack as="ul" gap={10}>
-          {card(next)}
-        </Stack>
+        {error}
+        <ul className={styles.list}>{row(next)}</ul>
       </Section>
     )
 
   return (
-    <Section title={t('checklist.title')} action={toggleAll}>
+    <Section
+      title={t('checklist.homeTitle', {
+        count: checklist.data?.totalRequiredCount ?? main.length,
+      })}
+      action={toggleAll}
+    >
       <QueryState query={checklist}>
-        {mark.isError && (
-          <FormError message={markErrorMessage(t, mark.error)} />
-        )}
-        {main.length === 0 && optional.length === 0 && (
+        {error}
+        {main.length === 0 && optional.length === 0 ? (
           <Muted>{t('checklist.empty')}</Muted>
-        )}
-        <Stack as="ul" gap={10}>
-          {main.map(card)}
-        </Stack>
-        {optional.length > 0 && (
-          <div className={styles.optional}>
-            <button
-              type="button"
-              aria-expanded={showOptional}
-              onClick={() => setShowOptional((value) => !value)}
-            >
-              <span>
-                {t('checklist.optional', {
-                  done: optional.filter((item) => item.status === 'DONE')
-                    .length,
-                  total: optional.length,
-                })}
-              </span>
-              <span>
-                {t(showOptional ? 'checklist.collapse' : 'checklist.expand')}{' '}
-                {showOptional ? '▲' : '▼'}
-              </span>
-            </button>
-            {showOptional && (
-              <Stack as="ul" gap={10}>
-                {optional.map(card)}
-              </Stack>
+        ) : (
+          <ul className={styles.list}>
+            {main.map(row)}
+            {showOptional && optional.map(row)}
+            {optional.length > 0 && (
+              <li>
+                <button
+                  type="button"
+                  className={styles.more}
+                  aria-expanded={showOptional}
+                  onClick={() => setShowOptional((value) => !value)}
+                >
+                  {showOptional
+                    ? t('checklist.optionalLess')
+                    : t('checklist.optionalMore', { count: optional.length })}
+                  <ChevronRightIcon data-open={showOptional} />
+                </button>
+              </li>
             )}
-          </div>
+          </ul>
         )}
       </QueryState>
     </Section>

@@ -113,6 +113,7 @@ export const router = createBrowserRouter([
             element: deferredPage(ruleScreen, 'RuleDetailPage'),
           },
           { path: '/home/checklist/:code', element: <ChecklistDetailPage /> },
+          { path: '/home/life-changes', element: <LifeChangePage /> },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.

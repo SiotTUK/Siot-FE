@@ -18,11 +18,14 @@ export function ChecklistDetail({
   memberId,
   busy,
   onToggleDone,
+  onToggleNotApplicable,
 }: {
   item: ChecklistItemResponse
   memberId: number
   busy?: boolean
   onToggleDone?: () => void
+  /** "해당 없음" (moved here from the home card in Figma v2). */
+  onToggleNotApplicable?: () => void
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -291,6 +294,20 @@ export function ChecklistDetail({
               </Button>
             )}
           </div>
+          {onToggleNotApplicable && item.itemType !== 'INFO' && (
+            <Button
+              variant="text"
+              disabled={busy}
+              aria-pressed={item.status === 'NOT_APPLICABLE'}
+              onClick={onToggleNotApplicable}
+            >
+              {t(
+                item.status === 'NOT_APPLICABLE'
+                  ? 'checklist.undoNotApplicable'
+                  : 'checklist.notApplicable',
+              )}
+            </Button>
+          )}
         </div>
       </PageBody>
 

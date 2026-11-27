@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
+import { ArrowRightIcon } from '@/shared/ui/icons'
 import { questionMaxLength } from '../api'
 import styles from './chat.module.css'
 
-/** Suggested questions + privacy note + input (M08a·b). */
+/** Privacy note + one-line input + round send button (Figma v2 M08a). */
 export function ChatComposer({
   draft,
   onDraftChange,
   onSend,
-  suggestions = [],
   busy,
   disabled,
   error,
@@ -15,7 +15,6 @@ export function ChatComposer({
   draft: string
   onDraftChange: (value: string) => void
   onSend: (text: string) => void
-  suggestions?: string[]
   busy: boolean
   disabled?: boolean
   error?: string
@@ -23,21 +22,6 @@ export function ChatComposer({
   const { t } = useTranslation()
   return (
     <div className={styles.composer}>
-      {suggestions.length > 0 && (
-        <ul className={styles.suggestions} aria-label={t('chat.suggestions')}>
-          {suggestions.map((question) => (
-            <li key={question}>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => onSend(question)}
-              >
-                {question}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
       {error && (
         <p className={styles.error} role="alert">
           {error}
@@ -71,8 +55,12 @@ export function ChatComposer({
             }
           }}
         />
-        <button type="submit" disabled={!draft.trim() || busy || disabled}>
-          {t('chat.send')}
+        <button
+          type="submit"
+          aria-label={t('chat.send')}
+          disabled={!draft.trim() || busy || disabled}
+        >
+          <ArrowRightIcon />
         </button>
       </form>
     </div>

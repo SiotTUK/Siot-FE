@@ -217,6 +217,7 @@ function RelatedTasks({
                 {items.map((item) => (
                   <li key={checklistItemKey(item)}>
                     <ChecklistCard
+                      showLifeChange={false}
                       item={item}
                       busy={busy || mark.isPending}
                       onToggleDone={() =>

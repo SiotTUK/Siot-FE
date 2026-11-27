@@ -41,6 +41,25 @@ export function pickDeadlineAlert(items: ChecklistItemResponse[]) {
     .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
 }
 
+/**
+ * H2 "다음 할 일": the open item whose server deadline comes first. The home
+ * switches to H2 when `pickDeadlineAlert` finds nothing within 30 days.
+ */
+export function pickNextItem(items: ChecklistItemResponse[]) {
+  return items
+    .filter((item) => open(item) && item.dDay !== null && item.deadline)
+    .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
+}
+
+/**
+ * Life change a task belongs to (LC-01-1 → LC-01), for the chip in front of
+ * its title (Figma v2 H1 "이사").
+ */
+export function lifeChangeOf(item: ChecklistItemResponse) {
+  if (item.kind !== 'LIFE_CHANGE_TASK') return undefined
+  return /^(LC-\d{2})-/.exec(item.code)?.[1]
+}
+
 /** What the checkbox and "해당 없음" buttons send for an item. */
 export function nextMark(
   item: ChecklistItemResponse,

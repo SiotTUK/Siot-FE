@@ -1,5 +1,6 @@
 import { adminMessages } from '@/features/admin/messages'
 import { authMessages } from '@/features/auth/messages'
+import { billMessages } from '@/features/bill-translation/messages'
 import { chatMessages } from '@/features/chat/messages'
 import { checklistMessages } from '@/features/checklist/messages'
 import { eventMessages } from '@/features/events/messages'
@@ -17,6 +18,7 @@ import { registerMessages } from '@/shared/i18n'
 registerMessages(
   pageMessages,
   authMessages,
+  billMessages,
   onboardingMessages,
   checklistMessages,
   lifeChangeMessages,

@@ -23,16 +23,22 @@ export function QueryState({
   query,
   children,
   keepContentOnError = false,
+  formatError,
 }: {
   query: QueryLike
   children: ReactNode
   keepContentOnError?: boolean
+  formatError?: (error: unknown) => string
 }) {
   const { t } = useTranslation()
   if (query.isPending) return <PageLoader label={t('common.loading')} />
   const error = query.isError ? (
     <Stack gap={12}>
-      <FormError message={errorMessage(t, query.error)} />
+      <FormError
+        message={
+          formatError ? formatError(query.error) : errorMessage(t, query.error)
+        }
+      />
       <Button
         variant="secondary"
         loading={query.isFetching}

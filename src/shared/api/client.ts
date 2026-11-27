@@ -86,8 +86,10 @@ export async function apiRequest<T = undefined>(
 ): Promise<T> {
   const method = (options.method ?? 'GET').toUpperCase()
   const changesState = !['GET', 'HEAD', 'OPTIONS'].includes(method)
+  const multipart = body instanceof FormData
 
   const assertRequestCurrent = () => {
+    options.signal?.throwIfAborted()
     if (isRequestCurrent && !isRequestCurrent())
       throw new DOMException('The request session has ended', 'AbortError')
   }
@@ -96,7 +98,8 @@ export async function apiRequest<T = undefined>(
     assertRequestCurrent()
     const headers = new Headers(options.headers)
     headers.set('Accept', 'application/json')
-    if (body !== undefined) headers.set('Content-Type', 'application/json')
+    if (multipart) headers.delete('Content-Type')
+    else if (body !== undefined) headers.set('Content-Type', 'application/json')
     if (changesState) {
       const token = readCookie('XSRF-TOKEN')
       if (!token)
@@ -111,7 +114,7 @@ export async function apiRequest<T = undefined>(
       method,
       headers,
       credentials: 'include',
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: multipart ? body : JSON.stringify(body),
     })
   }
 

@@ -4,6 +4,7 @@ import {
   firstPasswordError,
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
+import type { BillTranslation } from '@/features/bill-translation/api'
 import type { LifeChangeResponse } from '@/features/life-changes/api'
 import type { LifeChangeCode } from '@/features/life-changes/life-changes'
 import type { MessageResponse } from '@/features/chat/api'
@@ -32,6 +33,8 @@ export interface MockState {
   nextId: number
   conversations: Record<string, MockConversation>
   nextChatId: number
+  bills: Record<string, BillTranslation[]>
+  nextBillId: number
   guides: Record<string, GuideTranslationResponse>
   reviews: Record<
     string,
@@ -130,6 +133,8 @@ function seedState(): MockState {
       },
     },
     nextChatId: 2,
+    bills: {},
+    nextBillId: 1,
     guides: {
       'CL-01:ko': {
         code: 'CL-01',
@@ -165,6 +170,8 @@ function loadState(): MockState {
       state.lifeChanges ??= {}
       state.notificationReads ??= {}
       state.notificationPrefs ??= {}
+      state.bills ??= {}
+      state.nextBillId ??= 1
       return state
     }
   } catch {

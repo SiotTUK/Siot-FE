@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { currentLanguage } from '@/shared/i18n'
 import { errorMessage } from '@/shared/i18n/error-message'
@@ -63,12 +63,20 @@ export function ChecklistProgress({ memberId }: { memberId: number }) {
 }
 
 /** "내 체크리스트" cards, then optional "생활 준비" folded. */
-export function ChecklistSection({ memberId }: { memberId: number }) {
+export function ChecklistSection({
+  memberId,
+  guideCode,
+}: {
+  memberId: number
+  guideCode?: string | null
+}) {
   const { t } = useTranslation()
   const language = currentLanguage()
   const checklist = useChecklist(memberId, language)
   const mark = useMarkChecklistItem(memberId, language)
-  const [showOptional, setShowOptional] = useState(false)
+  const [showOptional, setShowOptional] = useState<boolean>()
+  const checklistStart = useRef<HTMLDivElement>(null)
+  const guideCard = useRef<HTMLLIElement>(null)
   const [shownKeys, setShownKeys] = useState<string[]>([])
   const items = checklist.data ? keepOrder(checklist.data.items, shownKeys) : []
   const nextKeys = items.map(checklistItemKey)
@@ -80,9 +88,25 @@ export function ChecklistSection({ memberId }: { memberId: number }) {
     setShownKeys(nextKeys)
   }
   const { main, optional } = groupItems(items)
+  const target = guideCode
+    ? [...main, ...optional].find((item) => item.code === guideCode)
+    : undefined
+  const optionalOpen = showOptional ?? target?.itemType === 'OPTIONAL'
+  const hasChecklist = !!checklist.data
+
+  useEffect(() => {
+    if (!guideCode || !hasChecklist) return
+    const element = guideCard.current ?? checklistStart.current
+    element?.focus({ preventScroll: true })
+    element?.scrollIntoView({ block: 'start' })
+  }, [guideCode, hasChecklist])
 
   const card = (item: ChecklistItemResponse) => (
-    <li key={checklistItemKey(item)}>
+    <li
+      key={checklistItemKey(item)}
+      ref={item === target ? guideCard : undefined}
+      tabIndex={item === target ? -1 : undefined}
+    >
       <ChecklistCard
         item={item}
         busy={mark.isPending}
@@ -97,42 +121,44 @@ export function ChecklistSection({ memberId }: { memberId: number }) {
   )
 
   return (
-    <Section title={t('checklist.title')}>
-      <QueryState query={checklist}>
-        {mark.isError && <FormError message={errorMessage(t, mark.error)} />}
-        {main.length === 0 && optional.length === 0 && (
-          <Muted>{t('checklist.empty')}</Muted>
-        )}
-        <Stack as="ul" gap={10}>
-          {main.map(card)}
-        </Stack>
-        {optional.length > 0 && (
-          <div className={styles.optional}>
-            <button
-              type="button"
-              aria-expanded={showOptional}
-              onClick={() => setShowOptional((value) => !value)}
-            >
-              <span>
-                {t('checklist.optional', {
-                  done: optional.filter((item) => item.status === 'DONE')
-                    .length,
-                  total: optional.length,
-                })}
-              </span>
-              <span>
-                {t(showOptional ? 'checklist.collapse' : 'checklist.expand')}{' '}
-                {showOptional ? '▲' : '▼'}
-              </span>
-            </button>
-            {showOptional && (
-              <Stack as="ul" gap={10}>
-                {optional.map(card)}
-              </Stack>
-            )}
-          </div>
-        )}
-      </QueryState>
-    </Section>
+    <div id="checklist" ref={checklistStart} tabIndex={-1}>
+      <Section title={t('checklist.title')}>
+        <QueryState query={checklist}>
+          {mark.isError && <FormError message={errorMessage(t, mark.error)} />}
+          {main.length === 0 && optional.length === 0 && (
+            <Muted>{t('checklist.empty')}</Muted>
+          )}
+          <Stack as="ul" gap={10}>
+            {main.map(card)}
+          </Stack>
+          {optional.length > 0 && (
+            <div className={styles.optional}>
+              <button
+                type="button"
+                aria-expanded={optionalOpen}
+                onClick={() => setShowOptional(!optionalOpen)}
+              >
+                <span>
+                  {t('checklist.optional', {
+                    done: optional.filter((item) => item.status === 'DONE')
+                      .length,
+                    total: optional.length,
+                  })}
+                </span>
+                <span>
+                  {t(optionalOpen ? 'checklist.collapse' : 'checklist.expand')}{' '}
+                  {optionalOpen ? '▲' : '▼'}
+                </span>
+              </button>
+              {optionalOpen && (
+                <Stack as="ul" gap={10}>
+                  {optional.map(card)}
+                </Stack>
+              )}
+            </div>
+          )}
+        </QueryState>
+      </Section>
+    </div>
   )
 }

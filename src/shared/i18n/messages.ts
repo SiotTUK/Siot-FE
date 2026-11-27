@@ -27,6 +27,8 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: '입력한 내용을 다시 확인해 주세요',
+      GUIDE_NOT_FOUND:
+        '이 안내를 찾을 수 없어요. 내용이 바뀌었거나 지워졌을 수 있어요.',
       UNAUTHORIZED: '로그인이 필요해요. 다시 로그인해 주세요',
       FORBIDDEN: '이 기능을 사용할 권한이 없어요',
       CSRF_TOKEN_INVALID:
@@ -62,6 +64,8 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: 'Please check what you entered',
+      GUIDE_NOT_FOUND:
+        'We could not find this guide. It may have been changed or removed.',
       UNAUTHORIZED: 'Please log in again',
       FORBIDDEN: 'You do not have permission to use this feature',
       CSRF_TOKEN_INVALID:
@@ -97,6 +101,7 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: '请重新确认输入的内容',
+      GUIDE_NOT_FOUND: '找不到该指南。内容可能已更改或删除。',
       UNAUTHORIZED: '需要登录。请重新登录',
       FORBIDDEN: '您没有使用此功能的权限',
       CSRF_TOKEN_INVALID: '安全验证已过期。请刷新页面后重试',
@@ -131,6 +136,8 @@ export const sharedMessages = defineMessages({
     },
     errors: {
       INVALID_INPUT: 'Hãy kiểm tra lại nội dung đã nhập',
+      GUIDE_NOT_FOUND:
+        'Không tìm thấy hướng dẫn này. Nội dung có thể đã thay đổi hoặc bị xóa.',
       UNAUTHORIZED: 'Cần đăng nhập. Hãy đăng nhập lại',
       FORBIDDEN: 'Bạn không có quyền sử dụng chức năng này',
       CSRF_TOKEN_INVALID:

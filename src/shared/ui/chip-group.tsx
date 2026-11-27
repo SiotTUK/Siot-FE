@@ -2,8 +2,11 @@ import type { Ref } from 'react'
 import styles from './chip-group.module.css'
 
 /**
- * Figma M06 category chips: one choice at a time, the picked one filled.
- * Plain toggle buttons (aria-pressed) so Tab and Enter/Space work.
+ * Category chips: one choice at a time (aria-pressed toggle buttons, so Tab
+ * and Enter/Space work).
+ * - `plain` (default, Figma M06 v1): words, the picked one as a small badge.
+ * - `pill` (Figma v2 생활 수칙 · 분야): outlined pills in one scrolling row,
+ *   the picked one filled with the brand color.
  */
 export function ChipGroup<T extends string>({
   ref,
@@ -11,15 +14,23 @@ export function ChipGroup<T extends string>({
   options,
   value,
   onChange,
+  variant = 'plain',
 }: {
   ref?: Ref<HTMLDivElement>
   label: string
   options: { value: T; label: string }[]
   value: T
   onChange: (value: T) => void
+  variant?: 'plain' | 'pill'
 }) {
   return (
-    <div ref={ref} className={styles.group} role="group" aria-label={label}>
+    <div
+      ref={ref}
+      className={styles.group}
+      data-variant={variant}
+      role="group"
+      aria-label={label}
+    >
       {options.map((option) => (
         <button
           key={option.value}

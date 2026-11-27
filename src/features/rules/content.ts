@@ -924,7 +924,10 @@ export const ruleEntries: RuleEntry[] = [
   },
 ]
 
-/** Figma M06 "자주 묻는 질문 TOP 5". Answers repeat checked facts from the rule. */
+/**
+ * 자주 묻는 질문. The first five are Figma M06 "TOP 5" (answers repeat checked
+ * facts from the rule); the rest are listed under "전체 보기".
+ */
 export const ruleFaqs: RuleFaq[] = [
   {
     rule: 'waste-food',
@@ -996,4 +999,130 @@ export const ruleFaqs: RuleFaq[] = [
       'Nếu ở chung cư, hãy báo ban quản lý trước. Nếu chưa giải quyết được, gọi Trung tâm láng giềng về tiếng ồn 1661-2642 (ngày thường 09:00–18:00).',
     ),
   },
+  // ---- 전체 보기: one question per remaining rule ----
+  // The answer is the rule's checked summary, so no new facts are added.
+  fromRule(
+    'order-smoking',
+    l(
+      '담배는 어디서 피우면 안 돼요?',
+      'Where am I not allowed to smoke?',
+      '哪里不能吸烟？',
+      'Không được hút thuốc ở đâu?',
+    ),
+  ),
+  fromRule(
+    'waste-general',
+    l(
+      '일반 쓰레기는 언제, 어떻게 내놓아요?',
+      'When and how do I put out general waste?',
+      '一般垃圾什么时候、怎么扔？',
+      'Bỏ rác thông thường khi nào và như thế nào?',
+    ),
+  ),
+  fromRule(
+    'waste-recycle',
+    l(
+      '페트병·캔·비닐은 어떻게 분리배출해요?',
+      'How do I sort PET bottles, cans and plastic bags?',
+      'PET瓶、易拉罐、塑料袋怎么分类投放？',
+      'Phân loại chai nhựa, lon và túi ni lông như thế nào?',
+    ),
+  ),
+  fromRule(
+    'traffic-parking',
+    l(
+      '어디에 차를 세우면 과태료가 나와요?',
+      'Where will I get a fine for parking?',
+      '车停在哪里会被罚款？',
+      'Đỗ xe ở đâu thì bị phạt tiền?',
+    ),
+  ),
+  fromRule(
+    'tax-property',
+    l(
+      '재산세는 언제 내요?',
+      'When do I pay property tax?',
+      '财产税什么时候缴？',
+      'Khi nào nộp thuế tài sản?',
+    ),
+  ),
+  fromRule(
+    'tax-car',
+    l(
+      '자동차세는 언제 내요?',
+      'When do I pay car tax?',
+      '汽车税什么时候缴？',
+      'Khi nào nộp thuế ô tô?',
+    ),
+  ),
+  fromRule(
+    'tax-payment',
+    l(
+      '세금은 어떻게 내고, 늦으면 어떻게 돼요?',
+      'How do I pay taxes, and what if I pay late?',
+      '税怎么缴？晚缴会怎样？',
+      'Nộp thuế thế nào và nếu nộp trễ thì sao?',
+    ),
+  ),
+  fromRule(
+    'living-siru',
+    l(
+      '시흥화폐 시루는 뭐예요?',
+      'What is Siru, the Siheung local currency?',
+      '始兴地区货币Siru是什么？',
+      'Siru, tiền địa phương của Siheung là gì?',
+    ),
+  ),
+  fromRule(
+    'living-bike',
+    l(
+      '자전거는 어디서 빌려요?',
+      'Where can I rent a bicycle?',
+      '在哪里租自行车？',
+      'Thuê xe đạp ở đâu?',
+    ),
+  ),
+  fromRule(
+    'support-1345',
+    l(
+      '체류·비자는 어디에 물어봐요?',
+      'Where can I ask about my stay or visa?',
+      '居留、签证问题向哪里咨询？',
+      'Hỏi về lưu trú, thị thực ở đâu?',
+    ),
+  ),
+  fromRule(
+    'support-welfare-center',
+    l(
+      '외국인 주민을 돕는 곳이 시흥에 있어요?',
+      'Is there a place in Siheung that helps foreign residents?',
+      '始兴有帮助外国居民的地方吗？',
+      'Ở Siheung có nơi hỗ trợ cư dân nước ngoài không?',
+    ),
+  ),
+  fromRule(
+    'support-family',
+    l(
+      '다문화가족은 어디서 상담받아요?',
+      'Where can multicultural families get counseling?',
+      '多文化家庭在哪里咨询？',
+      'Gia đình đa văn hóa được tư vấn ở đâu?',
+    ),
+  ),
+  fromRule(
+    'support-work',
+    l(
+      '일하다 생긴 고민은 어디에 물어봐요?',
+      'Where can I ask about problems at work?',
+      '工作中遇到的问题向哪里咨询？',
+      'Hỏi ở đâu khi gặp khó khăn trong công việc?',
+    ),
+  ),
 ]
+
+/** A FAQ whose answer is the rule's own checked summary. */
+function fromRule(rule: string, question: Localized): RuleFaq {
+  const entry = ruleEntries.find((item) => item.code === rule)
+  if (!entry) throw new Error(`Unknown rule for FAQ: ${rule}`)
+  return { rule, question, answer: entry.summary }
+}

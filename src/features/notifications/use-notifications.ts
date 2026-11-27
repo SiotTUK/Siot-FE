@@ -25,12 +25,15 @@ export function usePreferences(memberId: number) {
   })
 }
 
-/** Turns one settings group on or off (one PUT per BE kind). */
+/**
+ * Turns one settings group on or off (one PUT per BE kind). It waits for
+ * every PUT, even after one fails, so the re-read below sees the final state.
+ */
 export function useUpdatePreferenceGroup(memberId: number) {
   const queryClient = useQueryClient()
   const key = notificationKeys.preferences(memberId)
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       group,
       enabled,
     }: {
@@ -39,9 +42,15 @@ export function useUpdatePreferenceGroup(memberId: number) {
     }) => {
       const current =
         queryClient.getQueryData<NotificationPreference[]>(key) ?? []
-      return Promise.all(
+      const results = await Promise.allSettled(
         groupUpdates(current, group, enabled).map(updatePreference),
       )
+      const saved: NotificationPreference[] = []
+      for (const result of results) {
+        if (result.status === 'rejected') throw result.reason
+        saved.push(result.value)
+      }
+      return saved
     },
     onSuccess: (saved) => {
       queryClient.setQueryData<NotificationPreference[]>(key, (prefs) =>
@@ -50,8 +59,9 @@ export function useUpdatePreferenceGroup(memberId: number) {
         ),
       )
     },
-    // Some kinds may have saved before a failure; read the server again.
-    onError: () => void queryClient.invalidateQueries({ queryKey: key }),
+    // Some kinds may have saved; read the server again. Returning the promise
+    // keeps the mutation pending (switches locked) until the re-read is done.
+    onError: () => queryClient.invalidateQueries({ queryKey: key }),
   })
 }
 

@@ -70,11 +70,19 @@ export type PreferenceGroup = keyof typeof preferenceGroups
 
 type Preference = { kind: string; enabled: boolean; leadDays: number }
 
-/** On only when every kind in the group is on. */
-export function groupEnabled(prefs: Preference[], group: PreferenceGroup) {
+/**
+ * A group's switch state: on when every kind is on, off when none is, and
+ * partial when only some are (e.g. after a save that half failed).
+ */
+export function groupState(
+  prefs: Preference[],
+  group: PreferenceGroup,
+): 'on' | 'off' | 'partial' {
   const kinds: readonly string[] = preferenceGroups[group]
   const inGroup = prefs.filter((pref) => kinds.includes(pref.kind))
-  return inGroup.length > 0 && inGroup.every((pref) => pref.enabled)
+  const on = inGroup.filter((pref) => pref.enabled).length
+  if (on === 0) return 'off'
+  return on === inGroup.length ? 'on' : 'partial'
 }
 
 /** The PUT bodies for switching a group, keeping each kind's leadDays. */

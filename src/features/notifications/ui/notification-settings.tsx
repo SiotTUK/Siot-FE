@@ -4,7 +4,7 @@ import { errorMessage } from '@/shared/i18n/error-message'
 import { FormError } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import { SwitchField } from '@/shared/ui/switch-field'
-import { groupEnabled, type PreferenceGroup } from '../notifications'
+import { groupState, type PreferenceGroup } from '../notifications'
 import { usePreferences, useUpdatePreferenceGroup } from '../use-notifications'
 import styles from './notifications.module.css'
 
@@ -28,17 +28,28 @@ export function NotificationSettings({ memberId }: { memberId: number }) {
         {t('notifications.settings.title')}
       </h2>
       <QueryState query={preferences}>
-        {groups.map((group) => (
-          <SwitchField
-            key={group}
-            label={t(`notifications.settings.${group}`)}
-            checked={groupEnabled(preferences.data ?? [], group)}
-            disabled={update.isPending}
-            onChange={(event) =>
-              update.mutate({ group, enabled: event.target.checked })
-            }
-          />
-        ))}
+        {groups.map((group) => {
+          const state = groupState(preferences.data ?? [], group)
+          return (
+            <SwitchField
+              key={group}
+              label={t(`notifications.settings.${group}`)}
+              // Partial shows off with a line saying some still arrive;
+              // switching it on then turns every kind on.
+              hint={
+                state === 'partial'
+                  ? t('notifications.settings.partial')
+                  : undefined
+              }
+              checked={state === 'on'}
+              // Locked while saving and until the settings are read again.
+              disabled={update.isPending || preferences.isFetching}
+              onChange={(event) =>
+                update.mutate({ group, enabled: event.target.checked })
+              }
+            />
+          )
+        })}
         {update.isError && (
           <FormError message={errorMessage(t, update.error)} />
         )}

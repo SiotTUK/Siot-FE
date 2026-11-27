@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  groupEnabled,
+  groupState,
   groupUpdates,
   notificationDay,
   notificationGroup,
@@ -46,10 +46,16 @@ describe('notification screen rules', () => {
     { kind: 'NOTICE_CHANGED', enabled: true, leadDays: 0 },
   ]
 
-  it('turns a settings group on only when all its kinds are on', () => {
-    expect(groupEnabled(prefs, 'deadline')).toBe(false)
-    expect(groupEnabled(prefs, 'notice')).toBe(true)
-    expect(groupEnabled([], 'notice')).toBe(false)
+  it('shows a settings group as on, off or partial', () => {
+    expect(groupState(prefs, 'deadline')).toBe('partial')
+    expect(groupState(prefs, 'notice')).toBe('on')
+    expect(
+      groupState(
+        prefs.map((pref) => ({ ...pref, enabled: false })),
+        'deadline',
+      ),
+    ).toBe('off')
+    expect(groupState([], 'notice')).toBe('off')
   })
 
   it('switches every kind in a group and keeps each leadDays', () => {

@@ -29,7 +29,7 @@ export function HomePage() {
           {situation.detail}
         </Notice>
       )}
-      {me && <ChecklistSection key={me.id} memberId={me.id} />}
+      {me && <ChecklistSection key={`checklist:${me.id}`} memberId={me.id} />}
       <div className={styles.row} data-tone="info">
         <div>
           <strong>{t('home.billTitle')}</strong>

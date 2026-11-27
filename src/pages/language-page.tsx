@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { sessionState, useChangeLanguage } from '@/features/auth/use-session'
 import type { Language } from '@/shared/api/types'
-import mascots from '@/shared/assets/mascot/haero-toro.png'
 import { currentLanguage, isLanguage, languages } from '@/shared/i18n'
 import { ChoiceCard, ChoiceList } from '@/shared/ui/choice-card'
+import { MascotImage } from '@/shared/ui/mascot-image'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, Notice, PageHeading } from '@/shared/ui/page'
+import { TextLink } from '@/shared/ui/text-link'
 import styles from './pages.module.css'
 
 const codes = Object.keys(languages) as Language[]
@@ -43,13 +44,7 @@ export function LanguagePage() {
   return (
     <PageBody className={styles.language}>
       {withdrawn && <Notice tone="success">{t('withdrawal.done')}</Notice>}
-      <img
-        className={styles.mascots}
-        src={mascots}
-        alt=""
-        width={169}
-        height={140}
-      />
+      <MascotImage pose="duo" />
       <PageHeading title={t('languagePage.title')}>
         <p className={styles.subTitle}>
           {others.map((code, index) => (
@@ -77,9 +72,9 @@ export function LanguagePage() {
       </ChoiceList>
       <div className={styles.footer}>
         <Muted>{t('languagePage.autoNext')}</Muted>
-        <Link to="/login" className={styles.footerLink}>
+        <TextLink to="/login">
           {t('languagePage.haveAccount')} {t('languagePage.login')}
-        </Link>
+        </TextLink>
       </div>
     </PageBody>
   )

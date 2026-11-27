@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import haeroToroHug from '@/shared/assets/mascot/haero-toro-hug.png'
-import toro from '@/shared/assets/mascot/toro.png'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
+import { MascotImage } from '@/shared/ui/mascot-image'
 import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { FormError, Muted, PageHeading, Stack } from '@/shared/ui/page'
@@ -99,13 +98,7 @@ export function QuestionScreen({ question }: { question: Question }) {
             />
           ) : (
             // F02: 토로 above the question.
-            <img
-              className={styles.toro}
-              src={toro}
-              alt=""
-              width={120}
-              height={120}
-            />
+            <MascotImage pose="toro" />
           )}
           <PageHeading
             title={text('title')}
@@ -125,13 +118,7 @@ export function QuestionScreen({ question }: { question: Question }) {
           />
           {question === 'stayExpiry' && (
             // F06: 해로·토로 together before the last step.
-            <img
-              className={styles.hug}
-              src={haeroToroHug}
-              alt=""
-              width={134}
-              height={130}
-            />
+            <MascotImage pose="hug" />
           )}
           {tip && (
             <MascotTip mascot={tip}>

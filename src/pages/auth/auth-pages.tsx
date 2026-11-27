@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { NewPasswordForm } from '@/features/auth/ui/new-password-form'
 import { ResetRequestForm } from '@/features/auth/ui/reset-request-form'
@@ -9,6 +9,7 @@ import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Stack } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
+import { TextLink } from '@/shared/ui/text-link'
 import styles from './auth-pages.module.css'
 
 /** Auth screens a ‹ back may return to (set by the links between them). */
@@ -59,14 +60,9 @@ function AuthScreen({
           {links.length > 0 && (
             <div className={styles.links}>
               {links.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  state={{ back: pathname }}
-                  className={styles.link}
-                >
+                <TextLink key={link.to} to={link.to} state={{ back: pathname }}>
                   {link.text} {link.label}
-                </Link>
+                </TextLink>
               ))}
             </div>
           )}

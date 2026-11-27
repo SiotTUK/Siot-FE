@@ -1,42 +1,39 @@
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ChipGroup } from '@/shared/ui/chip-group'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { Muted, Section, Stack } from '@/shared/ui/page'
 import { SearchField } from '@/shared/ui/search-field'
+import { TextLink } from '@/shared/ui/text-link'
 import {
   groupByCategory,
   ruleCategories,
   searchRules,
   type Rule,
-  type RuleCategory,
 } from '../rules'
 import { useRules } from '../use-rules'
 import { RuleCategoryCard } from './rule-category-card'
+import { RuleCategoryGrid } from './rule-category-grid'
 import { RuleFaqList } from './rule-faq-list'
 import styles from './rules.module.css'
 
-type Filter = 'all' | RuleCategory
-
-/** M06 생활 수칙: search, category chips, FAQ TOP 5 and "분야별 안내". */
+/**
+ * M06 생활 수칙 (Figma v2): search, 분야별 안내 tiles, FAQ TOP 5 and a 토로
+ * tip. A tile opens that category's list (`?category=`); typing searches.
+ */
 export function RuleBrowser() {
   const { t } = useTranslation()
   const { rules, faqs } = useRules()
   const [params, setParams] = useSearchParams()
-  const categoryChips = useRef<HTMLDivElement>(null)
   const query = params.get('q') ?? ''
-  const filter =
-    ruleCategories.find((category) => category === params.get('category')) ??
-    'all'
-  const searching = query.trim().length > 0
-  const groups = groupByCategory(
-    filter === 'all' ? rules : rules.filter((rule) => rule.category === filter),
+  const category = ruleCategories.find(
+    (value) => value === params.get('category'),
   )
+  const searching = query.trim().length > 0
 
-  function updateParam(name: 'q' | 'category', value: string) {
+  function updateQuery(value: string) {
     const next = new URLSearchParams(params)
-    if (value) next.set(name, value)
-    else next.delete(name)
+    if (value) next.set('q', value)
+    else next.delete('q')
     setParams(next, { replace: true, preventScrollReset: true })
   }
 
@@ -46,59 +43,28 @@ export function RuleBrowser() {
         label={t('rules.search')}
         placeholder={t('rules.searchPlaceholder')}
         value={query}
-        onChange={(event) => updateParam('q', event.target.value)}
+        onChange={(event) => updateQuery(event.target.value)}
       />
-      {!searching && (
-        <ChipGroup<Filter>
-          ref={categoryChips}
-          label={t('rules.categoriesLabel')}
-          value={filter}
-          onChange={(category) =>
-            updateParam('category', category === 'all' ? '' : category)
-          }
-          options={[
-            { value: 'all', label: t('rules.all') },
-            ...ruleCategories.map((category) => ({
-              value: category,
-              label: t(`rules.categories.${category}`),
-            })),
-          ]}
-        />
-      )}
-
       {searching ? (
         <SearchResults rules={searchRules(rules, query)} />
+      ) : category ? (
+        <Stack gap={16}>
+          <TextLink to="/rules">‹ {t('rules.allCategories')}</TextLink>
+          {groupByCategory(
+            rules.filter((rule) => rule.category === category),
+          ).map((group) => (
+            <RuleCategoryCard key={group.category} group={group} />
+          ))}
+        </Stack>
       ) : (
         <>
-          {filter === 'all' && (
-            <Section title={t('rules.faqTitle')}>
-              <RuleFaqList faqs={faqs} />
-            </Section>
-          )}
           <Section title={t('rules.byCategory')}>
-            <Stack gap={12}>
-              {groups.map((group) => (
-                <RuleCategoryCard
-                  // Remount on filter change so the open state resets.
-                  key={`${filter}:${group.category}`}
-                  group={group}
-                  defaultOpen={filter !== 'all'}
-                  onViewAll={
-                    filter === 'all'
-                      ? () => {
-                          categoryChips.current
-                            ?.querySelector<HTMLButtonElement>(
-                              `button[value="${group.category}"]`,
-                            )
-                            ?.focus()
-                          updateParam('category', group.category)
-                        }
-                      : undefined
-                  }
-                />
-              ))}
-            </Stack>
+            <RuleCategoryGrid />
           </Section>
+          <Section title={t('rules.faqTitle')}>
+            <RuleFaqList faqs={faqs} />
+          </Section>
+          <MascotTip mascot="toro">{t('rules.tip')}</MascotTip>
         </>
       )}
     </>

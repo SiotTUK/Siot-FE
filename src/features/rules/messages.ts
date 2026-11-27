@@ -3,12 +3,13 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const ruleMessages = defineMessages({
   ko: {
     rules: {
+      subtitle: '시흥에서 지켜야 할 규칙과 생활 정보를 모았어요',
+      tip: '찾는 수칙이 없으면 질문 탭에서 토로에게 물어봐요',
+      allCategories: '전체 분야',
       title: '생활 수칙',
       detail: '생활 수칙',
       search: '생활 수칙 검색',
-      searchPlaceholder: '궁금한 생활 수칙 검색',
-      categoriesLabel: '분야',
-      all: '전체',
+      searchPlaceholder: '궁금한 생활 수칙 검색 (예: 음식물 쓰레기)',
       categories: {
         order: '기초 질서',
         waste: '쓰레기',
@@ -33,10 +34,8 @@ export const ruleMessages = defineMessages({
         living: '시루·자전거',
         support: '상담 전화·지원 기관·일자리',
       },
-      viewAll: '{{category}} 전체 보기',
       faqTitle: '자주 묻는 질문 TOP 5',
       byCategory: '분야별 안내',
-      more: '자세히 보기',
       results: '검색 결과 {{count}}개',
       noResults: '찾는 생활 수칙이 없어요. 다른 낱말로 검색해 보세요.',
       notFound: '이 안내를 찾을 수 없어요.',
@@ -56,12 +55,13 @@ export const ruleMessages = defineMessages({
   },
   en: {
     rules: {
+      subtitle: 'Rules to follow and useful information for life in Siheung',
+      tip: 'Cannot find what you need? Ask Toro in the Questions tab',
+      allCategories: 'All topics',
       title: 'Living rules',
       detail: 'Living rules',
       search: 'Search living rules',
-      searchPlaceholder: 'Search living rules',
-      categoriesLabel: 'Topics',
-      all: 'All',
+      searchPlaceholder: 'Search living rules (e.g. food waste)',
       categories: {
         order: 'Public order',
         waste: 'Waste',
@@ -86,10 +86,8 @@ export const ruleMessages = defineMessages({
         living: 'Siru · Bikes',
         support: 'Hotlines · Centers · Work',
       },
-      viewAll: 'See all: {{category}}',
       faqTitle: 'Top 5 questions',
       byCategory: 'Guides by topic',
-      more: 'See details',
       results: 'Results: {{count}}',
       noResults: 'Nothing found. Try other words.',
       notFound: 'This guide could not be found.',
@@ -109,12 +107,13 @@ export const ruleMessages = defineMessages({
   },
   zh: {
     rules: {
+      subtitle: '汇集了在始兴需要遵守的规则和生活信息',
+      tip: '找不到想要的内容？请在提问页向 Toro 提问',
+      allCategories: '全部分类',
       title: '生活须知',
       detail: '生活须知',
       search: '搜索生活须知',
-      searchPlaceholder: '搜索生活须知',
-      categoriesLabel: '分类',
-      all: '全部',
+      searchPlaceholder: '搜索生活须知（例：厨余垃圾）',
       categories: {
         order: '公共秩序',
         waste: '垃圾',
@@ -139,10 +138,8 @@ export const ruleMessages = defineMessages({
         living: 'Siru·自行车',
         support: '咨询电话·支援机构·工作',
       },
-      viewAll: '查看全部{{category}}',
       faqTitle: '常见问题 TOP 5',
       byCategory: '分类指南',
-      more: '查看详情',
       results: '搜索结果 {{count}}项',
       noResults: '没有找到。请换个词搜索。',
       notFound: '找不到此指南。',
@@ -162,12 +159,14 @@ export const ruleMessages = defineMessages({
   },
   vi: {
     rules: {
+      subtitle:
+        'Tổng hợp quy tắc cần tuân thủ và thông tin sinh hoạt ở Siheung',
+      tip: 'Không tìm thấy điều bạn cần? Hãy hỏi Toro ở tab Hỏi đáp',
+      allCategories: 'Tất cả chủ đề',
       title: 'Quy tắc sinh hoạt',
       detail: 'Quy tắc sinh hoạt',
       search: 'Tìm quy tắc sinh hoạt',
-      searchPlaceholder: 'Tìm quy tắc sinh hoạt',
-      categoriesLabel: 'Chủ đề',
-      all: 'Tất cả',
+      searchPlaceholder: 'Tìm quy tắc (vd: rác thực phẩm)',
       categories: {
         order: 'Trật tự công cộng',
         waste: 'Rác thải',
@@ -192,10 +191,8 @@ export const ruleMessages = defineMessages({
         living: 'Siru · Xe đạp',
         support: 'Tổng đài · Trung tâm · Việc làm',
       },
-      viewAll: 'Xem tất cả: {{category}}',
       faqTitle: 'Top 5 câu hỏi thường gặp',
       byCategory: 'Hướng dẫn theo chủ đề',
-      more: 'Xem chi tiết',
       results: 'Kết quả: {{count}}',
       noResults: 'Không tìm thấy. Hãy thử từ khác.',
       notFound: 'Không tìm thấy hướng dẫn này.',

@@ -1,21 +1,23 @@
 import { Icon } from '@/shared/ui/icons'
 import type { RuleCategory } from '../rules'
 
-/** Line icon for each 분야 card (20px, currentColor). */
+/** Line icon for each 분야 (20px, currentColor), as in Figma v2 M06. */
 const paths: Record<RuleCategory, string> = {
-  // speaker: noise and public order
-  order: 'M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14',
+  // two people: public order and manners
+  order:
+    'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
   // trash can
   waste: 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5',
   // car
   traffic: 'M3 17v-6l2-5h14l2 5v6zM3 11h18M7 17v2M17 17v2M7 14h.01M17 14h.01',
-  // receipt
-  tax: 'M6 2h12v20l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6M9 15h4',
-  // house
-  living: 'M3 10 12 3l9 7v11H3zM9 21v-6h6v6',
-  // phone
+  // won coin
+  tax: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M7 9l2 7 3-6 3 6 2-7M6.5 12h11',
+  // bus
+  living:
+    'M6 3h12a2 2 0 0 1 2 2v12H4V5a2 2 0 0 1 2-2M4 11h16M7 17v3M17 17v3M8 14h.01M16 14h.01',
+  // open book
   support:
-    'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z',
+    'M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z',
 }
 
 export function CategoryIcon({

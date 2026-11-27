@@ -7,12 +7,12 @@ import { Muted, PageHeading } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './rule-pages.module.css'
 
-/** M06 생활 수칙: search, category chips, FAQ TOP 5 and guides by topic. */
+/** M06 생활 수칙: search, 분야별 안내 tiles, FAQ TOP 5 and a 토로 tip. */
 export function RulesPage() {
   const { t } = useTranslation()
   return (
     <PageBody className={styles.body}>
-      <PageHeading title={t('rules.title')} />
+      <PageHeading title={t('rules.title')} description={t('rules.subtitle')} />
       <RuleBrowser />
     </PageBody>
   )

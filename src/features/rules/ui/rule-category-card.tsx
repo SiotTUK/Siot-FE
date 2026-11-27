@@ -5,32 +5,22 @@ import { CategoryIcon } from './category-icon'
 import styles from './rules.module.css'
 
 /**
- * 분야별 안내 card: icon, name and topics with a ▼; open = blue border,
- * rule rows with ›, and "○○ 전체 보기 →" that switches to that category.
+ * One category's list (opened from a 분야별 안내 tile): tinted icon, name
+ * and topics on top, then a row with › per rule.
  */
-export function RuleCategoryCard({
-  group,
-  defaultOpen,
-  onViewAll,
-}: {
-  group: RuleGroup
-  defaultOpen?: boolean
-  onViewAll?: () => void
-}) {
+export function RuleCategoryCard({ group }: { group: RuleGroup }) {
   const { t } = useTranslation()
-  const name = t(`rules.groups.${group.category}`)
   return (
-    <details className={styles.category} open={defaultOpen}>
-      <summary>
-        <span className={styles.categoryIcon}>
+    <section className={styles.category} data-category={group.category}>
+      <div className={styles.categoryHead}>
+        <span className={styles.tileIcon}>
           <CategoryIcon category={group.category} />
         </span>
         <span className={styles.categoryText}>
-          <strong>{name}</strong>
+          <strong>{t(`rules.groups.${group.category}`)}</strong>
           <small>{t(`rules.topics.${group.category}`)}</small>
         </span>
-        <span className={styles.triangle} aria-hidden="true" />
-      </summary>
+      </div>
       <ul className={styles.rows}>
         {group.rules.map((rule) => (
           <li key={rule.code}>
@@ -41,12 +31,6 @@ export function RuleCategoryCard({
           </li>
         ))}
       </ul>
-      {onViewAll && (
-        <button type="button" className={styles.viewAll} onClick={onViewAll}>
-          {t('rules.viewAll', { category: name })}
-          <span aria-hidden="true"> →</span>
-        </button>
-      )}
-    </details>
+    </section>
   )
 }

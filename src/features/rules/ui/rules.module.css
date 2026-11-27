@@ -1,94 +1,132 @@
-/* ▼ / ▲ disclosure mark */
-.triangle {
-  flex: none;
-  width: 0;
-  height: 0;
-  border-inline: 5px solid transparent;
-  border-top: 7px solid var(--placeholder);
-  transition: transform 0.15s;
+/* Figma v2 M06 category colors: tinted icon box per 분야. */
+[data-category='order'] {
+  --category-bg: #e3f3f7;
+  --category-fg: #0172ae;
 }
-details[open] > summary .triangle {
-  transform: rotate(180deg);
+[data-category='waste'] {
+  --category-bg: #e9f5e6;
+  --category-fg: #3d7f44;
 }
-.faq summary,
-.category summary {
-  cursor: pointer;
-  list-style: none;
+[data-category='traffic'] {
+  --category-bg: #fdeee3;
+  --category-fg: #c0621f;
 }
-.faq summary::-webkit-details-marker,
-.category summary::-webkit-details-marker {
-  display: none;
+[data-category='tax'] {
+  --category-bg: #fff6da;
+  --category-fg: #9a6b00;
 }
-
-/* 자주 묻는 질문: one bordered card, a divided row per question */
-.faqList {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-8);
-  background: var(--card);
-  overflow: hidden;
+[data-category='living'] {
+  --category-bg: #e6f6f6;
+  --category-fg: #1f8a8b;
 }
-.faq + .faq {
-  border-top: 1px solid var(--border);
+[data-category='support'] {
+  --category-bg: #efebfb;
+  --category-fg: #6741d9;
 }
-.faq summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-12);
-  min-height: 48px;
-  padding: var(--space-12) var(--space-16);
-  font: var(--text-label);
-  font-weight: 600;
-  color: var(--foreground);
-}
-.faq p {
-  padding: 0 var(--space-16);
-  font: var(--text-caption);
-  font-size: 14px;
-  color: var(--muted-foreground);
-}
-.faq a {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  padding: 0 var(--space-16);
-  font: var(--text-caption);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--primary);
-  text-decoration: none;
-}
-
-/* 분야별 안내 card: icon box, name + topics, ▼; open = blue border */
-.category {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-8);
-  background: var(--card);
-  overflow: hidden;
-}
-.category[open] {
-  border-color: var(--primary);
-}
-.category summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  min-height: 64px;
-  padding: var(--space-12) var(--space-16);
-}
-.categoryIcon {
+.tileIcon {
   flex: none;
   display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
   border-radius: var(--radius-8);
-  background: var(--background);
+  background: var(--category-bg);
+  color: var(--category-fg);
+}
+
+/* 분야별 안내: 3×2 tiles */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grid li {
+  display: flex;
+}
+.tile {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-height: 132px;
+  padding: var(--space-12);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  color: var(--foreground);
+  text-decoration: none;
+}
+.tile:hover {
+  box-shadow: 0 0 0 1px var(--border);
+}
+.tile strong {
+  margin-top: var(--space-4);
+  font: var(--text-label);
+  font-weight: 700;
+}
+.tile small {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+
+/* 자주 묻는 질문 TOP 5: one card, numbered rows with › */
+.faqList {
+  margin: 0;
+  padding: var(--space-4) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  list-style: none;
+}
+.faqList li + li {
+  border-top: 1px solid var(--border);
+}
+.faqList a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-height: 52px;
+  padding: var(--space-12) 0;
+  font: var(--text-label);
+  color: var(--foreground);
+  text-decoration: none;
+}
+.faqList a:hover .question {
+  text-decoration: underline;
+}
+.faqList a > span[aria-hidden] {
+  flex: none;
+  color: var(--placeholder);
+  font-size: 18px;
+}
+.rank {
+  flex: none;
+  width: 16px;
+  font-weight: 700;
+  text-align: center;
   color: var(--muted-foreground);
 }
-.category[open] .categoryIcon {
-  background: var(--secondary);
+.rank[data-top='true'] {
   color: var(--primary);
+}
+.question {
+  flex: 1;
+  min-width: 0;
+}
+
+/* One category's list (from a tile): head + divided rows */
+.category {
+  border-radius: var(--radius-16);
+  background: var(--card);
+  overflow: hidden;
+}
+.categoryHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-16);
 }
 .categoryText {
   flex: 1;
@@ -102,18 +140,12 @@ details[open] > summary .triangle {
   font-weight: 700;
   color: var(--foreground);
 }
-.category[open] .categoryText strong {
-  color: var(--primary);
-}
 .categoryText small {
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
-.category[open] .triangle {
-  border-top-color: var(--primary);
-}
 
-/* Divided rule rows with › (category body and search results) */
+/* Divided rule rows with › (category list and search results) */
 .rows {
   margin: 0;
   padding: 0;
@@ -143,8 +175,7 @@ details[open] > summary .triangle {
   background: var(--background);
 }
 .resultList {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-8);
+  border-radius: var(--radius-16);
   background: var(--card);
   overflow: hidden;
 }
@@ -156,32 +187,6 @@ details[open] > summary .triangle {
   margin-top: 2px;
   font: var(--text-caption);
   color: var(--muted-foreground);
-}
-
-/* "쓰레기 배출 전체 보기 →": switches the chip to that category */
-.viewAll {
-  display: flex;
-  width: 100%;
-  min-height: 44px;
-  align-items: center;
-  padding: var(--space-8) var(--space-16) var(--space-12);
-  border: 0;
-  border-top: 1px solid var(--border);
-  background: none;
-  font: var(--text-caption);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--primary);
-  text-align: left;
-}
-.viewAll:hover {
-  text-decoration: underline;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .triangle {
-    transition: none;
-  }
 }
 
 /* Detail: M07a hero card */

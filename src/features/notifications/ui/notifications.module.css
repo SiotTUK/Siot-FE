@@ -78,3 +78,9 @@ a.card:hover {
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
+/* Waiting for the read to save before opening. */
+.card[aria-busy='true'],
+.card:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

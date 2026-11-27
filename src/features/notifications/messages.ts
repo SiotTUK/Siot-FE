@@ -7,6 +7,8 @@ export const notificationMessages = defineMessages({
       empty: '아직 받은 알림이 없어요.',
       unread: '안 읽은 알림 {{count}}개',
       unreadMark: '안 읽음',
+      readFailed:
+        '알림을 읽음으로 바꾸지 못해 이동하지 않았어요. 다시 눌러 주세요.',
       today: '오늘',
       yesterday: '어제',
       groups: {
@@ -29,6 +31,8 @@ export const notificationMessages = defineMessages({
       empty: 'No notifications yet.',
       unread: 'Unread: {{count}}',
       unreadMark: 'Unread',
+      readFailed:
+        'Could not mark this notification as read, so it did not open. Tap it again.',
       today: 'Today',
       yesterday: 'Yesterday',
       groups: {
@@ -51,6 +55,7 @@ export const notificationMessages = defineMessages({
       empty: '还没有收到通知。',
       unread: '未读通知 {{count}}条',
       unreadMark: '未读',
+      readFailed: '未能将通知标为已读，因此没有打开。请再点一次。',
       today: '今天',
       yesterday: '昨天',
       groups: {
@@ -73,6 +78,8 @@ export const notificationMessages = defineMessages({
       empty: 'Chưa có thông báo nào.',
       unread: 'Chưa đọc: {{count}}',
       unreadMark: 'Chưa đọc',
+      readFailed:
+        'Không thể đánh dấu đã đọc nên chưa mở thông báo. Vui lòng nhấn lại.',
       today: 'Hôm nay',
       yesterday: 'Hôm qua',
       groups: {

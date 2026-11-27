@@ -1,5 +1,6 @@
+import type { MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { FormError } from '@/shared/ui/page'
 import { InfiniteList } from '@/shared/ui/query-state'
@@ -24,7 +25,9 @@ export function NotificationList({ memberId }: { memberId: number }) {
   return (
     <>
       {markRead.isError && (
-        <FormError message={errorMessage(t, markRead.error)} />
+        <FormError
+          message={`${t('notifications.readFailed')} ${errorMessage(t, markRead.error)}`}
+        />
       )}
       <InfiniteList
         query={notifications}
@@ -36,7 +39,9 @@ export function NotificationList({ memberId }: { memberId: number }) {
             pending={
               markRead.isPending && markRead.variables === item.notificationId
             }
-            onRead={() => markRead.mutate(item.notificationId)}
+            onRead={(then) =>
+              markRead.mutate(item.notificationId, { onSuccess: then })
+            }
           />
         )}
       />
@@ -51,9 +56,11 @@ function NotificationCard({
 }: {
   item: NotificationItem
   pending: boolean
-  onRead: () => void
+  /** Marks it read; `then` runs only after the server saved it. */
+  onRead: (then?: () => void) => void
 }) {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const day = notificationDay(item.createdAt, i18n.language)
   const when = 'relative' in day ? t(`notifications.${day.relative}`) : day.date
   const content = (
@@ -75,16 +82,22 @@ function NotificationCard({
   const path = notificationPath(item)
   const read = item.read ? 'true' : undefined
 
-  // With a destination: a link that also marks it read on the way.
+  // With a destination: an unread one is marked read first and opens only
+  // after that succeeds, so a failure stays here with its message and the
+  // user can tap again. New-tab clicks open at once and mark read here.
   if (path)
     return (
       <Link
         to={path}
-        state={{ from: '/notifications' }}
+        state={backState}
         className={styles.card}
         data-read={read}
-        onClick={() => {
-          if (!item.read) onRead()
+        aria-busy={pending || undefined}
+        onClick={(event) => {
+          if (item.read) return
+          if (!isPlainClick(event)) return onRead()
+          event.preventDefault()
+          if (!pending) onRead(() => navigate(path, { state: backState }))
         }}
       >
         {content}
@@ -101,9 +114,22 @@ function NotificationCard({
       type="button"
       className={styles.card}
       disabled={pending}
-      onClick={onRead}
+      onClick={() => onRead()}
     >
       {content}
     </button>
+  )
+}
+
+const backState = { from: '/notifications' }
+
+/** A left click without modifier keys, i.e. not "open in new tab/window". */
+function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
+  return (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
   )
 }

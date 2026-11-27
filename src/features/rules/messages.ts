@@ -3,6 +3,8 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const ruleMessages = defineMessages({
   ko: {
     rules: {
+      faqAll: '전체 보기',
+      faqAllTitle: '자주 묻는 질문',
       descriptions: {
         order: '이웃과 함께 살 때 지켜야 할 기본 규칙이에요',
         waste: '쓰레기 종류별로 내놓는 방법과 날짜예요',
@@ -88,6 +90,8 @@ export const ruleMessages = defineMessages({
   },
   en: {
     rules: {
+      faqAll: 'See all',
+      faqAllTitle: 'Frequently asked questions',
       descriptions: {
         order: 'Basic rules for living with your neighbors',
         waste: 'How and when to put out each kind of waste',
@@ -173,6 +177,8 @@ export const ruleMessages = defineMessages({
   },
   zh: {
     rules: {
+      faqAll: '查看全部',
+      faqAllTitle: '常见问题',
       descriptions: {
         order: '与邻居一起生活时要遵守的基本规则',
         waste: '各类垃圾的投放方法和日期',
@@ -258,6 +264,8 @@ export const ruleMessages = defineMessages({
   },
   vi: {
     rules: {
+      faqAll: 'Xem tất cả',
+      faqAllTitle: 'Câu hỏi thường gặp',
       descriptions: {
         order: 'Quy tắc cơ bản khi sống cùng hàng xóm',
         waste: 'Cách và ngày bỏ từng loại rác',

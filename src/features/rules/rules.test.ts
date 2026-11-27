@@ -90,10 +90,20 @@ describe('rule content', () => {
     }
   })
 
-  it('has five FAQ answers that open an existing rule', () => {
-    expect(ruleFaqs).toHaveLength(5)
-    const codes = new Set(ruleEntries.map((item) => item.code))
-    for (const faq of ruleFaqs) expect(codes.has(faq.rule), faq.rule).toBe(true)
+  it('has a FAQ for every rule, each opening an existing rule', () => {
+    const codes = ruleEntries.map((item) => item.code)
+    // TOP 5 first, then one more per remaining rule: every rule once.
+    expect(ruleFaqs.length).toBeGreaterThan(5)
+    expect(new Set(ruleFaqs.map((faq) => faq.rule))).toEqual(new Set(codes))
+    expect(ruleFaqs.map((faq) => faq.rule)).toHaveLength(codes.length)
+    const all = (value: Localized) =>
+      Object.keys(languages).every(
+        (language) => value[language as keyof Localized].trim().length > 0,
+      )
+    for (const faq of ruleFaqs) {
+      expect(all(faq.question), faq.rule).toBe(true)
+      expect(all(faq.answer), faq.rule).toBe(true)
+    }
   })
 
   it('finds a callable number in every contact, in every language', () => {

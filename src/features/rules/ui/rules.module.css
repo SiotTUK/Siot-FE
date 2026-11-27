@@ -120,6 +120,27 @@
   flex: 1;
   min-width: 0;
 }
+.question small {
+  display: -webkit-box;
+  margin-top: 2px;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+/* "전체 보기 ›" on the right of a section title */
+.more {
+  flex: none;
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+.more:hover {
+  color: var(--primary);
+}
 
 /* 생활 수칙 · 분야: category card, count, rule cards */
 .categoryHead {

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Navigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { MascotTip } from '@/shared/ui/mascot-tip'
 import { Muted, Section } from '@/shared/ui/page'
 import { SearchField } from '@/shared/ui/search-field'
@@ -7,7 +7,7 @@ import { ruleCategories, searchRules, type Rule } from '../rules'
 import { useRules } from '../use-rules'
 import { RuleCard } from './rule-card'
 import { RuleCategoryGrid } from './rule-category-grid'
-import { RuleFaqList } from './rule-faq-list'
+import { faqTopCount, RuleFaqList } from './rule-faq-list'
 import styles from './rules.module.css'
 
 /**
@@ -49,8 +49,20 @@ export function RuleBrowser() {
           <Section title={t('rules.byCategory')}>
             <RuleCategoryGrid />
           </Section>
-          <Section title={t('rules.faqTitle')}>
-            <RuleFaqList faqs={faqs} />
+          <Section
+            title={t('rules.faqTitle')}
+            action={
+              <Link
+                to="/rules/faq"
+                state={{ from: 'rules' }}
+                className={styles.more}
+              >
+                {t('rules.faqAll')}
+                <span aria-hidden="true"> ›</span>
+              </Link>
+            }
+          >
+            <RuleFaqList faqs={faqs.slice(0, faqTopCount)} />
           </Section>
           <MascotTip mascot="toro">{t('rules.tip')}</MascotTip>
         </>

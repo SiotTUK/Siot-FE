@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ruleCategories } from '@/features/rules/rules'
-import { useRule } from '@/features/rules/use-rules'
+import { useRule, useRules } from '@/features/rules/use-rules'
 import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
 import { RuleDetail } from '@/features/rules/ui/rule-detail'
+import { RuleFaqList } from '@/features/rules/ui/rule-faq-list'
 import { RuleBrowser } from '@/features/rules/ui/rule-groups'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, PageHeading } from '@/shared/ui/page'
@@ -34,6 +35,21 @@ function useRulesBack() {
       else void navigate('/rules', { replace: true })
     },
   }
+}
+
+/** 자주 묻는 질문 전체 (M06 "전체 보기 ›"): every question with its short answer. */
+export function RuleFaqPage() {
+  const { t } = useTranslation()
+  const back = useRulesBack()
+  const { faqs } = useRules()
+  return (
+    <>
+      <ScreenHeader back={back} title={t('rules.faqAllTitle')} />
+      <PageBody className={styles.body}>
+        <RuleFaqList faqs={faqs} withAnswers />
+      </PageBody>
+    </>
+  )
 }
 
 /** Figma v2 "생활 수칙 · 분야" at `/rules/category/:category`. */

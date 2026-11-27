@@ -18,11 +18,15 @@ export function SwitchField({
   label: string
   hint?: string
 }) {
-  const hintId = useId()
+  const id = useId()
+  const labelId = `${id}-label`
+  const hintId = `${id}-hint`
   return (
     <label className={styles.row}>
       <span className={styles.text}>
-        <span className={styles.label}>{label}</span>
+        <span id={labelId} className={styles.label}>
+          {label}
+        </span>
         {hint && (
           <span id={hintId} className={styles.hint}>
             {hint}
@@ -33,6 +37,10 @@ export function SwitchField({
         {...input}
         type="checkbox"
         role="switch"
+        aria-labelledby={
+          input['aria-labelledby'] ??
+          (input['aria-label'] ? undefined : labelId)
+        }
         aria-describedby={hint ? hintId : undefined}
         className={styles.input}
       />

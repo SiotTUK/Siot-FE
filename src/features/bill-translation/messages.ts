@@ -4,8 +4,29 @@ export const billMessages = defineMessages({
   ko: {
     bill: {
       title: '고지서 번역',
+      screenTitle: '고지서·안내문 번역',
+      uploadIntro:
+        '고지서와 안내문에서 무엇을 언제까지 해야 하는지 내 언어로 확인하세요.',
+      documentExamples:
+        '세금 고지서, 과태료 통지서, 관리비 고지서, 학교 가정통신문을 번역할 수 있어요.',
+      privacyTitle: '개인정보',
+      storageNotice:
+        '원본 파일은 서비스에 저장하지 않아요. 개인정보를 가린 결과는 최근 번역에 표시되며 언제든 지울 수 있어요.',
+      cameraHint: '기기에서 카메라 촬영을 지원하면 카메라가 열려요.',
+      tipOnePage: '한 번에 한 장씩 찍고 금액과 날짜가 잘리지 않게 해 주세요.',
+      processingTitle: '서류에서 납부 정보를 찾고 있어요',
+      processingDetails: '글자를 읽고 번역해 해야 할 일을 정리해요.',
+      recognition: '문서를 읽지 못한 이유',
+      retry: '다시 시도',
+      payBy: '{{date}}까지 납부',
+      dueUnclear: '납부 기한을 확인해 주세요',
+      verifyOriginal: '원본 확인',
+      reminderSchedule: '마감 알림 일정',
+      reminderSeven: 'D-7 · 마감 7일 전 오전 9시 (한국 시간)',
+      reminderOne: 'D-1 · 마감 1일 전 오전 9시 (한국 시간)',
+      saved: '최근 번역에 저장됐어요.',
       entry: '사진',
-      uploadTitle: '고지서 올리기',
+      uploadTitle: '받은 서류를 찍어 올리세요',
       formats: 'JPG·PNG 사진 또는 PDF를 올릴 수 있어요. 최대 10MB예요.',
       pick: '사진 찍기 / 파일 올리기',
       camera: '사진 찍기',
@@ -54,11 +75,10 @@ export const billMessages = defineMessages({
       firstPage: 'PDF의 첫 페이지만 번역했어요.',
       guides: '관련 안내',
       reminder: '납부 마감 알림',
-      reminderHint:
-        '마감 7일 전과 1일 전 오전 9시에 알림을 보내요. 세금 알림 설정을 따릅니다.',
+      reminderHint: '두 알림을 함께 설정하며 세금 알림 설정을 따릅니다.',
       reminderUnavailable: '기한을 확인할 수 없거나 이미 지났어요.',
       ask: '질문하기',
-      done: '완료',
+      done: '완료 · 저장',
       type: {
         TAX_NOTICE: '납세고지서',
         DEMAND_NOTICE: '독촉장',
@@ -93,8 +113,30 @@ export const billMessages = defineMessages({
   en: {
     bill: {
       title: 'Bill translation',
+      screenTitle: 'Translate bills and notices',
+      uploadIntro: 'Find out what to do and when in your language.',
+      documentExamples:
+        'Translate tax notices, fine notices, maintenance bills and letters from school.',
+      privacyTitle: 'Privacy',
+      storageNotice:
+        'We do not store the original file. Results with personal information masked appear under Recent translations and can be deleted at any time.',
+      cameraHint: 'On supported devices, this opens the camera.',
+      tipOnePage:
+        'Take one page at a time and keep the amount and date in the frame.',
+      processingTitle: 'Finding payment information',
+      processingDetails:
+        'We read and translate the text, then summarize what to do.',
+      recognition: 'Why the document could not be read',
+      retry: 'Try again',
+      payBy: 'Pay by {{date}}',
+      dueUnclear: 'Check the payment deadline',
+      verifyOriginal: 'Check the original',
+      reminderSchedule: 'Reminder schedule',
+      reminderSeven: 'D−7 · 7 days before the deadline at 9 a.m. Korea time',
+      reminderOne: 'D−1 · 1 day before the deadline at 9 a.m. Korea time',
+      saved: 'Saved to Recent translations.',
       entry: 'Photo',
-      uploadTitle: 'Upload a bill',
+      uploadTitle: 'Take a photo of your document',
       formats: 'Upload a JPG or PNG photo or a PDF up to 10 MB.',
       pick: 'Take a photo or upload a file',
       camera: 'Take a photo',
@@ -146,10 +188,10 @@ export const billMessages = defineMessages({
       guides: 'Related guides',
       reminder: 'Payment deadline reminders',
       reminderHint:
-        'Reminders are scheduled for 9 a.m. Korea time, 7 days and 1 day before the deadline. Your tax notification settings apply.',
+        'Both reminders use this switch and follow your tax notification settings.',
       reminderUnavailable: 'The deadline is unavailable or has passed.',
       ask: 'Ask a question',
-      done: 'Done',
+      done: 'Done · Saved',
       type: {
         TAX_NOTICE: 'Tax notice',
         DEMAND_NOTICE: 'Payment demand notice',
@@ -185,8 +227,27 @@ export const billMessages = defineMessages({
   zh: {
     bill: {
       title: '账单翻译',
+      screenTitle: '账单和通知翻译',
+      uploadIntro: '用你的语言了解通知要求做什么、何时完成。',
+      documentExamples: '可翻译税务通知、罚款通知、物业费账单和学校通知。',
+      privacyTitle: '个人信息',
+      storageNotice:
+        '本服务不会保存原文件。遮盖个人信息后的结果会显示在“最近翻译”中，可随时删除。',
+      cameraHint: '支持拍照的设备会打开相机。',
+      tipOnePage: '每次拍摄一页，确保金额和日期完整可见。',
+      processingTitle: '正在查找缴费信息',
+      processingDetails: '正在识别并翻译文字，整理待办事项。',
+      recognition: '无法识别文件的原因',
+      retry: '重试',
+      payBy: '请于 {{date}} 前缴费',
+      dueUnclear: '请核对缴费期限',
+      verifyOriginal: '核对原件',
+      reminderSchedule: '提醒时间',
+      reminderSeven: 'D−7 · 截止前 7 天，韩国时间上午 9 点',
+      reminderOne: 'D−1 · 截止前 1 天，韩国时间上午 9 点',
+      saved: '已保存到“最近翻译”。',
       entry: '拍照',
-      uploadTitle: '上传账单',
+      uploadTitle: '拍照上传收到的文件',
       formats: '可上传 JPG、PNG 照片或 PDF，最大 10 MB。',
       pick: '拍照或上传文件',
       camera: '拍照',
@@ -235,11 +296,10 @@ export const billMessages = defineMessages({
       firstPage: '仅翻译了 PDF 的第一页。',
       guides: '相关指南',
       reminder: '缴费截止提醒',
-      reminderHint:
-        '将在截止前 7 天和 1 天的韩国时间上午 9 点提醒，遵循你的税务提醒设置。',
+      reminderHint: '两个提醒一起设置，遵循你的税务通知设置。',
       reminderUnavailable: '无法确认期限，或期限已过。',
       ask: '提问',
-      done: '完成',
+      done: '完成 · 已保存',
       type: {
         TAX_NOTICE: '税务缴费通知单',
         DEMAND_NOTICE: '缴费催缴通知',
@@ -267,8 +327,30 @@ export const billMessages = defineMessages({
   vi: {
     bill: {
       title: 'Dịch hóa đơn',
+      screenTitle: 'Dịch hóa đơn và thông báo',
+      uploadIntro: 'Xem cần làm gì và khi nào bằng ngôn ngữ của bạn.',
+      documentExamples:
+        'Có thể dịch thông báo thuế, giấy phạt, hóa đơn phí quản lý và thông báo của trường.',
+      privacyTitle: 'Thông tin cá nhân',
+      storageNotice:
+        'Dịch vụ không lưu tệp gốc. Kết quả đã che thông tin cá nhân sẽ xuất hiện trong Bản dịch gần đây và có thể xóa bất cứ lúc nào.',
+      cameraHint: 'Máy ảnh sẽ mở trên thiết bị hỗ trợ chụp ảnh.',
+      tipOnePage:
+        'Chụp từng trang và bảo đảm số tiền cùng ngày tháng nằm trọn trong ảnh.',
+      processingTitle: 'Đang tìm thông tin thanh toán',
+      processingDetails:
+        'Hệ thống đọc và dịch nội dung, rồi tóm tắt việc cần làm.',
+      recognition: 'Lý do không đọc được giấy tờ',
+      retry: 'Thử lại',
+      payBy: 'Nộp chậm nhất ngày {{date}}',
+      dueUnclear: 'Hãy kiểm tra hạn nộp',
+      verifyOriginal: 'Kiểm tra bản gốc',
+      reminderSchedule: 'Lịch nhắc hạn nộp',
+      reminderSeven: 'D−7 · Trước hạn 7 ngày, lúc 9 giờ sáng theo giờ Hàn Quốc',
+      reminderOne: 'D−1 · Trước hạn 1 ngày, lúc 9 giờ sáng theo giờ Hàn Quốc',
+      saved: 'Đã lưu vào Bản dịch gần đây.',
       entry: 'Chụp ảnh',
-      uploadTitle: 'Tải hóa đơn lên',
+      uploadTitle: 'Chụp và tải giấy tờ lên',
       formats: 'Tải ảnh JPG, PNG hoặc tệp PDF tối đa 10 MB.',
       pick: 'Chụp ảnh hoặc tải tệp lên',
       camera: 'Chụp ảnh',
@@ -318,10 +400,10 @@ export const billMessages = defineMessages({
       guides: 'Hướng dẫn liên quan',
       reminder: 'Thông báo hạn nộp',
       reminderHint:
-        'Thông báo được lên lịch lúc 9 giờ sáng theo giờ Hàn Quốc, trước hạn 7 ngày và 1 ngày, theo cài đặt thông báo thuế.',
+        'Công tắc này áp dụng cho cả hai lời nhắc theo cài đặt thông báo thuế.',
       reminderUnavailable: 'Không xác định được hạn nộp hoặc đã quá hạn.',
       ask: 'Đặt câu hỏi',
-      done: 'Xong',
+      done: 'Xong · Đã lưu',
       type: {
         TAX_NOTICE: 'Thông báo nộp thuế',
         DEMAND_NOTICE: 'Thông báo đôn đốc nộp tiền',

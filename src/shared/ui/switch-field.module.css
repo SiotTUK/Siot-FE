@@ -33,6 +33,7 @@
 }
 .track {
   position: relative;
+  pointer-events: none;
   flex: none;
   width: 44px;
   height: 26px;

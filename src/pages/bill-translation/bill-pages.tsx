@@ -4,6 +4,7 @@ import { useMe } from '@/features/auth/use-session'
 import { billTranslationPath } from '@/features/bill-translation/bill-translation'
 import { BillResult } from '@/features/bill-translation/ui/bill-result'
 import { BillUpload } from '@/features/bill-translation/ui/bill-upload'
+import styles from '@/features/bill-translation/ui/bill.module.css'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { FormError } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
@@ -24,7 +25,7 @@ export function BillResultPage() {
         title={t('bill.result')}
         back={{ label: t('common.back'), to: billTranslationPath }}
       />
-      <PageBody>
+      <PageBody className={styles.body}>
         {member &&
         /^\d+$/.test(id ?? '') &&
         Number.isSafeInteger(translationId) &&

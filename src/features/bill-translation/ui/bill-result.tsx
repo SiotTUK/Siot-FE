@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { ButtonLink } from '@/shared/ui/button'
-import { DocumentStatus } from '@/shared/ui/document'
-import { Card, FormError, Notice, Section, Stack, Tag } from '@/shared/ui/page'
+import {
+  Card,
+  FormError,
+  Muted,
+  Notice,
+  Section,
+  Stack,
+} from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import { SwitchField } from '@/shared/ui/switch-field'
 import type { BillTranslation } from '../api'
@@ -76,12 +82,12 @@ function ResultDetails({
 
   return (
     <Stack>
-      <DocumentStatus
-        tone="success"
-        label={t(`bill.type.${result.documentType ?? 'OTHER'}`)}
-      >
+      <section className={styles.hero}>
+        <p>{t(`bill.type.${result.documentType ?? 'OTHER'}`)}</p>
+        <h2>{date ? t('bill.payBy', { date }) : t('bill.dueUnclear')}</h2>
+        {dDay && <p className={styles.countdown}>{dDay}</p>}
         {result.issuer && <p lang="ko">{result.issuer}</p>}
-      </DocumentStatus>
+      </section>
       {result.firstPageOnly && (
         <Notice tone="note">{t('bill.firstPage')}</Notice>
       )}
@@ -95,11 +101,6 @@ function ResultDetails({
                   <strong lang={key === 'what' ? 'ko' : undefined}>
                     {value}
                   </strong>
-                )}
-                {key === 'due' && dDay && (
-                  <Tag tone={days !== null && days < 0 ? 'danger' : 'main'}>
-                    {dDay}
-                  </Tag>
                 )}
                 {summary && <p lang={result.language}>{summary}</p>}
                 {key === 'how' && paymentMethods.length > 0 && (
@@ -118,18 +119,21 @@ function ResultDetails({
           ))}
         </dl>
       </Card>
-      <Notice tone="note" title={t('bill.warnings')}>
+      <Notice tone="note" title={t('bill.verifyOriginal')}>
         <p>{t('bill.disclaimer')}</p>
         {result.warnings.length > 0 && (
-          <ul className={styles.list} lang={result.language}>
-            {result.warnings.map(({ code, message }, index) => (
-              <li key={`${code}-${index}`}>{message}</li>
-            ))}
-          </ul>
+          <>
+            <strong>{t('bill.warnings')}</strong>
+            <ul className={styles.list} lang={result.language}>
+              {result.warnings.map(({ code, message }, index) => (
+                <li key={`${code}-${index}`}>{message}</li>
+              ))}
+            </ul>
+          </>
         )}
       </Notice>
       {result.originalLines.length > 0 && (
-        <details className={styles.original}>
+        <details className={styles.disclosure}>
           <summary>{t('bill.original')}</summary>
           <ul className={styles.list} lang="ko">
             {result.originalLines.map((line, index) => (
@@ -149,29 +153,43 @@ function ResultDetails({
           </ul>
         </Section>
       )}
-      <Card>
-        <SwitchField
-          label={t('bill.reminder')}
-          hint={t(
-            days === null || days < 0
-              ? 'bill.reminderUnavailable'
-              : 'bill.reminderHint',
+      <Section title={t('bill.reminderSchedule')}>
+        <Card>
+          <SwitchField
+            label={t('bill.reminder')}
+            hint={t(
+              days === null || days < 0
+                ? 'bill.reminderUnavailable'
+                : 'bill.reminderHint',
+            )}
+            checked={result.reminder}
+            disabled={
+              reminder.isPending ||
+              (!result.reminder && (days === null || days < 0))
+            }
+            onChange={(event) => reminder.change(event.target.checked)}
+          />
+          <ul className={styles.schedule}>
+            <li>{t('bill.reminderSeven')}</li>
+            <li>{t('bill.reminderOne')}</li>
+          </ul>
+          {reminder.isError && (
+            <FormError message={billErrorMessage(t, reminder.error)} />
           )}
-          checked={result.reminder}
-          disabled={
-            reminder.isPending ||
-            (!result.reminder && (days === null || days < 0))
-          }
-          onChange={(event) => reminder.change(event.target.checked)}
-        />
-        {reminder.isError && (
-          <FormError message={billErrorMessage(t, reminder.error)} />
-        )}
-      </Card>
-      <ButtonLink variant="secondary" to="/chat">
+        </Card>
+      </Section>
+      <ButtonLink className={styles.secondary} variant="secondary" to="/chat">
         {t('bill.ask')}
       </ButtonLink>
-      <ButtonLink to={billTranslationPath}>{t('bill.done')}</ButtonLink>
+      <Stack gap={8}>
+        <ButtonLink className={styles.primary} to={billTranslationPath}>
+          {t('bill.done')}
+        </ButtonLink>
+        {result.id !== null && <Muted>{t('bill.saved')}</Muted>}
+      </Stack>
+      <Notice tone="note" title={t('bill.privacyTitle')}>
+        {t('bill.storageNotice')}
+      </Notice>
     </Stack>
   )
 }

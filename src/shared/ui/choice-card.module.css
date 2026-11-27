@@ -77,3 +77,31 @@
   border-radius: 0;
   background: none;
 }
+/* With an icon (F06a): icon left, indicator right, rows split by a line. */
+.card[data-icon] {
+  align-items: center;
+  gap: var(--space-12);
+}
+.card[data-icon] .text {
+  flex: 1;
+  gap: 2px;
+}
+.card[data-icon] .description {
+  font: var(--text-caption);
+}
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  color: var(--primary);
+}
+.group .card[data-icon] {
+  min-height: 72px;
+}
+.group .card[data-icon] + .card[data-icon] {
+  border-top: 1px solid var(--background);
+}

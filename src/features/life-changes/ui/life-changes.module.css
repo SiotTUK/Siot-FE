@@ -1,207 +1,108 @@
-/* Home card (Figma v2 H1): icon tile, title, hint, ›. */
-.card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  padding: var(--space-16);
-  border-radius: var(--radius-16);
-  background: #e6f6f6; /* Mascot/Haero Tint */
-  color: var(--foreground);
-  text-decoration: none;
-}
-.cardIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-8);
-  background: var(--card);
-  color: var(--primary);
-}
-.cardText {
-  flex: 1;
-  min-width: 0;
+/* F06a: the date field under the list. */
+.when {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-.cardText strong {
-  font: var(--text-label);
-  font-weight: 700;
-}
-.cardText small {
-  font: var(--text-caption);
-  color: var(--muted-foreground);
+  gap: var(--space-8);
+  margin-top: var(--space-24);
 }
 
-.editor,
-.form,
-.tasks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-.editor {
+/* F06b 생활 변화 · 할 일 */
+.taskPage {
+  gap: var(--space-24);
   padding-top: var(--space-16);
 }
-.hint,
-.meta {
-  margin: 0;
-  font: var(--text-caption);
-  font-size: 14px;
-  color: var(--muted-foreground);
-}
-.success {
-  margin: 0;
-  font-size: 14px;
-}
-.remove {
-  align-self: start;
-}
-
-/* F06a: radio rows with an icon tile, in one white card. */
-.types {
-  margin: 0;
-  padding: var(--space-4) var(--space-16);
-  border: 0;
-  border-radius: var(--radius-16);
-  background: var(--card);
-}
-.type {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  padding: var(--space-12) 0;
-  cursor: pointer;
-}
-.type + .type {
-  border-top: 1px solid var(--border);
-}
-.typeIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-8);
-  background: var(--secondary);
-  color: var(--primary);
-}
-.typeText {
-  flex: 1;
-  min-width: 0;
+.summary {
   display: flex;
   flex-direction: column;
+  gap: var(--space-8);
 }
-.typeText strong {
-  font: var(--text-label);
-  font-weight: 700;
-}
-.typeText small {
+.summary p {
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
-.type input {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  accent-color: var(--primary);
-}
-
-/* F06b */
-.tasksTitle {
-  margin: 0;
+.summary h1 {
   font: var(--text-title);
 }
 .progress {
   display: flex;
   align-items: center;
   gap: var(--space-8);
+  margin-top: var(--space-4);
   font: var(--text-caption);
   color: var(--muted-foreground);
   white-space: nowrap;
 }
-.progress progress {
+.bar {
   flex: 1;
   height: 6px;
-  border: 0;
   border-radius: 3px;
   overflow: hidden;
-  appearance: none;
   background: var(--border);
 }
-.progress progress::-webkit-progress-bar {
-  background: var(--border);
-}
-.progress progress::-webkit-progress-value {
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
   background: var(--primary);
+  transition: width 0.4s ease;
 }
-.progress progress::-moz-progress-bar {
-  background: var(--primary);
-}
+
+/* "먼저 하세요": the most urgent task on a yellow card with 토로. */
 .first {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--warning-bg);
+}
+.firstMain {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  padding: var(--space-16);
-  border-radius: var(--radius-16);
-  background: #fff6da; /* Mascot/Toro Tint */
 }
-.first img {
-  flex: none;
-  object-fit: contain;
+.firstMain > img {
+  margin: -8px -4px -8px 0;
 }
 .firstText {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 6px;
 }
 .firstTags {
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
-.firstTags span {
-  padding: 1px var(--space-8);
+.dDay {
+  padding: 2px var(--space-8);
   border-radius: 999px;
-  background: var(--destructive-bg);
-  color: var(--destructive);
-  font: var(--text-caption);
-  font-size: 12px;
-  font-weight: 700;
-}
-.firstTags span[data-dday] {
   background: var(--card);
+  font: var(--text-caption);
+  font-weight: 700;
+  color: var(--destructive);
 }
-.firstText h3 {
-  margin: 0;
+.firstText h2 {
   font: var(--text-heading);
 }
 .firstText p {
-  margin: 0;
   font: var(--text-caption);
   color: var(--muted-foreground);
+  overflow-wrap: anywhere;
 }
-.firstAction {
-  display: grid;
-  place-items: center;
-  min-height: 44px;
-  margin-top: var(--space-8);
-  border-radius: var(--radius-8);
-  background: var(--primary);
-  color: var(--card);
+
+/* "함께 챙길 일": the other tasks in one white card. */
+.others {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+.others h2 {
   font: var(--text-label);
   font-weight: 700;
-  text-decoration: none;
-}
-.together {
-  margin: var(--space-8) 0 0;
-  font: var(--text-label);
-  font-weight: 700;
-  color: var(--muted-foreground);
 }
 .list {
   margin: 0;
@@ -210,25 +111,28 @@
   background: var(--card);
   list-style: none;
 }
-.list > li + li {
-  border-top: 1px solid var(--border);
+.list > li:last-child > * {
+  border-bottom: 0;
 }
 .note {
   display: flex;
-  align-items: flex-start;
   gap: var(--space-8);
-  margin: 0;
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
-.note svg {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
+.remove {
+  align-self: start;
 }
 .bottomActions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-8);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar > span {
+    transition: none;
+  }
+}
+.firstSkip {
+  align-self: center;
 }

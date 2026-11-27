@@ -26,7 +26,7 @@ export function formatMonthDay(
   }).format(date)
 }
 
-/** Calendar date (YYYY-MM-DD) as a spelled-out month and day, e.g. "12월 10일". */
+/** Calendar date (YYYY-MM-DD) with the month spelled out, e.g. "11월 18일", "November 18". */
 export function formatLongMonthDay(value: string, language: string) {
   const date = new Date(`${value}T00:00:00Z`)
   return Number.isNaN(date.getTime())
@@ -38,7 +38,7 @@ export function formatLongMonthDay(value: string, language: string) {
       }).format(date)
 }
 
-/** Calendar date (YYYY-MM-DD) as year and month, e.g. "2027년 3월". */
+/** Year and month of a calendar date, e.g. "2027년 3월", "March 2027". */
 export function formatYearMonth(value: string, language: string) {
   const date = new Date(`${value}T00:00:00Z`)
   return Number.isNaN(date.getTime())

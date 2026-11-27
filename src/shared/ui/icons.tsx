@@ -58,7 +58,22 @@ export const TranslateIcon = (props: SVGProps<SVGSVGElement>) => (
   </Icon>
 )
 
-/** ♥ 찜. `filled` draws the saved state. */
+/** 생활 변화: a house with an arrow going out. */
+export const LifeChangeIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M3 11 10 5l7 6" />
+    <path d="M5 10v9h10" />
+    <path d="M15 15h7m-3-3 3 3-3 3" />
+  </Icon>
+)
+
+export const CameraIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+    <circle cx="12" cy="13" r="3.5" />
+  </Icon>
+)
+
 export const HeartIcon = ({
   filled = false,
   ...props
@@ -124,83 +139,11 @@ export const ArrowRightIcon = (props: SVGProps<SVGSVGElement>) => (
   </Icon>
 )
 
-export const HouseArrowIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <path d="M3 10.5 12 3l9 7.5V21H3Z" />
-    <path d="M9 21v-6h6v6" />
-  </Icon>
-)
-
-export const CameraIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3Z" />
-    <circle cx="12" cy="13" r="3" />
-  </Icon>
-)
-
 export const SettingsIcon = (props: SVGProps<SVGSVGElement>) => (
   <Icon {...props}>
     <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
     <circle cx="16" cy="6" r="2" />
     <circle cx="10" cy="12" r="2" />
     <circle cx="18" cy="18" r="2" />
-  </Icon>
-)
-
-export const BriefcaseIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <rect x="2" y="7" width="20" height="14" rx="2" />
-    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20" />
-  </Icon>
-)
-
-export const SchoolIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <path d="m22 9-10-5L2 9l10 5 10-5Z" />
-    <path d="M6 11v5c3 2 9 2 12 0v-5" />
-  </Icon>
-)
-
-export const CarIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <path d="M5 17H3v-5l2-5h14l2 5v5h-2" />
-    <circle cx="7.5" cy="17" r="2" />
-    <circle cx="16.5" cy="17" r="2" />
-    <path d="M9.5 17h5M3 12h18" />
-  </Icon>
-)
-
-export const BabyIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <circle cx="12" cy="8" r="5" />
-    <path d="M10 8h.01M14 8h.01M10.5 10.5a2 2 0 0 0 3 0M6 21a6 6 0 0 1 12 0" />
-  </Icon>
-)
-
-export const UsersIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <circle cx="9" cy="8" r="4" />
-    <path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3" />
-  </Icon>
-)
-
-export const PlaneIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z" />
-  </Icon>
-)
-
-export const IdCardIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <rect x="2" y="5" width="20" height="14" rx="2" />
-    <circle cx="8" cy="12" r="2.5" />
-    <path d="M14 10h4M14 14h4" />
-  </Icon>
-)
-
-export const InfoIcon = (props: SVGProps<SVGSVGElement>) => (
-  <Icon {...props}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 16v-4M12 8h.01" />
   </Icon>
 )

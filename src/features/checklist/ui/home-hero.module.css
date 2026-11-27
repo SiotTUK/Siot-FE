@@ -1,0 +1,88 @@
+/* Figma v2 H1 (blue, urgent) and H2 (tinted, calm) hero card. */
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* About the urgent card's height, so switching to calm doesn't pull the
+     list below up by ~30px. */
+  min-height: 152px;
+  padding: 20px;
+  border-radius: var(--radius-16);
+  background: var(--primary);
+  color: var(--card);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+.hero[data-kind='calm'] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+/* 토로's picture has empty space around it; draw it bigger but let it sit in
+   the card's padding so the card keeps its height. */
+.hero[data-kind='urgent'] .content > img {
+  margin: -14px -6px -14px 0;
+}
+.content[data-enter] {
+  animation: hero-enter 0.3s ease both;
+}
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.label {
+  font: var(--text-caption);
+  overflow-wrap: anywhere;
+}
+.hero[data-kind='calm'] .label {
+  color: var(--primary);
+}
+.title {
+  font: var(--text-title);
+  overflow-wrap: anywhere;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+  font: var(--text-caption);
+  white-space: nowrap;
+}
+.bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 35%);
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--card);
+  transition: width 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .bar > span {
+    transition: none;
+  }
+  .content[data-enter] {
+    animation: none;
+  }
+}

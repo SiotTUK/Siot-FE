@@ -38,7 +38,7 @@ export const homeMessages = defineMessages({
   zh: {
     home: {
       billTitle: '收到的文件，拍一张照片就可以',
-      billLabel: '把账单和通知翻译成你的语言',
+      billLabel: '把账单和通知翻译成我的语言',
       comingSoon: '准备中',
       situationEdit: '修改',
       situationEditLabel: '修改我的情况',

@@ -42,6 +42,27 @@ export function pickDeadlineAlert(items: ChecklistItemResponse[]) {
 }
 
 /**
+ * Home hero (Figma v2 H1/H2). `urgent`: the open item due within 30 days (or
+ * overdue) with the nearest deadline. Otherwise `calm` ("지금 급한 할 일은
+ * 없어요") with the next open item that has a later deadline, if any.
+ */
+export function homeHero(
+  items: ChecklistItemResponse[],
+):
+  | { kind: 'urgent'; item: ChecklistItemResponse }
+  | { kind: 'calm'; next?: ChecklistItemResponse } {
+  const urgent = pickDeadlineAlert(items)
+  if (urgent) return { kind: 'urgent', item: urgent }
+  return { kind: 'calm', next: pickNextItem(items) }
+}
+
+/** Required items still to do (the "나에게 필요한 할 일 N" count). */
+export function openRequiredCount(items: ChecklistItemResponse[]) {
+  return items.filter((item) => item.itemType === 'REQUIRED' && open(item))
+    .length
+}
+
+/**
  * H2 "다음 할 일": the open item whose server deadline comes first. The home
  * switches to H2 when `pickDeadlineAlert` finds nothing within 30 days.
  */
@@ -127,4 +148,14 @@ export function markErrorMessage(t: TFunction, error: unknown) {
   return error instanceof ApiError && error.code === 'GUIDE_NOT_FOUND'
     ? t('checklist.itemGone')
     : errorMessage(t, error)
+}
+
+/**
+ * Where "‹" on the checklist detail goes: the screen that opened it (F06b
+ * passes its path as link state), otherwise home — also for notifications
+ * and shared links, which carry no state.
+ */
+export function detailBackPath(state: unknown): string {
+  const back = (state as { back?: unknown } | null)?.back
+  return typeof back === 'string' && back.startsWith('/home/') ? back : '/home'
 }

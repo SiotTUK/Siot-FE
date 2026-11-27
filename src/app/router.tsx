@@ -11,6 +11,7 @@ import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
 import { ChecklistDetailPage } from '@/pages/home/checklist-detail-page'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
+import { LifeChangeSelectPage } from '@/pages/home/life-change-select-page'
 import { LanguagePage } from '@/pages/language-page'
 import { MeEditPage } from '@/pages/me/me-edit-page'
 import { MePage } from '@/pages/me/me-page'
@@ -112,6 +113,7 @@ export const router = createBrowserRouter([
             path: '/rules/:code',
             element: deferredPage(ruleScreen, 'RuleDetailPage'),
           },
+          { path: '/home/life-changes', element: <LifeChangeSelectPage /> },
           { path: '/home/checklist/:code', element: <ChecklistDetailPage /> },
           { path: '/home/life-changes', element: <LifeChangePage /> },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },

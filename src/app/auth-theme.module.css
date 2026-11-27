@@ -4,8 +4,9 @@
  * moves to v2.
  */
 .theme {
-  --primary: #1987c2; /* Color/Brand */
-  --primary-hover: #146c9b;
+  /* Color/Brand: the team chose #018eda over Figma's #1987c2 (2026-11-27). */
+  --primary: #018eda;
+  --primary-hover: #0172ae;
   --secondary: #e3f3f7; /* Color/Tint */
   --foreground: #1a1f27; /* Color/Ink */
   --background: #f5f7f6; /* Color/Canvas */

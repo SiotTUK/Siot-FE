@@ -18,6 +18,8 @@ export function useChatConversation(
   conversationId: number | undefined,
   /** A question started from a detail screen (CB-06). */
   entry?: { key: string; draft: string; topic: ChatTopic },
+  /** The first question created the conversation, just before the URL changes. */
+  onCreated?: (conversationId: number) => void,
 ) {
   const navigate = useNavigate()
   const [draft, setDraft] = useState(entry?.draft ?? '')
@@ -43,6 +45,7 @@ export function useChatConversation(
       {
         onSuccess: ({ conversationId: id }) => {
           if (conversationId !== undefined) return
+          onCreated?.(id)
           navigate(`/chat/${id}`, {
             replace: true,
             // Keep the back button pointing at the detail screen.

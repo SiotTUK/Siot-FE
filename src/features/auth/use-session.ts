@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { billKeys } from '@/features/bill-translation/api'
 import { scheduleQueryKey } from '@/features/calendar/api'
+import { forgetBillCards } from '@/features/chat/chat-bill-cards'
 import { forgetConversation } from '@/features/chat/chat-entry'
 import { checklistKeys } from '@/features/checklist/api'
 import { eventKeys } from '@/features/events/api'
@@ -91,6 +92,7 @@ export function useStartSession() {
     async (member: MemberResponse) => {
       rotateSessionScope(queryClient)
       forgetConversation()
+      forgetBillCards()
       queryClient.removeQueries({ queryKey: billKeys.all })
       queryClient.removeQueries({ queryKey: checklistKeys.all })
       queryClient.removeQueries({ queryKey: scheduleQueryKey })
@@ -152,6 +154,7 @@ function useEndSession() {
     async (notice?: SessionLocationState['notice']) => {
       rotateSessionScope(queryClient)
       forgetConversation()
+      forgetBillCards()
       // M-06·M-09: logged out, to the main screen. `signedOut` keeps GuestOnly
       // from sending the visitor home while `me` is still being cleared.
       const state: SessionLocationState = { signedOut: true, notice }

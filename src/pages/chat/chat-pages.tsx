@@ -1,8 +1,23 @@
-import { useEffect, useRef } from 'react'
+import { Fragment, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation, useParams } from 'react-router-dom'
+import {
+  Navigate,
+  useLocation,
+  useNavigationType,
+  useParams,
+} from 'react-router-dom'
 import { useChangeLanguage, useMe } from '@/features/auth/use-session'
+import { photoTypes } from '@/features/bill-translation/bill-translation'
+import { BillConsentSheet } from '@/features/bill-translation/ui/bill-consent'
+import { BillFileInput } from '@/features/bill-translation/ui/bill-file-input'
 import { questionMaxLength } from '@/features/chat/api'
+import {
+  dropNewBillCards,
+  forgetBillCards,
+  linkNewBillCards,
+  placeBillCards,
+  type ChatBillCard,
+} from '@/features/chat/chat-bill-cards'
 import {
   chatTopicPath,
   currentConversation,
@@ -12,7 +27,12 @@ import {
   rememberConversation,
 } from '@/features/chat/chat-entry'
 import { useSuggestions } from '@/features/chat/use-chat'
+import { useChatBill } from '@/features/chat/use-chat-bill'
 import { useChatConversation } from '@/features/chat/use-chat-conversation'
+import {
+  ChatBillPendingTurn,
+  ChatBillResultTurn,
+} from '@/features/chat/ui/chat-bill'
 import { ChatComposer } from '@/features/chat/ui/chat-composer'
 import {
   ChatBubble,
@@ -63,16 +83,66 @@ function ChatScreen() {
     id === undefined && topic && topicDraft !== undefined
       ? { key, topic, draft: topicDraft }
       : undefined
-  const chat = useChatConversation(invalidId ? undefined : id, entry)
+  const navigationType = useNavigationType()
+  const bill = useChatBill(
+    memberId ?? 0,
+    id ?? null,
+    entry !== undefined && navigationType === 'PUSH',
+  )
+  const chat = useChatConversation(
+    invalidId ? undefined : id,
+    entry,
+    (created) => {
+      if (memberId !== undefined) linkNewBillCards(memberId, created)
+    },
+  )
   const changeLanguage = useChangeLanguage()
   const suggestions = useSuggestions(currentLanguage())
   const endRef = useRef<HTMLDivElement>(null)
+  const scrollToEnd = useCallback(
+    () => endRef.current?.scrollIntoView({ block: 'end' }),
+    [],
+  )
   const empty = chat.list.length === 0 && chat.sending === undefined
   const notFound = invalidId || chat.notFound
+  const photoInput = useRef<HTMLInputElement>(null)
+  // A card's place is the last message, so it must be loaded and settled.
+  const photoDisabled =
+    notFound ||
+    chat.ask.isPending ||
+    bill.processing ||
+    (id !== undefined && !chat.messages.isSuccess)
+  const pickPhoto = () => photoInput.current?.click()
+  /** No question is sent while a photo is processed, so the log keeps order. */
+  const send = (text: string) => {
+    if (bill.processing || !text.trim()) return
+    bill.dismiss()
+    chat.send(text)
+  }
+  const billPlaces = placeBillCards(
+    bill.cards,
+    chat.list.map((message) => message.messageId),
+  )
+  const billResults = (cards: ChatBillCard[] = []) =>
+    cards.map((card) => (
+      <ChatBillResultTurn
+        key={card.translationId}
+        memberId={memberId ?? 0}
+        translationId={card.translationId}
+        conversationPath={id === undefined ? '/chat' : `/chat/${id}`}
+        onLoaded={scrollToEnd}
+      />
+    ))
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: 'end' })
-  }, [chat.list.length, chat.sending])
+    scrollToEnd()
+  }, [
+    scrollToEnd,
+    chat.list.length,
+    chat.sending,
+    bill.cards.length,
+    bill.turn?.step,
+  ])
 
   // The conversation on screen becomes the one the chat tab reopens.
   const opened = id !== undefined && !invalidId && chat.messages.isSuccess
@@ -80,7 +150,9 @@ function ChatScreen() {
     if (opened && memberId !== undefined) rememberConversation(memberId, id)
   }, [opened, memberId, id])
   useEffect(() => {
-    if (chat.notFound && id !== undefined) forgetConversation(id)
+    if (!chat.notFound || id === undefined) return
+    forgetConversation(id)
+    forgetBillCards(id)
   }, [chat.notFound, id])
 
   return (
@@ -98,7 +170,13 @@ function ChatScreen() {
                 <HistoryIcon />
                 <span className="visually-hidden">{t('chat.history')}</span>
               </HeaderAction>
-              <HeaderAction to="/chat" onClick={chat.startOver}>
+              <HeaderAction
+                to="/chat"
+                onClick={() => {
+                  chat.startOver()
+                  bill.startOver()
+                }}
+              >
                 <PlusIcon />
                 <span className="visually-hidden">{t('chat.newChat')}</span>
               </HeaderAction>
@@ -110,13 +188,21 @@ function ChatScreen() {
         <ChatComposer
           draft={chat.draft}
           onDraftChange={chat.setDraft}
-          onSend={chat.send}
-          busy={chat.ask.isPending}
+          onSend={send}
+          busy={chat.ask.isPending || bill.processing}
           disabled={notFound}
+          onPhoto={pickPhoto}
+          photoDisabled={photoDisabled}
           error={
-            chat.ask.isError || chat.feedback.isError
-              ? errorMessage(t, chat.ask.error ?? chat.feedback.error)
-              : undefined
+            bill.fileError
+              ? t(
+                  bill.fileError === 'BILL_FILE_TOO_LARGE'
+                    ? 'bill.errors.BILL_FILE_TOO_LARGE'
+                    : 'chat.bill.photoOnly',
+                )
+              : chat.ask.isError || chat.feedback.isError
+                ? errorMessage(t, chat.ask.error ?? chat.feedback.error)
+                : undefined
           }
         />
       }
@@ -140,9 +226,12 @@ function ChatScreen() {
               />
             }
             suggestions={suggestions.data?.questions}
-            busy={chat.ask.isPending}
-            onAsk={empty && !notFound ? chat.send : undefined}
+            busy={chat.ask.isPending || bill.processing}
+            onAsk={empty && !notFound ? send : undefined}
+            onPhoto={pickPhoto}
+            photoDisabled={photoDisabled}
           />
+          {billResults(billPlaces.first)}
           {chat.list.map((message, index) => {
             // Only the latest failed answer offers to send its question again.
             const question = chat.list[index - 1]
@@ -152,16 +241,20 @@ function ChatScreen() {
               question?.role === 'USER' &&
               chat.sending === undefined
             return (
-              <ChatMessage
-                key={message.messageId}
-                message={message}
-                conversationPath={id === undefined ? undefined : `/chat/${id}`}
-                feedbackDisabled={chat.feedback.isPending}
-                onFeedback={(helpful) => chat.rate(message.messageId, helpful)}
-                onRetry={
-                  retryable ? () => chat.send(question.content) : undefined
-                }
-              />
+              <Fragment key={message.messageId}>
+                <ChatMessage
+                  message={message}
+                  conversationPath={
+                    id === undefined ? undefined : `/chat/${id}`
+                  }
+                  feedbackDisabled={chat.feedback.isPending}
+                  onFeedback={(helpful) =>
+                    chat.rate(message.messageId, helpful)
+                  }
+                  onRetry={retryable ? () => send(question.content) : undefined}
+                />
+                {billResults(billPlaces.after.get(message.messageId))}
+              </Fragment>
             )
           })}
           {chat.sending !== undefined && (
@@ -172,9 +265,31 @@ function ChatScreen() {
               <ChatThinking />
             </>
           )}
+          {bill.turn && (
+            <ChatBillPendingTurn
+              turn={bill.turn}
+              onCancel={bill.clear}
+              onResend={bill.select}
+              onPickAgain={pickPhoto}
+            />
+          )}
         </QueryState>
       )}
       <div ref={endRef} />
+      <BillFileInput
+        ref={photoInput}
+        accept={photoTypes}
+        onSelect={bill.select}
+        onReject={bill.reject}
+      />
+      {bill.file && (
+        <BillConsentSheet
+          consent={bill.consent}
+          onConsentChange={bill.setConsent}
+          onAgree={() => void bill.start(chat.list.at(-1)?.messageId ?? null)}
+          onClose={bill.closeConsent}
+        />
+      )}
     </ChatLayout>
   )
 }
@@ -182,6 +297,7 @@ function ChatScreen() {
 /** CB-03 past conversations. */
 export function ChatHistoryPage() {
   const { t } = useTranslation()
+  const memberId = useMe().data?.id
   return (
     <ChatLayout
       header={
@@ -189,7 +305,13 @@ export function ChatHistoryPage() {
           back={{ label: t('nav.chat'), to: '/chat' }}
           title={t('chat.historyTitle')}
           actions={
-            <HeaderAction to="/chat" onClick={() => forgetConversation()}>
+            <HeaderAction
+              to="/chat"
+              onClick={() => {
+                forgetConversation()
+                if (memberId !== undefined) dropNewBillCards(memberId)
+              }}
+            >
               {t('chat.newChat')}
             </HeaderAction>
           }

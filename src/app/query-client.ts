@@ -3,6 +3,7 @@ import { meQueryKey } from '@/features/auth/api'
 import { rotateSessionScope } from '@/features/auth/session-scope'
 import { billKeys } from '@/features/bill-translation/api'
 import { scheduleQueryKey } from '@/features/calendar/api'
+import { forgetBillCards } from '@/features/chat/chat-bill-cards'
 import { forgetConversation } from '@/features/chat/chat-entry'
 import { checklistKeys } from '@/features/checklist/api'
 import { eventKeys } from '@/features/events/api'
@@ -19,6 +20,7 @@ function onSessionExpired(error: unknown) {
   if (error instanceof ApiError && error.code === 'UNAUTHORIZED') {
     rotateSessionScope(queryClient)
     forgetConversation()
+    forgetBillCards()
     queryClient.setQueryData(meQueryKey, null)
     queryClient.removeQueries({ queryKey: billKeys.all })
     queryClient.removeQueries({ queryKey: checklistKeys.all })

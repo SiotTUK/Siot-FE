@@ -71,11 +71,16 @@ export function ChatIntro({
   suggestions = [],
   busy,
   onAsk,
+  onPhoto,
+  photoDisabled,
 }: {
   language: ReactNode
   suggestions?: string[]
   busy: boolean
   onAsk?: (question: string) => void
+  /** #29: the first chip opens the photo picker instead of asking. */
+  onPhoto: () => void
+  photoDisabled?: boolean
 }) {
   const { t } = useTranslation()
   return (
@@ -92,24 +97,25 @@ export function ChatIntro({
         <>
           <ChatBubble avatar>{t('chat.greetingHello')}</ChatBubble>
           <ChatBubble avatar>{t('chat.greetingAsk')}</ChatBubble>
-          {suggestions.length > 0 && (
-            <ul
-              className={styles.suggestions}
-              aria-label={t('chat.suggestions')}
-            >
-              {suggestions.map((question) => (
-                <li key={question}>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => onAsk(question)}
-                  >
-                    {question}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul className={styles.suggestions} aria-label={t('chat.suggestions')}>
+            <li>
+              <button type="button" disabled={photoDisabled} onClick={onPhoto}>
+                <span aria-hidden="true">📷 </span>
+                {t('chat.bill.chip')}
+              </button>
+            </li>
+            {suggestions.map((question) => (
+              <li key={question}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onAsk(question)}
+                >
+                  {question}
+                </button>
+              </li>
+            ))}
+          </ul>
         </>
       )}
     </>

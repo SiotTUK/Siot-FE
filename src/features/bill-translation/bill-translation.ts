@@ -2,12 +2,22 @@ import type { TFunction } from 'i18next'
 import { ApiError } from '@/shared/api/client'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { koreaToday } from '@/shared/i18n/format'
+import { chatBackPath } from '@/shared/lib/chat-back'
 import type { RelatedBillGuide } from './api'
 
 export const photoTypes = 'image/jpeg,image/png'
 export const pdfType = 'application/pdf'
 export const maxBillBytes = 10 * 1024 * 1024
 export const billTranslationPath = '/translations/bills'
+
+/**
+ * "‹" of a result opened from a chat card goes back to that chat (`/chat` for
+ * a new chat without a conversation yet), otherwise to the upload screen.
+ */
+export function billBackPath(state: unknown) {
+  const from = (state as { from?: unknown } | null)?.from
+  return from === '/chat' ? from : (chatBackPath(state) ?? billTranslationPath)
+}
 
 export function validateBillFile(file: File, accept: string) {
   if (!accept.split(',').includes(file.type) || file.size === 0)
@@ -36,6 +46,23 @@ export function billErrorMessage(t: TFunction, error: unknown) {
 
 export function billDaysLeft(date: string, now?: Date) {
   return (Date.parse(date) - Date.parse(koreaToday(now))) / 86_400_000
+}
+
+/** "D-7", or the words for today and a passed deadline. */
+export function billDDayLabel(t: TFunction, date: string | null, now?: Date) {
+  if (!date) return null
+  const days = billDaysLeft(date, now)
+  if (days === 0) return t('bill.today')
+  return days < 0 ? t('bill.overdue') : `D-${days}`
+}
+
+export function formatBillAmount(amount: number | null, language: string) {
+  return amount === null
+    ? null
+    : new Intl.NumberFormat(language, {
+        style: 'currency',
+        currency: 'KRW',
+      }).format(amount)
 }
 
 const opensChecklist = ({ kind }: RelatedBillGuide) =>

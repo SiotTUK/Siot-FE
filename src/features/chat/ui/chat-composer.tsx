@@ -11,6 +11,8 @@ export function ChatComposer({
   busy,
   disabled,
   error,
+  onPhoto,
+  photoDisabled,
 }: {
   draft: string
   onDraftChange: (value: string) => void
@@ -18,6 +20,9 @@ export function ChatComposer({
   busy: boolean
   disabled?: boolean
   error?: string
+  /** #29: opens the photo picker for a bill translation. */
+  onPhoto: () => void
+  photoDisabled?: boolean
 }) {
   const { t } = useTranslation()
   return (
@@ -35,6 +40,15 @@ export function ChatComposer({
           onSend(draft)
         }}
       >
+        <button
+          type="button"
+          className={styles.photo}
+          aria-label={t('chat.bill.entry')}
+          disabled={photoDisabled}
+          onClick={onPhoto}
+        >
+          <span aria-hidden="true">📷</span>
+        </button>
         <textarea
           aria-label={t('chat.inputLabel')}
           rows={1}

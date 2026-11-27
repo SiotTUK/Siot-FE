@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { currentLanguage } from '@/shared/i18n'
 import { Button } from '@/shared/ui/button'
 import { AttachmentItem } from '@/shared/ui/document'
-import { CheckField } from '@/shared/ui/field'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import {
   FormError,
@@ -22,9 +21,16 @@ import {
   billTranslationPath,
   pdfType,
   photoTypes,
-  validateBillFile,
 } from '../bill-translation'
 import { useTranslateBill } from '../use-bill-translations'
+import { BillConsent } from './bill-consent'
+import {
+  BillFailureCard,
+  BillPhotoTips,
+  BillRetakeActions,
+} from './bill-failure'
+import { BillFileInput } from './bill-file-input'
+import { BillProcessingCard } from './bill-processing-card'
 import { RecentBills } from './recent-bills'
 import styles from './bill.module.css'
 
@@ -57,16 +63,7 @@ export function BillUpload({ memberId }: { memberId: number }) {
     setFileError(undefined)
   }
 
-  function selectFile(event: ChangeEvent<HTMLInputElement>) {
-    const { files, accept } = event.currentTarget
-    const file = files?.[0]
-    event.currentTarget.value = ''
-    if (!file) return
-    const error = validateBillFile(file, accept)
-    if (error) {
-      setFileError(error)
-      return
-    }
+  function selectFile(file: File) {
     setFileError(undefined)
     upload.reset()
     setConsent(false)
@@ -108,27 +105,24 @@ export function BillUpload({ memberId }: { memberId: number }) {
         }
       />
       <PageBody className={styles.body}>
-        <input
-          hidden
+        <BillFileInput
           ref={camera}
-          type="file"
           accept={photoTypes}
           capture="environment"
-          onChange={selectFile}
+          onSelect={selectFile}
+          onReject={setFileError}
         />
-        <input
-          hidden
+        <BillFileInput
           ref={album}
-          type="file"
           accept={photoTypes}
-          onChange={selectFile}
+          onSelect={selectFile}
+          onReject={setFileError}
         />
-        <input
-          hidden
+        <BillFileInput
           ref={pdf}
-          type="file"
           accept={pdfType}
-          onChange={selectFile}
+          onSelect={selectFile}
+          onReject={setFileError}
         />
         <FormError
           message={fileError ? t(`bill.errors.${fileError}`) : undefined}
@@ -172,7 +166,7 @@ export function BillUpload({ memberId }: { memberId: number }) {
             </div>
             <details className={styles.disclosure} open>
               <summary>{t('bill.tipsTitle')}</summary>
-              <PhotoTips />
+              <BillPhotoTips />
             </details>
             <RecentBills memberId={memberId} />
           </>
@@ -180,22 +174,15 @@ export function BillUpload({ memberId }: { memberId: number }) {
         {state.screen === 'consent' && (
           <Stack>
             <AttachmentItem name={state.file.name} />
-            <Notice title={t('bill.consentTitle')}>{t('bill.privacy')}</Notice>
-            <CheckField
-              label={t('bill.agree')}
-              checked={consent}
-              onChange={(event) => setConsent(event.target.checked)}
+            <BillConsent
+              title={t('bill.consentTitle')}
+              consent={consent}
+              onConsentChange={setConsent}
+              onAgree={() => void start(state.file)}
+              error={
+                upload.isError ? billErrorMessage(t, upload.error) : undefined
+              }
             />
-            {upload.isError && (
-              <FormError message={billErrorMessage(t, upload.error)} />
-            )}
-            <Button
-              className={styles.primary}
-              disabled={!consent}
-              onClick={() => void start(state.file)}
-            >
-              {t('bill.translate')}
-            </Button>
             <Button variant="text" onClick={reset}>
               {t('bill.changeFile')}
             </Button>
@@ -250,29 +237,14 @@ export function BillUpload({ memberId }: { memberId: number }) {
   )
 }
 
-function PhotoTips() {
-  const { t } = useTranslation()
-  return (
-    <ul className={styles.list}>
-      <li>{t('bill.tipLight')}</li>
-      <li>{t('bill.tipFrame')}</li>
-      <li>{t('bill.tipFocus')}</li>
-      <li>{t('bill.tipOnePage')}</li>
-    </ul>
-  )
-}
-
 function Processing({ file, onCancel }: { file: File; onCancel: () => void }) {
   const { t } = useTranslation()
   const [preview, setPreview] = useState<string>()
-  const [delayed, setDelayed] = useState(false)
   useEffect(() => {
     const url = URL.createObjectURL(file)
-    const timer = window.setTimeout(() => setDelayed(true), 10_000)
     const frame = window.requestAnimationFrame(() => setPreview(url))
     return () => {
       window.cancelAnimationFrame(frame)
-      window.clearTimeout(timer)
       URL.revokeObjectURL(url)
     }
   }, [file])
@@ -282,17 +254,7 @@ function Processing({ file, onCancel }: { file: File; onCancel: () => void }) {
         <h2>{t('bill.processingTitle')}</h2>
         <Muted>{t('bill.usualTime')}</Muted>
       </section>
-      <Card>
-        <div className={styles.status} role="status">
-          <span className={styles.spinner} aria-hidden="true" />
-          <div>
-            <strong>{t('bill.processing')}</strong>
-            <Muted>
-              {t(delayed ? 'bill.delayed' : 'bill.processingDetails')}
-            </Muted>
-          </div>
-        </div>
-      </Card>
+      <BillProcessingCard />
       <AttachmentItem name={file.name}>
         {preview &&
           (file.type === pdfType ? (
@@ -341,47 +303,17 @@ function RecognitionFailure({
   onRetake: () => void
 }) {
   const { t } = useTranslation()
-  const reason = result.retake?.reason
   return (
     <Stack gap={12}>
       <section className={styles.centerIntro}>
         <h2>{t('bill.failed')}</h2>
       </section>
-      <Card>
-        <strong className={styles.errorTitle}>{t('bill.recognition')}</strong>
-        <p role="alert">
-          {reason
-            ? t(`bill.retake.${reason}`, {
-                defaultValue: result.retake?.message,
-              })
-            : t('bill.tipFocus')}
-        </p>
-        <Button
-          className={styles.secondary}
-          variant="secondary"
-          block
-          onClick={onRetry}
-        >
-          {t('bill.retry')}
-        </Button>
-      </Card>
+      <BillFailureCard result={result} onRetry={onRetry} />
       <Card>
         <strong>{t('bill.tipsTitle')}</strong>
-        <PhotoTips />
+        <BillPhotoTips />
       </Card>
-      <div className={styles.actions}>
-        <Button
-          className={styles.secondary}
-          variant="secondary"
-          block
-          onClick={onAlbum}
-        >
-          {t('bill.album')}
-        </Button>
-        <Button className={styles.primary} onClick={onRetake}>
-          {t('bill.captureAgain')}
-        </Button>
-      </div>
+      <BillRetakeActions onAlbum={onAlbum} onRetake={onRetake} />
       <div className={styles.help}>
         <Link to="/chat">{t('bill.askDirect')}</Link>
         <Section title={t('bill.contact')}>

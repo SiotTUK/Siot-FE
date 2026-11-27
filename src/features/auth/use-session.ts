@@ -7,6 +7,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { scheduleQueryKey } from '@/features/calendar/api'
+import { forgetConversation } from '@/features/chat/chat-entry'
 import { checklistKeys } from '@/features/checklist/api'
 import { eventKeys } from '@/features/events/api'
 import { lifeChangeKeys } from '@/features/life-changes/api'
@@ -95,6 +96,7 @@ export function useStartSession() {
   return useCallback(
     async (member: MemberResponse) => {
       rotateSessionScope(queryClient)
+      forgetConversation()
       queryClient.removeQueries({ queryKey: checklistKeys.all })
       queryClient.removeQueries({ queryKey: scheduleQueryKey })
       queryClient.removeQueries({ queryKey: eventKeys.all })
@@ -154,6 +156,7 @@ function useEndSession() {
   return useCallback(
     async (notice?: SessionLocationState['notice']) => {
       rotateSessionScope(queryClient)
+      forgetConversation()
       // M-06·M-09: logged out, to the main screen. `signedOut` keeps GuestOnly
       // from sending the visitor home while `me` is still being cleared.
       const state: SessionLocationState = { signedOut: true, notice }

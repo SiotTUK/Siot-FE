@@ -4,9 +4,18 @@ import type {
   EventDetail,
   EventRecommendation,
 } from '@/features/events/api'
+import { isIsoDate } from '@/features/events/event-filters'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { body, currentMember, error, unauthorized } from '../db'
+
+// Events that already ended, for "지난 행사 보기" (past=true).
+const pastTitles: Record<Language, string[]> = {
+  ko: ['가을 다문화 축제', '외국인 주민 생활 설명회'],
+  en: ['Autumn multicultural festival', 'Life in Siheung briefing'],
+  zh: ['秋季多文化节', '外国居民生活说明会'],
+  vi: ['Lễ hội đa văn hóa mùa thu', 'Buổi giới thiệu đời sống tại Siheung'],
+}
 
 const sampleText = {
   ko: {
@@ -79,7 +88,7 @@ export function mockEvents(language: Language) {
   const dateIn = (days: number) =>
     new Date(today + days * 86_400_000).toISOString().slice(0, 10)
 
-  return text.titles.map<EventDetail>((title, index) => ({
+  const upcoming = text.titles.map<EventDetail>((title, index) => ({
     eventId: index + 1,
     title,
     venue: text.venues[index],
@@ -99,6 +108,37 @@ export function mockEvents(language: Language) {
     sourceUrl: 'https://www.siheung.go.kr/',
     subscribed: false,
   }))
+  const past = pastTitles[language].map<EventDetail>((title, index) => ({
+    ...upcoming[index],
+    eventId: upcoming.length + index + 1,
+    title,
+    startsOn: dateIn(index === 0 ? -40 : -20),
+    endsOn: dateIn(index === 0 ? -38 : -20),
+    multicultural: index === 0,
+    applicationUrl: null,
+  }))
+  return [...upcoming, ...past]
+}
+
+/** GET /api/events conditions from EVE-10: past and an overlapping period. */
+export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
+  const today = koreaToday()
+  const past = params.get('past') === 'true'
+  const from = params.get('from')
+  const to = params.get('to')
+  return events
+    .filter(({ startsOn, endsOn }) => {
+      const start = startsOn ?? endsOn
+      const end = endsOn ?? startsOn
+      if (!start || !end) return false
+      if (past ? end >= today : end < today) return false
+      return (!from || end >= from) && (!to || start <= to)
+    })
+    .sort((a, b) =>
+      past
+        ? (b.endsOn ?? '').localeCompare(a.endsOn ?? '')
+        : (a.startsOn ?? '').localeCompare(b.startsOn ?? ''),
+    )
 }
 
 export const eventHandlers = [
@@ -116,15 +156,22 @@ export const eventHandlers = [
   http.get('*/api/events', ({ request }) => {
     const member = currentMember()
     if (!member) return unauthorized()
-    const page = Number(new URL(request.url).searchParams.get('page') ?? '0')
-    const events = mockEvents(member.language)
+    const params = new URL(request.url).searchParams
+    const page = Number(params.get('page') ?? '0')
+    const from = params.get('from')
+    const to = params.get('to')
+    if ((from && !isIsoDate(from)) || (to && !isIsoDate(to)))
+      return error(400, 'INVALID_INPUT', '날짜 형식은 yyyy-MM-dd 입니다.')
+    if (from && to && from > to)
+      return error(400, 'INVALID_INPUT', 'from 은 to 보다 늦을 수 없습니다.')
+    const events = listMockEvents(mockEvents(member.language), params)
     return HttpResponse.json({
       data: {
         content: page === 0 ? events : [],
         page,
         size: 20,
         totalElements: events.length,
-        totalPages: 1,
+        totalPages: events.length ? 1 : 0,
         hasNext: false,
       },
     })

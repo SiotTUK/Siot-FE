@@ -1,5 +1,6 @@
 import { apiRequest } from '@/shared/api/client'
 import type { Language, PageResponse } from '@/shared/api/types'
+import { eventListQuery, type EventListFilters } from './event-filters'
 
 export interface EventSummary {
   eventId: number
@@ -45,8 +46,8 @@ export const eventKeys = {
   member: (memberId: number) => [...eventKeys.all, memberId] as const,
   recommendations: (memberId: number) =>
     [...eventKeys.member(memberId), 'recommendations'] as const,
-  list: (memberId: number, page: number) =>
-    [...eventKeys.member(memberId), 'list', page] as const,
+  list: (memberId: number, page: number, filters: EventListFilters) =>
+    [...eventKeys.member(memberId), 'list', filters, page] as const,
   calendar: (memberId: number, year: number, month: number) =>
     [...eventKeys.member(memberId), 'calendar', year, month] as const,
   detail: (memberId: number, eventId: string) =>
@@ -60,10 +61,15 @@ export function fetchEventRecommendations(signal?: AbortSignal) {
   })
 }
 
-export function fetchEvents(page: number, signal?: AbortSignal) {
-  return apiRequest<PageResponse<EventSummary>>(`/api/events?page=${page}`, {
-    signal,
-  })
+export function fetchEvents(
+  page: number,
+  filters: EventListFilters,
+  signal?: AbortSignal,
+) {
+  return apiRequest<PageResponse<EventSummary>>(
+    `/api/events?${eventListQuery(page, filters)}`,
+    { signal },
+  )
 }
 
 export function fetchEventDetail(eventId: string, signal?: AbortSignal) {

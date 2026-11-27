@@ -13,9 +13,15 @@ import {
   formatEventDates,
   formatEventTimes,
 } from '@/features/events/event-display'
+import {
+  isDateRangeValid,
+  parseEventFilters,
+  withEventFilters,
+} from '@/features/events/event-filters'
 import { eventDetailBackPath, isEventId } from '@/features/events/event-routes'
 import { EventCard } from '@/features/events/ui/event-card'
 import { EventImage } from '@/features/events/ui/event-image'
+import { EventListFilters } from '@/features/events/ui/event-list-filters'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
 import { EventReport } from '@/features/events/ui/event-report'
@@ -24,7 +30,7 @@ import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
 import { Button } from '@/shared/ui/button'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
+import { FormError, Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import styles from './event-pages.module.css'
 
@@ -55,23 +61,42 @@ function EventList({ memberId }: { memberId: number }) {
     requestedPage <= 2_147_483_647
       ? requestedPage
       : 0
-  const query = useEvents(memberId, page)
+  const filters = parseEventFilters(params)
+  const rangeValid = isDateRangeValid(filters)
+  const query = useEvents(memberId, page, filters)
   const data = query.data
   const lastPage = data ? Math.max(0, data.totalPages - 1) : page
+  const rangeRejected =
+    query.error instanceof ApiError &&
+    query.error.status === 400 &&
+    query.error.code === 'INVALID_INPUT' &&
+    Boolean(filters.from || filters.to)
+
+  const pageParams = (nextPage: number) => {
+    const nextParams = new URLSearchParams(params)
+    if (nextPage === 0) nextParams.delete('page')
+    else nextParams.set('page', String(nextPage))
+    return nextParams
+  }
+
+  const filterArea = (
+    <EventListFilters
+      filters={filters}
+      onChange={(next) => setParams(withEventFilters(params, next))}
+    />
+  )
 
   if (query.isSuccess && page > lastPage) {
-    const nextParams = new URLSearchParams(params)
-    if (lastPage === 0) nextParams.delete('page')
-    else nextParams.set('page', String(lastPage))
     return (
       <Section title={t('events.all')}>
+        {filterArea}
         <EventQueryNotice
           pending
           fetching={query.isFetching}
           retry={() => void query.refetch()}
         />
         {!query.isFetching && (
-          <Navigate replace to={{ search: nextParams.toString() }} />
+          <Navigate replace to={{ search: pageParams(lastPage).toString() }} />
         )}
       </Section>
     )
@@ -79,7 +104,10 @@ function EventList({ memberId }: { memberId: number }) {
 
   return (
     <Section title={t('events.all')}>
-      {query.isPending || query.isError ? (
+      {filterArea}
+      {!rangeValid ? null : rangeRejected ? (
+        <FormError message={t('events.invalidRange')} />
+      ) : query.isPending || query.isError ? (
         <EventQueryNotice
           pending={query.isPending}
           fetching={query.isFetching}
@@ -94,16 +122,20 @@ function EventList({ memberId }: { memberId: number }) {
           ))}
         </ul>
       ) : (
-        <Muted>{t('events.empty')}</Muted>
+        <Muted>
+          {filters.from || filters.to
+            ? t('events.emptyFiltered')
+            : filters.past
+              ? t('events.emptyPast')
+              : t('events.empty')}
+        </Muted>
       )}
-      {data && (page > 0 || data.hasNext) && (
+      {rangeValid && data && (page > 0 || data.hasNext) && (
         <div className={styles.pager}>
           <Button
             variant="secondary"
             disabled={page === 0}
-            onClick={() =>
-              setParams(page === 1 ? {} : { page: String(page - 1) })
-            }
+            onClick={() => setParams(pageParams(page - 1))}
           >
             {t('events.previous')}
           </Button>
@@ -113,7 +145,7 @@ function EventList({ memberId }: { memberId: number }) {
           <Button
             variant="secondary"
             disabled={!data.hasNext}
-            onClick={() => setParams({ page: String(page + 1) })}
+            onClick={() => setParams(pageParams(page + 1))}
           >
             {t('events.next')}
           </Button>

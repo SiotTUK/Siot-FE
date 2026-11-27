@@ -12,6 +12,7 @@ import type { ChecklistItemResponse } from '../api'
 import {
   deadlineText,
   detailBackPath,
+  detailBackState,
   translationPending,
   warningText,
 } from '../checklist'
@@ -34,7 +35,9 @@ export function ChecklistDetail({
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const back = detailBackPath(useLocation().state)
+  const { state } = useLocation()
+  const back = detailBackPath(state)
+  const backState = detailBackState(state)
   const language = currentLanguage()
   const [copied, setCopied] = useState(false)
 
@@ -86,7 +89,7 @@ export function ChecklistDetail({
   return (
     <>
       <ScreenHeader
-        back={{ label: t('common.back'), to: back }}
+        back={{ label: t('common.back'), to: back, state: backState }}
         title={t('checklist.detail.screenTitle')}
         actions={
           <HeaderAction onClick={() => void handleShare()}>

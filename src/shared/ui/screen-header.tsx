@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './screen-header.module.css'
 
-type Back = { label: string } & ({ to: string } | { onClick: () => void })
+/** `state` rides along with a `to` link, e.g. the way back to a chat (CB-10). */
+type Back = { label: string } & (
+  { to: string; state?: unknown } | { onClick: () => void }
+)
 
 /**
  * Header of full-screen views (onboarding, chat, admin, edit screens):
@@ -23,7 +26,12 @@ export function ScreenHeader({
       <div className={styles.row}>
         {back &&
           ('to' in back ? (
-            <Link className={styles.back} to={back.to} aria-label={back.label}>
+            <Link
+              className={styles.back}
+              to={back.to}
+              state={back.state}
+              aria-label={back.label}
+            >
               <span aria-hidden="true">‹</span>
             </Link>
           ) : (
@@ -48,11 +56,16 @@ export function HeaderAction({
   children,
   ...props
 }: { children: ReactNode } & (
-  | { to: string; onClick?: () => void }
+  | { to: string; state?: unknown; onClick?: () => void }
   | { onClick: () => void; disabled?: boolean }
 )) {
   return 'to' in props ? (
-    <Link className={styles.action} to={props.to} onClick={props.onClick}>
+    <Link
+      className={styles.action}
+      to={props.to}
+      state={props.state}
+      onClick={props.onClick}
+    >
       {children}
     </Link>
   ) : (

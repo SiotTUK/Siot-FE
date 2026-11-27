@@ -6,6 +6,7 @@ import {
   checklistItemKey,
   deadlineText,
   detailBackPath,
+  detailBackState,
   dueSoon,
   groupItems,
   hasWarning,
@@ -302,6 +303,17 @@ describe('detailBackPath', () => {
   it('returns to the conversation when opened from a chat link (CB-10)', () => {
     expect(detailBackPath({ from: '/chat/7' })).toBe('/chat/7')
     expect(detailBackPath({ from: '/chat/x' })).toBe('/home')
+  })
+
+  it('keeps the chat for the home screen it returns to (CB-10)', () => {
+    const back = '/home/life-changes/LC-01'
+    expect(detailBackPath({ back, from: '/chat/7' })).toBe(back)
+    expect(detailBackState({ back, from: '/chat/7' })).toEqual({
+      from: '/chat/7',
+    })
+    expect(detailBackState({ back })).toBeUndefined()
+    // Going straight back to the chat needs no state.
+    expect(detailBackState({ from: '/chat/7' })).toBeUndefined()
   })
 })
 

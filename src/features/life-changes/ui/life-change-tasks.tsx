@@ -70,7 +70,11 @@ export function LifeChangeTasks({
             ? { label: t('common.back'), to: chat }
             : { label: t('lifeChanges.backHome'), to: '/home' }
         }
-        actions={<HeaderAction to={edit}>{t('lifeChanges.edit')}</HeaderAction>}
+        actions={
+          <HeaderAction to={edit} state={state}>
+            {t('lifeChanges.edit')}
+          </HeaderAction>
+        }
       />
       <PageBody className={styles.taskPage}>
         <QueryState query={changes} keepContentOnError={changes.isRefetchError}>
@@ -80,6 +84,7 @@ export function LifeChangeTasks({
               code={code}
               baseDate={existing.baseDate}
               busy={mutation.isPending}
+              chat={chat}
             />
           )}
           {mutation.isError && (
@@ -136,11 +141,13 @@ function TaskOverview({
   code,
   baseDate,
   busy,
+  chat,
 }: {
   memberId: number
   code: LifeChangeCode
   baseDate: string
   busy: boolean
+  chat?: string
 }) {
   const { t } = useTranslation()
   const language = currentLanguage()
@@ -203,6 +210,7 @@ function TaskOverview({
               key={checklistItemKey(first)}
               item={first}
               back={`/home/life-changes/${code}`}
+              chat={chat}
               busy={busy || mark.isSaving(first)}
               onNotApplicable={() => toggle(first, 'toggleNotApplicable')}
             />
@@ -249,11 +257,14 @@ function TaskOverview({
 function FirstTask({
   item,
   back,
+  chat,
   busy,
   onNotApplicable,
 }: {
   item: ChecklistItemResponse
   back: string
+  /** The conversation this flow was opened from (CB-10), kept for the way back. */
+  chat?: string
   busy: boolean
   onNotApplicable: () => void
 }) {
@@ -286,7 +297,7 @@ function FirstTask({
       </div>
       <ButtonLink
         to={`/home/checklist/${encodeURIComponent(item.code)}`}
-        state={{ back }}
+        state={{ back, from: chat }}
       >
         {t('lifeChanges.howTo')}
       </ButtonLink>

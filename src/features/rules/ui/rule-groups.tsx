@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { MascotTip } from '@/shared/ui/mascot-tip'
@@ -18,7 +19,10 @@ export function RuleBrowser() {
   const { t } = useTranslation()
   const { rules, faqs } = useRules()
   const [params, setParams] = useSearchParams()
-  const query = params.get('q') ?? ''
+  // The input keeps its own state. Reading it back from the URL lags behind
+  // (router navigation runs in a transition), and the stale value resets the
+  // input mid-composition, which breaks Korean IME input (이사 -> ㅇ이잇사).
+  const [query, setQuery] = useState(() => params.get('q') ?? '')
   const searching = query.trim().length > 0
   // Older links used `/rules?category=waste`; send them to the category screen.
   const oldCategory = ruleCategories.find(
@@ -40,7 +44,10 @@ export function RuleBrowser() {
         label={t('rules.search')}
         placeholder={t('rules.searchPlaceholder')}
         value={query}
-        onChange={(event) => updateQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value)
+          updateQuery(event.target.value)
+        }}
       />
       {searching ? (
         <SearchResults rules={searchRules(rules, query)} />

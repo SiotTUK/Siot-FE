@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { TaxDetailResponse } from './api'
-import { pickTaxRound, ruleTaxKind, taxDetailPath } from './taxes'
+import { pickTaxRound, taxDetailPath } from './taxes'
 
 const round = (scheduleId: number, dDay: number | null): TaxDetailResponse => ({
   scheduleId,
@@ -24,14 +24,6 @@ const round = (scheduleId: number, dDay: number | null): TaxDetailResponse => ({
 })
 
 describe('tax detail links', () => {
-  it('maps the tax rules to the BE tax kinds only', () => {
-    expect(ruleTaxKind('tax-car')).toBe('TAX_CAR')
-    expect(ruleTaxKind('tax-property')).toBe('TAX_PROPERTY')
-    expect(ruleTaxKind('tax-resident')).toBe('TAX_RESIDENT')
-    expect(ruleTaxKind('tax-payment')).toBeUndefined()
-    expect(ruleTaxKind('order-noise')).toBeUndefined()
-  })
-
   it('opens the first round whose deadline has not passed', () => {
     expect(pickTaxRound([round(1, -150), round(2, 33)])?.scheduleId).toBe(2)
     expect(pickTaxRound([round(1, 0), round(2, 180)])?.scheduleId).toBe(1)

@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
 import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { chatEntryState } from '@/features/chat/chat-entry'
+import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { KeepTogether } from '@/shared/ui/keep-together'
 import { Muted, Section, Tag } from '@/shared/ui/page'
+import { useRuleTaxKind } from '../api'
 import { rulesCheckedOn } from '../content'
 import { parseContacts, safeUrl, type Rule } from '../rules'
 import { useRule } from '../use-rules'
@@ -35,6 +37,8 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
   const reportId = useId()
   const [reporting, setReporting] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
+  // BE #29: the rules API says which tax a rule is (null for other rules).
+  const taxKind = useRuleTaxKind(rule.code, currentLanguage())
   const fact = (key: string) => rule.facts.find((item) => item.key === key)
   const know = knowKeys.flatMap((key) => {
     const item = fact(key)
@@ -119,7 +123,7 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
             </div>
           )}
 
-      <TaxDetailLink ruleCode={rule.code} />
+      <TaxDetailLink taxKind={taxKind} />
 
       <div className={styles.refs}>
         {law && (

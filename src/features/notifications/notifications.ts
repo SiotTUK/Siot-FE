@@ -1,9 +1,11 @@
 import { isEventId } from '@/features/events/event-routes'
+import { isLifeChangeCode } from '@/features/life-changes/life-changes'
 import { formatMonthDay, koreaToday } from '@/shared/i18n/format'
 
 /**
  * Screen for a notification's link (NTF-04). Only screens that exist are
- * used: checklist items open the home checklist, taxes and personal dates
+ * used: life change tasks open their life change page (home when the code is
+ * unknown), checklist items open the home checklist, taxes and personal dates
  * open the calendar, rules open the rules list (BE RUL-xx codes are not FE
  * rule pages). Unknown links return undefined and the card only marks read.
  */
@@ -14,8 +16,12 @@ export function notificationPath(link: {
   switch (link.linkType) {
     case 'EVENT':
       return isEventId(link.linkCode) ? `/events/${link.linkCode}` : undefined
+    case 'LIFE_CHANGE_TASK': {
+      // Task code LC-01-1 → its life change LC-01, whose page lists the tasks.
+      const parent = link.linkCode?.split('-').slice(0, 2).join('-')
+      return isLifeChangeCode(parent) ? `/home/life-changes/${parent}` : '/home'
+    }
     case 'CHECKLIST':
-    case 'LIFE_CHANGE_TASK':
       return '/home'
     case 'RULE':
       return '/rules'

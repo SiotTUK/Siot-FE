@@ -82,6 +82,12 @@
 - 반영: 생활 변화 저장과 같은 방식으로 요청을 시작할 때 `captureSessionScope`로 세션을 잡는다. 설정 저장(PUT)과 읽음(PATCH) API에 `isRequestCurrent`를 넘기고, mutation 컨텍스트에 `isSessionCurrent`를 넣어 전역 오류 처리가 끝난 세션의 오류를 무시하게 했다. 캐시 갱신·재조회·읽음 후 이동도 같은 세션일 때만 한다. 세션이 만료되면 알림 캐시도 함께 지우도록 `app/query-client.ts`에 추가했다.
 - 검증: `npm run check` 통과(Vitest 179개). CSRF 갱신 중 세션이 바뀌면 PUT·PATCH를 다시 보내지 않고 중단하는 계약 테스트를 추가했다.
 
+## 2026-11-27 후속: 생활 변화 알림은 생활 변화 상세로 (PR #25 리뷰 P2)
+
+- 요약: 사용자가 리뷰 지적을 가져왔다. `LIFE_CHANGE_TASK` 알림이 항목 코드(`LC-01-1`)를 버리고 홈만 열었는데, NTF-04에서 연결하기로 한 생활 변화 상세(`/home/life-changes/:code`)가 이미 있고 관련 할 일을 그 화면에서 볼 수 있다.
+- 반영: 항목 코드에서 앞 두 부분으로 부모 코드(`LC-01`)를 구하고 `isLifeChangeCode`로 확인되면 `/home/life-changes/LC-01`로 연다. 코드가 없거나 알 수 없으면 이전처럼 홈을 연다. `CHECKLIST`는 그대로 홈이다.
+- 검증: `npm run check` 통과(Vitest 182개, 이동 경로 경우 3개 추가).
+
 ## 남은 작업
 
 - 실제 BE로 목록·개수·읽음 확인.

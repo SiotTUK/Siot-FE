@@ -83,11 +83,7 @@ export function SignupPage() {
     <AuthScreen
       title={t('signup.title')}
       back="/"
-      tip={
-        <MascotTip mascot="haero" name={t('authTips.haero')}>
-          {t('authTips.signup')}
-        </MascotTip>
-      }
+      tip={<MascotTip mascot="haero">{t('authTips.signup')}</MascotTip>}
     >
       <SignupForm />
     </AuthScreen>
@@ -102,11 +98,7 @@ export function LoginPage() {
     <AuthScreen
       title={t('login.title')}
       back="/"
-      tip={
-        <MascotTip mascot="toro" name={t('authTips.toro')}>
-          {t('authTips.login')}
-        </MascotTip>
-      }
+      tip={<MascotTip mascot="toro">{t('authTips.login')}</MascotTip>}
       links={[
         { text: t('login.newHere'), label: t('login.signup'), to: '/signup' },
         {

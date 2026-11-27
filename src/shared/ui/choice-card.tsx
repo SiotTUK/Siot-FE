@@ -41,6 +41,13 @@ export function ChoiceCard({
   )
 }
 
-export function ChoiceList({ children }: { children: ReactNode }) {
-  return <div className={styles.list}>{children}</div>
+/** `grouped`: rows inside one white card (Figma v2 F05 checkboxes). */
+export function ChoiceList({
+  children,
+  grouped = false,
+}: {
+  children: ReactNode
+  grouped?: boolean
+}) {
+  return <div className={grouped ? styles.group : styles.list}>{children}</div>
 }

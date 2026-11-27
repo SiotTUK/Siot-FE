@@ -15,8 +15,7 @@ import { useWithdraw } from '../use-session'
 
 // Blank and over-long passwords are stopped here; the server would answer a
 // plain INVALID_INPUT instead of PASSWORD_INCORRECT.
-const schema = withdrawalSchema
-type Values = z.input<typeof schema>
+type Values = z.input<typeof withdrawalSchema>
 
 /** M-06·M-07: warning → password → in-page confirmation → delete at once. */
 export function WithdrawalForm() {
@@ -25,7 +24,7 @@ export function WithdrawalForm() {
   const [confirming, setConfirming] = useState(false)
   const { register, handleSubmit, setError, getValues, formState } =
     useForm<Values>({
-      resolver: zodResolver(schema),
+      resolver: zodResolver(withdrawalSchema),
       defaultValues: { password: '' },
     })
   const withdraw = useMutation({

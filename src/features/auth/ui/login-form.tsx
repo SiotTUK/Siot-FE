@@ -14,8 +14,7 @@ import { useStartSession } from '../use-session'
 
 // Blank and over-long values are stopped here: the server rejects them as a
 // plain INVALID_INPUT, not LOGIN_FAILED. Anything else wrong is LOGIN_FAILED.
-const schema = loginSchema
-type Values = z.input<typeof schema>
+type Values = z.input<typeof loginSchema>
 
 /** M02a. Unknown email and wrong password share LOGIN_FAILED. */
 export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
@@ -23,7 +22,7 @@ export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
   const msg = useMessage()
   const startSession = useStartSession()
   const { register, handleSubmit, formState } = useForm<Values>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(loginSchema),
     mode: 'onTouched',
     defaultValues: { email: '', password: '' },
   })
@@ -31,7 +30,11 @@ export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
   const onSubmit = handleSubmit((values) =>
     submit.mutate({ email: values.email.trim(), password: values.password }),
   )
-  const { errors } = formState
+  const { errors, isSubmitted } = formState
+  // "Wrong email or password" only makes sense after trying to log in, so an
+  // over-long value waits for submit; "please enter" still shows on blur.
+  const fieldError = (message?: string) =>
+    msg(isSubmitted || message !== 'errors.LOGIN_FAILED' ? message : undefined)
 
   return (
     <form onSubmit={(event) => void onSubmit(event)} noValidate>
@@ -46,7 +49,7 @@ export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
           inputMode="email"
           autoComplete="username"
           placeholder={t('login.emailPlaceholder')}
-          error={msg(errors.email?.message)}
+          error={fieldError(errors.email?.message)}
         />
         <TextField
           {...register('password')}
@@ -55,7 +58,7 @@ export function LoginForm({ passwordChanged }: { passwordChanged: boolean }) {
           autoComplete="current-password"
           placeholder={t('login.passwordPlaceholder')}
           error={
-            msg(errors.password?.message) ??
+            fieldError(errors.password?.message) ??
             (submit.error ? loginErrorMessage(t, submit.error) : undefined)
           }
         />

@@ -48,6 +48,8 @@
 
 미검증: 실제 BE와 FE 연동, 빈 달 "다음 할 일" 화면(목업은 매달 공통 일정이 있어 빈 달이 없다. 단위 테스트로 선택 규칙만 확인), 고지서 결과의 세금 상세 카드 화면.
 
+스크린샷: `assets/2026-11-27-calendar-dday.png`, `assets/2026-11-27-schedule-detail.png`
+
 ## 남은 작업
 
 - BE 브랜치 `feat/bill-tax-detail-link` 푸시·PR(이 FE 변경보다 먼저 병합).

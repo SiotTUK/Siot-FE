@@ -103,7 +103,14 @@ export function useSaveGuideTranslation(code: string, language: Language) {
   return useMutation({
     mutationFn: (body: GuideTranslationUpdateRequest) =>
       saveGuideTranslation(code, language, body),
-    onSuccess: (saved) =>
-      queryClient.setQueryData(adminKeys.guide(code, language), saved),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(adminKeys.guide(code, language), saved)
+      // Saving Korean makes the BE regenerate en/zh/vi (COM-02).
+      if (language === 'ko')
+        return queryClient.invalidateQueries({
+          queryKey: adminKeys.guideAll(code),
+          predicate: ({ queryKey }) => queryKey.at(-1) !== 'ko',
+        })
+    },
   })
 }

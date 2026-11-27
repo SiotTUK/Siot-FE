@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw'
+import { eventLeadDays } from '@/features/events/api'
 import type {
   EventCalendarItem,
   EventDetail,
@@ -7,7 +8,7 @@ import type {
 import { isIsoDate } from '@/features/events/event-filters'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
-import { body, currentMember, error, unauthorized } from '../db'
+import { body, currentMember, error, persist, state, unauthorized } from '../db'
 
 // Events that already ended, for "지난 행사 보기" (past=true).
 const pastTitles: Record<Language, string[]> = {
@@ -141,7 +142,58 @@ export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
     )
 }
 
+const subscriptionPath = '*/api/events/:eventId/subscriptions'
+
+function saveSubscription(eventId: string, request: Request, enabled: boolean) {
+  const member = currentMember()
+  if (!member) return unauthorized()
+  const event = mockEvents(member.language).find(
+    (item) => String(item.eventId) === eventId,
+  )
+  if (!event) return error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
+  const requested = new URL(request.url).searchParams.get('leadDays')
+  const selected = eventLeadDays.find((days) => String(days) === requested)
+  const lastDay = event.endsOn ?? event.startsOn
+  if (
+    enabled &&
+    ((requested !== null && selected === undefined) ||
+      (lastDay && lastDay < koreaToday()))
+  ) {
+    return error(400, 'INVALID_INPUT', '알림 설정을 다시 확인해 주세요.')
+  }
+  const subscriptions = (state.eventSubscriptions[member.id] ??= {})
+  const leadDays = selected ?? subscriptions[eventId]?.leadDays ?? 1
+  subscriptions[eventId] = { enabled, leadDays }
+  persist()
+  return HttpResponse.json({
+    data: {
+      eventId: event.eventId,
+      userId: member.id,
+      enabled,
+      leadDays,
+      updatedAt: new Date().toISOString(),
+    },
+  })
+}
+
 export const eventHandlers = [
+  http.get(subscriptionPath, ({ params }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const saved = state.eventSubscriptions[member.id]?.[String(params.eventId)]
+    return HttpResponse.json({
+      data: {
+        subscribed: saved?.enabled ?? false,
+        leadDays: saved?.enabled ? saved.leadDays : null,
+      },
+    })
+  }),
+  http.post(subscriptionPath, ({ params, request }) =>
+    saveSubscription(String(params.eventId), request, true),
+  ),
+  http.delete(subscriptionPath, ({ params, request }) =>
+    saveSubscription(String(params.eventId), request, false),
+  ),
   http.get('*/api/events/recommendations', () => {
     const member = currentMember()
     if (!member) return unauthorized()
@@ -214,19 +266,30 @@ export const eventHandlers = [
       (item) => String(item.eventId) === params.eventId,
     )
     return event
-      ? HttpResponse.json({ data: event })
+      ? HttpResponse.json({
+          data: {
+            ...event,
+            subscribed:
+              state.eventSubscriptions[member.id]?.[String(event.eventId)]
+                ?.enabled ?? false,
+          },
+        })
       : error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
   }),
   http.post('*/api/reports', async ({ request }) => {
     const member = currentMember()
     if (!member) return unauthorized()
     const report = await body(request)
+    // Same checks as BE ContentReportRequest (COM-01).
     if (
-      typeof report.reason !== 'string' ||
-      !report.reason.trim() ||
-      report.reason.length > 50
+      !['TRANSLATION', 'CONTENT', 'OTHER'].includes(String(report.reason)) ||
+      typeof report.quotedText !== 'string' ||
+      !report.quotedText.trim() ||
+      report.quotedText.length > 2000 ||
+      (typeof report.targetTitleSnapshot === 'string' &&
+        report.targetTitleSnapshot.length > 255)
     )
-      return error(400, 'INVALID_INPUT', '신고 사유를 다시 확인해 주세요.')
+      return error(400, 'INVALID_INPUT', '입력값이 올바르지 않습니다.')
     if (
       !mockEvents(member.language).some(
         ({ eventId }) => report.eventId === eventId,

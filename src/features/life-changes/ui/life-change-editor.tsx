@@ -5,7 +5,11 @@ import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
-import { checklistItemKey, nextMark } from '@/features/checklist/checklist'
+import {
+  checklistItemKey,
+  markErrorMessage,
+  nextMark,
+} from '@/features/checklist/checklist'
 import { ChecklistCard } from '@/features/checklist/ui/checklist-card'
 import {
   useChecklist,
@@ -204,7 +208,7 @@ function RelatedTasks({
           <>
             <h2>{t('lifeChanges.tasks', { count: items.length })}</h2>
             {mark.isError && (
-              <FormError message={errorMessage(t, mark.error)} />
+              <FormError message={markErrorMessage(t, mark.error)} />
             )}
             {items.length === 0 ? (
               <Muted>{t('lifeChanges.noTasks')}</Muted>

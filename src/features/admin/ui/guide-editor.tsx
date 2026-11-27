@@ -27,8 +27,11 @@ import {
 import { useGuideTranslation, useSaveGuideTranslation } from '../use-admin'
 
 /**
- * CHK-06·NTF-07: edit one language of a checklist item's detail text.
- * There is no item list API yet, so the code (CL-01, LC-01-1 ...) is typed in.
+ * CHK-06·NTF-07: edit one language of a guide's detail text by its code:
+ * checklist items (CL-01), life change tasks (LC-01-1) and living rules
+ * (waste-food). The BE looks codes up case-sensitively, so the code is sent
+ * as typed (only trimmed). Picking living rules from GET /api/admin/rules
+ * belongs to the admin rules screen (#43).
  */
 export function GuideEditor() {
   const { t } = useTranslation()
@@ -42,14 +45,13 @@ export function GuideEditor() {
       <form
         onSubmit={(event) => {
           event.preventDefault()
-          if (code.trim())
-            setTarget({ code: code.trim().toUpperCase(), language })
+          if (code.trim()) setTarget({ code: code.trim(), language })
         }}
       >
         <Toolbar>
           <TextField
             label={t('admin.code')}
-            placeholder="CL-01"
+            placeholder="CL-01 · waste-food"
             value={code}
             onChange={(event) => setCode(event.target.value)}
           />

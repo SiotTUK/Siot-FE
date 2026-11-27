@@ -133,4 +133,14 @@ describe('CHK-06 guide text', () => {
     expect(saved).toMatchObject({ language: 'vi', docs: ['Hộ chiếu'] })
     expect(saved.noticeChangedAt).not.toBeNull()
   })
+
+  it('opens living rules by their lowercase code, case-sensitively like the BE', async () => {
+    await login(admin)
+    await expect(
+      fetchGuideTranslation('waste-food', 'ko'),
+    ).resolves.toMatchObject({ code: 'waste-food', title: '음식물 쓰레기' })
+    await expect(
+      fetchGuideTranslation('WASTE-FOOD', 'ko'),
+    ).rejects.toMatchObject({ status: 404, code: 'GUIDE_NOT_FOUND' })
+  })
 })

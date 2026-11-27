@@ -4,6 +4,7 @@ import { ChipGroup } from '@/shared/ui/chip-group'
 import { TextField } from '@/shared/ui/field'
 import {
   defaultEventFilters,
+  eventCategories,
   hasEventFilters,
   isDateRangeValid,
   isIsoDate,
@@ -12,8 +13,8 @@ import {
 import styles from './event-list-filters.module.css'
 
 /**
- * EVE-10 list filter area: event status and a date range.
- * Region (#33) and category (#37) filters join this area and its reset.
+ * EVE-10 list filter area: event status, category and a date range.
+ * The region filter (#33) joins this area and its reset.
  */
 export function EventListFilters({
   filters,
@@ -37,6 +38,24 @@ export function EventListFilters({
         ]}
         value={filters.status}
         onChange={(status) => onChange({ ...filters, status })}
+      />
+      <ChipGroup
+        label={t('events.filters.category')}
+        variant="pill"
+        options={[
+          { value: 'ALL', label: t('events.filters.allCategories') },
+          ...eventCategories.map((category) => ({
+            value: category,
+            label: t(`events.categories.${category}`),
+          })),
+        ]}
+        value={filters.category ?? 'ALL'}
+        onChange={(category) =>
+          onChange({
+            ...filters,
+            category: category === 'ALL' ? null : category,
+          })
+        }
       />
       <fieldset className={styles.period}>
         <legend className="visually-hidden">

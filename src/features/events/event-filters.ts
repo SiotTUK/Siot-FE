@@ -1,16 +1,35 @@
 export type EventStatus = 'ongoing' | 'scheduled' | 'ended'
 
+/**
+ * BE EventCategory (EVE-10). There is no list API; the values follow the
+ * source classifications and change only with a BE release.
+ */
+export const eventCategories = [
+  'FESTIVAL',
+  'PERFORMANCE',
+  'EXHIBITION',
+  'EDUCATION',
+  'EVENT',
+] as const
+export type EventCategory = (typeof eventCategories)[number]
+
+export function isEventCategory(value: unknown): value is EventCategory {
+  return eventCategories.some((category) => category === value)
+}
+
 /** EVE-10 list controls stored in the URL. */
 export interface EventListFilters {
   status: EventStatus
   from: string | null
   to: string | null
+  category: EventCategory | null
 }
 
 export const defaultEventFilters: EventListFilters = {
   status: 'ongoing',
   from: null,
   to: null,
+  category: null,
 }
 
 /** A real calendar date in yyyy-MM-dd, the format the BE accepts. */
@@ -28,6 +47,7 @@ export function parseEventFilters(params: URLSearchParams): EventListFilters {
   const from = params.get('from')
   const to = params.get('to')
   const status = params.get('status')
+  const category = params.get('category')
   return {
     status:
       status === 'ongoing' || status === 'scheduled' || status === 'ended'
@@ -37,6 +57,7 @@ export function parseEventFilters(params: URLSearchParams): EventListFilters {
           : defaultEventFilters.status,
     from: isIsoDate(from) ? from : null,
     to: isIsoDate(to) ? to : null,
+    category: isEventCategory(category) ? category : null,
   }
 }
 
@@ -49,12 +70,13 @@ export function hasEventFilters(filters: EventListFilters) {
   return (
     filters.status !== defaultEventFilters.status ||
     filters.from !== null ||
-    filters.to !== null
+    filters.to !== null ||
+    filters.category !== null
   )
 }
 
 /**
- * List URL after a filter change. Other params (e.g. region, category) stay,
+ * List URL after a filter change. Other params (e.g. region) stay,
  * and the page goes back to the first one.
  */
 export function withEventFilters(
@@ -66,7 +88,7 @@ export function withEventFilters(
   next.delete('past')
   if (filters.status === defaultEventFilters.status) next.delete('status')
   else next.set('status', filters.status)
-  for (const key of ['from', 'to'] as const) {
+  for (const key of ['from', 'to', 'category'] as const) {
     const value = filters[key]
     if (value) next.set(key, value)
     else next.delete(key)
@@ -80,5 +102,6 @@ export function eventListQuery(page: number, filters: EventListFilters) {
   if (filters.status === 'ended') query.set('past', 'true')
   if (filters.from) query.set('from', filters.from)
   if (filters.to) query.set('to', filters.to)
+  if (filters.category) query.set('category', filters.category)
   return query.toString()
 }

@@ -27,7 +27,12 @@ describe('parseEventFilters', () => {
       parseEventFilters(
         new URLSearchParams('past=true&from=2026-12-01&to=2026-12-31'),
       ),
-    ).toEqual({ status: 'ended', from: '2026-12-01', to: '2026-12-31' })
+    ).toEqual({
+      status: 'ended',
+      from: '2026-12-01',
+      to: '2026-12-31',
+      category: null,
+    })
   })
 
   it('reads the scheduled status from the URL', () => {
@@ -36,10 +41,18 @@ describe('parseEventFilters', () => {
     ).toBe('scheduled')
   })
 
+  it('reads a known category', () => {
+    expect(
+      parseEventFilters(new URLSearchParams('category=FESTIVAL')).category,
+    ).toBe('FESTIVAL')
+  })
+
   it('drops malformed values', () => {
     expect(
-      parseEventFilters(new URLSearchParams('past=1&from=tomorrow&to=')),
-    ).toEqual({ status: 'ongoing', from: null, to: null })
+      parseEventFilters(
+        new URLSearchParams('past=1&from=tomorrow&to=&category=festival'),
+      ),
+    ).toEqual({ status: 'ongoing', from: null, to: null, category: null })
   })
 })
 
@@ -51,7 +64,9 @@ describe('isDateRangeValid', () => {
     ['2026-12-01', '2026-12-01'],
     ['2026-12-01', '2026-12-31'],
   ])('allows from %s to %s', (from, to) => {
-    expect(isDateRangeValid({ status: 'ongoing', from, to })).toBe(true)
+    expect(
+      isDateRangeValid({ status: 'ongoing', from, to, category: null }),
+    ).toBe(true)
   })
 
   it('rejects from later than to', () => {
@@ -60,18 +75,31 @@ describe('isDateRangeValid', () => {
         status: 'ongoing',
         from: '2026-12-31',
         to: '2026-12-01',
+        category: null,
       }),
     ).toBe(false)
   })
 })
 
 it('reports whether any filter is set', () => {
-  expect(hasEventFilters({ status: 'ongoing', from: null, to: null })).toBe(
-    false,
-  )
-  expect(hasEventFilters({ status: 'ended', from: null, to: null })).toBe(true)
   expect(
-    hasEventFilters({ status: 'ongoing', from: null, to: '2026-12-01' }),
+    hasEventFilters({
+      status: 'ongoing',
+      from: null,
+      to: null,
+      category: null,
+    }),
+  ).toBe(false)
+  expect(
+    hasEventFilters({ status: 'ended', from: null, to: null, category: null }),
+  ).toBe(true)
+  expect(
+    hasEventFilters({
+      status: 'ongoing',
+      from: null,
+      to: '2026-12-01',
+      category: null,
+    }),
   ).toBe(true)
 })
 
@@ -79,7 +107,7 @@ describe('withEventFilters', () => {
   it('sets the filters, keeps other params and resets the page', () => {
     const next = withEventFilters(
       new URLSearchParams('page=3&past=true&region=SIHEUNG&to=2026-12-01'),
-      { status: 'ended', from: '2026-11-01', to: null },
+      { status: 'ended', from: '2026-11-01', to: null, category: null },
     )
     expect(Object.fromEntries(next)).toEqual({
       region: 'SIHEUNG',
@@ -89,11 +117,58 @@ describe('withEventFilters', () => {
   })
 })
 
+it('treats a category as a filter', () => {
+  expect(
+    hasEventFilters({
+      status: 'ongoing',
+      from: null,
+      to: null,
+      category: 'EXHIBITION',
+    }),
+  ).toBe(true)
+})
+
+describe('withEventFilters and the category', () => {
+  it('sets the category and removes it with the reset filters', () => {
+    const set = withEventFilters(new URLSearchParams('page=2'), {
+      status: 'ongoing',
+      from: null,
+      to: null,
+      category: 'PERFORMANCE',
+    })
+    expect(Object.fromEntries(set)).toEqual({ category: 'PERFORMANCE' })
+    expect(
+      withEventFilters(set, {
+        status: 'ongoing',
+        from: null,
+        to: null,
+        category: null,
+      }).toString(),
+    ).toBe('')
+  })
+})
+
 describe('eventListQuery', () => {
+  it('sends the category', () => {
+    expect(
+      eventListQuery(0, {
+        status: 'ongoing',
+        from: null,
+        to: null,
+        category: 'EDUCATION',
+      }),
+    ).toBe('page=0&category=EDUCATION')
+  })
+
   it('sends only the page by default', () => {
-    expect(eventListQuery(0, { status: 'ongoing', from: null, to: null })).toBe(
-      'page=0',
-    )
+    expect(
+      eventListQuery(0, {
+        status: 'ongoing',
+        from: null,
+        to: null,
+        category: null,
+      }),
+    ).toBe('page=0')
   })
 
   it('sends past and the date range', () => {
@@ -102,6 +177,7 @@ describe('eventListQuery', () => {
         status: 'ended',
         from: '2026-12-01',
         to: '2026-12-31',
+        category: null,
       }),
     ).toBe('page=2&past=true&from=2026-12-01&to=2026-12-31')
   })

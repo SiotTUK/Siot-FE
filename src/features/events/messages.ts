@@ -77,7 +77,17 @@ export const eventMessages = defineMessages({
         from: '시작일',
         to: '종료일',
         invalidRange: '시작일은 종료일보다 늦을 수 없어요.',
+        category: '분류',
+        allCategories: '전체 분류',
         reset: '필터 초기화',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: '축제',
+        PERFORMANCE: '공연',
+        EXHIBITION: '전시',
+        EDUCATION: '교육·체험',
+        EVENT: '행사',
       },
       report: {
         open: '정보 오류 신고',
@@ -186,7 +196,17 @@ export const eventMessages = defineMessages({
         from: 'Start date',
         to: 'End date',
         invalidRange: 'The start date cannot be after the end date.',
+        category: 'Category',
+        allCategories: 'All categories',
         reset: 'Reset filters',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: 'Festival',
+        PERFORMANCE: 'Performance',
+        EXHIBITION: 'Exhibition',
+        EDUCATION: 'Education & experience',
+        EVENT: 'Event',
       },
       report: {
         open: 'Report an error',
@@ -292,7 +312,17 @@ export const eventMessages = defineMessages({
         from: '开始日期',
         to: '结束日期',
         invalidRange: '开始日期不能晚于结束日期。',
+        category: '类别',
+        allCategories: '全部类别',
         reset: '重置筛选',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: '节庆',
+        PERFORMANCE: '演出',
+        EXHIBITION: '展览',
+        EDUCATION: '教育·体验',
+        EVENT: '活动',
       },
       report: {
         open: '报告错误',
@@ -400,7 +430,17 @@ export const eventMessages = defineMessages({
         from: 'Ngày bắt đầu',
         to: 'Ngày kết thúc',
         invalidRange: 'Ngày bắt đầu không được muộn hơn ngày kết thúc.',
+        category: 'Thể loại',
+        allCategories: 'Tất cả thể loại',
         reset: 'Đặt lại bộ lọc',
+      },
+      // Same names as BE EventCategory.displayName.
+      categories: {
+        FESTIVAL: 'Lễ hội',
+        PERFORMANCE: 'Biểu diễn',
+        EXHIBITION: 'Triển lãm',
+        EDUCATION: 'Giáo dục & trải nghiệm',
+        EVENT: 'Sự kiện',
       },
       report: {
         open: 'Báo lỗi',

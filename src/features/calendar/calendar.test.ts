@@ -87,6 +87,8 @@ const event: EventCalendarItem = {
   startsOn: '2026-11-28',
   endsOn: '2026-12-02',
   region: 'SIHEUNG',
+  category: 'FESTIVAL',
+  categoryName: '축제',
   translated: true,
 }
 

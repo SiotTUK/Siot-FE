@@ -1,6 +1,10 @@
 import { apiRequest } from '@/shared/api/client'
 import type { Language, PageResponse } from '@/shared/api/types'
-import { eventListQuery, type EventListFilters } from './event-filters'
+import {
+  eventListQuery,
+  type EventCategory,
+  type EventListFilters,
+} from './event-filters'
 import { emptyEventListPage, fetchActiveEventPage } from './event-list-page'
 
 export interface EventSummary {
@@ -14,6 +18,9 @@ export interface EventSummary {
   endsAt: string | null
   timeUnknown: boolean
   region: string | null
+  /** EVE-10; categoryName is in the member's language. */
+  category: EventCategory
+  categoryName: string
   multicultural: boolean
   language: Language
   translated: boolean
@@ -39,6 +46,8 @@ export interface EventCalendarItem {
   startsOn: string | null
   endsOn: string | null
   region: string | null
+  category: EventCategory
+  categoryName: string
   translated: boolean
 }
 
@@ -123,11 +132,16 @@ export function fetchEventCalendar(
   year: number,
   month: number,
   signal?: AbortSignal,
+  category?: EventCategory,
 ) {
-  return apiRequest<EventCalendarItem[]>(
-    `/api/events/calendar?year=${year}&month=${month}`,
-    { signal },
-  )
+  const query = new URLSearchParams({
+    year: String(year),
+    month: String(month),
+  })
+  if (category) query.set('category', category)
+  return apiRequest<EventCalendarItem[]>(`/api/events/calendar?${query}`, {
+    signal,
+  })
 }
 
 export function fetchEventSubscription(eventId: string, signal?: AbortSignal) {

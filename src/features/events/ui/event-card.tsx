@@ -13,6 +13,7 @@ import styles from './event-card.module.css'
  * - `carousel`: picture on top, status badge, title, date · place (home)
  * - `featured`: the large "진행 중 · 나에게 추천" card (events screen)
  * - `row`: square picture, badge, title, date · place (all events list)
+ * The meta line starts with the category (EVE-10, #37).
  */
 export function EventCard({
   event,
@@ -29,6 +30,7 @@ export function EventCard({
   const { pathname, search } = useLocation()
   const status = eventStatus(event)
   const meta = [
+    event.categoryName,
     formatEventDates(event, currentLanguage()) ?? t('events.dateUnknown'),
     event.venue,
   ]

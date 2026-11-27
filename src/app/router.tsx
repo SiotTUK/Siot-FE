@@ -101,6 +101,14 @@ export const router = createBrowserRouter([
           },
           { path: '/events/:eventId', element: <EventDetailPage /> },
           {
+            path: '/rules/faq',
+            element: deferredPage(ruleScreen, 'RuleFaqPage'),
+          },
+          {
+            path: '/rules/category/:category',
+            element: deferredPage(ruleScreen, 'RuleCategoryPage'),
+          },
+          {
             path: '/rules/:code',
             element: deferredPage(ruleScreen, 'RuleDetailPage'),
           },

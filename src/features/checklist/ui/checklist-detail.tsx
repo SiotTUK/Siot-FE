@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { chatEntryState } from '@/features/chat/chat-entry'
 import { currentLanguage } from '@/shared/i18n'
 import { formatMonthDay } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
@@ -263,7 +264,15 @@ export function ChecklistDetail({
           <div className={styles.primaryActions}>
             <Button
               variant="secondary"
-              onClick={() => navigate('/chat', { state: { q: item.title } })}
+              onClick={() =>
+                navigate('/chat', {
+                  // CB-06: a draft the member edits and sends; back returns here.
+                  state: chatEntryState(
+                    { type: 'checklist', id: item.code },
+                    t('checklist.detail.askDraft', { title: item.title }),
+                  ),
+                })
+              }
             >
               {t('checklist.detail.askChat')}
             </Button>

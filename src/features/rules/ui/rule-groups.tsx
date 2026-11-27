@@ -1,42 +1,36 @@
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useSearchParams } from 'react-router-dom'
-import { ChipGroup } from '@/shared/ui/chip-group'
-import { Muted, Section, Stack } from '@/shared/ui/page'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
+import { MascotTip } from '@/shared/ui/mascot-tip'
+import { Muted, Section } from '@/shared/ui/page'
 import { SearchField } from '@/shared/ui/search-field'
-import {
-  groupByCategory,
-  ruleCategories,
-  searchRules,
-  type Rule,
-  type RuleCategory,
-} from '../rules'
+import { ruleCategories, searchRules, type Rule } from '../rules'
 import { useRules } from '../use-rules'
-import { RuleCategoryCard } from './rule-category-card'
-import { RuleFaqList } from './rule-faq-list'
+import { RuleCard } from './rule-card'
+import { RuleCategoryGrid } from './rule-category-grid'
+import { faqTopCount, RuleFaqList } from './rule-faq-list'
 import styles from './rules.module.css'
 
-type Filter = 'all' | RuleCategory
-
-/** M06 생활 수칙: search, category chips, FAQ TOP 5 and "분야별 안내". */
+/**
+ * M06 생활 수칙 (Figma v2): search, 분야별 안내 tiles, FAQ TOP 5 and a 토로
+ * tip. A tile opens `/rules/category/:category`; typing searches.
+ */
 export function RuleBrowser() {
   const { t } = useTranslation()
   const { rules, faqs } = useRules()
   const [params, setParams] = useSearchParams()
-  const categoryChips = useRef<HTMLDivElement>(null)
   const query = params.get('q') ?? ''
-  const filter =
-    ruleCategories.find((category) => category === params.get('category')) ??
-    'all'
   const searching = query.trim().length > 0
-  const groups = groupByCategory(
-    filter === 'all' ? rules : rules.filter((rule) => rule.category === filter),
+  // Older links used `/rules?category=waste`; send them to the category screen.
+  const oldCategory = ruleCategories.find(
+    (value) => value === params.get('category'),
   )
+  if (oldCategory)
+    return <Navigate to={`/rules/category/${oldCategory}`} replace />
 
-  function updateParam(name: 'q' | 'category', value: string) {
+  function updateQuery(value: string) {
     const next = new URLSearchParams(params)
-    if (value) next.set(name, value)
-    else next.delete(name)
+    if (value) next.set('q', value)
+    else next.delete('q')
     setParams(next, { replace: true, preventScrollReset: true })
   }
 
@@ -46,59 +40,31 @@ export function RuleBrowser() {
         label={t('rules.search')}
         placeholder={t('rules.searchPlaceholder')}
         value={query}
-        onChange={(event) => updateParam('q', event.target.value)}
+        onChange={(event) => updateQuery(event.target.value)}
       />
-      {!searching && (
-        <ChipGroup<Filter>
-          ref={categoryChips}
-          label={t('rules.categoriesLabel')}
-          value={filter}
-          onChange={(category) =>
-            updateParam('category', category === 'all' ? '' : category)
-          }
-          options={[
-            { value: 'all', label: t('rules.all') },
-            ...ruleCategories.map((category) => ({
-              value: category,
-              label: t(`rules.categories.${category}`),
-            })),
-          ]}
-        />
-      )}
-
       {searching ? (
         <SearchResults rules={searchRules(rules, query)} />
       ) : (
         <>
-          {filter === 'all' && (
-            <Section title={t('rules.faqTitle')}>
-              <RuleFaqList faqs={faqs} />
-            </Section>
-          )}
           <Section title={t('rules.byCategory')}>
-            <Stack gap={12}>
-              {groups.map((group) => (
-                <RuleCategoryCard
-                  // Remount on filter change so the open state resets.
-                  key={`${filter}:${group.category}`}
-                  group={group}
-                  defaultOpen={filter !== 'all'}
-                  onViewAll={
-                    filter === 'all'
-                      ? () => {
-                          categoryChips.current
-                            ?.querySelector<HTMLButtonElement>(
-                              `button[value="${group.category}"]`,
-                            )
-                            ?.focus()
-                          updateParam('category', group.category)
-                        }
-                      : undefined
-                  }
-                />
-              ))}
-            </Stack>
+            <RuleCategoryGrid />
           </Section>
+          <Section
+            title={t('rules.faqTitle')}
+            action={
+              <Link
+                to="/rules/faq"
+                state={{ from: 'rules' }}
+                className={styles.more}
+              >
+                {t('rules.faqAll')}
+                <span aria-hidden="true"> ›</span>
+              </Link>
+            }
+          >
+            <RuleFaqList faqs={faqs.slice(0, faqTopCount)} />
+          </Section>
+          <MascotTip mascot="toro">{t('rules.tip')}</MascotTip>
         </>
       )}
     </>
@@ -112,16 +78,10 @@ function SearchResults({ rules }: { rules: Rule[] }) {
       {rules.length === 0 ? (
         <Muted>{t('rules.noResults')}</Muted>
       ) : (
-        <ul className={`${styles.rows} ${styles.resultList}`}>
+        <ul className={styles.cards}>
           {rules.map((rule) => (
             <li key={rule.code}>
-              <Link to={`/rules/${rule.code}`} state={{ from: 'rules' }}>
-                <span>
-                  {rule.title}
-                  <small>{rule.summary}</small>
-                </span>
-                <span aria-hidden="true">›</span>
-              </Link>
+              <RuleCard rule={rule} />
             </li>
           ))}
         </ul>

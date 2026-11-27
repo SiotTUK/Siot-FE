@@ -2,6 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
+import {
+  chatEntryState,
+  forgetConversation,
+  type ChatTopic,
+} from './chat-entry'
 import { useAsk, useFeedback, useMessages } from './use-chat'
 
 /**
@@ -11,14 +16,15 @@ import { useAsk, useFeedback, useMessages } from './use-chat'
  */
 export function useChatConversation(
   conversationId: number | undefined,
-  eventQuestion?: { key: string; draft: string; eventId: string },
+  /** A question started from a detail screen (CB-06). */
+  entry?: { key: string; draft: string; topic: ChatTopic },
 ) {
   const navigate = useNavigate()
-  const [draft, setDraft] = useState(eventQuestion?.draft ?? '')
-  const [draftKey, setDraftKey] = useState(eventQuestion?.key)
-  if (eventQuestion && draftKey !== eventQuestion.key) {
-    setDraftKey(eventQuestion.key)
-    setDraft(eventQuestion.draft)
+  const [draft, setDraft] = useState(entry?.draft ?? '')
+  const [draftKey, setDraftKey] = useState(entry?.key)
+  if (entry && draftKey !== entry.key) {
+    setDraftKey(entry.key)
+    setDraft(entry.draft)
   }
   const [sending, setSending] = useState<string>()
   const [createdId, setCreatedId] = useState<number>()
@@ -39,7 +45,8 @@ export function useChatConversation(
           if (conversationId !== undefined) return
           navigate(`/chat/${id}`, {
             replace: true,
-            state: eventQuestion && { eventQuestionId: eventQuestion.eventId },
+            // Keep the back button pointing at the detail screen.
+            state: entry && chatEntryState(entry.topic),
           })
           // The URL carries the id now; a later "/chat" must start fresh.
           setCreatedId(undefined)
@@ -67,6 +74,7 @@ export function useChatConversation(
     rate: (messageId: number, helpful: boolean) =>
       activeId !== undefined && feedback.mutate({ messageId, helpful }),
     startOver: () => {
+      forgetConversation()
       setCreatedId(undefined)
       setDraft('')
       ask.reset()

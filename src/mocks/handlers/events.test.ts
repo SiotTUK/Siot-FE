@@ -24,3 +24,9 @@ it('keeps events that overlap the period by at least a day', () => {
   expect(list(`to=${first}`)).toEqual([1, 2])
   expect(list(`past=true&from=${events[5].endsOn}`)).toEqual([6])
 })
+
+it('filters by category like the BE, ignoring case', () => {
+  expect(list('category=EDUCATION')).toEqual([1, 2])
+  expect(list('category=festival&past=true')).toEqual([5])
+  expect(events[0].categoryName).toBe('교육·체험')
+})

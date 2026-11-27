@@ -301,19 +301,18 @@ function EventDetails({ event }: { event: EventDetail }) {
       <div className={styles.cover} aria-hidden="true">
         <EventImage url={event.thumbnailUrl} />
       </div>
-      {(event.multicultural || !event.translated || machineTranslated) && (
-        <div className={styles.tags}>
-          {event.multicultural && (
-            <Tag tone="main">{t('events.multicultural')}</Tag>
-          )}
-          {machineTranslated && (
-            <Tag tone="main">{t('events.translationAutomatic')}</Tag>
-          )}
-          {!event.translated && (
-            <Tag tone="warning">{t('events.translationPending')}</Tag>
-          )}
-        </div>
-      )}
+      <div className={styles.tags}>
+        {event.categoryName && <Tag>{event.categoryName}</Tag>}
+        {event.multicultural && (
+          <Tag tone="main">{t('events.multicultural')}</Tag>
+        )}
+        {machineTranslated && (
+          <Tag tone="main">{t('events.translationAutomatic')}</Tag>
+        )}
+        {!event.translated && (
+          <Tag tone="warning">{t('events.translationPending')}</Tag>
+        )}
+      </div>
       <h2 className={styles.title} lang={event.language}>
         {event.title}
       </h2>

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText, lifeChangeOf } from '../checklist'
+import { deadlineText, lifeChangeOf, reasonOf } from '../checklist'
 import { GuideDetail } from './guide-detail'
 import styles from './task-row.module.css'
 
@@ -37,6 +37,8 @@ export function TaskRow({
   const brief = [item.badge, item.place].filter(Boolean).join(' · ')
   const line = brief || item.summary
   const lifeChange = showLifeChange ? lifeChangeOf(item) : undefined
+  // On the life change's own screen (F06b): "자차가 있어서 보여요" (#31).
+  const reason = showLifeChange ? undefined : reasonOf(item)
   // Unknown life-change codes get no chip rather than a raw key.
   const tag = lifeChange
     ? t(`checklist.lifeChangeTag.${lifeChange}`, { defaultValue: '' })
@@ -75,6 +77,11 @@ export function TaskRow({
           <strong className={styles.title}>{item.title}</strong>
         </span>
         {line && <span className={styles.line}>{line}</span>}
+        {reason && (
+          <span className={styles.reason}>
+            {t(`checklist.reasons.${reason}`)}
+          </span>
+        )}
       </button>
       {dDayText && (
         <span className={styles.dDay} data-overdue={overdue}>

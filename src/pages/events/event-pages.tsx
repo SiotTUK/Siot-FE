@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Navigate,
@@ -26,15 +26,37 @@ import { EventImage } from '@/features/events/ui/event-image'
 import { EventListFilters } from '@/features/events/ui/event-list-filters'
 import { EventQueryNotice } from '@/features/events/ui/event-query-notice'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
-import { EventSubscription } from '@/features/events/ui/event-subscription'
+import { EventAlerts } from '@/features/events/ui/event-alerts'
+import { EventHeart } from '@/features/events/ui/event-heart'
 import { EventReport } from '@/features/events/ui/event-report'
-import { useEventDetail, useEvents } from '@/features/events/use-events'
+import {
+  useEventDetail,
+  useEvents,
+  useSavedEventIds,
+} from '@/features/events/use-events'
+import { useEventHeart } from '@/features/events/use-event-heart'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
 import { Button, ButtonLink } from '@/shared/ui/button'
+import {
+  CalendarIcon,
+  ClockIcon,
+  HeartIcon,
+  MapPinIcon,
+  ShareIcon,
+  TicketIcon,
+} from '@/shared/ui/icons'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { TextField } from '@/shared/ui/field'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { FormError, Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
+import {
+  BottomArea,
+  FormError,
+  Muted,
+  PageHeading,
+  Section,
+  Tag,
+} from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import { shareEvent } from '@/features/events/share-event'
 import styles from './event-pages.module.css'
@@ -48,7 +70,7 @@ export function EventsPage() {
       <PageHeading title={t('events.title')} />
       {member && (
         <>
-          <EventRecommendations memberId={member.id} />
+          <EventRecommendations memberId={member.id} layout="featured" />
           <EventList memberId={member.id} />
         </>
       )}
@@ -69,6 +91,7 @@ function EventList({ memberId }: { memberId: number }) {
   const filters = parseEventFilters(params)
   const rangeValid = isDateRangeValid(filters)
   const query = useEvents(memberId, page, filters)
+  const saved = useSavedEventIds(memberId)
   const data = query.data
   const lastPage = data ? Math.max(0, data.totalPages - 1) : page
   const rangeRejected =
@@ -121,10 +144,15 @@ function EventList({ memberId }: { memberId: number }) {
           retry={() => void query.refetch()}
         />
       ) : data?.content.length ? (
-        <ul className={styles.grid}>
+        <ul className={styles.list}>
           {data.content.map((event) => (
             <li key={event.eventId}>
-              <EventCard event={event} />
+              <EventCard
+                event={event}
+                memberId={memberId}
+                saved={saved.has(event.eventId)}
+                variant="row"
+              />
             </li>
           ))}
         </ul>
@@ -167,6 +195,7 @@ export function EventDetailPage() {
   const navigate = useNavigate()
   const { data: member } = useMe()
   const from = state?.from
+  const detail = useEventDetailIfValid(member?.id, eventId)
 
   return (
     <>
@@ -176,6 +205,20 @@ export function EventDetailPage() {
           from === 'calendar'
             ? { onClick: () => void navigate(-1), label: t('common.back') }
             : { to: eventDetailBackPath(from), label: t('common.back') }
+        }
+        actions={
+          member &&
+          detail && (
+            <>
+              <EventHeart
+                memberId={member.id}
+                eventId={detail.eventId}
+                saved={detail.subscribed}
+                title={detail.title}
+              />
+              <ShareButton event={detail} />
+            </>
+          )
         }
       />
       <PageBody className={styles.detail}>
@@ -193,6 +236,16 @@ export function EventDetailPage() {
       </PageBody>
     </>
   )
+}
+
+/** Detail data for the header ♥ and share (shares the content's query). */
+function useEventDetailIfValid(
+  memberId: number | undefined,
+  eventId: string | undefined,
+) {
+  const valid = memberId !== undefined && isEventId(eventId)
+  const query = useEventDetail(memberId ?? 0, valid ? eventId : '', valid)
+  return valid ? query.data : undefined
 }
 
 function EventDetailContent({
@@ -216,17 +269,14 @@ function EventDetailContent({
       />
     )
 
+  const event = query.data
   return (
     <>
-      <EventDetails event={query.data} />
-      <EventSubscription
-        event={query.data}
-        memberId={memberId}
-        initiallySubscribed={query.data.subscribed}
-        alignActionsEnd
-      />
-      <EventActions event={query.data} />
-      <EventReport event={query.data} memberId={memberId} />
+      <EventDetails event={event} />
+      <EventAlerts event={event} memberId={memberId} saved={event.subscribed} />
+      <MascotTip mascot="haero">{t('events.alerts.tip')}</MascotTip>
+      <EventLinks event={event} memberId={memberId} />
+      <EventBottomActions event={event} memberId={memberId} />
     </>
   )
 }
@@ -237,8 +287,6 @@ function EventDetails({ event }: { event: EventDetail }) {
   const machineTranslated = event.translated && event.language !== 'ko'
   const dates = formatEventDates(event, language)
   const times = formatEventTimes(event, language)
-  const applicationUrl = eventLink(event.applicationUrl)
-  const sourceUrl = eventLink(event.sourceUrl)
   const deadlineDate = new Date(event.applicationDeadline ?? '')
   const deadline = Number.isFinite(deadlineDate.getTime())
     ? new Intl.DateTimeFormat(language, {
@@ -270,75 +318,107 @@ function EventDetails({ event }: { event: EventDetail }) {
         {event.title}
       </h2>
       <dl className={styles.facts}>
-        <div>
-          <dt>{t('events.date')}</dt>
-          <dd>{dates ?? t('events.dateUnknown')}</dd>
+        <Fact icon={<CalendarIcon />} label={t('events.date')}>
+          {dates ?? t('events.dateUnknown')}
           {(times || event.timeUnknown) && (
-            <dd>{times || t('events.timeUnknown')}</dd>
+            <> · {times || t('events.timeUnknown')}</>
           )}
-        </div>
+        </Fact>
         {event.venue && (
-          <div>
-            <dt>{t('events.venue')}</dt>
-            <dd lang={event.language}>{event.venue}</dd>
-          </div>
+          <Fact
+            icon={<MapPinIcon />}
+            label={t('events.venue')}
+            lang={event.language}
+          >
+            {event.venue}
+          </Fact>
         )}
         {event.priceInfo && (
-          <div>
-            <dt>{t('events.price')}</dt>
-            <dd>{event.priceInfo}</dd>
-          </div>
+          <Fact icon={<TicketIcon />} label={t('events.price')}>
+            {event.priceInfo}
+          </Fact>
         )}
         {deadline && (
-          <div>
-            <dt>{t('events.deadline')}</dt>
-            <dd>{deadline}</dd>
-          </div>
-        )}
-        {event.description && (
-          <div>
-            <dt>{t('events.description')}</dt>
-            <dd lang={event.language} className={styles.description}>
-              {event.description}
-            </dd>
-          </div>
+          <Fact icon={<ClockIcon />} label={t('events.deadline')}>
+            {deadline}
+          </Fact>
         )}
       </dl>
-      {(applicationUrl || sourceUrl) && (
-        <div className={styles.links}>
-          {applicationUrl && (
-            <a href={applicationUrl} target="_blank" rel="noopener noreferrer">
-              {t('events.apply')}
-            </a>
-          )}
-          {sourceUrl && sourceUrl !== applicationUrl && (
-            <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
-              {t('events.original')}
-            </a>
-          )}
-        </div>
+      {event.description && (
+        <section className={styles.intro}>
+          <h3>{t('events.intro')}</h3>
+          <p lang={event.language}>{event.description}</p>
+        </section>
       )}
     </>
   )
 }
 
-function EventActions({ event }: { event: EventDetail }) {
-  const { t } = useTranslation()
-  const path = `/events/${event.eventId}`
-  const url = new URL(path, window.location.origin).href
-  const [shareStatus, setShareStatus] =
-    useState<Awaited<ReturnType<typeof shareEvent>>>()
+/** One fact row with its icon (Figma v2 M07c). The label stays for screen readers. */
+function Fact({
+  icon,
+  label,
+  lang,
+  children,
+}: {
+  icon: ReactNode
+  label: string
+  lang?: string
+  children: ReactNode
+}) {
   return (
-    <>
-      <div className={styles.links}>
-        <Button
-          variant="secondary"
-          onClick={async () =>
-            setShareStatus(await shareEvent(event.title, url, navigator))
-          }
-        >
-          {t('events.share')}
-        </Button>
+    <div>
+      <dt>
+        {icon}
+        <span className="visually-hidden">{label}</span>
+      </dt>
+      <dd lang={lang}>{children}</dd>
+    </div>
+  )
+}
+
+/** Text links: 원문 보기 · 신청하기 · 정보 오류 신고 (Figma v2 M07c). */
+function EventLinks({
+  event,
+  memberId,
+}: {
+  event: EventDetail
+  memberId: number
+}) {
+  const { t } = useTranslation()
+  const applicationUrl = eventLink(event.applicationUrl)
+  const sourceUrl = eventLink(event.sourceUrl)
+  return (
+    <div className={styles.textLinks}>
+      {sourceUrl && (
+        <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+          {t('events.original')} ›
+        </a>
+      )}
+      {applicationUrl && applicationUrl !== sourceUrl && (
+        <a href={applicationUrl} target="_blank" rel="noopener noreferrer">
+          {t('events.apply')} ›
+        </a>
+      )}
+      <EventReport event={event} memberId={memberId} />
+    </div>
+  )
+}
+
+/** Bottom: [질문하기][♥ 찜하고 달력에 담기] (Figma v2 M07c). */
+function EventBottomActions({
+  event,
+  memberId,
+}: {
+  event: EventDetail
+  memberId: number
+}) {
+  const { t } = useTranslation()
+  const heart = useEventHeart(memberId, event.eventId, event.subscribed)
+  return (
+    <BottomArea>
+      {heart.error && <FormError message={t('events.heart.saveError')} />}
+      <div className={styles.bottomActions}>
         <ButtonLink
           variant="secondary"
           to="/chat"
@@ -349,17 +429,52 @@ function EventActions({ event }: { event: EventDetail }) {
         >
           {t('events.ask')}
         </ButtonLink>
+        <Button
+          aria-pressed={heart.liked}
+          disabled={heart.pending}
+          onClick={heart.toggle}
+        >
+          <HeartIcon filled={heart.liked} />{' '}
+          {t(
+            heart.liked ? 'events.heart.remove' : 'events.heart.saveToCalendar',
+          )}
+        </Button>
       </div>
+    </BottomArea>
+  )
+}
+
+function ShareButton({ event }: { event: EventDetail }) {
+  const { t } = useTranslation()
+  const url = new URL(`/events/${event.eventId}`, window.location.origin).href
+  const [shareStatus, setShareStatus] =
+    useState<Awaited<ReturnType<typeof shareEvent>>>()
+  return (
+    <>
+      <button
+        type="button"
+        className={styles.iconButton}
+        aria-label={t('events.share')}
+        onClick={async () =>
+          setShareStatus(await shareEvent(event.title, url, navigator))
+        }
+      >
+        <ShareIcon />
+      </button>
       {shareStatus === 'copied' && (
-        <div role="status">{t('events.shareCopied')}</div>
+        <div role="status" className={styles.toast}>
+          {t('events.shareCopied')}
+        </div>
       )}
       {shareStatus === 'manual' && (
-        <TextField
-          label={t('events.shareManual')}
-          readOnly
-          value={url}
-          onFocus={(e) => e.target.select()}
-        />
+        <div className={styles.toast}>
+          <TextField
+            label={t('events.shareManual')}
+            readOnly
+            value={url}
+            onFocus={(e) => e.target.select()}
+          />
+        </div>
       )}
     </>
   )

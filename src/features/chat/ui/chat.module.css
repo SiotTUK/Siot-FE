@@ -39,9 +39,67 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* M08b: the question is a full-width light card. */
+.mine {
+  align-items: stretch;
+}
 .mine .bubble {
-  background: var(--primary);
-  color: var(--card);
+  max-width: none;
+  background: var(--secondary);
+  color: var(--primary-hover);
+  font-weight: 600;
+}
+/* M08b answer card, headed "토로 · 웰컴시흥 도우미". */
+.answer {
+  max-width: none;
+  width: 100%;
+}
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-8);
+  font: var(--text-caption);
+  font-weight: 700;
+  color: #489550; /* Mascot/Toro Deep */
+}
+.speaker img,
+.withAvatar img,
+.intro img {
+  object-fit: contain;
+}
+/* M08a greeting: 토로 avatar beside the bubble. */
+.withAvatar {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  max-width: 88%;
+}
+.withAvatar img {
+  flex: none;
+}
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+.intro strong {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.intro p {
+  margin: 0 0 var(--space-4);
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+.thinking {
+  margin: 0;
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
 }
 .markdown {
   white-space: normal;
@@ -76,7 +134,7 @@
   color: var(--muted-foreground);
 }
 .calls,
-.chips,
+.sources,
 .feedback {
   display: flex;
   flex-wrap: wrap;
@@ -100,28 +158,54 @@
   font-weight: 700;
   text-decoration: none;
 }
-.chips button,
-.feedback button {
-  min-height: 30px;
-  padding: 2px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
-  font-size: 12px;
+/* "출처 · …" text links (M08b). */
+.sources {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.sourceLink {
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--primary);
+  text-align: start;
+}
+.sourceLink:disabled {
+  cursor: default;
   color: var(--muted-foreground);
 }
-.chips button:disabled {
-  cursor: default;
-}
+/* "도움이 됐나요?" and two large buttons. */
 .feedback {
-  font-size: 12px;
-  color: var(--placeholder);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+}
+.feedback p {
+  grid-column: 1 / -1;
+  margin: 0;
+  font: var(--text-label);
+  font-weight: 700;
+}
+.feedback button {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-label);
+  font-weight: 700;
+  color: var(--primary-hover);
+}
+.feedback button:only-child,
+.feedback button:first-child:last-child {
+  grid-column: 1 / -1;
 }
 .feedback button[aria-pressed='true'] {
-  border-color: var(--primary);
-  background: var(--secondary);
-  color: var(--primary-hover);
-  font-weight: 700;
+  background: var(--primary);
+  color: var(--card);
 }
 .sourceDetail {
   display: flex;
@@ -149,14 +233,18 @@
   padding: 0;
   list-style: none;
 }
+/* M08a: outlined suggestion chips under the greeting. */
+.suggestions {
+  padding-left: 36px;
+}
 .suggestions button {
   min-height: 36px;
   padding: 4px 12px;
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--primary);
   border-radius: 18px;
-  background: var(--secondary);
+  background: var(--card);
   font-size: 13px;
-  color: var(--primary-hover);
+  color: var(--primary);
 }
 .privacy {
   font-size: 11px;
@@ -190,11 +278,14 @@
   box-shadow: 0 0 0 3px var(--secondary);
 }
 .inputRow button {
-  min-width: 56px;
-  min-height: 44px;
-  padding: 0 14px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border: 0;
-  border-radius: 22px;
+  border-radius: 50%;
   background: var(--primary);
   color: var(--card);
   font-weight: 700;
@@ -233,27 +324,28 @@
   color: var(--placeholder);
 }
 .related ul {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 6px;
   margin: 4px 0 0;
   padding: 0;
   list-style: none;
 }
+/* Related screen as a full-width button (M08b "외국인등록 자세히 보기"). */
 .related li > :is(a, span) {
-  display: block;
-  padding: 2px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--card);
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  padding: 4px 12px;
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-label);
+  font-weight: 700;
   color: var(--muted-foreground);
+  text-align: center;
 }
 .related li > a {
-  display: flex;
-  align-items: center;
-  min-height: 32px;
   color: var(--primary-hover);
-  text-decoration: underline;
+  text-decoration: none;
 }
 .related li > a:focus-visible {
   outline: 2px solid var(--primary);

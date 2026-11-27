@@ -52,6 +52,12 @@ export function ChecklistDetailPage() {
           mark: nextMark(query.item!, 'toggleDone'),
         })
       }
+      onToggleNotApplicable={() =>
+        mark.mutate({
+          item: query.item!,
+          mark: nextMark(query.item!, 'toggleNotApplicable'),
+        })
+      }
     />
   )
 }

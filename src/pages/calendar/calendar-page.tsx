@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
@@ -15,11 +15,16 @@ import {
   readCalendarLocation,
 } from '@/features/calendar/calendar-location'
 import { useMonthlySchedules } from '@/features/calendar/use-monthly-schedules'
-import { useEventCalendar } from '@/features/events/use-events'
+import {
+  useEventCalendar,
+  useSavedEventIds,
+} from '@/features/events/use-events'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate, koreaToday } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
-import { ChevronRightIcon } from '@/shared/ui/icons'
+import { ChipGroup } from '@/shared/ui/chip-group'
+import { ChevronRightIcon, HeartIcon } from '@/shared/ui/icons'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { FormError, Muted, PageHeading, Section, Tag } from '@/shared/ui/page'
 import styles from './calendar-page.module.css'
@@ -59,6 +64,9 @@ function MonthlyCalendar({
   const month = monthStart.getUTCMonth() + 1
   const schedulesQuery = useMonthlySchedules(memberId, year, month, language)
   const eventsQuery = useEventCalendar(memberId, year, month)
+  // Figma v2: the calendar holds saved (♥) events only; chips pick the kind.
+  const saved = useSavedEventIds(memberId)
+  const [kind, setKind] = useState<'all' | 'todo' | 'saved'>('all')
   const firstWeekday = monthStart.getUTCDay()
   const numberOfDays = new Date(Date.UTC(year, month, 0)).getUTCDate()
   const monthLabel = new Intl.DateTimeFormat(language, {
@@ -86,8 +94,10 @@ function MonthlyCalendar({
     }),
   )
   const { scheduleEntries, eventEntries, all } = calendarEntries(
-    schedulesQuery.data ?? [],
-    eventsQuery.data ?? [],
+    kind === 'saved' ? [] : (schedulesQuery.data ?? []),
+    kind === 'todo'
+      ? []
+      : (eventsQuery.data ?? []).filter((event) => saved.has(event.eventId)),
   )
   const visibleEntries = selectedDate
     ? all.filter((entry) => isScheduledOn(entry, selectedDate))
@@ -119,27 +129,40 @@ function MonthlyCalendar({
 
   return (
     <PageBody className={styles.body}>
-      <PageHeading title={t('nav.calendar')} />
-      <section className={styles.month} aria-label={monthLabel}>
+      <div className={styles.titleRow}>
+        <PageHeading title={t('nav.calendar')} />
         <div className={styles.monthNavigation}>
-          <Button
-            variant="secondary"
+          <button
+            type="button"
             aria-label={t('calendar.previousMonth')}
             disabled={monthPrefix === firstCalendarMonth}
             onClick={() => moveMonth(-1)}
           >
             <ChevronRightIcon className={styles.previousIcon} />
-          </Button>
+          </button>
           <h2 aria-live="polite">{monthLabel}</h2>
-          <Button
-            variant="secondary"
+          <button
+            type="button"
             aria-label={t('calendar.nextMonth')}
             disabled={monthPrefix === lastCalendarMonth}
             onClick={() => moveMonth(1)}
           >
             <ChevronRightIcon />
-          </Button>
+          </button>
         </div>
+      </div>
+      <ChipGroup
+        variant="pill"
+        label={t('calendar.kinds')}
+        value={kind}
+        onChange={setKind}
+        options={[
+          { value: 'all', label: t('calendar.kindAll') },
+          { value: 'todo', label: t('calendar.kindTodo') },
+          { value: 'saved', label: t('calendar.kindSaved') },
+        ]}
+      />
+      <section className={styles.month} aria-label={monthLabel}>
         <fieldset className={styles.filter}>
           <legend className="visually-hidden">{t('calendar.filter')}</legend>
           <label className={styles.all}>
@@ -246,7 +269,13 @@ function MonthlyCalendar({
         title={
           selectedDate
             ? formatCalendarDate(selectedDate, language)
-            : t('calendar.all')
+            : t('calendar.monthCount', {
+                month: new Intl.DateTimeFormat(language, {
+                  month: 'long',
+                  timeZone: 'UTC',
+                }).format(monthStart),
+                count: visibleEntries.length,
+              })
         }
       >
         {sources.map(({ query, key, error }) =>
@@ -273,7 +302,11 @@ function MonthlyCalendar({
           <ul className={styles.schedules}>
             {visibleEntries.map((entry) =>
               entry.source === 'schedule' ? (
-                <ScheduleItem key={entry.key} schedule={entry.schedule} />
+                <ScheduleItem
+                  key={entry.key}
+                  schedule={entry.schedule}
+                  day={entryDay(entry.startsOn, selectedDate, monthPrefix)}
+                />
               ) : (
                 <li key={entry.key}>
                   <Link
@@ -281,17 +314,23 @@ function MonthlyCalendar({
                     to={`/events/${entry.event.eventId}`}
                     state={{ from: 'calendar' }}
                   >
-                    <Tag tone="warning">{t('events.detail')}</Tag>
-                    <strong lang={entry.event.translated ? undefined : 'ko'}>
-                      {entry.event.title}
-                    </strong>
-                    <CalendarPeriod
-                      startsOn={entry.startsOn}
-                      endsOn={entry.endsOn}
+                    <DayBlock
+                      date={entryDay(entry.startsOn, selectedDate, monthPrefix)}
                     />
-                    {!entry.event.translated && (
-                      <Muted>{t('events.translationPending')}</Muted>
-                    )}
+                    <div className={styles.scheduleText}>
+                      <strong lang={entry.event.translated ? undefined : 'ko'}>
+                        <HeartIcon filled className={styles.heart} />{' '}
+                        {entry.event.title}
+                      </strong>
+                      <CalendarPeriod
+                        startsOn={entry.startsOn}
+                        endsOn={entry.endsOn}
+                      />
+                      {!entry.event.translated && (
+                        <Muted>{t('events.translationPending')}</Muted>
+                      )}
+                    </div>
+                    <Tag>{t('calendar.savedBadge')}</Tag>
                   </Link>
                 </li>
               ),
@@ -303,26 +342,58 @@ function MonthlyCalendar({
           </Muted>
         ) : null}
       </Section>
+      <MascotTip mascot="haero">{t('calendar.tip')}</MascotTip>
     </PageBody>
   )
 }
 
-function ScheduleItem({ schedule }: { schedule: ScheduleResponse }) {
+/** The day shown at the left of a row: the picked date, else the start date in this month. */
+function entryDay(startsOn: string, selected: string | null, month: string) {
+  if (selected) return selected
+  return startsOn.startsWith(month) ? startsOn : `${month}-01`
+}
+
+/** Day number and weekday at the left of a list row (Figma v2 M05). */
+function DayBlock({ date }: { date: string }) {
+  const language = currentLanguage()
+  const value = new Date(`${date}T00:00:00Z`)
+  return (
+    <span className={styles.dayBlock} aria-hidden="true">
+      <strong>{value.getUTCDate()}</strong>
+      <small>
+        {new Intl.DateTimeFormat(language, {
+          weekday: 'short',
+          timeZone: 'UTC',
+        }).format(value)}
+      </small>
+    </span>
+  )
+}
+
+function ScheduleItem({
+  schedule,
+  day,
+}: {
+  schedule: ScheduleResponse
+  day: string
+}) {
   const { t } = useTranslation()
   return (
     <li className={styles.schedule} data-highlighted={schedule.highlighted}>
-      {(schedule.personal || schedule.highlighted) && (
-        <div className={styles.tags}>
-          {schedule.personal && <Tag tone="main">{t('calendar.personal')}</Tag>}
-          {schedule.highlighted && (
-            <Tag tone="warning">{t('calendar.highlighted')}</Tag>
+      <DayBlock date={day} />
+      <div className={styles.scheduleText}>
+        <strong>{schedule.title}</strong>
+        <CalendarPeriod startsOn={schedule.startsOn} endsOn={schedule.endsOn} />
+        {schedule.targetDescription && (
+          <Muted>{schedule.targetDescription}</Muted>
+        )}
+      </div>
+      {(schedule.highlighted || schedule.personal) && (
+        <Tag tone={schedule.highlighted ? 'warning' : 'main'}>
+          {t(
+            schedule.highlighted ? 'calendar.highlighted' : 'calendar.personal',
           )}
-        </div>
-      )}
-      <strong>{schedule.title}</strong>
-      <CalendarPeriod startsOn={schedule.startsOn} endsOn={schedule.endsOn} />
-      {schedule.targetDescription && (
-        <Muted>{schedule.targetDescription}</Muted>
+        </Tag>
       )}
     </li>
   )

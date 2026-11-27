@@ -79,8 +79,7 @@ export function EventReport({
         <Notice tone="success" title={t('events.report.received')} />
       ) : (
         <Button
-          variant="secondary"
-          block
+          variant="text"
           aria-expanded={open}
           aria-controls={open ? panelId : undefined}
           disabled={submit.isPending}

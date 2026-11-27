@@ -182,6 +182,29 @@ function saveSubscription(eventId: string, request: Request, enabled: boolean) {
 }
 
 export const eventHandlers = [
+  http.get('*/api/members/me/event-subscriptions', () => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const content = Object.entries(state.eventSubscriptions[member.id] ?? {})
+      .filter(([, saved]) => saved.enabled)
+      .map(([eventId, saved]) => ({
+        eventId: Number(eventId),
+        userId: member.id,
+        enabled: true,
+        leadDays: saved.leadDays,
+        updatedAt: new Date().toISOString(),
+      }))
+    return HttpResponse.json({
+      data: {
+        content,
+        page: 0,
+        size: 100,
+        totalElements: content.length,
+        totalPages: 1,
+        hasNext: false,
+      },
+    })
+  }),
   http.get(subscriptionPath, ({ params }) => {
     const member = currentMember()
     if (!member) return unauthorized()

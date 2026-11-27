@@ -10,7 +10,8 @@ export const pageMessages = defineMessages({
     },
     notFound: {
       title: '페이지를 찾을 수 없어요',
-      home: '처음으로 돌아가기',
+      description: '주소가 바뀌었거나 지워진 페이지예요.',
+      home: '홈으로',
     },
   },
   en: {
@@ -22,7 +23,8 @@ export const pageMessages = defineMessages({
     },
     notFound: {
       title: 'Page not found',
-      home: 'Back to start',
+      description: 'The address changed or the page was removed.',
+      home: 'Home',
     },
   },
   zh: {
@@ -34,7 +36,8 @@ export const pageMessages = defineMessages({
     },
     notFound: {
       title: '找不到该页面',
-      home: '返回首页',
+      description: '地址已更改或页面已被删除。',
+      home: '首页',
     },
   },
   vi: {
@@ -46,7 +49,8 @@ export const pageMessages = defineMessages({
     },
     notFound: {
       title: 'Không tìm thấy trang',
-      home: 'Quay về trang đầu',
+      description: 'Địa chỉ đã thay đổi hoặc trang đã bị xóa.',
+      home: 'Trang chủ',
     },
   },
 })

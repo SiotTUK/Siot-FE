@@ -31,6 +31,21 @@ export const eventMessages = defineMessages({
       shareManual: '아래 링크를 복사해 주세요.',
       ask: '질문하기',
       askDraft: '‘{{title}}’ 행사에 대해 알려 주세요.',
+      intro: '소개',
+      recommended: '나에게 추천',
+      heart: {
+        save: '찜하기',
+        remove: '찜 해제',
+        saveToCalendar: '찜하고 달력에 담기',
+        saveError: '찜하지 못했어요. 다시 시도해 주세요.',
+      },
+      alerts: {
+        title: '찜하면 알림도 받아요',
+        notSaved: '찜하면 행사 전과 일정이 바뀔 때 알려 드려요.',
+        before: '행사 전 알림',
+        changes: '일정이 바뀌면 바로 알려 드려요',
+        tip: '일정이 바뀌면 해로가 바로 알려 줄게요',
+      },
       reminder: {
         title: '알림 받기',
         timing: '알림 받을 때',
@@ -65,7 +80,7 @@ export const eventMessages = defineMessages({
         reset: '필터 초기화',
       },
       report: {
-        open: '오류 신고',
+        open: '정보 오류 신고',
         quote: '문제가 있는 문구',
         quoteRequired: '문제가 있는 문구를 입력해 주세요.',
         quoteTooLong: '문구는 2000자까지 입력할 수 있어요.',
@@ -122,6 +137,22 @@ export const eventMessages = defineMessages({
       shareManual: 'Copy the link below.',
       ask: 'Ask about this event',
       askDraft: 'Tell me about the event “{{title}}”.',
+      intro: 'About',
+      recommended: 'For you',
+      heart: {
+        save: 'Save',
+        remove: 'Unsave',
+        saveToCalendar: 'Save to my calendar',
+        saveError: 'Could not save. Please try again.',
+      },
+      alerts: {
+        title: 'Saved events come with reminders',
+        notSaved:
+          'Save it to get a reminder before the event and when the schedule changes.',
+        before: 'Reminder before the event',
+        changes: 'We tell you right away if the schedule changes',
+        tip: 'Haero will tell you right away if the schedule changes',
+      },
       reminder: {
         title: 'Get reminders',
         timing: 'Remind me',
@@ -215,6 +246,21 @@ export const eventMessages = defineMessages({
       shareManual: '请复制下方链接。',
       ask: '询问此活动',
       askDraft: '请介绍一下“{{title}}”活动。',
+      intro: '介绍',
+      recommended: '为你推荐',
+      heart: {
+        save: '收藏',
+        remove: '取消收藏',
+        saveToCalendar: '收藏并加入日历',
+        saveError: '收藏失败，请重试。',
+      },
+      alerts: {
+        title: '收藏后也会收到提醒',
+        notSaved: '收藏后，活动开始前和日程变更时会提醒你。',
+        before: '活动前提醒',
+        changes: '日程变更时会立即通知你',
+        tip: '日程有变化时，Haero 会马上告诉你',
+      },
       reminder: {
         title: '接收提醒',
         timing: '提醒时间',
@@ -306,6 +352,21 @@ export const eventMessages = defineMessages({
       shareManual: 'Hãy sao chép liên kết bên dưới.',
       ask: 'Hỏi về sự kiện',
       askDraft: 'Hãy cho tôi biết về sự kiện “{{title}}”.',
+      intro: 'Giới thiệu',
+      recommended: 'Dành cho bạn',
+      heart: {
+        save: 'Lưu',
+        remove: 'Bỏ lưu',
+        saveToCalendar: 'Lưu vào lịch',
+        saveError: 'Không lưu được. Hãy thử lại.',
+      },
+      alerts: {
+        title: 'Lưu sự kiện để nhận nhắc nhở',
+        notSaved: 'Lưu để được nhắc trước sự kiện và khi lịch thay đổi.',
+        before: 'Nhắc trước sự kiện',
+        changes: 'Báo ngay khi lịch thay đổi',
+        tip: 'Haero sẽ báo ngay khi lịch thay đổi',
+      },
       reminder: {
         title: 'Nhận thông báo',
         timing: 'Thời điểm nhắc',

@@ -1,6 +1,6 @@
 .carousel {
   display: grid;
-  grid-auto-columns: 80%;
+  grid-auto-columns: 62%;
   grid-auto-flow: column;
   gap: var(--space-12);
   margin: 0 calc(-1 * var(--space-4));
@@ -14,8 +14,12 @@
 
 .carousel > li {
   display: grid;
-  align-content: start;
-  gap: var(--space-8);
   min-inline-size: 0;
   scroll-snap-align: start;
+}
+
+.featured {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }

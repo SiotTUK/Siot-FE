@@ -16,6 +16,8 @@ import { useChatConversation } from '@/features/chat/use-chat-conversation'
 import { ChatComposer } from '@/features/chat/ui/chat-composer'
 import {
   ChatBubble,
+  ChatIntro,
+  ChatThinking,
   ChatLayout,
   ChatMessage,
 } from '@/features/chat/ui/chat-message'
@@ -24,6 +26,7 @@ import { currentLanguage } from '@/shared/i18n'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { LanguageSelect } from '@/shared/ui/language-select'
 import { QueryState } from '@/shared/ui/query-state'
+import { HistoryIcon, PlusIcon } from '@/shared/ui/icons'
 import { HeaderAction, ScreenHeader } from '@/shared/ui/screen-header'
 
 /**
@@ -91,16 +94,13 @@ function ChatScreen() {
           title={t('chat.title')}
           actions={
             <>
-              <LanguageSelect
-                label={t('common.language')}
-                value={currentLanguage()}
-                onChange={changeLanguage}
-              />
               <HeaderAction to="/chat/history">
-                {t('chat.history')}
+                <HistoryIcon />
+                <span className="visually-hidden">{t('chat.history')}</span>
               </HeaderAction>
               <HeaderAction to="/chat" onClick={chat.startOver}>
-                {t('chat.newChat')}
+                <PlusIcon />
+                <span className="visually-hidden">{t('chat.newChat')}</span>
               </HeaderAction>
             </>
           }
@@ -111,7 +111,6 @@ function ChatScreen() {
           draft={chat.draft}
           onDraftChange={chat.setDraft}
           onSend={chat.send}
-          suggestions={empty ? suggestions.data?.questions : undefined}
           busy={chat.ask.isPending}
           disabled={notFound}
           error={
@@ -132,7 +131,18 @@ function ChatScreen() {
               : chat.messages
           }
         >
-          {empty && <ChatBubble>{t('chat.greeting')}</ChatBubble>}
+          <ChatIntro
+            language={
+              <LanguageSelect
+                label={t('chat.answerLanguage')}
+                value={currentLanguage()}
+                onChange={changeLanguage}
+              />
+            }
+            suggestions={suggestions.data?.questions}
+            busy={chat.ask.isPending}
+            onAsk={empty && !notFound ? chat.send : undefined}
+          />
           {chat.list.map((message, index) => {
             // Only the latest failed answer offers to send its question again.
             const question = chat.list[index - 1]
@@ -159,7 +169,7 @@ function ChatScreen() {
               <ChatBubble mine pending>
                 {chat.sending}
               </ChatBubble>
-              <ChatBubble pending>{t('chat.thinking')} · · ·</ChatBubble>
+              <ChatThinking />
             </>
           )}
         </QueryState>

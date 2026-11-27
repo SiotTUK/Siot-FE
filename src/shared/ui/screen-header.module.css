@@ -1,4 +1,5 @@
 .header {
+  position: relative;
   padding: 6px var(--space-12) var(--space-8) var(--space-4);
   background: var(--card);
   border-bottom: 1px solid var(--border);

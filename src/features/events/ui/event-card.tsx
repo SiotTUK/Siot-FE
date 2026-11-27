@@ -4,73 +4,83 @@ import { currentLanguage } from '@/shared/i18n'
 import { koreaToday } from '@/shared/i18n/format'
 import type { EventSummary } from '../api'
 import { formatEventDates } from '../event-display'
+import { EventHeart } from './event-heart'
 import { EventImage } from './event-image'
-import { eventMessages } from '../messages'
 import styles from './event-card.module.css'
 
+/**
+ * Figma v2 event cards, each with a ♥ beside the link:
+ * - `carousel`: picture on top, status badge, title, date · place (home)
+ * - `featured`: the large "진행 중 · 나에게 추천" card (events screen)
+ * - `row`: square picture, badge, title, date · place (all events list)
+ */
 export function EventCard({
   event,
-  reasons,
+  memberId,
+  saved,
+  variant,
 }: {
   event: EventSummary
-  reasons?: string[]
+  memberId: number
+  saved: boolean
+  variant: 'carousel' | 'featured' | 'row'
 }) {
   const { t } = useTranslation()
   const { pathname, search } = useLocation()
-  const dates = formatEventDates(event, currentLanguage())
-  const today = koreaToday()
-  const startDate = event.startsOn ?? event.endsOn
-  const endDate = event.endsOn ?? event.startsOn
-  const status =
-    startDate && endDate && endDate >= today
-      ? startDate <= today
-        ? 'ongoing'
-        : 'planned'
-      : undefined
-
-  const content = (
-    <div className={styles.caption}>
-      <h3 lang={event.language}>{event.title}</h3>
-      <p>{dates ?? t('events.dateUnknown')}</p>
-      {event.venue && <p lang={event.language}>{event.venue}</p>}
-    </div>
+  const status = eventStatus(event)
+  const meta = [
+    formatEventDates(event, currentLanguage()) ?? t('events.dateUnknown'),
+    event.venue,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+  const badge = status && (
+    <span className={styles.status}>
+      {variant === 'featured'
+        ? `${t(`events.${status}`)} · ${t('events.recommended')}`
+        : t(`events.${status}`)}
+    </span>
   )
 
   return (
-    <Link
-      className={styles.card}
-      data-featured={Boolean(reasons)}
-      to={`/events/${event.eventId}`}
-      state={{ from: pathname + search }}
-    >
-      <div className={styles.art}>
-        <EventImage url={event.thumbnailUrl} />
-        {status && (
-          <span className={styles.status}>{t(`events.${status}`)}</span>
-        )}
-        {reasons && content}
-      </div>
-      {reasons ? (
-        <ul className={styles.reasons}>
-          {reasons
-            .filter((reason) =>
-              Object.hasOwn(eventMessages.ko.events.reasons, reason),
-            )
-            .map((reason) => (
-              <li key={reason}>{t(`events.reasons.${reason}`)}</li>
-            ))}
-          {!event.translated && <li>{t('events.translationPending')}</li>}
-        </ul>
-      ) : (
-        <>
-          {content}
+    <article className={styles.card} data-variant={variant}>
+      <Link
+        className={styles.link}
+        to={`/events/${event.eventId}`}
+        state={{ from: pathname + search }}
+      >
+        <div className={styles.art} data-tone={event.eventId % 4}>
+          <EventImage url={event.thumbnailUrl} />
+          {variant !== 'row' && badge}
+        </div>
+        <div className={styles.body}>
+          {variant === 'row' && badge}
+          <h3 lang={event.language}>{event.title}</h3>
+          <p lang={event.language}>{meta}</p>
           {!event.translated && (
             <p className={styles.translation}>
               {t('events.translationPending')}
             </p>
           )}
-        </>
-      )}
-    </Link>
+        </div>
+      </Link>
+      <div className={styles.heart}>
+        <EventHeart
+          memberId={memberId}
+          eventId={event.eventId}
+          saved={saved}
+          title={event.title}
+        />
+      </div>
+    </article>
   )
+}
+
+/** Ongoing / planned by the event's Korea dates; ended events have none. */
+function eventStatus(event: EventSummary) {
+  const today = koreaToday()
+  const startDate = event.startsOn ?? event.endsOn
+  const endDate = event.endsOn ?? event.startsOn
+  if (!startDate || !endDate || endDate < today) return undefined
+  return startDate <= today ? 'ongoing' : 'planned'
 }

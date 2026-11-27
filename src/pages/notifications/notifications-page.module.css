@@ -1,11 +1,30 @@
-/* Figma M09: 16px rhythm, page title in the Heading size */
+/* Figma v2 M09: 16px rhythm, title with "설정" on the right */
 .body {
   gap: var(--space-16);
   padding-top: var(--space-16);
 }
-.body > :first-child {
-  margin-bottom: 0;
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
 }
-.body > :first-child h1 {
+.titleRow > :first-child {
+  margin: 0;
+}
+.titleRow h1 {
   font: var(--text-heading);
+}
+.settingsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 40px;
+  font: var(--text-label);
+  color: var(--primary);
+  text-decoration: none;
+}
+.settingsLink svg {
+  width: 18px;
+  height: 18px;
 }

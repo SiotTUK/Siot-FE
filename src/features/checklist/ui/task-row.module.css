@@ -91,3 +91,8 @@
   color: var(--primary);
   text-decoration: none;
 }
+/* Why a life-change task shows up (Figma v2 F06b, green). */
+.reason {
+  font: var(--text-caption);
+  color: var(--success);
+}

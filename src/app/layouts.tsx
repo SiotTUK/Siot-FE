@@ -21,7 +21,7 @@ export function RootLayout() {
   )
 }
 
-/** Start/signup screens (F01, M02a–d) with the Figma v2 colors. */
+/** Start/signup screens (F01, M02a–d) on the full-height v2 canvas. */
 export function AuthLayout() {
   return (
     <div className={authTheme.theme}>

@@ -16,6 +16,7 @@ import {
   optimisticStatus,
   pickDeadlineAlert,
   pickNextItem,
+  reasonOf,
 } from './checklist'
 
 const item = (over: Partial<ChecklistItemResponse>): ChecklistItemResponse => ({
@@ -90,6 +91,20 @@ describe('checklist screen rules', () => {
       pickNextItem([
         item({ status: 'DONE', deadline: '2027-01-18', dDay: 52 }),
       ]),
+    ).toBeUndefined()
+  })
+
+  it('explains car and school tasks of a life change (F06b)', () => {
+    const task = (code: string, category: string) =>
+      item({ code, kind: 'LIFE_CHANGE_TASK', category })
+    expect(reasonOf(task('LC-01-3', 'CAR'))).toBe('CAR')
+    expect(reasonOf(task('LC-01-4', 'EDUCATION'))).toBe('KIDS')
+    // On the car and school changes themselves every task has that reason.
+    expect(reasonOf(task('LC-04-1', 'CAR'))).toBeUndefined()
+    expect(reasonOf(task('LC-03-1', 'EDUCATION'))).toBeUndefined()
+    expect(reasonOf(task('LC-01-1', 'IMMIGRATION'))).toBeUndefined()
+    expect(
+      reasonOf(item({ code: 'CL-08', category: 'FAMILY' })),
     ).toBeUndefined()
   })
 

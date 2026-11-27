@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { koreaToday } from '@/shared/i18n/format'
 import {
   eventKeys,
   fetchEventCalendar,
@@ -6,6 +7,7 @@ import {
   fetchEventRecommendations,
   fetchEvents,
 } from './api'
+import { isDateRangeValid, type EventListFilters } from './event-filters'
 
 export function useEventRecommendations(memberId: number) {
   return useQuery({
@@ -14,10 +16,17 @@ export function useEventRecommendations(memberId: number) {
   })
 }
 
-export function useEvents(memberId: number, page: number) {
+export function useEvents(
+  memberId: number,
+  page: number,
+  filters: EventListFilters,
+) {
+  const today = koreaToday()
   return useQuery({
-    queryKey: eventKeys.list(memberId, page),
-    queryFn: ({ signal }) => fetchEvents(page, signal),
+    queryKey: eventKeys.list(memberId, page, filters, today),
+    queryFn: ({ signal }) => fetchEvents(page, filters, today, signal),
+    // The server rejects from > to with 400; the screen shows that error first.
+    enabled: isDateRangeValid(filters),
   })
 }
 

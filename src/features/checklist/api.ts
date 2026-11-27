@@ -42,6 +42,15 @@ export interface ChecklistItemResponse {
   applyStartsOn: string | null
   /** CL-05 from 30 days before expiry. */
   highlighted: boolean
+  /** Item guide ID used for error reports (POST /api/reports). */
+  guideId?: number | null
+  /** Category code (IMMIGRATION, TAX, etc.). */
+  category?: string | null
+  categoryLabel?: string | null
+  warning?: boolean
+  warningMessage?: string | null
+  warningType?: string | null
+  sourcePages?: string | null
 }
 
 export interface ChecklistSummaryResponse {

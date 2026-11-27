@@ -87,10 +87,31 @@
   flex-wrap: wrap;
   gap: 6px;
 }
+.titleLink {
+  text-decoration: none;
+  color: inherit;
+}
+.titleLink:hover .title {
+  color: var(--primary);
+  text-decoration: underline;
+}
 .title {
   font: var(--text-label);
   font-weight: 700;
   color: var(--foreground);
+}
+.viewDetail {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2px;
+  font: var(--text-caption);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+.viewDetail:hover {
+  text-decoration: underline;
 }
 .text {
   font: var(--text-caption);

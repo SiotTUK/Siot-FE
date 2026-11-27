@@ -144,6 +144,22 @@ describe('checklist screen rules', () => {
       ),
     ).toEqual(['2026-06', '2026-12'])
   })
+
+  it('detects recent notice changes and detailed fields', () => {
+    const target = item({
+      code: 'CL-01',
+      hasNoticeChanged: true,
+      noticeChangedAt: '2026-11-03T09:00:00Z',
+      place: '안산출입국·외국인사무소',
+      docs: ['여권', '표준입학허가서'],
+      fee: '30,000원',
+      guideId: 101,
+    })
+    expect(target.hasNoticeChanged).toBe(true)
+    expect(target.noticeChangedAt).toBe('2026-11-03T09:00:00Z')
+    expect(target.docs).toHaveLength(2)
+    expect(target.guideId).toBe(101)
+  })
 })
 
 describe('markErrorMessage', () => {

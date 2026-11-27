@@ -62,6 +62,11 @@ export function optimisticStatus(
 export const checklistItemKey = (item: ChecklistItemResponse) =>
   `${item.code}:${item.periodKey}`
 
+/** CL-xx checklist item code format. */
+export function isChecklistCode(value: unknown): value is string {
+  return typeof value === 'string' && /^CL-\d+$/.test(value)
+}
+
 export function deadlineText(
   item: ChecklistItemResponse,
   pastDeadline: string,

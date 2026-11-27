@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { currentLanguage } from '@/shared/i18n'
 import { formatMonthDay } from '@/shared/i18n/format'
 import { Tag } from '@/shared/ui/page'
@@ -50,7 +51,12 @@ export function ChecklistCard({
             <Tag tone="main">{t('checklist.noticeChanged')}</Tag>
           )}
         </div>
-        <h3 className={styles.title}>{item.title}</h3>
+        <Link
+          to={`/home/checklist/${encodeURIComponent(item.code)}`}
+          className={styles.titleLink}
+        >
+          <h3 className={styles.title}>{item.title}</h3>
+        </Link>
         {item.summary && <p className={styles.text}>{item.summary}</p>}
         {item.variantBodies.map((body) => (
           <p key={body} className={styles.text}>
@@ -70,6 +76,12 @@ export function ChecklistCard({
             {t('checklist.overdue')}
           </p>
         )}
+        <Link
+          to={`/home/checklist/${encodeURIComponent(item.code)}`}
+          className={styles.viewDetail}
+        >
+          {t('checklist.viewDetail')} ›
+        </Link>
       </div>
       <div className={styles.side}>
         {dDayText && (

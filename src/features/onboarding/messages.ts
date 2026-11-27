@@ -3,6 +3,20 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 export const onboardingMessages = defineMessages({
   ko: {
     onboarding: {
+      headers: {
+        userType: '나의 상황',
+        entryDate: '입국 날짜',
+        purpose: '체류 목적',
+        residence: '거주 정보',
+        stayExpiry: '체류 만료일',
+      },
+      tips: {
+        entryDate:
+          '날짜를 모르면 건너뛰어도 돼요. "90일 이내"처럼 기간만 알려 줄게요',
+        residence:
+          '자녀·자차를 고르면 학교 입학, 자동차세 같은 할 일도 챙겨 줄게요',
+        stayExpiry: '다 왔어요! 해로랑 토로가 맞춤 화면을 준비할게요',
+      },
       step: '{{current}} / {{total}}',
       autoNext: '누르면 바로 다음 화면으로 넘어가요',
       userType: {
@@ -77,6 +91,21 @@ export const onboardingMessages = defineMessages({
   },
   en: {
     onboarding: {
+      headers: {
+        userType: 'My situation',
+        entryDate: 'Entry date',
+        purpose: 'Purpose of stay',
+        residence: 'Residence',
+        stayExpiry: 'Stay expiry',
+      },
+      tips: {
+        entryDate:
+          'You can skip it if you do not know the date. I will show the time limit instead, like "within 90 days"',
+        residence:
+          'Pick children or a car and I will also keep track of tasks like school entry and car tax',
+        stayExpiry:
+          'Almost there! Haero and Toro will get your own screen ready',
+      },
       step: '{{current}} / {{total}}',
       autoNext: 'Tap to go to the next screen',
       userType: {
@@ -152,6 +181,18 @@ export const onboardingMessages = defineMessages({
   },
   zh: {
     onboarding: {
+      headers: {
+        userType: '我的情况',
+        entryDate: '入境日期',
+        purpose: '滞留目的',
+        residence: '居住信息',
+        stayExpiry: '滞留到期日',
+      },
+      tips: {
+        entryDate: '不知道日期可以跳过。我会告诉您"90天内"这样的期限',
+        residence: '选择子女或自有车辆后，也会提醒您入学、汽车税等事项',
+        stayExpiry: '快完成了！Haero 和 Toro 会为您准备专属页面',
+      },
       step: '{{current}} / {{total}}',
       autoNext: '点击后直接进入下一页',
       userType: {
@@ -225,6 +266,21 @@ export const onboardingMessages = defineMessages({
   },
   vi: {
     onboarding: {
+      headers: {
+        userType: 'Tình trạng của tôi',
+        entryDate: 'Ngày nhập cảnh',
+        purpose: 'Mục đích lưu trú',
+        residence: 'Thông tin cư trú',
+        stayExpiry: 'Ngày hết hạn lưu trú',
+      },
+      tips: {
+        entryDate:
+          'Nếu không biết ngày thì có thể bỏ qua. Mình sẽ cho bạn biết thời hạn như "trong vòng 90 ngày"',
+        residence:
+          'Nếu chọn có con hoặc có xe, mình sẽ nhắc cả việc nhập học và thuế ô tô',
+        stayExpiry:
+          'Sắp xong rồi! Haero và Toro sẽ chuẩn bị màn hình dành riêng cho bạn',
+      },
       step: '{{current}} / {{total}}',
       autoNext: 'Chạm để chuyển ngay sang màn hình tiếp theo',
       userType: {

@@ -1,0 +1,23 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.label {
+  font: var(--text-label);
+  font-size: 14px;
+  color: var(--primary);
+}
+.bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.bar span {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+}
+.bar span[data-done='true'] {
+  background: var(--primary);
+}

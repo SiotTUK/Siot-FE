@@ -30,20 +30,43 @@ export function groupItems(items: ChecklistItemResponse[]) {
 }
 
 /**
- * The alert banner: the open item with the nearest server-computed deadline,
- * if it is within 30 days (or past). The FE never computes deadlines itself.
+ * CHK-08 warning (#50): the server's `warning` on an item still to do. The BE
+ * keeps REGISTRATION_DUE on a completed CL-01·CL-02, so done and "해당 없음"
+ * items never warn.
+ */
+export const hasWarning = (item: ChecklistItemResponse) =>
+  item.warning === true && open(item)
+
+/** Server warning text in the requested language, if the item warns. */
+export const warningText = (item: ChecklistItemResponse) =>
+  (hasWarning(item) && item.warningMessage) || undefined
+
+/**
+ * "마감 임박" chip on a task row: a warning other than an overdue one, which
+ * the red "기한 지남" chip already shows.
+ */
+export const dueSoon = (item: ChecklistItemResponse) =>
+  hasWarning(item) && item.status !== 'OVERDUE'
+
+const byDeadline = (a: ChecklistItemResponse, b: ChecklistItemResponse) =>
+  (a.dDay ?? 0) - (b.dDay ?? 0)
+
+/**
+ * The alert banner (#50): the item the server warns about (CHK-08) with the
+ * nearest deadline. Without one, the open item with the nearest deadline
+ * within 30 days (or past). The FE never computes deadlines itself.
  */
 export function pickDeadlineAlert(items: ChecklistItemResponse[]) {
-  return items
-    .filter(
-      (item) => open(item) && item.dDay !== null && item.dDay <= urgentDays,
-    )
-    .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
+  const dated = items.filter((item) => open(item) && item.dDay !== null)
+  return (
+    dated.filter(hasWarning).sort(byDeadline)[0] ??
+    dated.filter((item) => (item.dDay ?? 0) <= urgentDays).sort(byDeadline)[0]
+  )
 }
 
 /**
- * Home hero (Figma v2 H1/H2). `urgent`: the open item due within 30 days (or
- * overdue) with the nearest deadline. Otherwise `calm` ("지금 급한 할 일은
+ * Home hero (Figma v2 H1/H2). `urgent`: what `pickDeadlineAlert` picks.
+ * Otherwise `calm` ("지금 급한 할 일은
  * 없어요") with the next open item that has a later deadline, if any.
  */
 export function homeHero(

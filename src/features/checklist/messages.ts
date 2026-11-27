@@ -21,6 +21,7 @@ export const checklistMessages = defineMessages({
       pastDeadline: '기한 지남',
       overdue: '기한이 지났어요. 외국인종합안내센터 ☎1345에 문의해 주세요.',
       noticeChanged: '안내 변경',
+      dueSoon: '마감 임박',
       applyStarts: '연장 신청 시작 {{date}}',
       place: '신청 장소 · {{place}}',
       docs: '준비물 · {{docs}}',
@@ -107,6 +108,7 @@ export const checklistMessages = defineMessages({
       overdue:
         'The deadline has passed. Please call the Immigration Contact Center at ☎1345.',
       noticeChanged: 'Updated',
+      dueSoon: 'Due soon',
       applyStarts: 'Extension opens {{date}}',
       place: 'Where · {{place}}',
       docs: 'Bring · {{docs}}',
@@ -193,6 +195,7 @@ export const checklistMessages = defineMessages({
       pastDeadline: '已逾期',
       overdue: '已过期限。请咨询外国人综合服务中心 ☎1345。',
       noticeChanged: '指南已更新',
+      dueSoon: '即将截止',
       applyStarts: '延期申请开始 {{date}}',
       place: '办理地点 · {{place}}',
       docs: '所需材料 · {{docs}}',
@@ -278,6 +281,7 @@ export const checklistMessages = defineMessages({
       overdue:
         'Đã quá hạn. Hãy liên hệ Trung tâm hỗ trợ người nước ngoài ☎1345.',
       noticeChanged: 'Đã cập nhật',
+      dueSoon: 'Sắp đến hạn',
       applyStarts: 'Bắt đầu xin gia hạn {{date}}',
       place: 'Nơi nộp · {{place}}',
       docs: 'Cần mang · {{docs}}',

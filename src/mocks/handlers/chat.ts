@@ -259,7 +259,12 @@ function cannedAnswer(
         relevanceScore: 0.82,
       },
     ],
-    relatedPages: [{ type: 'CHECKLIST', code: 'CL-01', title: '외국인등록' }],
+    // One related page of each linked type (CB-10, #45).
+    relatedPages: [
+      { type: 'CHECKLIST', code: 'CL-01', title: '외국인등록' },
+      { type: 'LIFE_CHANGE_TASK', code: 'LC-01-1', title: '체류지 변경 신고' },
+      { type: 'RULE', code: 'waste-food', title: '음식물 쓰레기 배출' },
+    ],
   }
 }
 

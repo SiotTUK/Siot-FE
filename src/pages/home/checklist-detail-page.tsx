@@ -1,7 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { useLocation, useParams } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
-import { detailBackPath, nextMark } from '@/features/checklist/checklist'
+import {
+  detailBackPath,
+  detailBackState,
+  nextMark,
+} from '@/features/checklist/checklist'
 import { ChecklistDetail } from '@/features/checklist/ui/checklist-detail'
 import {
   useChecklistItem,
@@ -15,7 +19,8 @@ import { ScreenHeader } from '@/shared/ui/screen-header'
 export function ChecklistDetailPage() {
   const { t } = useTranslation()
   const { code } = useParams<{ code: string }>()
-  const back = detailBackPath(useLocation().state)
+  const { state } = useLocation()
+  const back = detailBackPath(state)
   const { data: me } = useMe()
   const language = currentLanguage()
   const memberId = me?.id ?? 0
@@ -31,7 +36,11 @@ export function ChecklistDetailPage() {
     return (
       <>
         <ScreenHeader
-          back={{ label: t('common.back'), to: back }}
+          back={{
+            label: t('common.back'),
+            to: back,
+            state: detailBackState(state),
+          }}
           title={t('checklist.detail.screenTitle')}
         />
         <PageBody>

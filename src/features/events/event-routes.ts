@@ -1,3 +1,5 @@
+import { chatBackPath } from '@/shared/lib/chat-back'
+
 export function isEventId(value: unknown): value is string {
   return typeof value === 'string' && /^[1-9]\d{0,18}$/.test(value)
 }
@@ -11,8 +13,5 @@ export function eventDetailBackPath(from: unknown) {
   )
     return from
 
-  const conversationId = /^\/chat\/([1-9]\d*)$/.exec(from)?.[1]
-  return conversationId && Number.isSafeInteger(Number(conversationId))
-    ? from
-    : '/events'
+  return chatBackPath({ from }) ?? '/events'
 }

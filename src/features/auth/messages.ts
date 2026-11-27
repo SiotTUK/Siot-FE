@@ -2,6 +2,15 @@ import { defineMessages } from '@/shared/i18n/define-messages'
 
 export const authMessages = defineMessages({
   ko: {
+    authTips: {
+      haero: '해로',
+      toro: '토로',
+      signup: '반가워요! 이메일로 가입하고 시흥 생활을 시작해요',
+      login: '다시 만나서 반가워요! 오늘도 시흥 생활 도와줄게요',
+      expiredTitle: '링크가 만료됐어요',
+      expiredBody:
+        '30분이 지났거나 이미 쓴 링크예요. 재설정 메일을 다시 요청해 주세요.',
+    },
     signup: {
       emailAvailable: '가입할 수 있는 이메일이에요',
       title: '회원가입',
@@ -125,6 +134,15 @@ export const authMessages = defineMessages({
     },
   },
   en: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup: 'Welcome! Sign up with your email and start your life in Siheung',
+      login: 'Good to see you again! Let me help with life in Siheung today',
+      expiredTitle: 'This link has expired',
+      expiredBody:
+        'It is over 30 minutes old or was already used. Please request a new reset email.',
+    },
     signup: {
       emailAvailable: 'You can sign up with this email',
       title: 'Sign up',
@@ -254,6 +272,14 @@ export const authMessages = defineMessages({
     },
   },
   zh: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup: '欢迎！用邮箱注册，开始在始兴的生活吧',
+      login: '很高兴再次见到您！今天也来帮您在始兴生活',
+      expiredTitle: '链接已过期',
+      expiredBody: '已超过30分钟或链接已使用过。请重新申请重置邮件。',
+    },
     signup: {
       emailAvailable: '该邮箱可以注册',
       title: '注册',
@@ -370,6 +396,17 @@ export const authMessages = defineMessages({
     },
   },
   vi: {
+    authTips: {
+      haero: 'Haero',
+      toro: 'Toro',
+      signup:
+        'Chào mừng bạn! Đăng ký bằng email và bắt đầu cuộc sống ở Siheung nhé',
+      login:
+        'Rất vui gặp lại bạn! Hôm nay mình cũng sẽ giúp bạn sống ở Siheung',
+      expiredTitle: 'Liên kết đã hết hạn',
+      expiredBody:
+        'Đã quá 30 phút hoặc liên kết đã được dùng. Vui lòng yêu cầu lại email đặt lại mật khẩu.',
+    },
     signup: {
       emailAvailable: 'Bạn có thể đăng ký bằng email này',
       title: 'Đăng ký',

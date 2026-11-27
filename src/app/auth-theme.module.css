@@ -1,0 +1,17 @@
+/*
+ * Figma v2 colors for the start/signup screens only (F01, M02a–d).
+ * The rest of the app keeps the tokens in styles.css until the whole app
+ * moves to v2.
+ */
+.theme {
+  --primary: #1987c2; /* Color/Brand */
+  --primary-hover: #146c9b;
+  --secondary: #e3f3f7; /* Color/Tint */
+  --foreground: #1a1f27; /* Color/Ink */
+  --background: #f5f7f6; /* Color/Canvas */
+  --destructive: #c7363f; /* Color/Error */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+}

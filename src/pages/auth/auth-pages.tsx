@@ -5,31 +5,52 @@ import { LoginForm } from '@/features/auth/ui/login-form'
 import { NewPasswordForm } from '@/features/auth/ui/new-password-form'
 import { ResetRequestForm } from '@/features/auth/ui/reset-request-form'
 import { SignupForm } from '@/features/auth/ui/signup-form'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { InlineLink, PageHeading, Stack } from '@/shared/ui/page'
+import { Stack } from '@/shared/ui/page'
+import { ScreenHeader } from '@/shared/ui/screen-header'
+import styles from './auth-pages.module.css'
 
-/** Title + form + "처음이신가요? 회원가입" style links. */
+/**
+ * Figma v2 M02a–d: ‹ back + title header, an optional mascot tip, the form,
+ * then text links ("처음이신가요? 회원가입") on the left.
+ */
 function AuthScreen({
   title,
+  back,
+  tip,
   links = [],
   children,
 }: {
   title: string
+  back: string
+  tip?: ReactNode
   links?: { text: string; label: string; to: string }[]
   children: ReactNode
 }) {
+  const { t } = useTranslation()
   return (
-    <PageBody>
-      <PageHeading title={title} />
-      <Stack gap={24}>
-        {children}
-        {links.map((link) => (
-          <InlineLink key={link.to} text={link.text}>
-            <Link to={link.to}>{link.label}</Link>
-          </InlineLink>
-        ))}
-      </Stack>
-    </PageBody>
+    <>
+      <ScreenHeader
+        back={{ label: t('common.back'), to: back }}
+        title={title}
+      />
+      <PageBody className={styles.body}>
+        <Stack gap={24}>
+          {tip}
+          {children}
+          {links.length > 0 && (
+            <div className={styles.links}>
+              {links.map((link) => (
+                <Link key={link.to} to={link.to} className={styles.link}>
+                  {link.text} {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </Stack>
+      </PageBody>
+    </>
   )
 }
 
@@ -39,13 +60,12 @@ export function SignupPage() {
   return (
     <AuthScreen
       title={t('signup.title')}
-      links={[
-        {
-          text: t('signup.haveAccount'),
-          label: t('signup.login'),
-          to: '/login',
-        },
-      ]}
+      back="/"
+      tip={
+        <MascotTip mascot="haero" name={t('authTips.haero')}>
+          {t('authTips.signup')}
+        </MascotTip>
+      }
     >
       <SignupForm />
     </AuthScreen>
@@ -59,6 +79,12 @@ export function LoginPage() {
   return (
     <AuthScreen
       title={t('login.title')}
+      back="/"
+      tip={
+        <MascotTip mascot="toro" name={t('authTips.toro')}>
+          {t('authTips.login')}
+        </MascotTip>
+      }
       links={[
         { text: t('login.newHere'), label: t('login.signup'), to: '/signup' },
         {
@@ -79,6 +105,7 @@ export function PasswordResetRequestPage() {
   return (
     <AuthScreen
       title={t('resetRequest.title')}
+      back="/login"
       links={[
         {
           text: t('resetRequest.remembered'),
@@ -97,7 +124,7 @@ export function PasswordResetPage() {
   const { t } = useTranslation()
   const token = useSearchParams()[0].get('token') ?? ''
   return (
-    <AuthScreen title={t('newPassword.title')}>
+    <AuthScreen title={t('newPassword.title')} back="/login">
       {/* Remount per token so the link check starts fresh. */}
       <NewPasswordForm key={token} token={token} />
     </AuthScreen>

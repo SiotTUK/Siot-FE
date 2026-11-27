@@ -27,7 +27,7 @@
 ## 반영
 
 - `src/features/admin/ui/guide-editor.tsx`: `code.trim().toUpperCase()` → `code.trim()`. 낡은 주석("항목 목록 API가 아직 없다")을 지금 상황(대소문자 구분, 생활수칙 목록은 #43)으로 고치고, 입력칸 예시를 `CL-01 · waste-food`로 바꿨다.
-- `src/mocks/handlers/admin.ts`: 관리자 문구 조회·저장이 생활수칙 코드(FE `ruleEntries` 17개)도 받는다. BE처럼 대소문자를 구분하고, 저장한 적 없는 생활수칙은 FE 내용(제목·요약)으로 만든 4개 언어 문구를 돌려준다(BE는 4개 언어를 시드로 넣어 둔다).
+- `src/mocks/handlers/admin.ts`: 관리자 문구 조회·저장이 생활수칙 코드(FE `ruleEntries` 18개)도 받는다. BE처럼 대소문자를 구분하고, 저장한 적 없는 생활수칙은 FE 내용(제목·요약)으로 만든 4개 언어 문구를 돌려준다(BE는 4개 언어를 시드로 넣어 둔다).
 - `src/features/admin/api.test.ts`: `waste-food`는 열리고 `WASTE-FOOD`는 404 `GUIDE_NOT_FOUND`인 계약 테스트.
 
 ## 검증

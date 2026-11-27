@@ -1,17 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import type { Language } from '@/shared/api/types'
-import { isLanguage } from '@/shared/i18n'
+import { currentLanguage } from '@/shared/i18n'
 import { ruleEntries, ruleFaqs } from './content'
 import { localizeRule } from './rules'
 
 /**
- * The language `t()` renders with. `currentLanguage()` reads
- * `resolvedLanguage`, which can still hold the previous language during the
- * re-render after a switch, so content and labels would disagree.
+ * The language `t()` renders with, so content and labels agree.
+ * `useTranslation()` re-renders the screen when the language changes.
  */
 function useScreenLanguage(): Language {
-  const { i18n } = useTranslation()
-  return isLanguage(i18n.language) ? i18n.language : 'ko'
+  useTranslation()
+  return currentLanguage()
 }
 
 /** Rules and FAQ in the screen language. */

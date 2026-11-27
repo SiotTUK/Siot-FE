@@ -20,6 +20,17 @@ describe('currentLanguage', () => {
     }
   })
 
+  it('follows the language t() renders with even if resolvedLanguage lags', async () => {
+    await i18n.changeLanguage('vi')
+    const resolved = i18n.resolvedLanguage
+    Object.assign(i18n, { resolvedLanguage: 'ko' })
+    try {
+      expect(currentLanguage()).toBe('vi')
+    } finally {
+      Object.assign(i18n, { resolvedLanguage: resolved })
+    }
+  })
+
   it('falls back to Korean for an unsupported language', async () => {
     await i18n.changeLanguage('fr')
     Object.assign(i18n, { resolvedLanguage: undefined })

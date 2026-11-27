@@ -1,0 +1,30 @@
+.sheet {
+  width: min(100%, 480px);
+  max-width: none;
+  margin: auto auto 0;
+  border: 0;
+  border-radius: var(--radius-16) var(--radius-16) 0 0;
+  padding: var(--space-16);
+  background: var(--card);
+  color: var(--foreground);
+}
+
+.sheet::backdrop {
+  background: rgb(25 31 40 / 60%);
+}
+
+.sheet h2 {
+  font: var(--text-heading);
+}
+
+.name {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}

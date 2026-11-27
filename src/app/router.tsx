@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { GuestOnly, RequireMember } from '@/features/auth/route-guards'
+import { billTranslationPath } from '@/features/bill-translation/bill-translation'
 import {
   LoginPage,
   PasswordResetPage,
@@ -30,6 +31,9 @@ import {
 import { DeferredPage } from './route-feedback'
 
 const adminScreen = deferredModule(() => import('@/pages/admin/admin-pages'))
+const billScreen = deferredModule(
+  () => import('@/pages/bill-translation/bill-pages'),
+)
 const chatScreen = deferredModule(() => import('@/pages/chat/chat-pages'))
 const ruleScreen = deferredModule(() => import('@/pages/rules/rule-pages'))
 
@@ -102,6 +106,14 @@ export const router = createBrowserRouter([
             ],
           },
           { path: '/events/:eventId', element: <EventDetailPage /> },
+          {
+            path: billTranslationPath,
+            element: deferredPage(billScreen, 'BillUploadPage'),
+          },
+          {
+            path: `${billTranslationPath}/:id`,
+            element: deferredPage(billScreen, 'BillResultPage'),
+          },
           {
             path: '/rules/faq',
             element: deferredPage(ruleScreen, 'RuleFaqPage'),

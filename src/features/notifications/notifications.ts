@@ -1,3 +1,4 @@
+import { billTranslationPath } from '@/features/bill-translation/bill-translation'
 import { isChecklistCode } from '@/features/checklist/checklist'
 import { isEventId } from '@/features/events/event-routes'
 import { isLifeChangeCode } from '@/features/life-changes/life-changes'
@@ -9,7 +10,9 @@ import { formatMonthDay, koreaToday } from '@/shared/i18n/format'
  * used: checklist items and life change tasks open their checklist detail
  * (/home/checklist/:code), taxes and personal dates open the calendar,
  * rules open their detail page when the slug is recognized (/rules when
- * unknown). Unknown codes fall back to their main home/rules list.
+ * unknown). A bill reminder opens its translation result; without an id (the
+ * translation was deleted) it opens the screen with the recent list.
+ * Unknown codes fall back to their main home/rules list.
  * Unknown link types return undefined and the card only marks read.
  */
 export function notificationPath(link: {
@@ -31,6 +34,10 @@ export function notificationPath(link: {
         : '/home'
     case 'RULE':
       return isRuleCode(link.linkCode) ? `/rules/${link.linkCode}` : '/rules'
+    case 'BILL_TRANSLATION':
+      return /^[1-9]\d*$/.test(link.linkCode ?? '')
+        ? `${billTranslationPath}/${link.linkCode}`
+        : billTranslationPath
     case 'SCHEDULE':
     case 'CALENDAR':
       return '/calendar'

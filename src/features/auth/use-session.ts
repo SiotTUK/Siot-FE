@@ -6,6 +6,7 @@ import {
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { billKeys } from '@/features/bill-translation/api'
 import { scheduleQueryKey } from '@/features/calendar/api'
 import { forgetConversation } from '@/features/chat/chat-entry'
 import { checklistKeys } from '@/features/checklist/api'
@@ -97,6 +98,7 @@ export function useStartSession() {
     async (member: MemberResponse) => {
       rotateSessionScope(queryClient)
       forgetConversation()
+      queryClient.removeQueries({ queryKey: billKeys.all })
       queryClient.removeQueries({ queryKey: checklistKeys.all })
       queryClient.removeQueries({ queryKey: scheduleQueryKey })
       queryClient.removeQueries({ queryKey: eventKeys.all })

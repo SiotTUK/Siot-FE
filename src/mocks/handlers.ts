@@ -1,5 +1,6 @@
 import { adminHandlers } from './handlers/admin'
 import { authHandlers } from './handlers/auth'
+import { billHandlers } from './handlers/bills'
 import { scheduleHandlers } from './handlers/schedules'
 import { chatHandlers } from './handlers/chat'
 import { checklistHandlers } from './handlers/checklist'
@@ -15,6 +16,7 @@ export { mockResetToken, mockSignupCode, resetMockState } from './db'
 export const handlers = [
   ...authHandlers,
   ...memberHandlers,
+  ...billHandlers,
   ...checklistHandlers,
   ...scheduleHandlers,
   ...eventHandlers,

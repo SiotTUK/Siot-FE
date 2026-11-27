@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
+import { billTranslationPath } from '@/features/bill-translation/bill-translation'
 import { homeHero } from '@/features/checklist/checklist'
 import { useChecklist } from '@/features/checklist/use-checklist'
 import { ChecklistSection } from '@/features/checklist/ui/home-checklist'
@@ -13,7 +14,6 @@ import { currentLanguage } from '@/shared/i18n'
 import { ActionTile } from '@/shared/ui/action-tile'
 import { CameraIcon } from '@/shared/ui/icons'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Tag } from '@/shared/ui/page'
 import { TextLink } from '@/shared/ui/text-link'
 import styles from './home-page.module.css'
 
@@ -60,11 +60,11 @@ function HomeContent({ member }: { member: MemberResponse }) {
       <div className={styles.tiles}>
         <LifeChangeTile memberId={member.id} />
         <ActionTile
+          to={billTranslationPath}
           tone="warning"
           icon={<CameraIcon />}
           title={t('home.billTitle')}
           description={t('home.billLabel')}
-          trailing={<Tag>{t('home.comingSoon')}</Tag>}
         />
       </div>
       {!calm && events}

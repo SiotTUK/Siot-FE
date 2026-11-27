@@ -47,6 +47,10 @@ export function MePage() {
         <dl className={styles.email}>
           <dt>{t('me.email')}</dt>
           <dd>{me.email}</dd>
+          {/* #72: the sign-up email is the only address; it also receives notification and reset emails. */}
+          <dd className={styles.emailUse}>
+            {t(me.emailVerified ? 'me.emailUse' : 'me.emailUseUnverified')}
+          </dd>
         </dl>
         <LanguageSelect
           label={t('me.language')}

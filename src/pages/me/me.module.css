@@ -28,6 +28,11 @@
   font: var(--text-body);
   overflow-wrap: anywhere;
 }
+.email .emailUse {
+  margin-top: var(--space-4);
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
 .rows > div {
   display: flex;
   align-items: center;

@@ -5,8 +5,9 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: '받은 서류, 사진 한 장이면 돼요',
       billLabel: '고지서·안내문을 내 언어로 번역해요',
-      change: '변경',
       comingSoon: '준비 중',
+      situationEdit: '변경',
+      situationEditLabel: '나의 상황 변경',
     },
     nav: {
       label: '주요 메뉴',
@@ -21,8 +22,9 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: 'Got a document? One photo is enough',
       billLabel: 'Translate bills and notices into your language',
-      change: 'Edit',
       comingSoon: 'Coming soon',
+      situationEdit: 'Change',
+      situationEditLabel: 'Change my situation',
     },
     nav: {
       label: 'Main menu',
@@ -37,8 +39,9 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: '收到的文件，拍一张照片就可以',
       billLabel: '把账单和通知翻译成我的语言',
-      change: '修改',
       comingSoon: '准备中',
+      situationEdit: '修改',
+      situationEditLabel: '修改我的情况',
     },
     nav: {
       label: '主菜单',
@@ -53,8 +56,9 @@ export const homeMessages = defineMessages({
     home: {
       billTitle: 'Giấy tờ nhận được, chỉ cần một tấm ảnh',
       billLabel: 'Dịch hóa đơn, thông báo sang ngôn ngữ của bạn',
-      change: 'Sửa',
       comingSoon: 'Đang chuẩn bị',
+      situationEdit: 'Thay đổi',
+      situationEditLabel: 'Thay đổi tình trạng của tôi',
     },
     nav: {
       label: 'Menu chính',

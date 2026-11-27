@@ -8,11 +8,13 @@ import {
   groupItems,
   homeHero,
   keepOrder,
+  lifeChangeOf,
   markErrorMessage,
   nextMark,
   openRequiredCount,
   optimisticStatus,
   pickDeadlineAlert,
+  pickNextItem,
 } from './checklist'
 
 const item = (over: Partial<ChecklistItemResponse>): ChecklistItemResponse => ({
@@ -67,6 +69,37 @@ describe('checklist screen rules', () => {
     ])
     expect(main.map((entry) => entry.code)).toEqual(['CL-04', 'CL-07', 'CL-01'])
     expect(optional.map((entry) => entry.code)).toEqual(['CL-21', 'CL-20'])
+  })
+
+  it('picks the open item with the first server deadline as next (H2)', () => {
+    const next = pickNextItem([
+      item({ code: 'CL-05', deadline: '2027-07-10', dDay: 225 }),
+      item({ code: 'CL-01', deadline: '2027-01-18', dDay: 52, status: 'DONE' }),
+      item({ code: 'CL-04', deadline: null, dDay: null }),
+      item({ code: 'CL-06', deadline: '2027-03-10', dDay: 103 }),
+      item({
+        code: 'CL-07',
+        deadline: '2027-02-01',
+        dDay: 66,
+        status: 'NOT_APPLICABLE',
+      }),
+    ])
+    expect(next?.code).toBe('CL-06')
+    expect(
+      pickNextItem([
+        item({ status: 'DONE', deadline: '2027-01-18', dDay: 52 }),
+      ]),
+    ).toBeUndefined()
+  })
+
+  it('finds the life change of a life-change task only', () => {
+    expect(
+      lifeChangeOf(item({ code: 'LC-01-1', kind: 'LIFE_CHANGE_TASK' })),
+    ).toBe('LC-01')
+    expect(
+      lifeChangeOf(item({ code: 'LC-04-2', kind: 'LIFE_CHANGE_TASK' })),
+    ).toBe('LC-04')
+    expect(lifeChangeOf(item({ code: 'CL-01' }))).toBeUndefined()
   })
 
   it('alerts the nearest open deadline within 30 days only', () => {
@@ -176,6 +209,22 @@ describe('checklist screen rules', () => {
         (entry) => entry.periodKey,
       ),
     ).toEqual(['2026-06', '2026-12'])
+  })
+
+  it('detects recent notice changes and detailed fields', () => {
+    const target = item({
+      code: 'CL-01',
+      hasNoticeChanged: true,
+      noticeChangedAt: '2026-11-03T09:00:00Z',
+      place: '안산출입국·외국인사무소',
+      docs: ['여권', '표준입학허가서'],
+      fee: '30,000원',
+      guideId: 101,
+    })
+    expect(target.hasNoticeChanged).toBe(true)
+    expect(target.noticeChangedAt).toBe('2026-11-03T09:00:00Z')
+    expect(target.docs).toHaveLength(2)
+    expect(target.guideId).toBe(101)
   })
 })
 

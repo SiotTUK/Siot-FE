@@ -23,6 +23,7 @@ export const ruleMessages = defineMessages({
       share: '공유',
       shareCopied: '링크를 복사했어요',
       askToro: '토로에게 질문하기',
+      askDraft: '‘{{title}}’에 대해 더 알려 주세요.',
       report: {
         open: '정보 오류 신고',
         quote: '문제가 있는 문구',
@@ -110,6 +111,7 @@ export const ruleMessages = defineMessages({
       share: 'Share',
       shareCopied: 'Link copied',
       askToro: 'Ask Toro',
+      askDraft: 'Tell me more about “{{title}}”.',
       report: {
         open: 'Report wrong information',
         quote: 'Text with the error',
@@ -197,6 +199,7 @@ export const ruleMessages = defineMessages({
       share: '分享',
       shareCopied: '已复制链接',
       askToro: '向 Toro 提问',
+      askDraft: '请再详细介绍一下“{{title}}”。',
       report: {
         open: '报告信息错误',
         quote: '有问题的原文',
@@ -284,6 +287,7 @@ export const ruleMessages = defineMessages({
       share: 'Chia sẻ',
       shareCopied: 'Đã sao chép liên kết',
       askToro: 'Hỏi Toro',
+      askDraft: 'Hãy cho tôi biết thêm về “{{title}}”.',
       report: {
         open: 'Báo thông tin sai',
         quote: 'Đoạn văn có lỗi',

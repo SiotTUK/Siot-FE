@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
+import { chatEntryState } from '@/features/chat/chat-entry'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { KeepTogether } from '@/shared/ui/keep-together'
@@ -171,7 +172,16 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
         >
           {reporting ? t('common.cancel') : t('rules.report.open')}
         </Button>
-        <ButtonLink to="/chat">{t('rules.askToro')}</ButtonLink>
+        {/* CB-06: opens the chat with a draft the member edits and sends. */}
+        <ButtonLink
+          to="/chat"
+          state={chatEntryState(
+            { type: 'rule', id: rule.code },
+            t('rules.askDraft', { title: rule.title }),
+          )}
+        >
+          {t('rules.askToro')}
+        </ButtonLink>
       </div>
     </>
   )

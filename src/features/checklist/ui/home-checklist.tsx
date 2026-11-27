@@ -24,13 +24,10 @@ import styles from './checklist.module.css'
 export function ChecklistSection({
   memberId,
   calm = false,
-  tagFor,
 }: {
   memberId: number
   /** H2 (nothing urgent): titled "다음 할 일". */
   calm?: boolean
-  /** Short life-change name for a life-change task row ("이사"). */
-  tagFor?: (item: ChecklistItemResponse) => string | undefined
 }) {
   const { t } = useTranslation()
   const language = currentLanguage()
@@ -53,7 +50,6 @@ export function ChecklistSection({
     <li key={checklistItemKey(item)}>
       <TaskRow
         item={item}
-        tag={tagFor?.(item)}
         busy={mark.isSaving(item)}
         onToggleDone={() =>
           mark.mutate({ item, mark: nextMark(item, 'toggleDone') })

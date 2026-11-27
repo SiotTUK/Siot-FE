@@ -36,6 +36,18 @@ function seeds(member: MockMember): Seed[] {
       badge: '입국 후 90일 이내',
       summary:
         '안산출입국·외국인사무소 (하이코리아 예약) · 이때 시흥 주소도 함께 신고',
+      place: '안산출입국·외국인사무소',
+      docs: ['여권', '신청서', '컬러 증명사진 1장', '체류지 입증 서류'],
+      fee: '30,000원',
+      penalty: '기한 초과 시 출입국관리법에 따라 과태료가 부과돼요.',
+      contact: '1345',
+      sourceUrl: 'https://www.hikorea.go.kr',
+      sourceName: '하이코리아 방문 예약',
+      content:
+        '대한민국에 90일을 초과하여 체류하려는 외국인은 입국한 날부터 90일 이내에 체류지 관할 출입국·외국인관서에 등록해야 합니다.',
+      guideId: 1,
+      noticeChangedAt: '2026-11-03T09:00:00Z',
+      hasNoticeChanged: true,
       law: f4 ? '재외동포법 제6조' : '출입국관리법 제31조',
       deadline: isoIn(5),
     })

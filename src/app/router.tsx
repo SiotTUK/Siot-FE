@@ -8,6 +8,7 @@ import {
 } from '@/pages/auth/auth-pages'
 import { CalendarPage } from '@/pages/calendar/calendar-page'
 import { EventDetailPage, EventsPage } from '@/pages/events/event-pages'
+import { ChecklistDetailPage } from '@/pages/home/checklist-detail-page'
 import { HomePage } from '@/pages/home/home-page'
 import { LifeChangePage } from '@/pages/home/life-change-page'
 import { LifeChangeSelectPage } from '@/pages/home/life-change-select-page'
@@ -113,6 +114,7 @@ export const router = createBrowserRouter([
             element: deferredPage(ruleScreen, 'RuleDetailPage'),
           },
           { path: '/home/life-changes', element: <LifeChangeSelectPage /> },
+          { path: '/home/checklist/:code', element: <ChecklistDetailPage /> },
           { path: '/home/life-changes/:code', element: <LifeChangePage /> },
           { path: '/me/edit/:question', element: <MeEditPage /> },
           // Chat is full screen with its own header (M08), no tab bar.

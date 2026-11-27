@@ -8,6 +8,7 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 import { useMe } from '@/features/auth/use-session'
+import { chatEntryState } from '@/features/chat/chat-entry'
 import type { EventDetail } from '@/features/events/api'
 import {
   eventLink,
@@ -341,10 +342,10 @@ function EventActions({ event }: { event: EventDetail }) {
         <ButtonLink
           variant="secondary"
           to="/chat"
-          state={{
-            eventQuestionId: String(event.eventId),
-            eventQuestionDraft: t('events.askDraft', { title: event.title }),
-          }}
+          state={chatEntryState(
+            { type: 'event', id: String(event.eventId) },
+            t('events.askDraft', { title: event.title }),
+          )}
         >
           {t('events.ask')}
         </ButtonLink>

@@ -8,7 +8,6 @@ import {
   markErrorMessage,
   nextMark,
 } from '@/features/checklist/checklist'
-import { GuideDetail } from '@/features/checklist/ui/guide-detail'
 import { TaskRow } from '@/features/checklist/ui/task-row'
 import {
   useChecklist,
@@ -162,7 +161,7 @@ function TaskOverview({
             <p>
               {t('lifeChanges.summary', {
                 date: formatLongMonthDay(baseDate, language),
-                name: t(`lifeChanges.types.${code}.short`),
+                name: t(`checklist.lifeChangeTag.${code}`),
               })}
             </p>
             <h1>
@@ -192,14 +191,7 @@ function TaskOverview({
             <FormError message={markErrorMessage(t, mark.error)} />
           )}
           {tasks.length === 0 && <Muted>{t('lifeChanges.noTasks')}</Muted>}
-          {first && (
-            <FirstTask
-              key={checklistItemKey(first)}
-              item={first}
-              busy={busy || mark.isSaving(first)}
-              onMark={(action) => toggle(first, action)}
-            />
-          )}
+          {first && <FirstTask key={checklistItemKey(first)} item={first} />}
           {others.length > 0 && (
             <section className={styles.others}>
               <h2>
@@ -209,6 +201,7 @@ function TaskOverview({
                 {others.map((item) => (
                   <li key={checklistItemKey(item)}>
                     <TaskRow
+                      showLifeChange={false}
                       item={item}
                       busy={busy || mark.isSaving(item)}
                       onToggleDone={() => toggle(item, 'toggleDone')}
@@ -233,19 +226,13 @@ function TaskOverview({
   )
 }
 
-/** The yellow "먼저 하세요" card: due date, place, how-to and marking. */
-function FirstTask({
-  item,
-  busy,
-  onMark,
-}: {
-  item: ChecklistItemResponse
-  busy: boolean
-  onMark: (action: MarkAction) => void
-}) {
+/**
+ * The yellow "먼저 하세요" card: due date, place and "방법 보기", which opens
+ * the checklist detail screen (M07a) where it can also be marked done.
+ */
+function FirstTask({ item }: { item: ChecklistItemResponse }) {
   const { t } = useTranslation()
   const language = currentLanguage()
-  const [open, setOpen] = useState(false)
   const where = [
     item.deadline &&
       t('lifeChanges.dueBy', {
@@ -271,30 +258,9 @@ function FirstTask({
         </div>
         <MascotImage pose="toro" height={96} />
       </div>
-      <Button aria-expanded={open} onClick={() => setOpen((value) => !value)}>
-        {t(open ? 'lifeChanges.howToHide' : 'lifeChanges.howTo')}
-      </Button>
-      {open && (
-        <div className={styles.firstDetail}>
-          <GuideDetail item={item} />
-          <div className={styles.firstActions}>
-            <Button
-              variant="secondary"
-              disabled={busy}
-              onClick={() => onMark('toggleDone')}
-            >
-              {t('lifeChanges.markDone')}
-            </Button>
-            <Button
-              variant="text"
-              disabled={busy}
-              onClick={() => onMark('toggleNotApplicable')}
-            >
-              {t('checklist.notApplicable')}
-            </Button>
-          </div>
-        </div>
-      )}
+      <ButtonLink to={`/home/checklist/${encodeURIComponent(item.code)}`}>
+        {t('lifeChanges.howTo')}
+      </ButtonLink>
     </section>
   )
 }

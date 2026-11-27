@@ -86,3 +86,8 @@
   color: var(--muted-foreground);
   text-decoration: underline;
 }
+.detailLink {
+  font-size: 14px;
+  color: var(--primary);
+  text-decoration: none;
+}

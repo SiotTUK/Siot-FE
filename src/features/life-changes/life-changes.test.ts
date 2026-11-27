@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChecklistItemResponse } from '@/features/checklist/api'
-import {
-  currentLifeChange,
-  lifeChangeOf,
-  splitLifeChangeTasks,
-} from './life-changes'
+import { currentLifeChange, splitLifeChangeTasks } from './life-changes'
 
 const item = (over: Partial<ChecklistItemResponse>) =>
   ({
@@ -21,12 +17,6 @@ const task = (code: string, periodKey: string, status = 'TODO' as const) =>
   item({ code, kind: 'LIFE_CHANGE_TASK', periodKey, status })
 
 describe('home life-change helpers', () => {
-  it('finds the life change of a task row', () => {
-    expect(lifeChangeOf(task('LC-01-2', '2026-11-01'))).toBe('LC-01')
-    expect(lifeChangeOf(item({ code: 'CL-01' }))).toBeUndefined()
-    expect(lifeChangeOf(task('LC-99-1', '2026-11-01'))).toBeUndefined()
-  })
-
   it('shows the latest change with its open tasks for that date', () => {
     const items = [
       task('LC-01-1', '2026-11-01'),

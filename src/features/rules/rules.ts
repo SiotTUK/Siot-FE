@@ -1,4 +1,5 @@
 import type { Language } from '@/shared/api/types'
+import { ruleEntries } from './content'
 
 /**
  * 생활 수칙 is fixed guide text kept in the FE (team decision 2026-11-25):
@@ -154,4 +155,12 @@ export function safeUrl(value: string | null) {
   } catch {
     return null
   }
+}
+
+/** Checks whether a slug is one of the recognized living rules. */
+export function isRuleCode(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    ruleEntries.some((entry) => entry.code === value)
+  )
 }

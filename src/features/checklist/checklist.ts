@@ -53,16 +53,32 @@ export function homeHero(
   | { kind: 'calm'; next?: ChecklistItemResponse } {
   const urgent = pickDeadlineAlert(items)
   if (urgent) return { kind: 'urgent', item: urgent }
-  const next = items
-    .filter((item) => open(item) && item.dDay !== null && item.dDay > 0)
-    .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
-  return { kind: 'calm', next }
+  return { kind: 'calm', next: pickNextItem(items) }
 }
 
 /** Required items still to do (the "나에게 필요한 할 일 N" count). */
 export function openRequiredCount(items: ChecklistItemResponse[]) {
   return items.filter((item) => item.itemType === 'REQUIRED' && open(item))
     .length
+}
+
+/**
+ * H2 "다음 할 일": the open item whose server deadline comes first. The home
+ * switches to H2 when `pickDeadlineAlert` finds nothing within 30 days.
+ */
+export function pickNextItem(items: ChecklistItemResponse[]) {
+  return items
+    .filter((item) => open(item) && item.dDay !== null && item.deadline)
+    .sort((a, b) => (a.dDay ?? 0) - (b.dDay ?? 0))[0]
+}
+
+/**
+ * Life change a task belongs to (LC-01-1 → LC-01), for the chip in front of
+ * its title (Figma v2 H1 "이사").
+ */
+export function lifeChangeOf(item: ChecklistItemResponse) {
+  if (item.kind !== 'LIFE_CHANGE_TASK') return undefined
+  return /^(LC-\d{2})-/.exec(item.code)?.[1]
 }
 
 /** What the checkbox and "해당 없음" buttons send for an item. */
@@ -85,6 +101,11 @@ export function optimisticStatus(
 
 export const checklistItemKey = (item: ChecklistItemResponse) =>
   `${item.code}:${item.periodKey}`
+
+/** CL-xx checklist item code format. */
+export function isChecklistCode(value: unknown): value is string {
+  return typeof value === 'string' && /^CL-\d+$/.test(value)
+}
 
 export function deadlineText(
   item: ChecklistItemResponse,

@@ -1,26 +1,28 @@
 import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { Tag } from '@/shared/ui/page'
 import type { ChecklistItemResponse } from '../api'
-import { deadlineText } from '../checklist'
+import { deadlineText, lifeChangeOf } from '../checklist'
 import { GuideDetail } from './guide-detail'
 import styles from './task-row.module.css'
 
 /**
- * Figma v2 home task row: checkbox, (life-change tag) title, one short line
- * and the D-day chip. Tapping the text opens the guide (GuideDetail) and
- * "해당 없음". INFO items have no checkbox.
+ * Figma v2 home task row: checkbox, life-change chip ("이사"), title, one
+ * short line and the D-day chip. Tapping the text opens the guide
+ * (GuideDetail), a link to the checklist detail screen and "해당 없음".
+ * INFO items have no checkbox.
  */
 export function TaskRow({
   item,
-  tag,
+  showLifeChange = true,
   busy,
   onToggleDone,
   onToggleNotApplicable,
 }: {
   item: ChecklistItemResponse
-  /** Short life-change name ("이사") for a life-change task. */
-  tag?: string
+  /** Off on the life change's own screen, where every task has the same chip. */
+  showLifeChange?: boolean
   busy: boolean
   onToggleDone: () => void
   onToggleNotApplicable: () => void
@@ -34,6 +36,11 @@ export function TaskRow({
   const dDayText = deadlineText(item, t('checklist.pastDeadline'))
   const brief = [item.badge, item.place].filter(Boolean).join(' · ')
   const line = brief || item.summary
+  const lifeChange = showLifeChange ? lifeChangeOf(item) : undefined
+  // Unknown life-change codes get no chip rather than a raw key.
+  const tag = lifeChange
+    ? t(`checklist.lifeChangeTag.${lifeChange}`, { defaultValue: '' })
+    : ''
 
   return (
     <article
@@ -76,6 +83,12 @@ export function TaskRow({
       )}
       <div id={detailId} className={styles.detail} hidden={!open}>
         <GuideDetail item={item} />
+        <Link
+          to={`/home/checklist/${encodeURIComponent(item.code)}`}
+          className={styles.detailLink}
+        >
+          {t('checklist.viewDetail')} ›
+        </Link>
         {checkable && (
           <button
             type="button"

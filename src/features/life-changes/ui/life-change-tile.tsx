@@ -19,7 +19,7 @@ export function LifeChangeTile({ memberId }: { memberId: number }) {
     changes.data &&
     checklist.data &&
     currentLifeChange(changes.data, checklist.data.items)
-  const name = current && t(`lifeChanges.types.${current.code}.short`)
+  const name = current && t(`checklist.lifeChangeTag.${current.code}`)
 
   return (
     <ActionTile

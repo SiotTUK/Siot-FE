@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
-import type { ChecklistItemResponse } from '@/features/checklist/api'
 import { homeHero } from '@/features/checklist/checklist'
 import { useChecklist } from '@/features/checklist/use-checklist'
 import { ChecklistSection } from '@/features/checklist/ui/home-checklist'
 import { HomeHero } from '@/features/checklist/ui/home-hero'
 import { EventRecommendations } from '@/features/events/ui/event-recommendations'
-import { lifeChangeOf } from '@/features/life-changes/life-changes'
 import { LifeChangeTile } from '@/features/life-changes/ui/life-change-tile'
 import { situationSummary } from '@/features/onboarding/summary'
 import type { MemberResponse } from '@/shared/api/types'
@@ -44,14 +42,8 @@ function HomeContent({ member }: { member: MemberResponse }) {
     setCalmOnEntry(homeHero(checklist.data.items).kind === 'calm')
   const calm = calmOnEntry ?? false
   const situation = situationSummary(t, member)
-  const tagFor = (item: ChecklistItemResponse) => {
-    const code = lifeChangeOf(item)
-    return code && t(`lifeChanges.types.${code}.short`)
-  }
 
-  const tasks = (
-    <ChecklistSection memberId={member.id} calm={calm} tagFor={tagFor} />
-  )
+  const tasks = <ChecklistSection memberId={member.id} calm={calm} />
   const events = <EventRecommendations memberId={member.id} showAllLink />
 
   return (
@@ -59,7 +51,9 @@ function HomeContent({ member }: { member: MemberResponse }) {
       {checklist.data && <HomeHero checklist={checklist.data} />}
       <div className={styles.situation}>
         <p>{[situation.title, situation.detail].filter(Boolean).join(' · ')}</p>
-        <TextLink to="/me">{t('home.change')} ›</TextLink>
+        <TextLink to="/me" aria-label={t('home.situationEditLabel')}>
+          {t('home.situationEdit')} ›
+        </TextLink>
       </div>
       {calm ? events : tasks}
       {calm && tasks}

@@ -1,0 +1,211 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-16);
+}
+
+.noticeBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--secondary);
+  color: var(--primary);
+  font: var(--text-label);
+  font-weight: 700;
+}
+
+.noticeIcon {
+  font-size: 18px;
+}
+
+.headerCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.dDay {
+  padding: 2px var(--space-8);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  color: var(--primary);
+  font: var(--text-label);
+  font-weight: 700;
+}
+
+.dDay[data-overdue='true'] {
+  background: var(--destructive-bg);
+  color: var(--destructive);
+}
+
+.title {
+  margin: 0;
+  font: var(--text-title);
+  color: var(--foreground);
+}
+
+.summary {
+  margin: 0;
+  font: var(--text-body);
+  color: var(--muted-foreground);
+}
+
+.content {
+  margin: 0;
+  font: var(--text-body);
+  color: var(--foreground);
+  white-space: pre-wrap;
+}
+
+.variantText {
+  margin: 0;
+  font: var(--text-caption);
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+.overdueNotice {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--destructive);
+  font-weight: 600;
+}
+
+.warningNotice {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.facts {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.facts div {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-16);
+}
+
+.facts div + div {
+  border-top: 1px solid var(--border);
+}
+
+.facts dt {
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+  font: var(--text-body);
+  overflow-wrap: anywhere;
+}
+
+.applyStarts {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.docList {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.linkText {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.linkText:hover {
+  text-decoration: underline;
+}
+
+.telLink {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.telLink:hover {
+  text-decoration: underline;
+}
+
+.penaltyText {
+  color: var(--destructive);
+}
+
+.sourcePages {
+  color: var(--muted-foreground);
+  font: var(--text-caption);
+}
+
+.sourceBox {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.sourceLink {
+  display: block;
+  text-align: center;
+  padding: var(--space-12);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  color: var(--primary-hover);
+  font: var(--text-label);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+.bottomActions {
+  display: grid;
+  gap: var(--space-12);
+  margin-top: var(--space-8);
+}
+
+.primaryActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+}
+
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--foreground);
+  color: white;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-8);
+  font: var(--text-caption);
+  font-weight: 600;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

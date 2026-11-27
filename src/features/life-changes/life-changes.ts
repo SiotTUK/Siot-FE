@@ -30,15 +30,6 @@ export function relatedLifeChangeTasks(
   )
 }
 
-/** The life change a checklist row belongs to ("LC-01-2" → "LC-01"). */
-export function lifeChangeOf(
-  item: ChecklistItemResponse,
-): LifeChangeCode | undefined {
-  if (item.kind !== 'LIFE_CHANGE_TASK') return undefined
-  const code = item.code.slice(0, 5)
-  return isLifeChangeCode(code) ? code : undefined
-}
-
 /**
  * Home "생활 변화" card: the most recently dated change and how many of its
  * tasks are still open ("이사 진행 중 · 할 일 3개").

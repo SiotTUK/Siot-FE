@@ -55,36 +55,32 @@ function seeds(member: MockMember): Seed[] {
     title: '건강보험 가입 확인',
     itemType: 'REQUIRED',
     badge: '조건별',
-    dDayText: '조건 확인',
     variantBodies: [
       '고용허가제로 온 근로자는 입국일부터 가입돼요. 그 밖의 회사원은 회사가 직장보험에 가입해 줘요.',
     ],
     law: '국민건강보험법 제109조',
   })
+  // No deadline, so dDay and dDayText stay null like the BE sends them.
   const byPurpose: Record<string, Seed> = {
     STUDY: {
       code: 'CL-06',
       title: '아르바이트 전 시간제 취업 허가',
       itemType: 'REQUIRED',
-      dDayText: '일하기 전',
     },
     WORK: {
       code: 'CL-07',
       title: '직장을 바꿀 때 절차 알아두기',
       itemType: 'REQUIRED',
-      dDayText: '바꿀 때',
     },
     FAMILY: {
       code: 'CL-08',
       title: '가족센터 프로그램 보기',
       itemType: 'REQUIRED',
-      dDayText: '언제든',
     },
     OTHER: {
       code: 'CL-09',
       title: '체류·취업 업종 상담 (☎1345)',
       itemType: 'REQUIRED',
-      dDayText: '언제든',
     },
   }
   list.push({ badge: '목적별', ...byPurpose[member.purpose ?? 'OTHER'] })

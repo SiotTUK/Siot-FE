@@ -4,11 +4,13 @@ import { isLanguage } from '@/shared/i18n'
 import { koreaToday } from '@/shared/i18n/format'
 import { currentMember, unauthorized } from '../db'
 
+// The common schedule is a tax period like the ones admins enter in the BE
+// (calendar_schedule, kind TAX); the BE never sends a kind such as LIFE.
 const titles = {
-  ko: ['지역 생활 안내 기간', '체류기간 만료일'],
-  en: ['Community information period', 'Stay expiry date'],
-  zh: ['社区生活咨询期', '居留期满日'],
-  vi: ['Thời gian tư vấn sinh hoạt địa phương', 'Ngày hết hạn lưu trú'],
+  ko: ['주민세(개인분) 납부', '체류기간 만료일'],
+  en: ['Resident tax payment', 'Stay expiry date'],
+  zh: ['居民税缴纳', '居留期满日'],
+  vi: ['Nộp thuế cư trú', 'Ngày hết hạn lưu trú'],
 }
 
 export const scheduleHandlers = [
@@ -29,7 +31,7 @@ export const scheduleHandlers = [
       {
         scheduleId: 1,
         guideId: null,
-        kind: 'LIFE',
+        kind: 'TAX',
         title: commonTitle,
         startsOn: `${period}-05`,
         endsOn: `${period}-10`,

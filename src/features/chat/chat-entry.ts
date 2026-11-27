@@ -3,9 +3,11 @@
  * conversation" of this visit so the chat tab can reopen it.
  */
 
+/** Detail screens that can start a question. */
+export const chatTopicTypes = ['event', 'rule', 'checklist'] as const
+
 /** The detail screen a question was started from. */
-export type ChatTopic =
-  { type: 'event'; id: string } | { type: 'rule'; id: string }
+export type ChatTopic = { type: (typeof chatTopicTypes)[number]; id: string }
 
 /** Location state a detail screen passes to `/chat`. */
 export interface ChatEntryState {
@@ -25,6 +27,14 @@ export function chatEntryState(
 const topicIds: Record<ChatTopic['type'], RegExp> = {
   event: /^[1-9]\d{0,18}$/,
   rule: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+  // Checklist item codes such as CL-01 (#30).
+  checklist: /^[A-Z]{2,4}-\d+(?:-\d+)*$/,
+}
+
+const topicPaths: Record<ChatTopic['type'], (id: string) => string> = {
+  event: (id) => `/events/${id}`,
+  rule: (id) => `/rules/${id}`,
+  checklist: (id) => `/home/checklist/${id}`,
 }
 
 /** Reads untrusted location state; anything unexpected is dropped. */
@@ -34,9 +44,15 @@ export function readChatTopic(state: unknown): ChatTopic | undefined {
   const topic: unknown = state.chatTopic
   if (!topic || typeof topic !== 'object') return undefined
   const { type, id } = topic as { type?: unknown; id?: unknown }
-  if ((type !== 'event' && type !== 'rule') || typeof id !== 'string')
+  if (
+    !chatTopicTypes.includes(type as ChatTopic['type']) ||
+    typeof id !== 'string'
+  )
     return undefined
-  return id.length <= 64 && topicIds[type].test(id) ? { type, id } : undefined
+  const topicType = type as ChatTopic['type']
+  return id.length <= 64 && topicIds[topicType].test(id)
+    ? { type: topicType, id }
+    : undefined
 }
 
 export function readChatDraft(state: unknown, maxLength: number) {
@@ -49,8 +65,7 @@ export function readChatDraft(state: unknown, maxLength: number) {
 
 /** Where the chat's back button returns to. */
 export function chatTopicPath(topic: ChatTopic | undefined) {
-  if (!topic) return '/home'
-  return topic.type === 'event' ? `/events/${topic.id}` : `/rules/${topic.id}`
+  return topic ? topicPaths[topic.type](topic.id) : '/home'
 }
 
 // The current conversation lives in sessionStorage: one tab's visit, gone

@@ -35,6 +35,7 @@ describe('readChatTopic', () => {
   it.each([
     [{ type: 'event', id: '42' }, '/events/42'],
     [{ type: 'rule', id: 'waste-food' }, '/rules/waste-food'],
+    [{ type: 'checklist', id: 'CL-01' }, '/home/checklist/CL-01'],
   ] as const)('reads %o and returns to %s', (topic, path) => {
     const state = chatEntryState(topic, 'draft')
     expect(readChatTopic(state)).toEqual(topic)
@@ -51,6 +52,9 @@ describe('readChatTopic', () => {
     { chatTopic: { type: 'rule', id: '../me' } },
     { chatTopic: { type: 'rule', id: 'Waste' } },
     { chatTopic: { type: 'checklist', id: '1' } },
+    { chatTopic: { type: 'checklist', id: 'cl-01' } },
+    { chatTopic: { type: 'checklist', id: 'CL-01/../me' } },
+    { chatTopic: { type: 'notice', id: '1' } },
     { chatTopic: { type: 'rule', id: 7 } },
   ])('drops %o', (state) => {
     expect(readChatTopic(state)).toBeUndefined()

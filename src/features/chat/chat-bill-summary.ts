@@ -36,6 +36,44 @@ function summaryDate(date: string, language: string, now?: Date) {
 }
 
 /**
+ * The same for a passed deadline, with the year spelled out: the short form
+ * ends in a period, which cannot be followed by the rest of the sentence.
+ */
+function passedDate(date: string, language: string, now?: Date) {
+  return date.slice(0, 4) === koreaToday(now).slice(0, 4)
+    ? formatLongMonthDay(date, language)
+    : new Intl.DateTimeFormat(language, {
+        dateStyle: 'long',
+        timeZone: 'UTC',
+      }).format(new Date(`${date}T00:00:00Z`))
+}
+
+/** What to pay by when; a passed deadline is only reported as passed. */
+function paymentSentence(
+  t: TFunction,
+  { amount, dueDate }: SummaryFields,
+  language: string,
+  now?: Date,
+) {
+  // YYYY-MM-DD compares as text; the deadline day itself has not passed.
+  if (dueDate && dueDate < koreaToday(now))
+    return t('chat.bill.summary.overdue', {
+      date: passedDate(dueDate, language, now),
+    })
+  const values = {
+    amount:
+      amount === null
+        ? undefined
+        : new Intl.NumberFormat(language).format(amount),
+    date: dueDate ? summaryDate(dueDate, language, now) : undefined,
+  }
+  if (values.amount && values.date)
+    return t('chat.bill.summary.amountAndDue', values)
+  if (values.amount) return t('chat.bill.summary.amount', values)
+  return values.date ? t('chat.bill.summary.due', values) : null
+}
+
+/**
  * #29 토로's one line above a bill result, built from the result fields with
  * fixed sentences (no AI). A missing value leaves its part out; null when
  * nothing is known.
@@ -47,22 +85,9 @@ export function chatBillSummary(
   now?: Date,
 ) {
   const name = documentKey(result)
-  const amount =
-    result.amount === null
-      ? null
-      : new Intl.NumberFormat(language).format(result.amount)
-  const date = result.dueDate
-    ? summaryDate(result.dueDate, language, now)
-    : null
   const sentences = [
     name && t(`chat.bill.summary.document.${name}`),
-    amount !== null && date !== null
-      ? t('chat.bill.summary.amountAndDue', { amount, date })
-      : amount !== null
-        ? t('chat.bill.summary.amount', { amount })
-        : date !== null
-          ? t('chat.bill.summary.due', { date })
-          : null,
+    paymentSentence(t, result, language, now),
   ].filter(Boolean)
   // Chinese puts no space between sentences.
   return sentences.join(language === 'zh' ? '' : ' ') || null

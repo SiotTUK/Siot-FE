@@ -86,6 +86,44 @@ describe('one line summary of a bill in the chat', () => {
     ).toBe(sentence)
   })
 
+  it.each([
+    ['ko', '자동차세 고지서예요. 납부 기한 11월 1일이 지났어요.'],
+    [
+      'en',
+      'This is a vehicle tax notice. The payment deadline of November 1 has passed.',
+    ],
+    ['zh', '这是汽车税缴费通知。缴费期限11月1日已过。'],
+    ['vi', 'Đây là thông báo thuế xe. Hạn nộp ngày 1 tháng 11 đã qua.'],
+  ] as const)(
+    'says only that the deadline has passed in %s',
+    async (language, sentence) => {
+      const t = await translator(language)
+      expect(
+        chatBillSummary(t, { ...bill, dueDate: '2026-11-01' }, language, now),
+      ).toBe(sentence)
+    },
+  )
+
+  it('treats a deadline as passed from the next day in Korea', async () => {
+    const t = await translator('ko')
+    const summary = (dueDate: string, at: Date) =>
+      chatBillSummary(t, { ...nothing, dueDate }, 'ko', at)
+
+    expect(summary('2026-11-28', now)).toBe('11월 28일까지 내야 해요.')
+    expect(summary('2026-11-27', now)).toBe('납부 기한 11월 27일이 지났어요.')
+    // Already 11-28 in Korea, still 11-27 in UTC.
+    expect(summary('2026-11-27', new Date('2026-11-27T15:00:00Z'))).toBe(
+      '납부 기한 11월 27일이 지났어요.',
+    )
+  })
+
+  it('spells out the year of a passed deadline from another year', async () => {
+    const t = await translator('ko')
+    expect(
+      chatBillSummary(t, { ...nothing, dueDate: '2025-11-01' }, 'ko', now),
+    ).toBe('납부 기한 2025년 11월 1일이 지났어요.')
+  })
+
   it('adds the year to a deadline outside this year', async () => {
     const t = await translator('ko')
     expect(

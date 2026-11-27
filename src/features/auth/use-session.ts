@@ -26,6 +26,7 @@ import {
   updateMyLanguage,
   withdraw,
 } from './api'
+import { returnPath } from './return-path'
 import { captureSessionScope, rotateSessionScope } from './session-scope'
 
 export function useMe() {
@@ -51,14 +52,6 @@ export function sessionState(state: unknown): SessionLocationState {
   return state && typeof state === 'object'
     ? (state as SessionLocationState)
     : {}
-}
-
-/** Only same-app paths; never a guest screen that would bounce back. */
-function returnPath(from: string | undefined) {
-  if (!from || !from.startsWith('/') || from.startsWith('//')) return undefined
-  const path = from.split(/[?#]/)[0]
-  if (['/', '/login', '/signup'].includes(path)) return undefined
-  return from
 }
 
 /** M-08·M-10: return to the protected screen after login, after onboarding. */

@@ -67,7 +67,6 @@ export const adminMessages = defineKoreanMessages({
     ADMIN_SELF_DEMOTION: '자기 자신의 관리자 권한은 내릴 수 없어요',
     MEMBER_NOT_FOUND: '회원을 찾을 수 없어요',
     CHAT_REVIEW_NOT_FOUND: '검토할 답변을 찾을 수 없어요',
-    GUIDE_NOT_FOUND: '항목을 찾을 수 없어요',
     GUIDE_TRANSLATION_NOT_FOUND: '이 언어의 문구가 아직 없어요',
   },
 })

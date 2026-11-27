@@ -53,7 +53,6 @@ export function RuleReport({
         {
           ...values,
           guideCode: rule.code,
-          targetTitleSnapshot: rule.title,
           language: currentLanguage(),
         },
         isSessionCurrent,

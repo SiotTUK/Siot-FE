@@ -4,6 +4,7 @@ import {
   firstPasswordError,
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
+import type { AdminRuleDetail, AdminRuleFaq } from '@/features/admin/rule-api'
 import type { BillTranslation } from '@/features/bill-translation/api'
 import type {
   DocumentResponse,
@@ -44,6 +45,8 @@ export interface MockState {
   nextDocumentId: number
   nextBillId: number
   guides: Record<string, GuideTranslationResponse>
+  /** ADM-06·RUL-04: admin rule data, seeded from the rule mock on first use. */
+  adminRules?: MockAdminRules
   reviews: Record<
     string,
     { reviewed: boolean; adminMemo: string | null; reviewedAt: string | null }
@@ -73,6 +76,17 @@ export interface MockState {
       }
     >
   >
+}
+
+/** ADM-06 rules (Korean source text), categories' en/zh/vi names and FAQs. */
+export interface MockAdminRules {
+  rules: Record<
+    string,
+    AdminRuleDetail & { deletedAt: string | null; updatedAt: string | null }
+  >
+  categoryNames: Record<string, Partial<Record<'en' | 'zh' | 'vi', string>>>
+  faqs: Omit<AdminRuleFaq, 'ruleTitle' | 'ruleDeleted'>[]
+  nextFaqId: number
 }
 
 export interface MockConversation {

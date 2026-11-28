@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import type { Language } from '@/shared/api/types'
 import { currentLanguage, languages } from '@/shared/i18n'
 import { errorMessage, useMessage } from '@/shared/i18n/error-message'
@@ -35,9 +36,14 @@ import { useGuideTranslation, useSaveGuideTranslation } from '../use-admin'
  */
 export function GuideEditor() {
   const { t } = useTranslation()
-  const [code, setCode] = useState('')
+  // ADM-06: the rule editor opens this screen with ?code= to review texts.
+  const [params] = useSearchParams()
+  const initialCode = params.get('code')?.trim() ?? ''
+  const [code, setCode] = useState(initialCode)
   const [language, setLanguage] = useState<Language>('ko')
-  const [target, setTarget] = useState<{ code: string; language: Language }>()
+  const [target, setTarget] = useState<
+    { code: string; language: Language } | undefined
+  >(() => (initialCode ? { code: initialCode, language: 'ko' } : undefined))
   const guide = useGuideTranslation(target?.code, target?.language ?? 'ko')
 
   return (
@@ -110,6 +116,16 @@ function GuideTextForm({
             ` · ${t('admin.updatedAt', { date: formatDateTime(saved.updatedAt, currentLanguage()) })}`}
         </Muted>
         {!saved && <Notice>{t('admin.newTranslation')}</Notice>}
+        {/* BE #23: auto-translations are replaced when Korean changes. */}
+        {saved && language !== 'ko' && (
+          <Notice tone={saved.reviewed ? 'success' : 'note'}>
+            {t(
+              saved.reviewed
+                ? 'admin.reviewedTranslation'
+                : 'admin.autoTranslation',
+            )}
+          </Notice>
+        )}
         {language === 'ko' && (
           <Notice tone="note">{t('admin.koreanRegenerates')}</Notice>
         )}

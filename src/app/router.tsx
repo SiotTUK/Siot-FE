@@ -171,6 +171,27 @@ export const router = createBrowserRouter([
             path: 'documents',
             element: deferredPage(adminScreen, 'AdminDocumentsPage'),
           },
+          // ADM-06·RUL-04·09~13
+          {
+            path: 'rules',
+            element: deferredPage(adminScreen, 'AdminRulesPage'),
+          },
+          {
+            path: 'rules/new',
+            element: deferredPage(adminScreen, 'AdminRuleNewPage'),
+          },
+          {
+            path: 'rules/:code',
+            element: deferredPage(adminScreen, 'AdminRuleEditPage'),
+          },
+          {
+            path: 'rule-categories',
+            element: deferredPage(adminScreen, 'AdminRuleCategoriesPage'),
+          },
+          {
+            path: 'rule-faqs',
+            element: deferredPage(adminScreen, 'AdminRuleFaqsPage'),
+          },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

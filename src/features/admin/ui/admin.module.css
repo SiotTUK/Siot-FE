@@ -36,3 +36,23 @@
   font-weight: 700;
   color: var(--primary);
 }
+
+/* ADM-06 rules: tag row and a form section that can be locked. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.answer {
+  margin: 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

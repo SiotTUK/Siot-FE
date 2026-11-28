@@ -1,11 +1,20 @@
-import { describe, expect, it } from 'vitest'
-import type { RuleFaqResponse, RuleResponse } from './api'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  fetchRuleCategories,
+  type RuleCategoryResponse,
+  type RuleFaqResponse,
+  type RuleResponse,
+} from './api'
+import {
+  categoryPath,
+  categorySlug,
+  findRuleCategory,
   groupByCategory,
   isRuleCode,
   koreaDateOf,
   mentionsFine,
   parseContacts,
+  ruleBelongsToCategory,
   safeUrl,
   searchRules,
   toFaqItems,
@@ -213,5 +222,113 @@ describe('rule contacts', () => {
       { name: '', phone: '1345', tel: '1345' },
     ])
     expect(parseContacts('시흥시청 누리집')).toEqual([])
+  })
+})
+
+describe('dynamic rule categories (RUL-12·13, #132)', () => {
+  const categories: RuleCategoryResponse[] = [
+    {
+      category: '반려동물',
+      name: 'Pets',
+      translated: true,
+      key: null,
+      sortOrder: 70,
+    },
+    {
+      category: '쓰레기',
+      name: 'Waste',
+      translated: true,
+      key: 'waste',
+      sortOrder: 20,
+    },
+  ]
+
+  it('builds slugs/paths, resolves params, and groups rules in server sortOrder including admin-added categories', () => {
+    const builtIn = categories[1]
+    const custom = categories[0]
+    expect(categorySlug(builtIn)).toBe('waste')
+    expect(categorySlug(custom)).toBe('반려동물')
+    expect(categoryPath(builtIn)).toBe('/rules/category/waste')
+    expect(categoryPath(custom)).toBe(
+      `/rules/category/${encodeURIComponent('반려동물')}`,
+    )
+
+    expect(findRuleCategory(categories, 'waste')).toBe(builtIn)
+    expect(findRuleCategory(categories, '쓰레기')).toBe(builtIn)
+    expect(findRuleCategory(categories, '반려동물')).toBe(custom)
+    expect(findRuleCategory(categories, 'unknown')).toBeUndefined()
+
+    const wasteRule = toRule(
+      response({
+        code: 'waste-food',
+        category: '쓰레기',
+        categoryName: 'Waste',
+        categoryKey: 'waste',
+      }),
+      'en',
+    )
+    const petRule = toRule(
+      response({
+        code: 'pet-registration',
+        category: '반려동물',
+        categoryName: 'Pets',
+        categoryKey: null,
+      }),
+      'en',
+    )
+
+    expect(petRule.category).toBeNull()
+    expect(petRule.categoryRaw).toBe('반려동물')
+    expect(petRule.categoryName).toBe('Pets')
+    expect(ruleBelongsToCategory(petRule, custom)).toBe(true)
+    expect(ruleBelongsToCategory(petRule, builtIn)).toBe(false)
+
+    expect(
+      groupByCategory([petRule, wasteRule], categories).map((group) => [
+        group.category,
+        group.rules.map((r) => r.code),
+      ]),
+    ).toEqual([
+      ['waste', ['waste-food']],
+      ['반려동물', ['pet-registration']],
+    ])
+  })
+
+  describe('GET /api/rules/categories (MSW contract)', () => {
+    const origin = 'http://localhost'
+
+    beforeEach(() => {
+      const interceptedFetch = globalThis.fetch
+      vi.stubGlobal(
+        'fetch',
+        vi.fn((input: string | URL | Request, init?: RequestInit) =>
+          interceptedFetch(
+            typeof input === 'string' ? new URL(input, origin) : input,
+            init,
+          ),
+        ),
+      )
+    })
+    afterEach(() => vi.unstubAllGlobals())
+
+    it('returns server categories including an admin-added category and translation status', async () => {
+      const en = await fetchRuleCategories('en')
+      const petEn = en.find((item) => item.category === '반려동물')
+      expect(petEn).toMatchObject({
+        category: '반려동물',
+        name: 'Pets',
+        translated: true,
+        key: null,
+      })
+
+      const viList = await fetchRuleCategories('vi')
+      const petVi = viList.find((item) => item.category === '반려동물')
+      expect(petVi).toMatchObject({
+        category: '반려동물',
+        name: '반려동물',
+        translated: false,
+        key: null,
+      })
+    })
   })
 })

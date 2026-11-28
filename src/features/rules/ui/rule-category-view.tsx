@@ -1,48 +1,68 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { ChipGroup } from '@/shared/ui/chip-group'
 import { MascotTip } from '@/shared/ui/mascot-tip'
-import { Stack } from '@/shared/ui/page'
+import { Stack, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
-import { useDocumentTitle } from '@/shared/lib/document-title'
-import { ruleCategories, type RuleCategory } from '../rules'
+import type { RuleCategoryResponse } from '../api'
+import {
+  categoryPath,
+  categorySlug,
+  isRuleCategory,
+  ruleBelongsToCategory,
+} from '../rules'
 import { useRules } from '../use-rules'
 import { CategoryIcon } from './category-icon'
 import { RuleCard } from './rule-card'
 import styles from './rules.module.css'
 
 /**
- * Figma v2 "생활 수칙 · 분야": category chips, the category card (icon, name,
- * description), "수칙 N개", rule cards and a 토로 tip.
+ * Figma v2 "생활 수칙 · 분야": category chips (including admin-added
+ * categories), the category card, "수칙 N개", rule cards and a 토로 tip.
  */
-export function RuleCategoryView({ category }: { category: RuleCategory }) {
+export function RuleCategoryView({
+  category,
+  categories,
+}: {
+  category: RuleCategoryResponse
+  categories: readonly RuleCategoryResponse[]
+}) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { query, rules: all } = useRules()
-  useDocumentTitle(t(`rules.groups.${category}`), t('nav.rules'))
-  const rules = all.filter((rule) => rule.category === category)
+  const builtIn = isRuleCategory(category.key) ? category.key : null
+  const activeSlug = categorySlug(category)
+  useDocumentTitle(category.name, t('nav.rules'))
+  const rules = all.filter((rule) => ruleBelongsToCategory(rule, category))
 
   return (
     <Stack gap={16}>
-      <ChipGroup<RuleCategory>
+      <ChipGroup<string>
         variant="pill"
         label={t('rules.byCategory')}
-        value={category}
-        onChange={(next) =>
-          void navigate(`/rules/category/${next}`, { replace: true })
-        }
-        options={ruleCategories.map((value) => ({
-          value,
-          label: t(`rules.categories.${value}`),
+        value={activeSlug}
+        onChange={(nextSlug) => {
+          const target = categories.find(
+            (item) => categorySlug(item) === nextSlug,
+          )
+          if (target) void navigate(categoryPath(target), { replace: true })
+        }}
+        options={categories.map((item) => ({
+          value: categorySlug(item),
+          label: item.name,
         }))}
       />
-      <div className={styles.categoryHead} data-category={category}>
+      <div className={styles.categoryHead} data-category={builtIn ?? undefined}>
         <span className={styles.tileIcon}>
-          <CategoryIcon category={category} />
+          <CategoryIcon category={builtIn} />
         </span>
         <span className={styles.categoryText}>
-          <strong>{t(`rules.groups.${category}`)}</strong>
-          <small>{t(`rules.descriptions.${category}`)}</small>
+          <strong>{category.name}</strong>
+          {builtIn && <small>{t(`rules.descriptions.${builtIn}`)}</small>}
+          {!category.translated && (
+            <Tag tone="warning">{t('rules.translationPending')}</Tag>
+          )}
         </span>
       </div>
       <QueryState query={query} keepContentOnError={Boolean(query.data)}>

@@ -10,8 +10,13 @@ import { Muted, Section, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
 import { useDocumentTitle } from '@/shared/lib/document-title'
 import { isRuleNotFound } from '../api'
-import { parseContacts, safeUrl, type Rule } from '../rules'
-import { useRule } from '../use-rules'
+import {
+  parseContacts,
+  ruleBelongsToCategory,
+  safeUrl,
+  type Rule,
+} from '../rules'
+import { useRule, useRuleCategories } from '../use-rules'
 import { RuleReport } from './rule-report'
 import styles from './rules.module.css'
 
@@ -41,6 +46,16 @@ export function RuleDetail({ code }: { code: string }) {
 function RuleDetailBody({ rule }: { rule: Rule }) {
   const { t, i18n } = useTranslation()
   const { data: me } = useMe()
+  const { categories } = useRuleCategories()
+  const matchedCategory = categories.find((item) =>
+    ruleBelongsToCategory(rule, item),
+  )
+  const categoryLabel =
+    rule.categoryName ??
+    matchedCategory?.name ??
+    (rule.category ? t(`rules.groups.${rule.category}`) : null)
+  const translationPending =
+    !rule.translated || matchedCategory?.translated === false
   const reportId = useId()
   const [reporting, setReporting] = useState(false)
   const reportRef = useRef<HTMLDivElement>(null)
@@ -62,11 +77,9 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
     <>
       <div className={styles.detailHead}>
         <span className={styles.tags}>
-          {rule.category && (
-            <Tag tone="main">{t(`rules.groups.${rule.category}`)}</Tag>
-          )}
+          {categoryLabel && <Tag tone="main">{categoryLabel}</Tag>}
           {rule.fine && <Tag tone="danger">{t('rules.fineTag')}</Tag>}
-          {!rule.translated && (
+          {translationPending && (
             <Tag tone="warning">{t('rules.translationPending')}</Tag>
           )}
           {/* NTF-07: an admin saved this as a real change (no notification for rules). */}

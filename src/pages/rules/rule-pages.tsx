@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { chatBackPath } from '@/shared/lib/chat-back'
-import { ruleCategories } from '@/features/rules/rules'
-import { useRule, useRuleFaqs } from '@/features/rules/use-rules'
+import { findRuleCategory } from '@/features/rules/rules'
+import {
+  useRule,
+  useRuleCategories,
+  useRuleFaqs,
+} from '@/features/rules/use-rules'
 import { RuleCategoryView } from '@/features/rules/ui/rule-category-view'
 import { RuleDetail } from '@/features/rules/ui/rule-detail'
 import { RuleFaqList } from '@/features/rules/ui/rule-faq-list'
@@ -66,13 +70,20 @@ export function RuleCategoryPage() {
   const { t } = useTranslation()
   const back = useRulesBack()
   const param = useParams().category
-  const category = ruleCategories.find((value) => value === param)
-  if (!category) return <Navigate to="/rules" replace />
+  const { query, categories } = useRuleCategories()
+  const category = findRuleCategory(categories, param)
+
+  if (query.isSuccess && !category) return <Navigate to="/rules" replace />
+
   return (
     <>
-      <ScreenHeader back={back} title={t(`rules.groups.${category}`)} />
+      <ScreenHeader back={back} title={category?.name ?? t('nav.rules')} />
       <PageBody className={styles.body}>
-        <RuleCategoryView category={category} />
+        <QueryState query={query} keepContentOnError={Boolean(category)}>
+          {category && (
+            <RuleCategoryView category={category} categories={categories} />
+          )}
+        </QueryState>
       </PageBody>
     </>
   )

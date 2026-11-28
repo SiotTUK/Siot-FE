@@ -155,6 +155,15 @@ export const adminMessages = defineKoreanMessages({
     titleRequired: '제목을 입력해 주세요',
     tooLong: '입력할 수 있는 길이를 넘었어요',
     docsLimit: '준비물은 30개까지, 한 줄에 255자까지 입력할 수 있어요',
+    guideInfo: {
+      title: '출처 링크 · 문의 전화 (모든 언어 공통)',
+      sourceUrl: '출처 링크 (http/https)',
+      contact: '문의 전화',
+      empty: '없음',
+      blankClears: '비워 두고 저장하면 지워요',
+      nothingChanged: '바뀐 값이 없어요',
+      save: '출처 · 문의 저장',
+    },
     menuDocuments: '챗봇 근거 문서',
     menuDocumentsDesc: 'PDF 등록 · 새 버전 업로드 · 반영 상태 확인',
     documents: {

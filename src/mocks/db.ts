@@ -47,6 +47,14 @@ export interface MockState {
   guides: Record<string, GuideTranslationResponse>
   /** ADM-06·RUL-04: admin rule data, seeded from the rule mock on first use. */
   adminRules?: MockAdminRules
+  /**
+   * CHK-06·NTF-07 source link and contact changed by an admin, by item code.
+   * Only changed fields are kept (null = cleared); the rest stay as seeded.
+   */
+  guideInfo?: Record<
+    string,
+    { sourceUrl?: string | null; contact?: string | null; updatedAt: string }
+  >
   reviews: Record<
     string,
     { reviewed: boolean; adminMemo: string | null; reviewedAt: string | null }

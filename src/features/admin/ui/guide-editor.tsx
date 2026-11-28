@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
+import type { z } from 'zod'
 import type { Language } from '@/shared/api/types'
 import { currentLanguage, languages } from '@/shared/i18n'
 import { errorMessage, useMessage } from '@/shared/i18n/error-message'
@@ -14,9 +15,23 @@ import {
   TextAreaField,
   TextField,
 } from '@/shared/ui/field'
-import { FormError, Muted, Notice, Stack, Toolbar } from '@/shared/ui/page'
+import {
+  FormError,
+  Muted,
+  Notice,
+  Section,
+  Stack,
+  Toolbar,
+} from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
-import type { GuideTranslationResponse } from '../api'
+import type { GuideInfoResponse, GuideTranslationResponse } from '../api'
+import {
+  toGuideInfoForm,
+  guideInfoFormSchema,
+  guideInfoMaxLength,
+  toGuideInfoRequest,
+  type GuideInfoForm,
+} from '../guide-info-form'
 import {
   guideFields,
   guideFormSchema,
@@ -25,7 +40,12 @@ import {
   toGuideRequest,
   type GuideForm,
 } from '../guide-form'
-import { useGuideTranslation, useSaveGuideTranslation } from '../use-admin'
+import {
+  useGuideInfo,
+  useGuideTranslation,
+  useSaveGuideTranslation,
+  useUpdateGuideInfo,
+} from '../use-admin'
 
 /**
  * CHK-06·NTF-07: edit one language of a guide's detail text by its code:
@@ -77,6 +97,7 @@ export function GuideEditor() {
       </form>
       {target && (
         <QueryState query={guide}>
+          <GuideInfoEditor key={target.code} code={target.code} />
           <GuideTextForm
             key={`${target.code}-${target.language}-${guide.data?.updatedAt ?? 'new'}`}
             code={target.code}
@@ -86,6 +107,101 @@ export function GuideEditor() {
         </QueryState>
       )}
     </>
+  )
+}
+
+/**
+ * CHK-06·NTF-07 source link and contact, shared by every language. The
+ * fields start with the saved values (GET /api/admin/guides/{code}); only
+ * changed fields are sent, and an emptied field clears the value.
+ */
+function GuideInfoEditor({ code }: { code: string }) {
+  const { t } = useTranslation()
+  const info = useGuideInfo(code)
+  // Kept here: the fields restart from the saved values after a save.
+  const update = useUpdateGuideInfo(code)
+  return (
+    <Section title={t('admin.guideInfo.title')}>
+      <QueryState query={info}>
+        {info.data && (
+          <GuideInfoFields
+            key={info.data.updatedAt ?? 'never'}
+            saved={info.data}
+            update={update}
+          />
+        )}
+      </QueryState>
+    </Section>
+  )
+}
+
+function GuideInfoFields({
+  saved,
+  update,
+}: {
+  saved: GuideInfoResponse
+  update: ReturnType<typeof useUpdateGuideInfo>
+}) {
+  const { t } = useTranslation()
+  const msg = useMessage()
+  const { register, handleSubmit, formState, setError } = useForm<
+    GuideInfoForm,
+    unknown,
+    z.output<typeof guideInfoFormSchema>
+  >({
+    resolver: zodResolver(guideInfoFormSchema),
+    defaultValues: toGuideInfoForm(saved),
+  })
+  const onSubmit = handleSubmit((values) => {
+    const body = toGuideInfoRequest(values, saved)
+    if (Object.keys(body).length === 0)
+      return setError('root', { message: 'admin.guideInfo.nothingChanged' })
+    update.mutate(body)
+  })
+
+  return (
+    <form onSubmit={(event) => void onSubmit(event)} noValidate>
+      <Stack gap={14}>
+        {saved.updatedAt && (
+          <Muted>
+            {t('admin.updatedAt', {
+              date: formatDateTime(saved.updatedAt, currentLanguage()),
+            })}
+          </Muted>
+        )}
+        <TextField
+          {...register('sourceUrl')}
+          type="url"
+          inputMode="url"
+          maxLength={guideInfoMaxLength.sourceUrl}
+          label={t('admin.guideInfo.sourceUrl')}
+          placeholder={t('admin.guideInfo.empty')}
+          help={t('admin.guideInfo.blankClears')}
+          error={msg(formState.errors.sourceUrl?.message)}
+        />
+        <TextField
+          {...register('contact')}
+          type="tel"
+          maxLength={guideInfoMaxLength.contact}
+          label={t('admin.guideInfo.contact')}
+          placeholder={t('admin.guideInfo.empty')}
+          help={t('admin.guideInfo.blankClears')}
+          error={msg(formState.errors.contact?.message)}
+        />
+        <FormError
+          message={
+            msg(formState.errors.root?.message) ??
+            (update.isError ? errorMessage(t, update.error) : undefined)
+          }
+        />
+        {update.isSuccess && !formState.isDirty && (
+          <Notice tone="success">{t('admin.saved')}</Notice>
+        )}
+        <Button type="submit" variant="secondary" loading={update.isPending}>
+          {t('admin.guideInfo.save')}
+        </Button>
+      </Stack>
+    </form>
   )
 }
 

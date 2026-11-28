@@ -145,6 +145,44 @@ export const adminHandlers = [
     },
   ),
 
+  http.patch('*/api/admin/guides/:code', async ({ request, params }) => {
+    const denied = requireAdmin()
+    if (denied) return denied
+    const code = String(params.code)
+    if (!isGuideCode(code))
+      return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
+    const input = await body(request)
+    const { sourceUrl, contact } = input
+    const invalid = (value: unknown, max: number) =>
+      value != null && (typeof value !== 'string' || value.length > max)
+    if (
+      invalid(sourceUrl, 2000) ||
+      invalid(contact, 255) ||
+      (typeof sourceUrl === 'string' &&
+        sourceUrl !== '' &&
+        !/^\s*https?:\/\/\S+\s*$/.test(sourceUrl))
+    )
+      return error(400, 'INVALID_INPUT', '요청 값이 올바르지 않습니다.')
+    // Like Guide.updateSourceAndContact: omitted stays, blank clears.
+    const value = (text: string) => text.trim() || null
+    const now = new Date().toISOString()
+    const info = { ...state.guideInfo?.[code], updatedAt: now }
+    if (typeof sourceUrl === 'string') info.sourceUrl = value(sourceUrl)
+    if (typeof contact === 'string') info.contact = value(contact)
+    state.guideInfo = { ...state.guideInfo, [code]: info }
+    persist()
+    return HttpResponse.json({ data: guideInfoView(code) })
+  }),
+
+  http.get('*/api/admin/guides/:code', ({ params }) => {
+    const denied = requireAdmin()
+    if (denied) return denied
+    const code = String(params.code)
+    if (!isGuideCode(code))
+      return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
+    return HttpResponse.json({ data: guideInfoView(code) })
+  }),
+
   http.get('*/api/admin/guides/:code/translations/:language', ({ params }) => {
     const denied = requireAdmin()
     if (denied) return denied
@@ -216,6 +254,33 @@ export const adminHandlers = [
     },
   ),
 ]
+
+/** Seeded source link and contact (same as the checklist mock's CL-01). */
+const seededGuideInfo: Record<
+  string,
+  { sourceUrl: string | null; contact: string | null }
+> = { 'CL-01': { sourceUrl: 'https://www.hikorea.go.kr', contact: '1345' } }
+
+/** GuideInfoResponse: admin changes over the seeded values. */
+function guideInfoView(code: string) {
+  const seeded = seededGuideInfo[code]
+  const changed = state.guideInfo?.[code]
+  const pick = (field: 'sourceUrl' | 'contact') =>
+    changed && field in changed
+      ? (changed[field] ?? null)
+      : (seeded?.[field] ?? null)
+  return {
+    code,
+    kind: code.startsWith('CL-')
+      ? 'CHECKLIST'
+      : code.startsWith('LC-')
+        ? 'LIFE_CHANGE_TASK'
+        : 'RULE',
+    sourceUrl: pick('sourceUrl'),
+    contact: pick('contact'),
+    updatedAt: changed?.updatedAt ?? null,
+  }
+}
 
 /**
  * Checklist (CL-01), life change task (LC-01-1) and living rule (waste-food)

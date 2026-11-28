@@ -30,15 +30,18 @@ import {
 /**
  * After any change: the admin rule data, the members' rule screens (list,
  * detail, FAQ, categories) and the admin text editor (the BE regenerates
- * en/zh/vi when the Korean text changes).
+ * en/zh/vi when the Korean text changes) with its source link and contact.
  */
 function useRefreshRules() {
   const queryClient = useQueryClient()
   return () =>
     Promise.all(
-      [adminRuleKeys.all, ruleKeys.all, [...adminKeys.all, 'guide']].map(
-        (queryKey) => queryClient.invalidateQueries({ queryKey }),
-      ),
+      [
+        adminRuleKeys.all,
+        ruleKeys.all,
+        [...adminKeys.all, 'guide'],
+        [...adminKeys.all, 'guide-info'],
+      ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
     )
 }
 

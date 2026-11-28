@@ -224,6 +224,16 @@ function warningOf(
   return null
 }
 
+/** An admin's PATCH /api/admin/guides/{code} (only the changed fields). */
+function guideInfoOverride(code: string) {
+  const info = state.guideInfo?.[code]
+  if (!info) return {}
+  return {
+    ...('sourceUrl' in info && { sourceUrl: info.sourceUrl ?? null }),
+    ...('contact' in info && { contact: info.contact ?? null }),
+  }
+}
+
 function items(member: MockMember): ChecklistItemResponse[] {
   const marks = state.checklist[member.email] ?? {}
   const allSeeds = [...seeds(member), ...changeSeeds(member)]
@@ -263,6 +273,7 @@ function items(member: MockMember): ChecklistItemResponse[] {
       contentLanguage: 'ko',
       translated: member.language === 'ko',
       ...seed,
+      ...guideInfoOverride(seed.code),
       highlighted: seed.code === 'CL-05' && dDay !== null && dDay <= 30,
       periodKey,
       dDay,

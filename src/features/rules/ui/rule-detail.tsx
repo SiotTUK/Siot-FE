@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMe } from '@/features/auth/use-session'
 import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { chatEntryState } from '@/features/chat/chat-entry'
-import { formatCalendarDate } from '@/shared/i18n/format'
+import { formatCalendarDate, formatMonthDay } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { KeepTogether } from '@/shared/ui/keep-together'
 import { Muted, Section, Tag } from '@/shared/ui/page'
@@ -66,6 +66,14 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
           {rule.fine && <Tag tone="danger">{t('rules.fineTag')}</Tag>}
           {!rule.translated && (
             <Tag tone="warning">{t('rules.translationPending')}</Tag>
+          )}
+          {/* NTF-07: an admin saved this as a real change (no notification for rules). */}
+          {rule.noticeChangedOn && (
+            <Tag tone="warning">
+              {t('rules.noticeChanged', {
+                date: formatMonthDay(rule.noticeChangedOn, i18n.language),
+              })}
+            </Tag>
           )}
         </span>
         <h2 className={styles.detailTitle}>{rule.title}</h2>

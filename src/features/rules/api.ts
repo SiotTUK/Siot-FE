@@ -29,6 +29,12 @@ export interface RuleResponse {
   /** false → Korean text shown: "번역 준비 중" (COM-02). */
   translated: boolean
   /**
+   * NTF-07 when an admin last saved the rule as a real change (deadline,
+   * place, fee…), e.g. `2026-11-28T10:00:00+09:00`; null = never. Rules send
+   * no change notification; the detail screen shows "안내 변경" with this date.
+   */
+  noticeChangedAt: string | null
+  /**
    * RUL-06 tax kind (BE #29): TAX_CAR · TAX_PROPERTY · TAX_RESIDENT, null
    * for other rules. Finds the tax detail with `GET /api/schedules/taxes?kind=`.
    */

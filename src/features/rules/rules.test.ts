@@ -3,6 +3,7 @@ import type { RuleFaqResponse, RuleResponse } from './api'
 import {
   groupByCategory,
   isRuleCode,
+  koreaDateOf,
   mentionsFine,
   parseContacts,
   safeUrl,
@@ -26,6 +27,7 @@ const response = (over: Partial<RuleResponse> = {}): RuleResponse => ({
   sources: [{ name: '시흥시', url: 'https://www.siheung.go.kr' }],
   checkedOn: '2026-11-25',
   translated: true,
+  noticeChangedAt: null,
   taxKind: null,
   ...over,
 })
@@ -64,6 +66,22 @@ describe('BE rule → screen rule', () => {
     )
     expect(rule.facts).toEqual([{ key: 'where', value: '주민센터' }])
     expect(rule.taxKind).toBe('TAX_CAR')
+  })
+
+  it('keeps the day in Korea of the last real change (NTF-07)', () => {
+    expect(toRule(response(), 'ko').noticeChangedOn).toBeNull()
+    expect(
+      toRule(response({ noticeChangedAt: '2026-11-28T10:00:00+09:00' }), 'ko')
+        .noticeChangedOn,
+    ).toBe('2026-11-28')
+  })
+
+  it('reads the change day in Korea whatever offset the BE writes', () => {
+    // 2026-11-27 23:30 UTC is already 11-28 in Korea; 08:30 KST is still 11-27 in UTC.
+    expect(koreaDateOf('2026-11-27T23:30:00Z')).toBe('2026-11-28')
+    expect(koreaDateOf('2026-11-28T08:30:00+09:00')).toBe('2026-11-28')
+    expect(koreaDateOf('not a date')).toBeNull()
+    expect(koreaDateOf(null)).toBeNull()
   })
 
   it('leaves a category the screens do not know as null', () => {

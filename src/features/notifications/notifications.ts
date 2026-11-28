@@ -6,11 +6,12 @@ import { isRuleCode } from '@/features/rules/rules'
 import { formatMonthDay, koreaToday } from '@/shared/i18n/format'
 
 /**
- * Screen for a notification's link (NTF-04). Only screens that exist are
- * used: checklist items and life change tasks open their checklist detail
- * (/home/checklist/:code), taxes and personal dates open the calendar,
- * rules open their detail page when the slug is recognized (/rules when
- * unknown). A bill reminder opens its translation result; without an id (the
+ * Screen for a notification's link (NTF-04): checklist items and life
+ * change tasks open their checklist detail (/home/checklist/:code), a tax
+ * reminder (SCHEDULE, its common tax schedule id) opens the tax detail
+ * (CAL-03 /calendar/taxes/:id, the calendar when the id is not a number),
+ * personal dates open the calendar, rules open their detail page when the
+ * slug is recognized (/rules when unknown). A bill reminder opens its translation result; without an id (the
  * translation was deleted) it opens the screen with the recent list.
  * Unknown codes fall back to their main home/rules list.
  * Unknown link types return undefined and the card only marks read.
@@ -39,6 +40,9 @@ export function notificationPath(link: {
         ? `${billTranslationPath}/${link.linkCode}`
         : billTranslationPath
     case 'SCHEDULE':
+      return /^[1-9]\d*$/.test(link.linkCode ?? '')
+        ? `/calendar/taxes/${link.linkCode}`
+        : '/calendar'
     case 'CALENDAR':
       return '/calendar'
     default:

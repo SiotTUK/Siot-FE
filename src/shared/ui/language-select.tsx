@@ -5,7 +5,9 @@ import styles from './language-select.module.css'
 
 /**
  * `inline` for the top bar (globe + language name, Figma M/TopBar),
- * `boxed` for screen headers, `field` for a full-width select in a card (M10).
+ * `boxed` for screen headers, `field` for a full-width select in a card (M10),
+ * `pill` for a small rounded chip (chat M08a "한국어로 답해요 ▾").
+ * `optionLabel` replaces the language names, e.g. with "Answer in English".
  * Always a native <select>, so the list and keyboard work everywhere.
  */
 export function LanguageSelect({
@@ -13,11 +15,13 @@ export function LanguageSelect({
   label,
   onChange,
   variant = 'boxed',
+  optionLabel,
 }: {
   value: Language
   label: string
   onChange: (language: Language) => void
-  variant?: 'inline' | 'boxed' | 'field'
+  variant?: 'inline' | 'boxed' | 'field' | 'pill'
+  optionLabel?: (language: Language) => string
 }) {
   return (
     <label className={`${styles.wrapper} ${styles[variant]}`}>
@@ -31,7 +35,7 @@ export function LanguageSelect({
       >
         {Object.entries(languages).map(([code, name]) => (
           <option key={code} value={code} lang={code}>
-            {name}
+            {optionLabel ? optionLabel(code as Language) : name}
           </option>
         ))}
       </select>
@@ -39,6 +43,11 @@ export function LanguageSelect({
       {variant === 'boxed' && (
         <span className={styles.caret} aria-hidden="true">
           ▼
+        </span>
+      )}
+      {variant === 'pill' && (
+        <span className={styles.caret} aria-hidden="true">
+          ▾
         </span>
       )}
     </label>

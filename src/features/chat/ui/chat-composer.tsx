@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { ArrowRightIcon } from '@/shared/ui/icons'
+import { ArrowRightIcon, CameraIcon } from '@/shared/ui/icons'
 import { questionMaxLength } from '../api'
 import styles from './chat.module.css'
 
@@ -47,7 +47,7 @@ export function ChatComposer({
           disabled={photoDisabled}
           onClick={onPhoto}
         >
-          <span aria-hidden="true">📷</span>
+          <CameraIcon aria-hidden="true" />
         </button>
         <textarea
           aria-label={t('chat.inputLabel')}

@@ -8,24 +8,25 @@ import {
 import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import { Link } from 'react-router-dom'
-import toro from '@/shared/assets/mascot/toro.png'
+import { formatTime } from '@/shared/i18n/format'
+import { CameraIcon } from '@/shared/ui/icons'
 import { feedbackCommentMaxLength, type MessageResponse } from '../api'
 import { relatedPagePath } from '../related-pages'
 import { groupChatSources, type ChatSource } from './chat-sources'
 import styles from './chat.module.css'
+import { ToroAvatar } from './toro-picture'
 
 /** Phone link that keeps digits only, e.g. "031-310-3009" → tel:0313103009. */
 const telHref = (number: string) => `tel:${number.replace(/[^\d+]/g, '')}`
 
 /**
  * One chat entry (Figma v2). `mine`: the question as a full-width light
- * card (M08b). `avatar`: a 토로 greeting bubble (M08a). `answer`: the
- * answer card headed "토로 · 챗봇" (M08b).
+ * card (M08b). `answer`: the answer card headed "토로 · 웰컴시흥 도우미"
+ * (M08b).
  */
 export function ChatBubble({
   mine,
   pending,
-  avatar,
   answer,
   tone,
   note,
@@ -33,7 +34,6 @@ export function ChatBubble({
 }: {
   mine?: boolean
   pending?: boolean
-  avatar?: boolean
   answer?: boolean
   tone?: 'caution' | 'emergency'
   note?: string
@@ -45,32 +45,26 @@ export function ChatBubble({
       className={`${styles.row} ${mine ? styles.mine : ''} ${pending ? styles.pending : ''}`}
       role={pending ? 'status' : undefined}
     >
-      {avatar ? (
-        <div className={styles.withAvatar}>
-          <img src={toro} alt="" width={28} height={28} />
-          <div className={styles.bubble}>{children}</div>
-        </div>
-      ) : (
-        <div
-          className={`${styles.bubble} ${answer ? styles.answer : ''} ${tone ? styles[tone] : ''}`}
-        >
-          {answer && (
-            <p className={styles.speaker}>
-              <img src={toro} alt="" width={24} height={24} />
-              {t('common.mascots.toro')} · {t('nav.chat')}
-            </p>
-          )}
-          {children}
-        </div>
-      )}
+      <div
+        className={`${styles.bubble} ${answer ? styles.answer : ''} ${tone ? styles[tone] : ''}`}
+      >
+        {answer && (
+          <p className={styles.speaker}>
+            <ToroAvatar size={28} />
+            {t('common.mascots.toro')} · {t('chat.title')}
+          </p>
+        )}
+        {children}
+      </div>
       {note && <p className={styles.note}>{note}</p>}
     </div>
   )
 }
 
 /**
- * M08a intro: 토로, what the helper does, and the answer language, then the
- * greeting and suggested questions as outlined chips.
+ * M08a intro: 토로, what the helper does and the answer language; then the
+ * time, and 토로's greeting bubbles with the suggested questions under one
+ * profile picture.
  */
 export function ChatIntro({
   language,
@@ -92,39 +86,66 @@ export function ChatIntro({
   return (
     <>
       <div className={styles.intro}>
-        <img src={toro} alt="" width={72} height={72} />
+        <ToroAvatar size={72} />
         <strong>
-          {t('common.mascots.toro')} · {t('nav.chat')}
+          {t('common.mascots.toro')} · {t('chat.title')}
         </strong>
         <p>{t('chat.intro')}</p>
         {language}
       </div>
       {onAsk && (
         <>
-          <ChatBubble avatar>{t('chat.greetingHello')}</ChatBubble>
-          <ChatBubble avatar>{t('chat.greetingAsk')}</ChatBubble>
-          <ul className={styles.suggestions} aria-label={t('chat.suggestions')}>
-            <li>
-              <button type="button" disabled={photoDisabled} onClick={onPhoto}>
-                <span aria-hidden="true">📷 </span>
-                {t('chat.bill.chip')}
-              </button>
-            </li>
-            {suggestions.map((question) => (
-              <li key={question}>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAsk(question)}
-                >
-                  {question}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <GreetingTime />
+          <div className={styles.toro}>
+            <ToroAvatar size={32} />
+            <div className={styles.toroMessages}>
+              <p className={styles.toroBubble}>{t('chat.greetingHello')}</p>
+              <p className={styles.toroBubble}>{t('chat.greetingAsk')}</p>
+              <ul
+                className={styles.suggestions}
+                aria-label={t('chat.suggestions')}
+              >
+                <li>
+                  <button
+                    type="button"
+                    disabled={photoDisabled}
+                    onClick={onPhoto}
+                  >
+                    <CameraIcon aria-hidden="true" />
+                    {t('chat.bill.chip')}
+                  </button>
+                </li>
+                {suggestions.map((question) => (
+                  <li key={question}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => onAsk(question)}
+                    >
+                      {question}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </>
       )}
     </>
+  )
+}
+
+/**
+ * "오늘 오후 2:10" above 토로's greeting: the moment the greeting appears.
+ * Mounted with the greeting, so a new chat ("+") shows its own time.
+ */
+function GreetingTime() {
+  const { t, i18n } = useTranslation()
+  const [shownAt] = useState(() => new Date())
+  return (
+    <p className={styles.time}>
+      {t('chat.today', { time: formatTime(shownAt, i18n.language) })}
+    </p>
   )
 }
 

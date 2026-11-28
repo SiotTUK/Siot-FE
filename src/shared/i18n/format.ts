@@ -70,3 +70,8 @@ export function koreaToday(now = new Date()): string {
     day: '2-digit',
   }).format(now)
 }
+
+/** Time of day in the reader's language, e.g. "오후 2:10", "2:10 PM". */
+export function formatTime(date: Date, language: string) {
+  return new Intl.DateTimeFormat(language, { timeStyle: 'short' }).format(date)
+}

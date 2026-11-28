@@ -7,8 +7,7 @@
 }
 .card h3 {
   margin: 0;
-  font: var(--text-heading);
-  font-size: 18px;
+  font: var(--text-subheading);
 }
 .always {
   margin: 0;

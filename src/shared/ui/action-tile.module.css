@@ -35,8 +35,7 @@
   gap: 2px;
 }
 .text strong {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .text small {
   font: var(--text-caption);

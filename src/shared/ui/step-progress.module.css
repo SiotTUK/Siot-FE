@@ -4,8 +4,8 @@
   gap: var(--space-8);
 }
 .label {
-  font: var(--text-label);
-  font-size: 14px;
+  font: var(--text-compact);
+  font-weight: 500;
   color: var(--primary);
 }
 .bar {

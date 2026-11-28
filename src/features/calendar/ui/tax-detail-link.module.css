@@ -17,7 +17,7 @@
   gap: 2px;
 }
 .link strong {
-  font: var(--text-label);
+  font: var(--text-item);
   font-weight: 700;
   color: var(--primary);
 }

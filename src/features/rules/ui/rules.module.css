@@ -1,6 +1,6 @@
 /* Figma v2 category colors: tinted icon box per 분야. */
 [data-category='order'] {
-  --category-bg: #e3f3f7;
+  --category-bg: var(--secondary);
   --category-fg: #0172ae;
 }
 [data-category='waste'] {
@@ -21,7 +21,7 @@
 }
 [data-category='support'] {
   --category-bg: #efebfb;
-  --category-fg: #6741d9;
+  --category-fg: var(--translation);
 }
 .tileIcon {
   flex: none;
@@ -68,8 +68,7 @@
 }
 .tile strong {
   margin-top: var(--space-4);
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .tile small {
   font: var(--text-caption);
@@ -133,8 +132,7 @@
 /* "전체 보기 ›" on the right of a section title */
 .more {
   flex: none;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
   text-decoration: none;
 }
@@ -164,8 +162,7 @@
   gap: var(--space-4);
 }
 .categoryText strong {
-  font: var(--text-heading);
-  font-size: 18px;
+  font: var(--text-subheading);
   color: var(--foreground);
 }
 .categoryText small {
@@ -215,8 +212,7 @@
   gap: var(--space-4);
 }
 .ruleText strong {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .ruleText small {
   display: -webkit-box;
@@ -262,7 +258,6 @@
   align-items: flex-start;
   gap: var(--space-12);
   font: var(--text-body);
-  font-size: 15px;
 }
 .stepNumber {
   flex: none;
@@ -297,8 +292,7 @@
   grid-column: 1 / -1;
 }
 .know dt {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .know dd {
   margin: 0;
@@ -320,8 +314,7 @@
   gap: 2px;
 }
 .contact strong {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .contact small {
   font: var(--text-caption);

@@ -10,8 +10,8 @@
   gap: var(--space-12);
   padding: 10px var(--space-16);
   border-radius: var(--radius-8);
-  background: var(--secondary);
-  font: var(--text-caption);
+  background: var(--card);
+  font: var(--text-compact);
   color: var(--foreground);
 }
 .situation[data-compact='true'] {
@@ -23,7 +23,9 @@
 }
 .situation a {
   flex: none;
-  font-size: 13px;
+  font: var(--text-compact);
+  font-weight: 600;
+  text-decoration: underline;
 }
 .tiles {
   display: flex;

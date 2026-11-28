@@ -135,6 +135,53 @@ describe('the combined calendar', () => {
     })
   })
 
+  it('marks only the true endpoints of a long event and keeps it in each date list', () => {
+    const { eventEntries, all } = calendarEntries(
+      [],
+      [{ ...event, startsOn: '2026-07-03', endsOn: '2026-12-12' }],
+    )
+    const start = getCalendarWeek(
+      ['2026-07-03', '2026-07-04'],
+      [],
+      eventEntries,
+    )
+    const middle = getCalendarWeek(
+      ['2026-11-28', '2026-11-29'],
+      [],
+      eventEntries,
+    )
+    const end = getCalendarWeek(['2026-12-11', '2026-12-12'], [], eventEntries)
+
+    expect(start.lines).toMatchObject([{ firstDay: 0, lastDay: 0 }])
+    expect(end.lines).toMatchObject([{ firstDay: 1, lastDay: 1 }])
+    expect(middle.lines).toEqual([])
+    expect(middle.laneCount).toBe(0)
+    expect(middle.days).toEqual([
+      { scheduleCount: 0, eventCount: 1, hidden: 0 },
+      { scheduleCount: 0, eventCount: 1, hidden: 0 },
+    ])
+    expect(
+      all.filter((entry) => isScheduledOn(entry, '2026-11-28')),
+    ).toHaveLength(1)
+  })
+
+  it.each([
+    ['2026-11-28', '2026-12-27', false],
+    ['2026-11-28', '2026-12-28', true],
+    ['2026-01-31', '2026-02-28', true],
+    ['2028-01-31', '2028-02-28', false],
+    ['2028-01-31', '2028-02-29', true],
+  ])(
+    'uses the calendar-month threshold for %s to %s',
+    (startsOn, endsOn, endpointOnly) => {
+      const { eventEntries } = calendarEntries(
+        [],
+        [{ ...event, startsOn, endsOn }],
+      )
+      expect(eventEntries[0].endpointOnly).toBe(endpointOnly)
+    },
+  )
+
   it('caps combined lanes and counts hidden entries only on affected dates', () => {
     const { scheduleEntries, eventEntries, all } = calendarEntries(
       [schedule],

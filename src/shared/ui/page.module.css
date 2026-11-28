@@ -17,9 +17,11 @@
 }
 .description,
 .muted {
-  font: var(--text-caption);
-  font-size: 15px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
+}
+.description {
+  font: var(--text-body);
 }
 .section {
   display: flex;
@@ -69,8 +71,7 @@
   gap: var(--space-4);
   padding: var(--space-16);
   border-radius: var(--radius-16);
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
 }
 .notice ul {
@@ -78,7 +79,7 @@
   padding-left: var(--space-16);
 }
 .info {
-  background: var(--secondary);
+  background: var(--info-banner-bg);
   color: var(--foreground);
 }
 .note {
@@ -127,7 +128,8 @@
   color: var(--warning);
 }
 .inlineLink {
-  font-size: 15px;
+  font: var(--text-label);
+  font-weight: 400;
   color: var(--muted-foreground);
   text-align: center;
 }

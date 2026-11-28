@@ -31,11 +31,10 @@
   gap: 2px;
   margin: 0;
   font: var(--text-body);
-  font-size: 15px;
   color: var(--foreground);
 }
 .name {
-  font: var(--text-label);
-  font-size: 13px;
+  font: var(--text-caption);
+  font-weight: 600;
   color: var(--tip-name);
 }

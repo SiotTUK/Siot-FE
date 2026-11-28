@@ -47,8 +47,7 @@
 }
 
 .title {
-  font: var(--text-body);
-  font-weight: 600;
+  font: var(--text-item);
   color: var(--foreground);
   overflow-wrap: anywhere;
 }

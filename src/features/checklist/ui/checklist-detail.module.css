@@ -72,8 +72,7 @@
 
 .variantText {
   margin: 0;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
 }
 

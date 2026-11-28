@@ -14,6 +14,7 @@ type CalendarEvent = DateRange & {
   key: string
   source: 'event'
   event: EventCalendarItem
+  endpointOnly: boolean
 }
 
 export function isScheduledOn(schedule: DateRange, date: string) {
@@ -40,6 +41,15 @@ function getWeekRanges(
     .sort((first, second) => first.firstDay - second.firstDay)
 }
 
+function spansCalendarMonth(startsOn: string, endsOn: string) {
+  const anniversary = new Date(`${startsOn}T00:00:00Z`)
+  const day = anniversary.getUTCDate()
+  // Clamp to the last day if the next month is shorter (e.g. Jan 31 → Feb 28).
+  anniversary.setUTCMonth(anniversary.getUTCMonth() + 2, 0)
+  anniversary.setUTCDate(Math.min(day, anniversary.getUTCDate()))
+  return new Date(`${endsOn}T00:00:00Z`) >= anniversary
+}
+
 export function calendarEntries(
   schedules: ScheduleResponse[],
   events: EventCalendarItem[],
@@ -54,13 +64,15 @@ export function calendarEntries(
   const eventEntries = events.flatMap<CalendarEvent>((event) => {
     const startsOn = event.startsOn ?? event.endsOn
     if (!startsOn) return []
+    const endsOn = event.endsOn ?? startsOn
     return [
       {
         key: `event:${event.eventId}`,
         source: 'event',
         startsOn,
-        endsOn: event.endsOn ?? startsOn,
+        endsOn,
         event,
+        endpointOnly: spansCalendarMonth(startsOn, endsOn),
       },
     ]
   })
@@ -91,21 +103,34 @@ export function getCalendarWeek(
   )
   const days = dates.map(() => ({ scheduleCount: 0, eventCount: 0, hidden: 0 }))
   const lines = ranges.flatMap((range) => {
-    const { firstDay, lastDay, schedule } = range
-    const lane = lanes.findIndex((occupied) =>
-      occupied.slice(firstDay, lastDay + 1).every((day) => !day),
-    )
-
-    for (let day = firstDay; day <= lastDay; day++) {
+    const { schedule } = range
+    // Day counts describe the full list shown when that date is selected.
+    for (let day = range.firstDay; day <= range.lastDay; day++) {
       const count = days[day]
       if (schedule.source === 'event') count.eventCount++
       else count.scheduleCount++
-      if (lane === -1) count.hidden++
     }
 
-    if (lane === -1) return []
+    let { firstDay, lastDay } = range
+    if (schedule.source === 'event' && schedule.endpointOnly) {
+      const endpoint = dates.findIndex(
+        (date) => date === schedule.startsOn || date === schedule.endsOn,
+      )
+      if (endpoint === -1) return []
+      firstDay = endpoint
+      lastDay = endpoint
+    }
+
+    const lane = lanes.findIndex((occupied) =>
+      occupied.slice(firstDay, lastDay + 1).every((day) => !day),
+    )
+    if (lane === -1) {
+      for (let day = firstDay; day <= lastDay; day++) days[day].hidden++
+      return []
+    }
+
     lanes[lane].fill(true, firstDay, lastDay + 1)
-    return [{ ...range, lane }]
+    return [{ schedule, firstDay, lastDay, lane }]
   })
 
   return {

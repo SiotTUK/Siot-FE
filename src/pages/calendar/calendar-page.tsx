@@ -267,6 +267,9 @@ function MonthlyCalendar({
                     data-end={
                       dates[lastDay] === (schedule.endsOn ?? schedule.startsOn)
                     }
+                    data-endpoint={
+                      schedule.source === 'event' && schedule.endpointOnly
+                    }
                     key={schedule.key}
                     style={{
                       gridColumn: `${firstColumn + firstDay} / ${firstColumn + lastDay + 1}`,
@@ -411,6 +414,11 @@ function ScheduleItem({
     schedule.dDay != null && schedule.dDay >= 0
       ? dDayLabel(t, schedule.dDay)
       : null
+  // On a stay expiry, the countdown already calls attention to the expiry.
+  // On an extension-start card, the alert can refer to a different date.
+  const showStatus = schedule.highlighted
+    ? schedule.kind !== 'STAY_EXPIRY' || dDay === null
+    : schedule.personal
   // BE #29: personal TAX_CAR·TAX_PROPERTY have no scheduleId, so the tax
   // detail opens by taxScheduleId. Other common schedules open the schedule
   // detail (#34); personal ones (stay expiry) have none.
@@ -429,34 +437,25 @@ function ScheduleItem({
   // The detail screen links the official page itself.
   const source = detail ? null : httpUrl(schedule.sourceUrl)
   return (
-    <li className={styles.schedule} data-highlighted={schedule.highlighted}>
+    <li
+      className={styles.schedule}
+      data-highlighted={schedule.highlighted}
+      data-official-link={Boolean(source) || undefined}
+    >
       <DayBlock date={day} />
       <div className={styles.scheduleText}>
         <strong>{schedule.title}</strong>
         <CalendarPeriod startsOn={schedule.startsOn} endsOn={schedule.endsOn} />
-        {schedule.targetDescription && (
-          <Muted>{schedule.targetDescription}</Muted>
-        )}
         {detail && (
           <Link className={styles.taxLink} to={detail.to}>
             {t(detail.label)} ›
           </Link>
         )}
-        {source && (
-          <a
-            className={styles.taxLink}
-            href={source}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('calendar.sourceLink')} ↗
-          </a>
-        )}
       </div>
-      {(dDay || schedule.highlighted || schedule.personal) && (
+      {(dDay || showStatus) && (
         <div className={styles.badges}>
           {dDay && <Tag tone="warning">{dDay}</Tag>}
-          {(schedule.highlighted || schedule.personal) && (
+          {showStatus && (
             <Tag tone={schedule.highlighted ? 'warning' : 'main'}>
               {t(
                 schedule.highlighted
@@ -466,6 +465,17 @@ function ScheduleItem({
             </Tag>
           )}
         </div>
+      )}
+      {source && (
+        <a
+          className={styles.officialLink}
+          href={source}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('calendar.sourceLink')}
+          <span aria-hidden="true">↗</span>
+        </a>
       )}
     </li>
   )

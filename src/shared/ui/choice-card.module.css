@@ -37,12 +37,11 @@
   min-width: 0;
 }
 .title {
-  font: var(--text-label);
+  font: var(--text-item);
   color: var(--foreground);
 }
 .description {
   font: var(--text-body);
-  font-size: 15px;
   color: var(--muted-foreground);
 }
 .radio,

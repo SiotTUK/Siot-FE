@@ -34,7 +34,6 @@
   border-radius: var(--radius-16);
   background: var(--card);
   font: var(--text-body);
-  font-size: 15px;
   color: var(--foreground);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -72,7 +71,7 @@
   text-align: center;
 }
 .intro strong {
-  font: var(--text-label);
+  font: var(--text-item);
   color: var(--foreground);
 }
 .intro p {
@@ -112,8 +111,7 @@
 }
 .thinking {
   margin: 0;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
 }
 .markdown {
@@ -145,7 +143,7 @@
   background: var(--destructive-bg);
 }
 .note {
-  font-size: 11px;
+  font: var(--text-caption);
   color: var(--muted-foreground);
 }
 .calls,
@@ -183,8 +181,7 @@
   padding: 2px 0;
   border: 0;
   background: none;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--primary);
   text-align: start;
 }
@@ -202,8 +199,7 @@
 .feedback p {
   grid-column: 1 / -1;
   margin: 0;
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .feedback button {
   min-height: 44px;
@@ -244,8 +240,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-8);
   background: var(--card);
-  font-size: 15px;
-  line-height: 1.4;
+  font: var(--text-body);
   resize: vertical;
 }
 .comment textarea:focus {
@@ -255,7 +250,7 @@
 }
 .commentCount {
   align-self: flex-end;
-  font-size: 12px;
+  font: var(--text-caption);
   color: var(--muted-foreground);
 }
 .commentActions {
@@ -281,7 +276,7 @@
 }
 .commentSent {
   margin: var(--space-8) 0 0;
-  font-size: 13px;
+  font: var(--text-caption);
   color: var(--muted-foreground);
 }
 .sourceDetail {
@@ -289,7 +284,7 @@
   flex-wrap: wrap;
   gap: 8px;
   padding: 2px 4px;
-  font-size: 12px;
+  font: var(--text-caption);
   color: var(--muted-foreground);
 }
 
@@ -338,7 +333,7 @@
   color: var(--muted-foreground);
 }
 .error {
-  font-size: 12px;
+  font: var(--text-caption);
   color: var(--destructive);
 }
 .inputRow {
@@ -468,12 +463,12 @@
   white-space: nowrap;
 }
 .historyRow span {
-  font-size: 12px;
+  font: var(--text-caption);
   color: var(--muted-foreground);
 }
 .related {
   margin: 8px 0 0;
-  font-size: 12px;
+  font: var(--text-caption);
   color: var(--placeholder);
 }
 .related ul {

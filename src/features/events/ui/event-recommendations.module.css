@@ -1,3 +1,7 @@
+a.viewAll {
+  color: var(--primary);
+  font-weight: 600;
+}
 .carousel {
   display: grid;
   grid-auto-columns: 62%;

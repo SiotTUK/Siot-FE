@@ -5,8 +5,7 @@
   justify-content: center;
   border: 1px solid transparent;
   border-radius: var(--radius-16);
-  font: var(--text-label);
-  font-weight: 600;
+  font: var(--text-action);
   text-decoration: none;
   white-space: nowrap;
   transition:
@@ -40,13 +39,11 @@
   border-radius: var(--radius-8);
   background: var(--secondary);
   color: var(--primary);
-  font-size: 14px;
 }
 .block {
   width: 100%;
   min-height: var(--control-height);
   border-radius: var(--radius-16);
-  font-size: 15px;
 }
 .secondary:not(:disabled):not([aria-disabled='true']):hover {
   filter: brightness(0.96);
@@ -67,8 +64,7 @@
   min-height: 44px;
   padding: 0;
   background: none;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
   text-decoration: underline;
 }

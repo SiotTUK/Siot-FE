@@ -11,7 +11,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-8);
   background: var(--card);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--foreground);
 }
 

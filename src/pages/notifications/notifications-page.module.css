@@ -12,9 +12,6 @@
 .titleRow > :first-child {
   margin: 0;
 }
-.titleRow h1 {
-  font: var(--text-heading);
-}
 .settingsLink {
   display: inline-flex;
   align-items: center;

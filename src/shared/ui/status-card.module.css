@@ -25,16 +25,12 @@
   min-width: 0;
 }
 .text strong {
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
 }
 .text p {
   margin: 0;
   font: var(--text-caption);
   color: var(--muted-foreground);
-}
-.text .meta {
-  font-size: 12px;
 }
 
 .empty {
@@ -55,7 +51,6 @@
 }
 .empty p {
   margin: 0;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
 }

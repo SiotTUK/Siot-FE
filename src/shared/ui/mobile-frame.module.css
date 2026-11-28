@@ -30,8 +30,7 @@
   gap: var(--space-12);
   padding: var(--space-48) var(--gutter);
   color: var(--muted-foreground);
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
 }
 .spinner {
   width: 28px;

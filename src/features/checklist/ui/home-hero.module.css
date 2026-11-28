@@ -15,7 +15,7 @@
     color 0.3s ease;
 }
 .hero[data-kind='calm'] {
-  background: var(--secondary);
+  background: var(--info-banner-bg);
   color: var(--foreground);
 }
 .content {

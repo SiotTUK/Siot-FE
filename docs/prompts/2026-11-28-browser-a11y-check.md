@@ -1,7 +1,7 @@
 # PC·모바일 브라우저와 기본 접근성 점검
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: [#74](https://github.com/SiotTUK/Siot-FE/issues/74) / 미생성
+- 관련 이슈 / PR: [#74](https://github.com/SiotTUK/Siot-FE/issues/74) / [#139](https://github.com/SiotTUK/Siot-FE/pull/139)
 
 ## 목적
 

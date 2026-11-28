@@ -8,6 +8,7 @@ import {
   deadlineText,
   markErrorMessage,
   nextMark,
+  reasonLine,
 } from '@/features/checklist/checklist'
 import { TaskRow } from '@/features/checklist/ui/task-row'
 import {
@@ -279,6 +280,8 @@ function FirstTask({
   ]
     .filter(Boolean)
     .join(' · ')
+  // Same line as in the list below, so it stays when the task moves up here.
+  const reason = reasonLine(t, item, true)
 
   return (
     <section className={styles.first}>
@@ -292,6 +295,7 @@ function FirstTask({
           </div>
           <h2>{item.title}</h2>
           {where && <p>{where}</p>}
+          {reason && <p className={styles.firstReason}>{reason}</p>}
         </div>
         <MascotImage pose="toro" height={96} />
       </div>

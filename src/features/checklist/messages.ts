@@ -32,10 +32,7 @@ export const checklistMessages = defineMessages({
       askToro: '$t(nav.chat)에 질문하기',
       viewDetail: '기한과 준비물 보기',
       translationPending: '번역 준비 중',
-      reasons: {
-        CAR: '자차가 있어서 보여요',
-        KIDS: '자녀가 있어서 보여요',
-      },
+      reasonShown: '{{reason}} 보여요',
       lifeChangeTag: {
         'LC-01': '이사',
         'LC-02': '이직',
@@ -119,10 +116,8 @@ export const checklistMessages = defineMessages({
       askToro: 'Ask the $t(nav.chat)',
       viewDetail: 'View deadline & documents',
       translationPending: 'Translation coming soon',
-      reasons: {
-        CAR: 'Shown because you have a car',
-        KIDS: 'Shown because you have children',
-      },
+      // The server's text is already a clause: "Because you own a vehicle".
+      reasonShown: '{{reason}}',
       lifeChangeTag: {
         'LC-01': 'Move',
         'LC-02': 'New job',
@@ -205,10 +200,7 @@ export const checklistMessages = defineMessages({
       askToro: '向$t(nav.chat)提问',
       viewDetail: '查看期限与材料',
       translationPending: '翻译准备中',
-      reasons: {
-        CAR: '因为你有车而显示',
-        KIDS: '因为你有孩子而显示',
-      },
+      reasonShown: '{{reason}}而显示',
       lifeChangeTag: {
         'LC-01': '搬家',
         'LC-02': '换工作',
@@ -292,10 +284,7 @@ export const checklistMessages = defineMessages({
       askToro: '$t(nav.chat)',
       viewDetail: 'Xem hạn và giấy tờ',
       translationPending: 'Đang chuẩn bị bản dịch',
-      reasons: {
-        CAR: 'Hiện vì bạn có ô tô',
-        KIDS: 'Hiện vì bạn có con',
-      },
+      reasonShown: '{{reason}} nên hiển thị',
       lifeChangeTag: {
         'LC-01': 'Chuyển nhà',
         'LC-02': 'Đổi việc',

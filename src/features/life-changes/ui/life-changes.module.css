@@ -93,6 +93,10 @@
   color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
+/* "자차가 있어서 보여요" (#137), the same green as the task rows. */
+.firstText p.firstReason {
+  color: var(--success);
+}
 
 /* "함께 챙길 일": the other tasks in one white card. */
 .others {

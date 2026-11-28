@@ -1,13 +1,10 @@
-/* Figma M06: 16px rhythm, page title in the Heading size */
+/* Figma M06: 16px rhythm */
 .body {
   gap: var(--space-16);
   padding-top: var(--space-16);
 }
 .body > :first-child {
   margin-bottom: 0;
-}
-.body > :first-child h1 {
-  font: var(--text-heading);
 }
 /* Section titles sit 16px below the block above them */
 .body h2 {

@@ -3,7 +3,7 @@
   grid-template-columns: auto 1fr;
   gap: 4px 10px;
   margin: 0;
-  font-size: 14px;
+  font: var(--text-compact);
 }
 .qa dt {
   font-weight: 700;
@@ -22,7 +22,7 @@
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  font-size: 14px;
+  font: var(--text-compact);
   overflow-wrap: anywhere;
 }
 .version p {
@@ -32,7 +32,7 @@
   color: var(--destructive);
 }
 .link {
-  font-size: 14px;
+  font: var(--text-compact);
   font-weight: 700;
   color: var(--primary);
 }
@@ -52,7 +52,7 @@
 }
 .answer {
   margin: 0;
-  font-size: 14px;
+  font: var(--text-compact);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -63,13 +63,13 @@
   gap: 4px;
   margin: 0;
   padding-left: 18px;
-  font-size: 14px;
+  font: var(--text-compact);
 }
 
 /* ADM-07 quoted text in a report row. */
 .quote {
   margin: 0;
-  font-size: 14px;
+  font: var(--text-compact);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   display: -webkit-box;

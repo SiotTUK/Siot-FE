@@ -3,8 +3,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
@@ -18,7 +17,4 @@
 .overdue {
   font: var(--text-caption);
   color: var(--destructive);
-}
-.detail a {
-  font-size: 14px;
 }

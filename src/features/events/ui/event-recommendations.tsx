@@ -116,7 +116,7 @@ export function EventRecommendations({
       title={t('events.recommendations')}
       action={
         showAllLink && (
-          <ButtonLink variant="text" to="/events">
+          <ButtonLink variant="text" className={styles.viewAll} to="/events">
             {t('events.viewAll')}
           </ButtonLink>
         )

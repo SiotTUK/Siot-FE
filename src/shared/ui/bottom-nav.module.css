@@ -3,7 +3,7 @@
   bottom: 0;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
   padding: var(--space-8) var(--space-8)
     calc(var(--space-8) + env(safe-area-inset-bottom));
@@ -19,8 +19,7 @@
   min-height: 52px;
   padding: var(--space-4) 2px;
   border-radius: var(--radius-8);
-  font-size: 12px;
-  line-height: 1.2;
+  font: var(--text-navigation);
   text-align: center;
   text-decoration: none;
   color: var(--muted-foreground);

@@ -58,8 +58,7 @@
 
 .body h3 {
   margin: 0;
-  font: var(--text-label);
-  font-weight: 700;
+  font: var(--text-item);
   overflow-wrap: anywhere;
 }
 
@@ -70,7 +69,7 @@
 }
 
 .translation {
-  font-size: 12px;
+  font: var(--text-caption);
 }
 
 .heart {

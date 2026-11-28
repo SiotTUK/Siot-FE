@@ -10,7 +10,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-8);
   background: var(--card);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--foreground);
 }
 .caret {
@@ -27,9 +27,7 @@
   padding: 0 0 0 36px;
   border: 0;
   background: none;
-  font: var(--text-label);
-  font-weight: 600;
-  line-height: 40px;
+  font: var(--text-action);
   /* Fit the chosen language, not the longest option ("Tiếng Việt"). */
   field-sizing: content;
 }

@@ -25,9 +25,7 @@
 .title {
   flex: 1;
   min-width: 0;
-  font: var(--text-label);
-  font-size: 17px;
-  font-weight: 700;
+  font: var(--text-subheading);
   color: var(--foreground);
   /* Long translations wrap to a second line instead of being cut off. */
   display: -webkit-box;
@@ -54,8 +52,7 @@
   padding: 0 var(--space-4);
   border: 0;
   background: none;
-  font: var(--text-caption);
-  font-size: 14px;
+  font: var(--text-compact);
   color: var(--muted-foreground);
   text-decoration: none;
   white-space: nowrap;

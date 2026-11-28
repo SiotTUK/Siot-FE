@@ -20,6 +20,16 @@ function notificationsFor(email: string): NotificationItem[] {
       title: '체류기간 만료 34일 전이에요. 연장 신청을 할 수 있어요.',
       ago: 1,
     },
+    // A tax reminder links to its common tax schedule (mock: resident tax, 1).
+    {
+      id: 8,
+      kind: 'TAX',
+      scheduleId: 1,
+      linkType: 'SCHEDULE',
+      linkCode: '1',
+      title: '주민세 납부 안내가 있어요.',
+      ago: 2,
+    },
     {
       id: 3,
       kind: 'EVENT',
@@ -87,7 +97,7 @@ function notificationsFor(email: string): NotificationItem[] {
       kind: seed.kind,
       eventId: seed.eventId ?? null,
       guideId: seed.guideId ?? null,
-      scheduleId: null,
+      scheduleId: seed.scheduleId ?? null,
       documentVersionId: null,
       linkType: seed.linkType,
       linkCode: seed.linkCode ?? null,

@@ -66,7 +66,7 @@ it('submits checklist report with guideId or guideCode', async () => {
       targetTitleSnapshot: '외국인등록',
       quotedText: '여권만 있으면 돼요',
       language: 'ko',
-      reason: '내용 오류',
+      reason: 'CONTENT',
     },
   ])
 })

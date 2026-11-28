@@ -8,11 +8,12 @@ export const checklistReportReasons = [
   'other',
 ] as const
 
-const storedReasons = {
-  translation: '번역 오류',
-  content: '내용 오류',
-  other: '기타',
-}
+// The API accepts only these reason codes (BE ContentReportRequest).
+const apiReasons = {
+  translation: 'TRANSLATION',
+  content: 'CONTENT',
+  other: 'OTHER',
+} as const
 
 export const checklistReportSchema = z.object({
   quotedText: z.string().trim().min(1, 'checklist.report.quoteRequired'),
@@ -42,7 +43,7 @@ export function submitChecklistReport(
       targetTitleSnapshot: body.targetTitleSnapshot,
       quotedText: body.quotedText,
       language: body.language,
-      reason: storedReasons[body.reason],
+      reason: apiReasons[body.reason],
     },
     isRequestCurrent,
   })

@@ -62,7 +62,6 @@
 }
 body {
   margin: 0;
-  min-width: 320px;
   /* Outside the 480px app frame (desktop). Not in the design system. */
   background: var(--page-outside);
 }

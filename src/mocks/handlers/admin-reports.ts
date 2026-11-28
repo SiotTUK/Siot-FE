@@ -3,6 +3,7 @@ import {
   reportStatuses,
   type AdminReport,
   type ReportReason,
+  type ReportTargetKind,
 } from '@/features/admin/report-api'
 import type { Language } from '@/shared/api/types'
 import { body, currentMember, error, page, persist, state } from '../db'
@@ -87,10 +88,11 @@ export function recordReport(
   reporterUserId: number,
   input: Record<string, unknown>,
   koreanTitle: string | null,
+  targetKind: ReportTargetKind,
 ): AdminReport {
   const store = data()
   const now = new Date().toISOString()
-  const event = typeof input.guideCode !== 'string'
+  const event = targetKind === 'EVENT'
   const snapshot =
     typeof input.targetTitleSnapshot === 'string'
       ? input.targetTitleSnapshot.trim()
@@ -114,8 +116,9 @@ export function recordReport(
     processedAt: null,
     createdAt: now,
     updatedAt: now,
-    targetCode: event ? String(input.eventId) : String(input.guideCode),
-    targetKind: event ? 'EVENT' : 'RULE',
+    targetCode: event ? String(input.eventId) : String(input.guideCode).trim(),
+    // BE targetType is RULE for every guide item; targetKind tells them apart.
+    targetKind,
   }
   store.reports.push(report)
   persist()

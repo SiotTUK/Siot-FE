@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw'
+import type { GuideKind } from '@/features/admin/api'
 import { eventLeadDays } from '@/features/events/api'
 import type {
   EventCalendarItem,
@@ -16,6 +17,20 @@ import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { body, currentMember, error, persist, state, unauthorized } from '../db'
 import { recordReport } from './admin-reports'
+import { mockGuideSummaries } from './checklist'
+
+/**
+ * COM-01 `guideCode`: like BE `findByCode`, any guide item — a living rule
+ * slug, a checklist item (CL-01) or a life change task (LC-01-1).
+ */
+function reportedGuide(
+  code: string,
+): { kind: GuideKind; title: string | null } | undefined {
+  const rule = ruleEntries.find((entry) => entry.code === code)
+  if (rule) return { kind: 'RULE', title: rule.title.ko }
+  const item = mockGuideSummaries().find((guide) => guide.code === code)
+  return item && { kind: item.kind, title: item.title }
+}
 
 // Events that already ended, for "지난 행사 보기" (past=true).
 const pastTitles: Record<Language, string[]> = {
@@ -423,9 +438,13 @@ export const eventHandlers = [
         report.targetTitleSnapshot.length > 255)
     )
       return error(400, 'INVALID_INPUT', '입력값이 올바르지 않습니다.')
-    // A living rule is reported by its slug (BE guideCode, #14).
+    // A guide item is reported by its code (BE guideCode, #14).
+    const guide =
+      typeof report.guideCode === 'string'
+        ? reportedGuide(report.guideCode.trim())
+        : undefined
     if (typeof report.guideCode === 'string') {
-      if (!ruleEntries.some(({ code }) => code === report.guideCode))
+      if (!guide)
         return error(404, 'GUIDE_NOT_FOUND', '항목을 찾을 수 없습니다.')
     } else if (
       !mockEvents(member.language).some(
@@ -435,12 +454,16 @@ export const eventHandlers = [
       return error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
 
     // BE keeps the Korean title when no snapshot is sent.
-    const koreanTitle =
-      typeof report.guideCode === 'string'
-        ? ruleEntries.find(({ code }) => code === report.guideCode)?.title.ko
-        : mockEvents('ko').find(({ eventId }) => eventId === report.eventId)
-            ?.title
-    const saved = recordReport(member.id, report, koreanTitle ?? null)
+    const koreanTitle = guide
+      ? guide.title
+      : mockEvents('ko').find(({ eventId }) => eventId === report.eventId)
+          ?.title
+    const saved = recordReport(
+      member.id,
+      report,
+      koreanTitle ?? null,
+      guide?.kind ?? 'EVENT',
+    )
     return HttpResponse.json({ data: saved }, { status: 201 })
   }),
 ]

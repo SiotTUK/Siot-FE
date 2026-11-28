@@ -1,7 +1,7 @@
 # 생활수칙 '안내 변경' 표시와 관리자 저장 문구 정정 (NTF-07)
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: [#133](https://github.com/SiotTUK/Siot-FE/issues/133) / PR 미생성. BE 문서 정정: [SiotTUK/Siot-BE#43](https://github.com/SiotTUK/Siot-BE/issues/43)·[SiotTUK/Siot-BE#44](https://github.com/SiotTUK/Siot-BE/pull/44)
+- 관련 이슈 / PR: [#133](https://github.com/SiotTUK/Siot-FE/issues/133) / [#140](https://github.com/SiotTUK/Siot-FE/pull/140). BE 문서 정정: [SiotTUK/Siot-BE#43](https://github.com/SiotTUK/Siot-BE/issues/43)·[SiotTUK/Siot-BE#44](https://github.com/SiotTUK/Siot-BE/pull/44)
 
 ## 목적
 

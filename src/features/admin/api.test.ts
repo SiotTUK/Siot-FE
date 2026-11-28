@@ -9,12 +9,15 @@ import {
   changeRole,
   fetchGuideInfo,
   fetchGuideTranslation,
+  fetchGuides,
   fetchReviews,
   saveGuideTranslation,
   searchMembers,
   updateGuideInfo,
   updateReview,
 } from './api'
+
+import { state } from '@/mocks/db'
 
 // Contract tests against the MSW mock (not the real BE).
 const origin = 'http://localhost'
@@ -73,6 +76,25 @@ describe('ADM-01 members', () => {
   })
 })
 
+describe('ADM-01 member order', () => {
+  it('lists admins first, then the newest members', async () => {
+    await login(admin)
+    const seeded = state.members['taken@example.com']!
+    state.members['new@example.com'] = {
+      ...seeded,
+      id: 99,
+      email: 'new@example.com',
+    }
+    const { content } = await searchMembers('', '', 0)
+    expect(content.map((row) => row.role)).toEqual(['ADMIN', 'USER', 'USER'])
+    expect(content.map((row) => row.email).slice(1)).toEqual([
+      'new@example.com',
+      'taken@example.com',
+    ])
+    delete state.members['new@example.com']
+  })
+})
+
 describe('ADM-08 chat reviews', () => {
   it('lists unhelpful answers and records the review', async () => {
     await login(member)
@@ -108,6 +130,63 @@ describe('ADM-08 chat reviews', () => {
     expect(
       done.content.find((row) => row.messageId === asked.answer.messageId),
     ).toMatchObject({ reviewed: true, adminMemo: '자료 보충함' })
+  })
+
+  it('finds a review by its answer number or by masked text', async () => {
+    await login(member)
+    const { conversationId } = await createConversation('ko')
+    const asked = await askQuestion(
+      conversationId,
+      '건강보험은 어떻게 가입해요?',
+    )
+    await sendFeedback(
+      conversationId,
+      asked.answer.messageId,
+      false,
+      '틀렸어요',
+    )
+    await logout()
+
+    await login(admin)
+    const id = asked.answer.messageId
+    const ids = async (search: Parameters<typeof fetchReviews>[3]) =>
+      (await fetchReviews('ALL', undefined, 0, search)).content.map(
+        (row) => row.messageId,
+      )
+    await expect(ids({ messageId: id })).resolves.toEqual([id])
+    await expect(ids({ keyword: '건강보험' })).resolves.toContain(id)
+    await expect(ids({ keyword: '틀렸' })).resolves.toContain(id)
+    await expect(ids({ keyword: '없는문구zz' })).resolves.toEqual([])
+    await expect(
+      fetchReviews('ALL', undefined, 0, { keyword: 'a'.repeat(101) }),
+    ).rejects.toMatchObject({ status: 400, code: 'INVALID_INPUT' })
+  })
+})
+
+describe('CHK-06 guide list', () => {
+  it('lists items to pick: checklist, life change tasks, then rules', async () => {
+    await login(admin)
+    const guides = await fetchGuides()
+    expect(guides).toContainEqual(
+      expect.objectContaining({
+        code: 'CL-01',
+        kind: 'CHECKLIST',
+        title: '외국인등록',
+      }),
+    )
+    expect(guides).toContainEqual(
+      expect.objectContaining({ code: 'LC-01-1', lifeChangeCode: 'LC-01' }),
+    )
+    const kinds = guides.map((guide) => guide.kind)
+    expect(kinds.lastIndexOf('CHECKLIST')).toBeLessThan(
+      kinds.indexOf('LIFE_CHANGE_TASK'),
+    )
+    expect(kinds.lastIndexOf('LIFE_CHANGE_TASK')).toBeLessThan(
+      kinds.indexOf('RULE'),
+    )
+    await logout()
+    await login(member)
+    await expect(fetchGuides()).rejects.toMatchObject({ status: 403 })
   })
 })
 

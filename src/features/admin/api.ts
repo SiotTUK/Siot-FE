@@ -88,10 +88,28 @@ export interface GuideTranslationUpdateRequest {
   noticeChanged: boolean
 }
 
+export type GuideKind = 'CHECKLIST' | 'LIFE_CHANGE_TASK' | 'RULE'
+
+/** CHK-06 `GET /api/admin/guides`: items to pick for text editing. */
+export interface GuideSummaryResponse {
+  code: string
+  kind: GuideKind
+  /** Korean title; null when the item has no Korean text. */
+  title: string | null
+  category: string | null
+  lifeChangeCode: string | null
+}
+
+/** ADM-08 search: answer number and/or text (masked text, ignoring case). */
+export interface ReviewSearch {
+  messageId?: number
+  keyword?: string
+}
+
 /** CHK-06·NTF-07 language-independent values of an item. */
 export interface GuideInfoResponse {
   code: string
-  kind: 'CHECKLIST' | 'LIFE_CHANGE_TASK' | 'RULE'
+  kind: GuideKind
   sourceUrl: string | null
   contact: string | null
   updatedAt: string | null
@@ -110,8 +128,20 @@ export const adminKeys = {
   all: ['admin'] as const,
   members: (email: string, role: Role | '') =>
     [...adminKeys.all, 'members', email, role] as const,
-  reviews: (type: ReviewType, reviewed: boolean | undefined) =>
-    [...adminKeys.all, 'reviews', type, reviewed ?? 'any'] as const,
+  reviews: (
+    type: ReviewType,
+    reviewed: boolean | undefined,
+    search: ReviewSearch = {},
+  ) =>
+    [
+      ...adminKeys.all,
+      'reviews',
+      type,
+      reviewed ?? 'any',
+      search.messageId ?? '',
+      search.keyword ?? '',
+    ] as const,
+  guides: () => [...adminKeys.all, 'guides'] as const,
   guideAll: (code: string) => [...adminKeys.all, 'guide', code] as const,
   guide: (code: string, language: Language) =>
     [...adminKeys.guideAll(code), language] as const,
@@ -142,9 +172,11 @@ export function fetchReviews(
   type: ReviewType,
   reviewed: boolean | undefined,
   page: number,
+  search: ReviewSearch = {},
 ) {
+  const { messageId, keyword } = search
   return apiRequest<PageResponse<ChatReviewResponse>>(
-    `/api/admin/chat/reviews?${query({ type, reviewed, page, size: 20 })}`,
+    `/api/admin/chat/reviews?${query({ type, reviewed, messageId, keyword, page, size: 20 })}`,
   )
 }
 
@@ -156,6 +188,11 @@ export function updateReview(
     `/api/admin/chat/reviews/${messageId}`,
     { method: 'PATCH', body },
   )
+}
+
+/** Not deleted items: checklist, then life change tasks, then rules. */
+export function fetchGuides() {
+  return apiRequest<GuideSummaryResponse[]>('/api/admin/guides')
 }
 
 const guidePath = (code: string, language: Language) =>

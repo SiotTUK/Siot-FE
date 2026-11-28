@@ -14,7 +14,7 @@ import { useChangeRole, useMembers } from '../use-admin'
 
 const otherRole = (role: Role): Role => (role === 'ADMIN' ? 'USER' : 'ADMIN')
 
-/** ADM-01: search members (newest first) and change their role. */
+/** ADM-01: search members (admins first, then newest) and change their role. */
 export function MemberList() {
   const { t } = useTranslation()
   const myId = useMe().data?.id

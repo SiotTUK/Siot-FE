@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useDeferredValue, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -7,10 +7,16 @@ import { currentLanguage } from '@/shared/i18n'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { formatDateTime } from '@/shared/i18n/format'
 import { Button } from '@/shared/ui/button'
-import { CheckField, SelectField, TextAreaField } from '@/shared/ui/field'
+import {
+  CheckField,
+  SelectField,
+  TextAreaField,
+  TextField,
+} from '@/shared/ui/field'
 import { Card, FormError, Muted, Tag, Toolbar } from '@/shared/ui/page'
 import { InfiniteList } from '@/shared/ui/query-state'
 import type { ChatReviewResponse, ReviewType } from '../api'
+import { reviewKeywordMax, toReviewSearch } from '../review-search'
 import { useReviews, useUpdateReview } from '../use-admin'
 import styles from './admin.module.css'
 
@@ -19,9 +25,14 @@ export function ReviewList() {
   const { t } = useTranslation()
   const [type, setType] = useState<ReviewType>('ALL')
   const [reviewed, setReviewed] = useState('false')
+  const [id, setId] = useState('')
+  const [keyword, setKeyword] = useState('')
+  const search = toReviewSearch(useDeferredValue(id), useDeferredValue(keyword))
+  const badId = id.trim() !== '' && search.messageId === undefined
   const reviews = useReviews(
     type,
     reviewed === '' ? undefined : reviewed === 'true',
+    search,
   )
 
   return (
@@ -46,6 +57,25 @@ export function ReviewList() {
             { value: 'false', label: t('admin.reviewedFalse') },
             { value: 'true', label: t('admin.reviewedTrue') },
           ]}
+        />
+      </Toolbar>
+      <Toolbar>
+        <TextField
+          type="search"
+          inputMode="numeric"
+          label={t('admin.reviewId')}
+          placeholder="#32"
+          value={id}
+          error={badId ? t('admin.reviewIdInvalid') : undefined}
+          onChange={(event) => setId(event.target.value)}
+        />
+        <TextField
+          type="search"
+          label={t('admin.reviewKeyword')}
+          placeholder={t('admin.reviewKeywordPlaceholder')}
+          value={keyword}
+          maxLength={reviewKeywordMax}
+          onChange={(event) => setKeyword(event.target.value)}
         />
       </Toolbar>
       <InfiniteList
@@ -90,7 +120,7 @@ function ReviewCard({ review }: { review: ChatReviewResponse }) {
           {t(`admin.type${review.reason}`)}
         </Tag>
         <Muted>
-          {review.language} ·{' '}
+          #{review.messageId} · {review.language} ·{' '}
           {t('admin.answeredAt', {
             date: formatDateTime(review.createdAt, language),
           })}

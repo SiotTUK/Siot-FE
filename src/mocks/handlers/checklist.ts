@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw'
+import type { GuideSummaryResponse } from '@/features/admin/api'
 import type { ChecklistItemResponse } from '@/features/checklist/api'
 import type { LifeChangeCode } from '@/features/life-changes/life-changes'
 import {
@@ -145,6 +146,45 @@ const changeTasks: Record<
   'LC-06': [{ title: '가족 외국인등록', days: 90 }],
   'LC-07': [{ title: '재입국허가 확인' }],
   'LC-08': [{ title: '외국인등록사항 변경 신고', days: 15 }],
+}
+
+/**
+ * CHK-06 admin item list (`GET /api/admin/guides`): every checklist item
+ * and life change task the mock knows, in BE order. Dev/test only.
+ */
+export function mockGuideSummaries(): GuideSummaryResponse[] {
+  const checklist: [string, string][] = [
+    ['CL-01', '외국인등록'],
+    ['CL-02', '국내거소신고'],
+    ['CL-04', '건강보험 가입 확인'],
+    ['CL-05', '체류기간 연장'],
+    ['CL-06', '아르바이트 전 시간제 취업 허가'],
+    ['CL-07', '직장을 바꿀 때 절차 알아두기'],
+    ['CL-08', '가족센터 프로그램 보기'],
+    ['CL-09', '체류·취업 업종 상담 (☎1345)'],
+    ['CL-10', '자동차세 내기'],
+    ['CL-20', '휴대폰 개통'],
+    ['CL-21', '은행 계좌 만들기'],
+    ['CL-22', '쓰레기 분리배출 요일 확인'],
+  ]
+  return [
+    ...checklist.map(([code, title]) => ({
+      code,
+      kind: 'CHECKLIST' as const,
+      title,
+      category: null,
+      lifeChangeCode: null,
+    })),
+    ...Object.entries(changeTasks).flatMap(([lifeChangeCode, tasks]) =>
+      tasks.map(({ title, category }, index) => ({
+        code: `${lifeChangeCode}-${index + 1}`,
+        kind: 'LIFE_CHANGE_TASK' as const,
+        title,
+        category: category ?? null,
+        lifeChangeCode,
+      })),
+    ),
+  ]
 }
 
 function changeSeeds(member: MockMember): Seed[] {

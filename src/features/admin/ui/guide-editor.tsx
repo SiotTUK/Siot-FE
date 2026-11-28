@@ -24,7 +24,12 @@ import {
   Toolbar,
 } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
-import type { GuideInfoResponse, GuideTranslationResponse } from '../api'
+import type {
+  GuideInfoResponse,
+  GuideKind,
+  GuideTranslationResponse,
+} from '../api'
+import { guideKinds, guideOptions } from '../guide-list'
 import {
   toGuideInfoForm,
   guideInfoFormSchema,
@@ -42,6 +47,7 @@ import {
 } from '../guide-form'
 import {
   useGuideInfo,
+  useGuides,
   useGuideTranslation,
   useSaveGuideTranslation,
   useUpdateGuideInfo,
@@ -50,21 +56,23 @@ import {
 /**
  * CHK-06·NTF-07: edit one language of a guide's detail text by its code:
  * checklist items (CL-01), life change tasks (LC-01-1) and living rules
- * (waste-food). The BE looks codes up case-sensitively, so the code is sent
- * as typed (only trimmed). Picking living rules from GET /api/admin/rules
- * belongs to the admin rules screen (#43).
+ * (waste-food). The item is picked from GET /api/admin/guides; if that list
+ * cannot load, the code can still be typed (sent as typed, only trimmed,
+ * because the BE looks codes up case-sensitively).
  */
 export function GuideEditor() {
   const { t } = useTranslation()
-  // ADM-06: the rule editor opens this screen with ?code= to review texts.
+  // ADM-06·07: the rule editor and reports open this screen with ?code=.
   const [params] = useSearchParams()
   const initialCode = params.get('code')?.trim() ?? ''
   const [code, setCode] = useState(initialCode)
+  const [kind, setKind] = useState<GuideKind | ''>('')
   const [language, setLanguage] = useState<Language>('ko')
   const [target, setTarget] = useState<
     { code: string; language: Language } | undefined
   >(() => (initialCode ? { code: initialCode, language: 'ko' } : undefined))
   const guide = useGuideTranslation(target?.code, target?.language ?? 'ko')
+  const guides = useGuides()
 
   return (
     <>
@@ -74,26 +82,63 @@ export function GuideEditor() {
           if (code.trim()) setTarget({ code: code.trim(), language })
         }}
       >
-        <Toolbar>
-          <TextField
-            label={t('admin.code')}
-            placeholder="CL-01 · waste-food"
-            value={code}
-            onChange={(event) => setCode(event.target.value)}
-          />
-          <SelectField
-            label={t('admin.language')}
-            value={language}
-            onChange={(event) => setLanguage(event.target.value as Language)}
-            options={Object.entries(languages).map(([value, label]) => ({
-              value,
-              label,
-            }))}
-          />
-          <Button type="submit" variant="secondary">
-            {t('admin.load')}
-          </Button>
-        </Toolbar>
+        <Stack gap={12}>
+          {guides.isError ? (
+            <>
+              <FormError message={errorMessage(t, guides.error)} />
+              <TextField
+                label={t('admin.code')}
+                placeholder="CL-01 · waste-food"
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+              />
+            </>
+          ) : (
+            <>
+              <SelectField
+                label={t('admin.guideKind')}
+                value={kind}
+                onChange={(event) => {
+                  setKind(event.target.value as GuideKind | '')
+                  setCode('')
+                }}
+                options={[
+                  { value: '', label: t('admin.all') },
+                  ...guideKinds.map((value) => ({
+                    value,
+                    label: t(`admin.guideKinds.${value}`),
+                  })),
+                ]}
+              />
+              <SelectField
+                label={t('admin.guideItem')}
+                value={code}
+                disabled={guides.isPending}
+                onChange={(event) => setCode(event.target.value)}
+                options={guideOptions(
+                  guides.data ?? [],
+                  kind,
+                  code,
+                  t(guides.isPending ? 'common.loading' : 'admin.guidePick'),
+                )}
+              />
+            </>
+          )}
+          <Toolbar>
+            <SelectField
+              label={t('admin.language')}
+              value={language}
+              onChange={(event) => setLanguage(event.target.value as Language)}
+              options={Object.entries(languages).map(([value, label]) => ({
+                value,
+                label,
+              }))}
+            />
+            <Button type="submit" variant="secondary" disabled={!code.trim()}>
+              {t('admin.load')}
+            </Button>
+          </Toolbar>
+        </Stack>
       </form>
       {target && (
         <QueryState query={guide}>

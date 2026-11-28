@@ -13,7 +13,7 @@ export const chatMessages = defineMessages({
       answerLanguage: '답변 언어',
       greetingHello: '안녕하세요! 저는 토로예요.',
       greetingAsk:
-        '시흥 생활에서 궁금한 걸 편하게 물어보세요. 서류 사진을 보내면 번역도 해 줘요.',
+        '시흥 생활에서 궁금한 걸 편하게 물어보세요. 고지서 사진을 보내면 번역도 해 줘요.',
       title: '웰컴시흥 도우미',
       today: '오늘 {{time}}',
       answerIn: '한국어로 답해요',
@@ -96,7 +96,7 @@ export const chatMessages = defineMessages({
       answerLanguage: 'Answer language',
       greetingHello: 'Hello! I am Toro.',
       greetingAsk:
-        'Ask me anything about living in Siheung. Send a photo of a document and I will translate it too.',
+        'Ask me anything about living in Siheung. Send a photo of a bill and I will translate it too.',
       title: 'Welcome Siheung Helper',
       today: 'Today {{time}}',
       answerIn: 'Answer in English',
@@ -180,7 +180,7 @@ export const chatMessages = defineMessages({
       answerLanguage: '回答语言',
       greetingHello: '你好！我是 Toro。',
       greetingAsk:
-        '关于在始兴的生活，有什么想问的都可以问我。发送文件照片，我还可以帮你翻译。',
+        '关于在始兴的生活，有什么想问的都可以问我。发送缴费通知单照片，我还可以帮你翻译。',
       title: '始兴生活助手',
       today: '今天 {{time}}',
       answerIn: '用中文回答',
@@ -262,7 +262,7 @@ export const chatMessages = defineMessages({
       answerLanguage: 'Ngôn ngữ trả lời',
       greetingHello: 'Xin chào! Mình là Toro.',
       greetingAsk:
-        'Hãy hỏi mình bất cứ điều gì về cuộc sống ở Siheung. Gửi ảnh giấy tờ, mình sẽ dịch giúp bạn.',
+        'Hãy hỏi mình bất cứ điều gì về cuộc sống ở Siheung. Gửi ảnh hóa đơn, mình sẽ dịch giúp bạn.',
       title: 'Trợ lý Siheung',
       today: 'Hôm nay {{time}}',
       answerIn: 'Trả lời bằng tiếng Việt',

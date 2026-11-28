@@ -82,8 +82,7 @@ export function ChatIntro({
   onPhoto: () => void
   photoDisabled?: boolean
 }) {
-  const { t, i18n } = useTranslation()
-  const [openedAt] = useState(() => new Date())
+  const { t } = useTranslation()
   return (
     <>
       <div className={styles.intro}>
@@ -96,9 +95,7 @@ export function ChatIntro({
       </div>
       {onAsk && (
         <>
-          <p className={styles.time}>
-            {t('chat.today', { time: formatTime(openedAt, i18n.language) })}
-          </p>
+          <GreetingTime />
           <div className={styles.toro}>
             <ToroAvatar size={32} />
             <div className={styles.toroMessages}>
@@ -135,6 +132,20 @@ export function ChatIntro({
         </>
       )}
     </>
+  )
+}
+
+/**
+ * "오늘 오후 2:10" above 토로's greeting: the moment the greeting appears.
+ * Mounted with the greeting, so a new chat ("+") shows its own time.
+ */
+function GreetingTime() {
+  const { t, i18n } = useTranslation()
+  const [shownAt] = useState(() => new Date())
+  return (
+    <p className={styles.time}>
+      {t('chat.today', { time: formatTime(shownAt, i18n.language) })}
+    </p>
   )
 }
 

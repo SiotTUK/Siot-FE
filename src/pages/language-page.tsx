@@ -66,7 +66,9 @@ export function LanguagePage() {
             lang={language}
             title={languages[language]}
             description={languageName(language, current)}
-            selected={language === current}
+            // Nothing starts selected: the screen language is only a default
+            // for the text here, not the user's choice.
+            selected={false}
             onClick={() => {
               changeLanguage(language)
               navigate('/signup', { state: carry })

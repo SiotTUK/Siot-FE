@@ -4,6 +4,7 @@ import {
   firstPasswordError,
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
+import type { AdminEventDetail } from '@/features/admin/event-api'
 import type { AdminRuleDetail, AdminRuleFaq } from '@/features/admin/rule-api'
 import type { BillTranslation } from '@/features/bill-translation/api'
 import type {
@@ -47,6 +48,8 @@ export interface MockState {
   guides: Record<string, GuideTranslationResponse>
   /** ADM-06·RUL-04: admin rule data, seeded from the rule mock on first use. */
   adminRules?: MockAdminRules
+  /** ADM-05: admin event data, seeded from the event mock on first use. */
+  adminEvents?: { events: AdminEventDetail[]; nextId: number }
   /**
    * CHK-06·NTF-07 source link and contact changed by an admin, by item code.
    * Only changed fields are kept (null = cleared); the rest stay as seeded.

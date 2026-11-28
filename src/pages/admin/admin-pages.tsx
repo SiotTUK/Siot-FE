@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { DocumentList } from '@/features/admin/ui/document-list'
+import { EventCreate, EventEdit } from '@/features/admin/ui/event-editor'
+import { EventList } from '@/features/admin/ui/event-list'
 import { GuideEditor } from '@/features/admin/ui/guide-editor'
 import { MemberList } from '@/features/admin/ui/member-list'
 import { ReviewList } from '@/features/admin/ui/review-list'
@@ -43,6 +45,7 @@ const menus = [
   ['guides', 'admin.menuGuides', 'admin.menuGuidesDesc'],
   ['documents', 'admin.menuDocuments', 'admin.menuDocumentsDesc'],
   ['rules', 'admin.menuRules', 'admin.menuRulesDesc'],
+  ['events', 'admin.menuEvents', 'admin.menuEventsDesc'],
 ] as const
 
 export function AdminHomePage() {
@@ -149,6 +152,38 @@ export function AdminRuleFaqsPage() {
   return (
     <AdminScreen title={t('admin.menuRuleFaqs')} backTo="/admin/rules">
       <RuleFaqList />
+    </AdminScreen>
+  )
+}
+
+/** ADM-05 */
+export function AdminEventsPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen title={t('admin.menuEvents')} backTo="/admin">
+      <EventList />
+    </AdminScreen>
+  )
+}
+
+/** EVE-07 */
+export function AdminEventNewPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen title={t('admin.events.create')} backTo="/admin/events">
+      <EventCreate />
+    </AdminScreen>
+  )
+}
+
+/** EVE-08·09. ADM-07 (#39) links reported events here. */
+export function AdminEventEditPage() {
+  const { t } = useTranslation()
+  const eventId = Number(useParams().eventId)
+  const created = (useLocation().state as { created?: boolean } | null)?.created
+  return (
+    <AdminScreen title={t('admin.menuEvents')} backTo="/admin/events">
+      <EventEdit key={eventId} eventId={eventId} created={created} />
     </AdminScreen>
   )
 }

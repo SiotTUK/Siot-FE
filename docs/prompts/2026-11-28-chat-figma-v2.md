@@ -45,6 +45,12 @@
 
 스크린샷(목업, 390×844): [첫 화면](assets/2026-11-28-chat-figma-v2-intro.png), [답변](assets/2026-11-28-chat-figma-v2-answer.png)
 
+## 2026-11-28 후속: main(#109) 합치기
+
+- 요약: PR을 올린 뒤 main에 챗봇 답변 평가 의견 입력(#109)이 들어와 `chat-message.tsx`의 import 한 줄이 충돌했다. CI가 돌지 않아 main을 합쳤다.
+- 반영: 두 쪽 import를 모두 살렸다(이 브랜치의 `formatTime`·`CameraIcon`, #109의 `feedbackCommentMaxLength`). #109가 지운 `toro.png` 직접 import는 이 브랜치에서도 쓰지 않는다.
+- 검증: `npm run check` 통과(Vitest 544개). 목업에서 답변 → "안 됐어요" → 의견 입력이 새 답변 머리와 함께 보이는 것을 확인했다.
+
 ## 남은 작업
 
 - 머리의 뒤로 가기 "‹"는 공용 머리라 Figma 아이콘으로 바꾸지 않았다.

@@ -79,9 +79,34 @@ export function fetchTaxSchedules(
   })
 }
 
+export interface MonthlyTodoItemResponse {
+  schedule: ScheduleResponse
+  /** Days left to endsOn (or startsOn), Korea time. 0 = due today. */
+  dDay: number
+}
+
+/** CAL-02 home monthly to-dos (GET /api/schedules/this-month?language=). */
+export interface MonthlyTodoResponse {
+  year: number
+  month: number
+  /** true when this month has no remaining schedules and next month is returned. */
+  nextMonth: boolean
+  items: MonthlyTodoItemResponse[]
+}
+
 export const scheduleQueryKey = ['schedules'] as const
 export const memberScheduleQueryKey = (memberId: number) =>
   [...scheduleQueryKey, memberId] as const
+export const monthlyTodosQueryKey = (memberId: number, language: Language) =>
+  [...memberScheduleQueryKey(memberId), 'this-month', language] as const
+
+export function fetchMonthlyTodos(language: Language, signal?: AbortSignal) {
+  const search = new URLSearchParams({ language })
+  return apiRequest<MonthlyTodoResponse>(
+    `/api/schedules/this-month?${search}`,
+    { signal },
+  )
+}
 
 export function fetchMonthlySchedules(
   year: number,

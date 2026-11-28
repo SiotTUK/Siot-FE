@@ -8,12 +8,14 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-12);
-  margin-top: -12px;
   padding: 10px var(--space-16);
   border-radius: var(--radius-8);
   background: var(--secondary);
   font: var(--text-caption);
   color: var(--foreground);
+}
+.situation[data-compact='true'] {
+  margin-top: -12px;
 }
 .situation p {
   min-width: 0;

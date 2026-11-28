@@ -23,13 +23,13 @@
 .primary {
   background: var(--primary);
 }
-.primary:not(:disabled):hover {
+.primary:not(:disabled):not([aria-disabled='true']):hover {
   background: var(--primary-hover);
 }
 .danger {
   background: var(--destructive);
 }
-.danger:not(:disabled):hover {
+.danger:not(:disabled):not([aria-disabled='true']):hover {
   filter: brightness(0.9);
 }
 .secondary {
@@ -48,15 +48,19 @@
   border-radius: var(--radius-16);
   font-size: 15px;
 }
-.secondary:not(:disabled):hover {
+.secondary:not(:disabled):not([aria-disabled='true']):hover {
   filter: brightness(0.96);
 }
 .primary:disabled,
+.primary[aria-disabled='true'],
 .danger:disabled,
-.secondary:disabled {
+.danger[aria-disabled='true'],
+.secondary:disabled,
+.secondary[aria-disabled='true'] {
   background: var(--background);
   border-color: var(--border);
   color: var(--placeholder);
+  cursor: not-allowed;
 }
 .text {
   align-self: flex-start;
@@ -68,6 +72,8 @@
   color: var(--muted-foreground);
   text-decoration: underline;
 }
-.text:disabled {
+.text:disabled,
+.text[aria-disabled='true'] {
   opacity: 0.45;
+  cursor: not-allowed;
 }

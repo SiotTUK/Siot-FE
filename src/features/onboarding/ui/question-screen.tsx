@@ -80,7 +80,7 @@ export function QuestionScreen({ question }: { question: Question }) {
           step && (
             <HeaderAction
               onClick={() => advance(skipValue)}
-              disabled={save.isPending}
+              loading={save.isPending}
             >
               {t('common.skip')}
             </HeaderAction>

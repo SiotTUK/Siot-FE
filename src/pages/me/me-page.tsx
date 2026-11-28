@@ -98,7 +98,7 @@ export function MePage() {
       <Button
         variant="secondary"
         block
-        disabled={logout.isPending}
+        loading={logout.isPending}
         onClick={() => logout.mutate()}
       >
         {t('common.logout')}

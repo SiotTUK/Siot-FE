@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/shared/i18n/error-message'
 import { Button } from '@/shared/ui/button'
+import { busyButtonProps, guardBusyClick } from '@/shared/ui/button-guard'
 import { FormError } from '@/shared/ui/page'
 import { InfiniteList } from '@/shared/ui/query-state'
 import { EmptyState } from '@/shared/ui/status-card'
@@ -38,7 +39,7 @@ export function NotificationList({ memberId }: { memberId: number }) {
         <div className={styles.listTools}>
           <Button
             variant="text"
-            disabled={markAll.isPending}
+            loading={markAll.isPending}
             onClick={markAll.markAll}
           >
             {t('notifications.readAll')}
@@ -142,8 +143,8 @@ function NotificationCard({
     <button
       type="button"
       className={styles.card}
-      disabled={pending}
-      onClick={() => onRead()}
+      {...busyButtonProps({ loading: pending })}
+      onClick={guardBusyClick(pending, () => onRead())}
     >
       {content}
     </button>

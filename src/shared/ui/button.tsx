@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes } from 'react'
 import { Link, type LinkProps } from 'react-router-dom'
+import { busyButtonProps, guardBusyClick } from './button-guard'
 import styles from './button.module.css'
 
 /**
@@ -20,6 +21,7 @@ export function Button({
   disabled,
   className,
   type = 'button',
+  onClick,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant
@@ -30,8 +32,8 @@ export function Button({
     <button
       {...props}
       type={type}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
+      {...busyButtonProps({ disabled, loading })}
+      onClick={guardBusyClick(Boolean(disabled || loading), onClick)}
       className={classes(variant, className, block)}
     />
   )

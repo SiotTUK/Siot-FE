@@ -8,6 +8,13 @@
   font: var(--text-title);
   color: var(--foreground);
 }
+.headingRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+}
 .description,
 .muted {
   font: var(--text-caption);

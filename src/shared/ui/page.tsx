@@ -4,15 +4,26 @@ import styles from './page.module.css'
 export function PageHeading({
   title,
   description,
+  aside,
   children,
 }: {
   title: string
   description?: string
+  /** Small text on the title's right, e.g. M12 "갱신 11.13 03:00". */
+  aside?: ReactNode
   children?: ReactNode
 }) {
+  const heading = <h1 className={styles.title}>{title}</h1>
   return (
     <div className={styles.heading}>
-      <h1 className={styles.title}>{title}</h1>
+      {aside ? (
+        <div className={styles.headingRow}>
+          {heading}
+          {aside}
+        </div>
+      ) : (
+        heading
+      )}
       {children}
       {description && <p className={styles.description}>{description}</p>}
     </div>

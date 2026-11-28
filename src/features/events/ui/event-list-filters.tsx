@@ -3,25 +3,28 @@ import { Button } from '@/shared/ui/button'
 import { ChipGroup } from '@/shared/ui/chip-group'
 import { TextField } from '@/shared/ui/field'
 import {
-  defaultEventFilters,
   eventCategories,
   hasEventFilters,
   isDateRangeValid,
   isIsoDate,
+  resetEventFilters,
   type EventListFilters as Filters,
 } from '../event-filters'
 import styles from './event-list-filters.module.css'
 
 /**
  * EVE-10 list filter area: event status, category and a date range.
- * The region filter (#33) joins this area and its reset.
+ * The reset clears them and keeps the order (sort).
  */
 export function EventListFilters({
   filters,
   onChange,
+  showReset = true,
 }: {
   filters: Filters
   onChange: (filters: Filters) => void
+  /** false while the M13 empty card shows its own reset. */
+  showReset?: boolean
 }) {
   const { t } = useTranslation()
   const rangeValid = isDateRangeValid(filters)
@@ -81,11 +84,11 @@ export function EventListFilters({
           error={rangeValid ? undefined : t('events.filters.invalidRange')}
         />
       </fieldset>
-      {hasEventFilters(filters) && (
+      {showReset && hasEventFilters(filters) && (
         <Button
           variant="secondary"
           className={styles.reset}
-          onClick={() => onChange(defaultEventFilters)}
+          onClick={() => onChange(resetEventFilters(filters))}
         >
           {t('events.filters.reset')}
         </Button>

@@ -129,7 +129,9 @@ export function mockEvents(language: Language) {
     translated: true,
     description: text.description,
     priceInfo: text.free,
-    applicationDeadline: null,
+    // The winter market closes applications first, for the DEADLINE order.
+    applicationDeadline:
+      index === 2 ? dateIn(3) : index === 3 ? dateIn(6) : null,
     applicationUrl: index === 0 ? 'https://example.org/' : null,
     sourceUrl: 'https://www.siheung.go.kr/',
     subscribed: false,
@@ -142,15 +144,25 @@ export function mockEvents(language: Language) {
     startsOn: dateIn(index === 0 ? -40 : -20),
     endsOn: dateIn(index === 0 ? -38 : -20),
     multicultural: index === 0,
+    applicationDeadline: null,
     applicationUrl: null,
   }))
   return [...upcoming, ...past]
 }
 
-/** GET /api/events conditions from EVE-10: past, category and an overlapping period. */
+/**
+ * GET /api/events conditions from EVE-10: past, category, an overlapping
+ * period and the sort (BE #17: DATE, DEADLINE, LATEST; the mock's event ID
+ * order stands in for the registration order).
+ */
 export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
   const today = koreaToday()
   const past = params.get('past') === 'true'
+  const sort = params.get('sort') ?? 'DATE'
+  const openDeadline = (event: EventDetail) =>
+    event.applicationDeadline && event.applicationDeadline >= today
+      ? event.applicationDeadline
+      : null
   const from = params.get('from')
   const to = params.get('to')
   const category = params.get('category')?.toUpperCase()
@@ -163,15 +175,30 @@ export function listMockEvents(events: EventDetail[], params: URLSearchParams) {
       if (past ? end >= today : end < today) return false
       return (!from || end >= from) && (!to || start <= to)
     })
-    .sort((a, b) =>
-      past
+    .sort((a, b) => {
+      if (sort === 'LATEST') return b.eventId - a.eventId
+      if (sort === 'DEADLINE') {
+        const [left, right] = [openDeadline(a), openDeadline(b)]
+        if (left && right && left !== right) return left.localeCompare(right)
+        if (left && !right) return -1
+        if (!left && right) return 1
+      }
+      return past
         ? (b.endsOn ?? b.startsOn ?? '').localeCompare(
             a.endsOn ?? a.startsOn ?? '',
           )
         : (a.startsOn ?? a.endsOn ?? '').localeCompare(
             b.startsOn ?? b.endsOn ?? '',
-          ),
-    )
+          )
+    })
+}
+
+/** BE EventQueryService.list: blank is DATE, case is ignored, other values are 400. */
+function isMockSort(value: string | null) {
+  return (
+    !value?.trim() ||
+    ['DATE', 'DEADLINE', 'LATEST'].includes(value.trim().toUpperCase())
+  )
 }
 
 /** BE EventCategory.parse: blank means no filter, case is ignored, other values are 400. */
@@ -278,6 +305,12 @@ export const eventHandlers = [
       return error(400, 'INVALID_INPUT', 'from 은 to 보다 늦을 수 없습니다.')
     if (!isMockCategory(params.get('category')))
       return error(400, 'INVALID_INPUT', '카테고리 값이 올바르지 않습니다.')
+    if (!isMockSort(params.get('sort')))
+      return error(
+        400,
+        'INVALID_INPUT',
+        'sort 는 DATE, DEADLINE, LATEST 중 하나입니다.',
+      )
     const events = listMockEvents(mockEvents(member.language), params)
     return HttpResponse.json({
       data: {
@@ -289,6 +322,27 @@ export const eventHandlers = [
         hasNext: false,
       },
     })
+  }),
+  // Today's 03:00 Korea run, like the daily collection (BE EventCollectionScheduler).
+  http.get('*/api/events/collection-status', () => {
+    const lastUpdatedAt = `${koreaToday()}T03:00:00+09:00`
+    const sources = (['GGC', 'FESTIVAL_STD', 'TOURAPI'] as const).map(
+      (source, index) => ({
+        source,
+        lastSucceededAt: lastUpdatedAt,
+        lastRun: {
+          runId: index + 1,
+          source,
+          status: 'SUCCEEDED' as const,
+          startedAt: lastUpdatedAt,
+          finishedAt: lastUpdatedAt,
+          fetchedCount: 12,
+          upsertedCount: 1,
+          error: null,
+        },
+      }),
+    )
+    return HttpResponse.json({ data: { lastUpdatedAt, sources } })
   }),
   http.get('*/api/events/calendar', ({ request }) => {
     const member = currentMember()

@@ -17,12 +17,26 @@ export function isEventCategory(value: unknown): value is EventCategory {
   return eventCategories.some((category) => category === value)
 }
 
+/**
+ * BE GET /api/events sort (BE #17): DATE starts soonest first (ended: ended
+ * most recently first), DEADLINE puts open applications closing soonest
+ * first, LATEST is newest registered first.
+ */
+export const eventSorts = ['DATE', 'DEADLINE', 'LATEST'] as const
+export type EventSort = (typeof eventSorts)[number]
+
+function isEventSort(value: unknown): value is EventSort {
+  return eventSorts.some((sort) => sort === value)
+}
+
 /** EVE-10 list controls stored in the URL. */
 export interface EventListFilters {
   status: EventStatus
   from: string | null
   to: string | null
   category: EventCategory | null
+  /** Order, not a filter: resets keep it. */
+  sort: EventSort
 }
 
 export const defaultEventFilters: EventListFilters = {
@@ -30,6 +44,7 @@ export const defaultEventFilters: EventListFilters = {
   from: null,
   to: null,
   category: null,
+  sort: 'DATE',
 }
 
 /** A real calendar date in yyyy-MM-dd, the format the BE accepts. */
@@ -48,6 +63,7 @@ export function parseEventFilters(params: URLSearchParams): EventListFilters {
   const to = params.get('to')
   const status = params.get('status')
   const category = params.get('category')
+  const sort = params.get('sort')
   return {
     status:
       status === 'ongoing' || status === 'scheduled' || status === 'ended'
@@ -58,6 +74,7 @@ export function parseEventFilters(params: URLSearchParams): EventListFilters {
     from: isIsoDate(from) ? from : null,
     to: isIsoDate(to) ? to : null,
     category: isEventCategory(category) ? category : null,
+    sort: isEventSort(sort) ? sort : defaultEventFilters.sort,
   }
 }
 
@@ -67,12 +84,32 @@ export function isDateRangeValid({ from, to }: EventListFilters) {
 }
 
 export function hasEventFilters(filters: EventListFilters) {
-  return (
-    filters.status !== defaultEventFilters.status ||
-    filters.from !== null ||
-    filters.to !== null ||
-    filters.category !== null
-  )
+  return filters.status !== defaultEventFilters.status || hasNarrowing(filters)
+}
+
+/** Category or period narrows the chosen status (M13 "조건에 맞는 행사가 없어요"). */
+export function hasNarrowing({ from, to, category }: EventListFilters) {
+  return from !== null || to !== null || category !== null
+}
+
+/** Clears every filter; the order stays. */
+export function resetEventFilters(filters: EventListFilters) {
+  return { ...defaultEventFilters, sort: filters.sort }
+}
+
+/** M13 "필터 초기화": drops category and period, keeps status and order. */
+export function clearNarrowing(filters: EventListFilters) {
+  return { ...filters, from: null, to: null, category: null }
+}
+
+/**
+ * Scheduled events (and ongoing ones in a future period) are split out of the
+ * BE's DATE order on the client (event-list-page.ts), so only DATE works there.
+ */
+export function isSortAvailable(filters: EventListFilters, today: string) {
+  if (filters.status === 'ended') return true
+  if (filters.status === 'scheduled') return false
+  return !(filters.from && filters.from > today)
 }
 
 /**
@@ -93,6 +130,8 @@ export function withEventFilters(
     if (value) next.set(key, value)
     else next.delete(key)
   }
+  if (filters.sort === defaultEventFilters.sort) next.delete('sort')
+  else next.set('sort', filters.sort)
   return next
 }
 
@@ -103,5 +142,6 @@ export function eventListQuery(page: number, filters: EventListFilters) {
   if (filters.from) query.set('from', filters.from)
   if (filters.to) query.set('to', filters.to)
   if (filters.category) query.set('category', filters.category)
+  if (filters.sort !== defaultEventFilters.sort) query.set('sort', filters.sort)
   return query.toString()
 }

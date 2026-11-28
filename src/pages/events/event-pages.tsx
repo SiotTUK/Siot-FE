@@ -12,13 +12,18 @@ import { chatEntryState } from '@/features/chat/chat-entry'
 import type { EventDetail } from '@/features/events/api'
 import {
   eventLink,
+  formatCollectedAt,
   formatEventDates,
   formatEventTimes,
 } from '@/features/events/event-display'
 import {
+  clearNarrowing,
+  hasNarrowing,
   isDateRangeValid,
+  isSortAvailable,
   parseEventFilters,
   withEventFilters,
+  type EventListFilters as Filters,
 } from '@/features/events/event-filters'
 import { eventDetailBackPath, isEventId } from '@/features/events/event-routes'
 import { EventCard } from '@/features/events/ui/event-card'
@@ -29,7 +34,9 @@ import { EventRecommendations } from '@/features/events/ui/event-recommendations
 import { EventAlerts } from '@/features/events/ui/event-alerts'
 import { EventHeart } from '@/features/events/ui/event-heart'
 import { EventReport } from '@/features/events/ui/event-report'
+import { EventSortSelect } from '@/features/events/ui/event-sort-select'
 import {
+  useEventCollectionStatus,
   useEventDetail,
   useEvents,
   useSavedEventIds,
@@ -37,6 +44,7 @@ import {
 import { useEventHeart } from '@/features/events/use-event-heart'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
+import { koreaToday } from '@/shared/i18n/format'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import {
   CalendarIcon,
@@ -58,6 +66,7 @@ import {
   Tag,
 } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
+import { StatusCard } from '@/shared/ui/status-card'
 import { shareEvent } from '@/features/events/share-event'
 import styles from './event-pages.module.css'
 
@@ -67,14 +76,31 @@ export function EventsPage() {
 
   return (
     <PageBody className={styles.body}>
-      <PageHeading title={t('events.title')} />
+      <PageHeading title={t('events.title')} aside={<CollectedAt />} />
       {member && (
         <>
           <EventRecommendations memberId={member.id} layout="featured" />
           <EventList memberId={member.id} />
+          <p className={styles.collectionNotice}>
+            {t('events.collectionNotice')}
+          </p>
         </>
       )}
     </PageBody>
+  )
+}
+
+/** M12 "갱신 11.13 03:00". Hidden until a collection has succeeded. */
+function CollectedAt() {
+  const { t } = useTranslation()
+  const lastUpdatedAt = useEventCollectionStatus().data?.lastUpdatedAt
+  const time =
+    lastUpdatedAt && formatCollectedAt(lastUpdatedAt, currentLanguage())
+  if (!lastUpdatedAt || !time) return null
+  return (
+    <p className={styles.collectedAt}>
+      <time dateTime={lastUpdatedAt}>{t('events.updatedAt', { time })}</time>
+    </p>
   )
 }
 
@@ -107,18 +133,34 @@ function EventList({ memberId }: { memberId: number }) {
     return nextParams
   }
 
+  const changeFilters = (next: Filters) =>
+    setParams(withEventFilters(params, next), { preventScrollReset: true })
+  // M13: an empty narrowed list shows its own reset button instead.
+  const emptyNarrowed =
+    rangeValid &&
+    query.isSuccess &&
+    !query.data.content.length &&
+    page === 0 &&
+    hasNarrowing(filters)
   const filterArea = (
     <EventListFilters
       filters={filters}
-      onChange={(next) =>
-        setParams(withEventFilters(params, next), { preventScrollReset: true })
-      }
+      onChange={changeFilters}
+      showReset={!emptyNarrowed}
+    />
+  )
+  const sortSelect = (
+    <EventSortSelect
+      value={filters.sort}
+      status={filters.status}
+      available={isSortAvailable(filters, koreaToday())}
+      onChange={(sort) => changeFilters({ ...filters, sort })}
     />
   )
 
   if (query.isSuccess && page > lastPage) {
     return (
-      <Section title={t('events.all')}>
+      <Section title={t('events.all')} action={sortSelect}>
         {filterArea}
         <EventQueryNotice
           pending
@@ -133,7 +175,7 @@ function EventList({ memberId }: { memberId: number }) {
   }
 
   return (
-    <Section title={t('events.all')}>
+    <Section title={t('events.all')} action={sortSelect}>
       {filterArea}
       {!rangeValid ? null : rangeRejected ? (
         <FormError message={t('events.invalidRange')} />
@@ -156,12 +198,23 @@ function EventList({ memberId }: { memberId: number }) {
             </li>
           ))}
         </ul>
+      ) : hasNarrowing(filters) ? (
+        <StatusCard
+          mascot="haero"
+          role="status"
+          title={t('events.emptyNarrowed.title')}
+          description={t('events.emptyNarrowed.description')}
+          action={
+            <Button
+              variant="secondary"
+              onClick={() => changeFilters(clearNarrowing(filters))}
+            >
+              {t('events.filters.reset')}
+            </Button>
+          }
+        />
       ) : (
-        <Muted>
-          {filters.from || filters.to
-            ? t('events.emptyFiltered')
-            : t(`events.emptyStatus.${filters.status}`)}
-        </Muted>
+        <Muted>{t(`events.emptyStatus.${filters.status}`)}</Muted>
       )}
       {rangeValid && data && (page > 0 || data.hasNext) && (
         <div className={styles.pager}>

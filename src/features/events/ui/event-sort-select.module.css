@@ -1,0 +1,29 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.select {
+  appearance: none;
+  min-height: 36px;
+  padding: var(--space-4) 30px var(--space-4) var(--space-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-8);
+  background: var(--card);
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+.select:disabled {
+  color: var(--muted-foreground);
+}
+
+.caret {
+  position: absolute;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  color: var(--primary);
+}

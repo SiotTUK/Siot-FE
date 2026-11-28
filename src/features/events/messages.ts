@@ -23,6 +23,7 @@ export const eventMessages = defineMessages({
       original: '원문 보기',
       ongoing: '진행 중',
       planned: '예정',
+      soon: '곧 시작',
       multicultural: '다문화·외국인 대상',
       translationPending: '번역 준비 중',
       translationAutomatic: '자동 번역',
@@ -71,7 +72,25 @@ export const eventMessages = defineMessages({
         scheduled: '예정된 행사가 없어요.',
         ended: '종료된 행사가 없어요.',
       },
-      emptyFiltered: '조건에 맞는 행사가 없어요. 기간을 바꿔 보세요.',
+      emptyNarrowed: {
+        title: '조건에 맞는 행사가 없어요',
+        description: '분류나 기간을 바꿔 보세요',
+      },
+      updatedAt: '갱신 {{time}}',
+      collectionNotice:
+        '행사는 매일 새벽 3시에 경기도 문화행사 정보 등에서 가져와요',
+      sort: {
+        label: '정렬',
+        DATE: '시작일순',
+        DATE_ENDED: '최근 종료순',
+        DEADLINE: '마감 임박순',
+        LATEST: '최신 등록순',
+        dateOnly: '예정 행사는 시작일순으로만 볼 수 있어요',
+      },
+      carousel: {
+        label: '추천 위치',
+        slide: '{{current}}번째 추천 보기',
+      },
       invalidRange: '시작일이 종료일보다 늦어요. 기간을 다시 선택해 주세요.',
       filters: {
         status: '행사 구분',
@@ -144,6 +163,7 @@ export const eventMessages = defineMessages({
       original: 'View original',
       ongoing: 'Ongoing',
       planned: 'Upcoming',
+      soon: 'Starting soon',
       multicultural: 'Multicultural event',
       translationPending: 'Translation pending',
       translationAutomatic: 'Machine translation',
@@ -194,7 +214,25 @@ export const eventMessages = defineMessages({
         scheduled: 'There are no upcoming events.',
         ended: 'There are no ended events.',
       },
-      emptyFiltered: 'No events match these filters. Try a different period.',
+      emptyNarrowed: {
+        title: 'No events match these filters',
+        description: 'Try a different category or period',
+      },
+      updatedAt: 'Updated {{time}}',
+      collectionNotice:
+        'Events are updated every day at 3 a.m. (Korea time) from Gyeonggi cultural event listings and other public sources',
+      sort: {
+        label: 'Sort',
+        DATE: 'Start date',
+        DATE_ENDED: 'Recently ended',
+        DEADLINE: 'Closing soon',
+        LATEST: 'Newest',
+        dateOnly: 'Upcoming events can only be sorted by start date',
+      },
+      carousel: {
+        label: 'Recommendation position',
+        slide: 'Show recommendation {{current}}',
+      },
       invalidRange:
         'The start date is after the end date. Choose the period again.',
       filters: {
@@ -268,6 +306,7 @@ export const eventMessages = defineMessages({
       original: '查看原文',
       ongoing: '进行中',
       planned: '即将举行',
+      soon: '{{days}}天内开始',
       multicultural: '多文化活动',
       translationPending: '翻译准备中',
       translationAutomatic: '机器翻译',
@@ -316,7 +355,25 @@ export const eventMessages = defineMessages({
         scheduled: '暂无即将举行的活动。',
         ended: '暂无已结束的活动。',
       },
-      emptyFiltered: '没有符合条件的活动。请尝试更换时间段。',
+      emptyNarrowed: {
+        title: '没有符合条件的活动',
+        description: '请尝试更换分类或时间段',
+      },
+      updatedAt: '更新于 {{time}}',
+      collectionNotice:
+        '活动信息每天凌晨3点（韩国时间）从京畿道文化活动信息等公开来源更新',
+      sort: {
+        label: '排序',
+        DATE: '按开始日期',
+        DATE_ENDED: '最近结束',
+        DEADLINE: '即将截止',
+        LATEST: '最新登记',
+        dateOnly: '即将举行的活动只能按开始日期排序',
+      },
+      carousel: {
+        label: '推荐位置',
+        slide: '查看第{{current}}个推荐',
+      },
       invalidRange: '开始日期晚于结束日期。请重新选择时间段。',
       filters: {
         status: '活动状态',
@@ -389,6 +446,7 @@ export const eventMessages = defineMessages({
       original: 'Xem thông tin gốc',
       ongoing: 'Đang diễn ra',
       planned: 'Sắp diễn ra',
+      soon: 'Bắt đầu trong {{days}} ngày',
       multicultural: 'Sự kiện đa văn hóa',
       translationPending: 'Đang chuẩn bị bản dịch',
       translationAutomatic: 'Bản dịch tự động',
@@ -437,8 +495,25 @@ export const eventMessages = defineMessages({
         scheduled: 'Không có sự kiện sắp diễn ra.',
         ended: 'Chưa có sự kiện đã kết thúc.',
       },
-      emptyFiltered:
-        'Không có sự kiện phù hợp. Hãy thử chọn khoảng thời gian khác.',
+      emptyNarrowed: {
+        title: 'Không có sự kiện phù hợp',
+        description: 'Hãy thử đổi phân loại hoặc khoảng thời gian',
+      },
+      updatedAt: 'Cập nhật {{time}}',
+      collectionNotice:
+        'Sự kiện được cập nhật lúc 3 giờ sáng mỗi ngày (giờ Hàn Quốc) từ thông tin sự kiện văn hóa Gyeonggi và các nguồn công khai khác',
+      sort: {
+        label: 'Sắp xếp',
+        DATE: 'Ngày bắt đầu',
+        DATE_ENDED: 'Mới kết thúc',
+        DEADLINE: 'Sắp hết hạn đăng ký',
+        LATEST: 'Mới đăng',
+        dateOnly: 'Sự kiện sắp diễn ra chỉ có thể sắp xếp theo ngày bắt đầu',
+      },
+      carousel: {
+        label: 'Vị trí gợi ý',
+        slide: 'Xem gợi ý thứ {{current}}',
+      },
       invalidRange:
         'Ngày bắt đầu muộn hơn ngày kết thúc. Vui lòng chọn lại khoảng thời gian.',
       filters: {

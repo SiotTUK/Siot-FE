@@ -3,6 +3,7 @@ import { koreaToday } from '@/shared/i18n/format'
 import {
   eventKeys,
   fetchEventCalendar,
+  fetchEventCollectionStatus,
   fetchEventDetail,
   fetchEventRecommendations,
   fetchEvents,
@@ -28,6 +29,15 @@ export function useEvents(
     queryFn: ({ signal }) => fetchEvents(page, filters, today, signal),
     // The server rejects from > to with 400; the screen shows that error first.
     enabled: isDateRangeValid(filters),
+  })
+}
+
+/** "갱신 11.13 03:00" beside the title. Collection runs once a day. */
+export function useEventCollectionStatus() {
+  return useQuery({
+    queryKey: eventKeys.collectionStatus(),
+    queryFn: ({ signal }) => fetchEventCollectionStatus(signal),
+    staleTime: 10 * 60 * 1000,
   })
 }
 

@@ -15,7 +15,8 @@
 .label {
   font: var(--text-label);
   font-weight: 400;
-  color: var(--foreground);
+  /* A screen can override these two (e.g. a locked bill reminder). */
+  color: var(--switch-label-color, var(--foreground));
 }
 .hint {
   font: var(--text-caption);
@@ -64,7 +65,7 @@
   outline-offset: 2px;
 }
 .input:disabled + .track {
-  opacity: 0.5;
+  opacity: var(--switch-disabled-opacity, 0.5);
 }
 @media (prefers-reduced-motion: reduce) {
   .track,

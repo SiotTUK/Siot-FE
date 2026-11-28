@@ -459,12 +459,13 @@ details[open] > summary .chevron {
   padding-bottom: var(--space-16);
 }
 
-/* M11c reminder: when it cannot be turned on, fade the switch and times. */
-.reminder[data-locked] :is([role='switch'] + span, .schedule) {
-  opacity: 0.35;
-}
-
-.reminder[data-locked] label > span:first-child > span:first-child {
+/*
+ * M11c reminder that cannot be turned on: a fainter switch, and the title
+ * and times in the muted colour (still readable, 7:1 on white).
+ */
+.reminder[data-locked] {
+  --switch-label-color: var(--muted-foreground);
+  --switch-disabled-opacity: 0.35;
   color: var(--muted-foreground);
 }
 

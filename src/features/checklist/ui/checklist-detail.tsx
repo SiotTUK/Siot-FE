@@ -119,6 +119,8 @@ export function ChecklistDetail({
             {item.itemType === 'REQUIRED' && (
               <Tag tone="main">{t('checklist.detail.required')}</Tag>
             )}
+            {/* #47: the server's category name in the screen language. */}
+            {item.categoryLabel && <Tag>{item.categoryLabel}</Tag>}
             {item.badge && <Tag>{item.badge}</Tag>}
             {translationPending(item) && (
               <Tag tone="warning">{t('checklist.translationPending')}</Tag>

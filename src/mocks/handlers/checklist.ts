@@ -47,6 +47,8 @@ function seeds(member: MockMember): Seed[] {
       content:
         '대한민국에 90일을 초과하여 체류하려는 외국인은 입국한 날부터 90일 이내에 체류지 관할 출입국·외국인관서에 등록해야 합니다.',
       guideId: 1,
+      category: 'IMMIGRATION',
+      categoryLabel: '출입국·체류',
       noticeChangedAt: '2026-11-03T09:00:00Z',
       hasNoticeChanged: true,
       law: f4 ? '재외동포법 제6조' : '출입국관리법 제31조',
@@ -57,6 +59,8 @@ function seeds(member: MockMember): Seed[] {
       code: 'CL-05',
       title: '체류기간 연장',
       itemType: 'REQUIRED',
+      category: 'IMMIGRATION',
+      categoryLabel: '출입국·체류',
       badge: '만료 4개월 전부터',
       summary: '재학증명서 등 준비 · 하이코리아 예약 후 안산출입국',
       law: '출입국관리법 제25조',
@@ -67,6 +71,8 @@ function seeds(member: MockMember): Seed[] {
     code: 'CL-04',
     title: '건강보험 가입 확인',
     itemType: 'REQUIRED',
+    category: 'HEALTH_INSURANCE',
+    categoryLabel: '건강보험',
     badge: '조건별',
     variantBodies: [
       '고용허가제로 온 근로자는 입국일부터 가입돼요. 그 밖의 회사원은 회사가 직장보험에 가입해 줘요.',

@@ -1,7 +1,7 @@
 # 관리자 오류 신고 처리 화면 (ADM-07)
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: SiotTUK/Siot-FE#39 / PR 미생성
+- 관련 이슈 / PR: SiotTUK/Siot-FE#39 / SiotTUK/Siot-FE#118
 
 ## 목적
 

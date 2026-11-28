@@ -29,9 +29,13 @@
   font-size: 17px;
   font-weight: 700;
   color: var(--foreground);
-  white-space: nowrap;
+  /* Long translations wrap to a second line instead of being cut off. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 /* No ‹ before it (first screen): line the title up with the page content. */
 .title:first-child {

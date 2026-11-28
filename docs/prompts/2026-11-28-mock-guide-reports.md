@@ -1,7 +1,7 @@
 # 체크리스트·생활 변화 할 일 오류 신고: 목업 404와 사유 코드 수정
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: [#135](https://github.com/SiotTUK/Siot-FE/issues/135) / 미생성. 이전 기록: [2026-11-28-admin-reports.md](2026-11-28-admin-reports.md) 남은 작업
+- 관련 이슈 / PR: [#135](https://github.com/SiotTUK/Siot-FE/issues/135) / [#138](https://github.com/SiotTUK/Siot-FE/pull/138). 이전 기록: [2026-11-28-admin-reports.md](2026-11-28-admin-reports.md) 남은 작업
 
 ## 목적
 

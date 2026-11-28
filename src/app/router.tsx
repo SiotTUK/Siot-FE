@@ -229,7 +229,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        // ADM-01~08, CHK-06. The server still rejects non-admins with 403.
+        // ADM-01~08, CHK-06, CAL-01~03. The server still rejects non-admins with 403.
         path: '/admin',
         element: <RequireMember when="admin" />,
         handle: title('admin.title'),
@@ -300,6 +300,22 @@ export const router = createBrowserRouter([
             path: 'events/:eventId',
             element: deferredPage(adminScreen, 'AdminEventEditPage'),
             handle: title('admin.menuEvents'),
+          },
+          // CAL-01~03·NTF-01 common calendar schedules
+          {
+            path: 'schedules',
+            element: deferredPage(adminScreen, 'AdminSchedulesPage'),
+            handle: title('admin.menuSchedules'),
+          },
+          {
+            path: 'schedules/new',
+            element: deferredPage(adminScreen, 'AdminScheduleNewPage'),
+            handle: title('admin.schedules.create'),
+          },
+          {
+            path: 'schedules/:scheduleId',
+            element: deferredPage(adminScreen, 'AdminScheduleEditPage'),
+            handle: title('admin.menuSchedules'),
           },
           // ADM-07
           {

@@ -331,7 +331,7 @@ function guideInfoView(code: string) {
  * Checklist (CL-01), life change task (LC-01-1) and living rule (waste-food)
  * codes. Matched exactly, because the BE looks codes up case-sensitively.
  */
-function isGuideCode(code: string) {
+export function isGuideCode(code: string) {
   return (
     /^(CL|LC)-/.test(code) || ruleEntries.some((rule) => rule.code === code)
   )

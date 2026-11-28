@@ -44,6 +44,14 @@ export interface MockState {
   nextDocumentId: number
   nextBillId: number
   guides: Record<string, GuideTranslationResponse>
+  /**
+   * CHK-06·NTF-07 source link and contact changed by an admin, by item code.
+   * Only changed fields are kept (null = cleared); the rest stay as seeded.
+   */
+  guideInfo?: Record<
+    string,
+    { sourceUrl?: string | null; contact?: string | null; updatedAt: string }
+  >
   reviews: Record<
     string,
     { reviewed: boolean; adminMemo: string | null; reviewedAt: string | null }

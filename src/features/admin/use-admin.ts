@@ -4,16 +4,22 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { checklistKeys } from '@/features/checklist/api'
+import { lifeChangeKeys } from '@/features/life-changes/api'
+import { ruleKeys } from '@/features/rules/api'
 import { ApiError } from '@/shared/api/client'
 import type { Language } from '@/shared/api/types'
 import {
   adminKeys,
   changeRole,
+  fetchGuideInfo,
   fetchGuideTranslation,
   fetchReviews,
   saveGuideTranslation,
   searchMembers,
+  updateGuideInfo,
   updateReview,
+  type GuideInfoUpdateRequest,
   type GuideTranslationUpdateRequest,
   type ReviewType,
   type Role,
@@ -111,6 +117,34 @@ export function useSaveGuideTranslation(code: string, language: Language) {
           queryKey: adminKeys.guideAll(code),
           predicate: ({ queryKey }) => queryKey.at(-1) !== 'ko',
         })
+    },
+  })
+}
+
+/** CHK-06·NTF-07 source link and contact of an item (shared by languages). */
+export function useGuideInfo(code: string) {
+  return useQuery({
+    queryKey: adminKeys.guideInfo(code),
+    queryFn: () => fetchGuideInfo(code),
+    staleTime: 0,
+  })
+}
+
+/**
+ * Checklist, life change and rule screens show these values, so their cached
+ * data is refetched after a save.
+ */
+export function useUpdateGuideInfo(code: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: GuideInfoUpdateRequest) => updateGuideInfo(code, body),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(adminKeys.guideInfo(code), saved)
+      return Promise.all(
+        [checklistKeys.all, lifeChangeKeys.all, ruleKeys.all].map((queryKey) =>
+          queryClient.invalidateQueries({ queryKey }),
+        ),
+      )
     },
   })
 }

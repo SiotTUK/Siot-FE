@@ -88,6 +88,24 @@ export interface GuideTranslationUpdateRequest {
   noticeChanged: boolean
 }
 
+/** CHK-06·NTF-07 language-independent values of an item. */
+export interface GuideInfoResponse {
+  code: string
+  kind: 'CHECKLIST' | 'LIFE_CHANGE_TASK' | 'RULE'
+  sourceUrl: string | null
+  contact: string | null
+  updatedAt: string | null
+}
+
+/**
+ * PATCH: an omitted field stays as it is, an empty string clears it.
+ * `sourceUrl` must start with http:// or https:// (BE checks it too).
+ */
+export interface GuideInfoUpdateRequest {
+  sourceUrl?: string
+  contact?: string
+}
+
 export const adminKeys = {
   all: ['admin'] as const,
   members: (email: string, role: Role | '') =>
@@ -97,6 +115,7 @@ export const adminKeys = {
   guideAll: (code: string) => [...adminKeys.all, 'guide', code] as const,
   guide: (code: string, language: Language) =>
     [...adminKeys.guideAll(code), language] as const,
+  guideInfo: (code: string) => [...adminKeys.all, 'guide-info', code] as const,
 }
 
 function query(params: Record<string, string | number | boolean | undefined>) {
@@ -144,6 +163,20 @@ const guidePath = (code: string, language: Language) =>
 
 export function fetchGuideTranslation(code: string, language: Language) {
   return apiRequest<GuideTranslationResponse>(guidePath(code, language))
+}
+
+const guideInfoPath = (code: string) =>
+  `/api/admin/guides/${encodeURIComponent(code)}` as const
+
+export function fetchGuideInfo(code: string) {
+  return apiRequest<GuideInfoResponse>(guideInfoPath(code))
+}
+
+export function updateGuideInfo(code: string, body: GuideInfoUpdateRequest) {
+  return apiRequest<GuideInfoResponse>(guideInfoPath(code), {
+    method: 'PATCH',
+    body,
+  })
 }
 
 export function saveGuideTranslation(

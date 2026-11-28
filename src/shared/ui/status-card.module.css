@@ -33,6 +33,9 @@
   font: var(--text-caption);
   color: var(--muted-foreground);
 }
+.text .meta {
+  font-size: 12px;
+}
 
 .empty {
   display: flex;

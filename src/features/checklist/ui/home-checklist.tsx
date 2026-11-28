@@ -69,7 +69,10 @@ export function ChecklistSection({
           : t('checklist.needTitle', { count: openRequiredCount(items) })
       }
     >
-      <QueryState query={checklist}>
+      <QueryState
+        query={checklist}
+        keepContentOnError={Boolean(checklist.data)}
+      >
         {mark.isError && (
           <FormError message={markErrorMessage(t, mark.error)} />
         )}

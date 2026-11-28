@@ -166,7 +166,7 @@ function TaskOverview({
     mark.mutate({ item, mark: nextMark(item, action) })
 
   return (
-    <QueryState query={checklist}>
+    <QueryState query={checklist} keepContentOnError={Boolean(checklist.data)}>
       {checklist.isFetching && tasks.length === 0 ? (
         <PageLoader label={t('common.loading')} />
       ) : (

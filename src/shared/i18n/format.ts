@@ -71,6 +71,34 @@ export function koreaToday(now = new Date()): string {
   }).format(now)
 }
 
+/**
+ * Last-updated timestamp (epoch ms, e.g. TanStack Query `dataUpdatedAt`) in
+ * Korea time (`Asia/Seoul`) formatted for the reader's language (M13).
+ * Returns `''` when no data has been loaded yet (`<= 0` or invalid).
+ */
+export function formatKoreaUpdatedAt(
+  timestamp: number | null | undefined,
+  language: string,
+): string {
+  if (
+    typeof timestamp !== 'number' ||
+    !Number.isFinite(timestamp) ||
+    timestamp <= 0
+  ) {
+    return ''
+  }
+  const date = new Date(timestamp)
+  if (Number.isNaN(date.getTime())) return ''
+  return new Intl.DateTimeFormat(language, {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'Asia/Seoul',
+  }).format(date)
+}
+
 /** Time of day in the reader's language, e.g. "오후 2:10", "2:10 PM". */
 export function formatTime(date: Date, language: string) {
   return new Intl.DateTimeFormat(language, { timeStyle: 'short' }).format(date)

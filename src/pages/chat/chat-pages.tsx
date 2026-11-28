@@ -216,6 +216,7 @@ function ChatScreen() {
               ? { ...chat.messages, isPending: false }
               : chat.messages
           }
+          keepContentOnError={chat.list.length > 0}
         >
           <ChatIntro
             language={

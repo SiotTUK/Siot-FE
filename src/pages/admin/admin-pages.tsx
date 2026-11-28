@@ -40,14 +40,19 @@ function AdminScreen({
   )
 }
 
+/**
+ * Most frequent work first: queues that fill up every day (member reports,
+ * chatbot answers), then content that changes often (events, rules, checklist
+ * text), then occasional setup (source documents, admin roles).
+ */
 const menus = [
-  ['members', 'admin.menuMembers', 'admin.menuMembersDesc'],
+  ['reports', 'admin.menuReports', 'admin.menuReportsDesc'],
   ['reviews', 'admin.menuReviews', 'admin.menuReviewsDesc'],
+  ['events', 'admin.menuEvents', 'admin.menuEventsDesc'],
+  ['rules', 'admin.menuRules', 'admin.menuRulesDesc'],
   ['guides', 'admin.menuGuides', 'admin.menuGuidesDesc'],
   ['documents', 'admin.menuDocuments', 'admin.menuDocumentsDesc'],
-  ['rules', 'admin.menuRules', 'admin.menuRulesDesc'],
-  ['events', 'admin.menuEvents', 'admin.menuEventsDesc'],
-  ['reports', 'admin.menuReports', 'admin.menuReportsDesc'],
+  ['members', 'admin.menuMembers', 'admin.menuMembersDesc'],
 ] as const
 
 export function AdminHomePage() {

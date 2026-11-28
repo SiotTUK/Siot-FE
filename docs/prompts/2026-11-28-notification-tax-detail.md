@@ -1,7 +1,7 @@
 # 세금 알림을 누르면 세금 상세로
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: #134. PR 미정(초안). 이전 기록: [2026-11-26-notifications.md](2026-11-26-notifications.md)
+- 관련 이슈 / PR: #134, #144. 이전 기록: [2026-11-26-notifications.md](2026-11-26-notifications.md)
 
 ## 목적
 

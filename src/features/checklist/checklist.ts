@@ -106,17 +106,17 @@ export function lifeChangeOf(item: ChecklistItemResponse) {
 }
 
 /**
- * Why a life-change task shows up (Figma v2 F06b "자차가 있어서 보여요"),
- * from the server category: CAR tasks need a car, EDUCATION tasks a child at
- * school (BE seed: LC-01-3 CAR, LC-01-4 EDUCATION). Skipped on the car and
- * school life changes themselves, where every task has that reason.
+ * "자차가 있어서 보여요" under a life change's task (Figma v2 F06b, #137): the
+ * server's reason (BE #42) in the requested language, put in this screen's
+ * sentence. Nothing for common items, nor on screens that do not show it.
  */
-export function reasonOf(item: ChecklistItemResponse) {
-  const lifeChange = lifeChangeOf(item)
-  if (!lifeChange) return undefined
-  if (item.category === 'CAR' && lifeChange !== 'LC-04') return 'CAR'
-  if (item.category === 'EDUCATION' && lifeChange !== 'LC-03') return 'KIDS'
-  return undefined
+export function reasonLine(
+  t: TFunction,
+  item: ChecklistItemResponse,
+  shown: boolean,
+) {
+  if (!shown || !item.reasonLabel) return undefined
+  return t('checklist.reasonShown', { reason: item.reasonLabel })
 }
 
 /**

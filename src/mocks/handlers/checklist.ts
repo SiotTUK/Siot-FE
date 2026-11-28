@@ -228,6 +228,59 @@ function changeSeeds(member: MockMember): Seed[] {
   )
 }
 
+/**
+ * BE `ChecklistDisplayReason` (#42): why an item shows, from the onboarding
+ * answer its display rule checks above. Common items have none.
+ */
+const reasonOfCode: Record<string, string> = {
+  'CL-05': 'STAY_EXPIRY',
+  'LC-01-2': 'F4',
+  'LC-01-3': 'CAR',
+  'LC-01-4': 'KIDS',
+  'LC-02-1': 'PURPOSE_WORK',
+  'LC-02-2': 'PURPOSE_WORK',
+  'LC-02-3': 'PURPOSE_STUDY',
+}
+
+const reasonLabels: Record<string, Record<MockMember['language'], string>> = {
+  CAR: {
+    ko: '자차가 있어서',
+    en: 'Because you own a vehicle',
+    zh: '因为您有自己的车',
+    vi: 'Vì bạn có xe riêng',
+  },
+  KIDS: {
+    ko: '자녀가 있어서',
+    en: 'Because you have children',
+    zh: '因为您有子女',
+    vi: 'Vì bạn có con',
+  },
+  F4: {
+    ko: '재외동포(F-4)라서',
+    en: 'Because you are an overseas Korean (F-4)',
+    zh: '因为您是在外同胞（F-4）',
+    vi: 'Vì bạn là kiều bào (F-4)',
+  },
+  STAY_EXPIRY: {
+    ko: '체류 만료일을 입력해서',
+    en: 'Because you entered your stay expiry date',
+    zh: '因为您填写了滞留到期日',
+    vi: 'Vì bạn đã nhập ngày hết hạn lưu trú',
+  },
+  PURPOSE_STUDY: {
+    ko: '공부하러 와서',
+    en: 'Because you came to study',
+    zh: '因为您来学习',
+    vi: 'Vì bạn đến để học',
+  },
+  PURPOSE_WORK: {
+    ko: '일하러 와서',
+    en: 'Because you came to work',
+    zh: '因为您来工作',
+    vi: 'Vì bạn đến để làm việc',
+  },
+}
+
 /** BE `ChecklistCategories`: category names in the member's language. */
 const categoryLabels: Record<string, Record<MockMember['language'], string>> = {
   IMMIGRATION: {
@@ -344,6 +397,10 @@ function items(member: MockMember): ChecklistItemResponse[] {
       translated: member.language === 'ko',
       ...seed,
       ...guideInfoOverride(seed.code),
+      reason: reasonOfCode[seed.code] ?? null,
+      reasonLabel: reasonOfCode[seed.code]
+        ? (reasonLabels[reasonOfCode[seed.code]]?.[member.language] ?? null)
+        : null,
       // Like the BE: unknown category → the code, none → null.
       categoryLabel: seed.category
         ? (categoryLabels[seed.category]?.[member.language] ?? seed.category)

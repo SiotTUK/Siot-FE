@@ -1,4 +1,4 @@
-import type { TFunction } from 'i18next'
+import { createInstance, type TFunction } from 'i18next'
 import { describe, expect, it } from 'vitest'
 import { ApiError } from '@/shared/api/client'
 import type { ChecklistItemResponse } from './api'
@@ -19,10 +19,11 @@ import {
   optimisticStatus,
   pickDeadlineAlert,
   pickNextItem,
-  reasonOf,
+  reasonLine,
   translationPending,
   warningText,
 } from './checklist'
+import { checklistMessages } from './messages'
 
 const item = (over: Partial<ChecklistItemResponse>): ChecklistItemResponse => ({
   code: 'CL-01',
@@ -99,18 +100,37 @@ describe('checklist screen rules', () => {
     ).toBeUndefined()
   })
 
-  it('explains car and school tasks of a life change (F06b)', () => {
-    const task = (code: string, category: string) =>
-      item({ code, kind: 'LIFE_CHANGE_TASK', category })
-    expect(reasonOf(task('LC-01-3', 'CAR'))).toBe('CAR')
-    expect(reasonOf(task('LC-01-4', 'EDUCATION'))).toBe('KIDS')
-    // On the car and school changes themselves every task has that reason.
-    expect(reasonOf(task('LC-04-1', 'CAR'))).toBeUndefined()
-    expect(reasonOf(task('LC-03-1', 'EDUCATION'))).toBeUndefined()
-    expect(reasonOf(task('LC-01-1', 'IMMIGRATION'))).toBeUndefined()
-    expect(
-      reasonOf(item({ code: 'CL-08', category: 'FAMILY' })),
-    ).toBeUndefined()
+  it('puts the server reason in each language sentence (F06b, #137)', async () => {
+    const reasons = {
+      ko: ['자차가 있어서', '자차가 있어서 보여요'],
+      en: ['Because you own a vehicle', 'Because you own a vehicle'],
+      zh: ['因为您有自己的车', '因为您有自己的车而显示'],
+      vi: ['Vì bạn có xe riêng', 'Vì bạn có xe riêng nên hiển thị'],
+    } as const
+    for (const [language, [label, line]] of Object.entries(reasons)) {
+      const i18n = createInstance()
+      await i18n.init({
+        lng: language,
+        resources: {
+          [language]: {
+            translation:
+              checklistMessages[language as keyof typeof checklistMessages],
+          },
+        },
+        interpolation: { escapeValue: false },
+      })
+      const task = item({
+        kind: 'LIFE_CHANGE_TASK',
+        reason: 'CAR',
+        reasonLabel: label,
+      })
+      expect(reasonLine(i18n.t, task, true)).toBe(line)
+      // Not on screens that do not show it (home), nor for common items.
+      expect(reasonLine(i18n.t, task, false)).toBeUndefined()
+      expect(
+        reasonLine(i18n.t, item({ reason: null, reasonLabel: null }), true),
+      ).toBeUndefined()
+    }
   })
 
   it('shows "번역 준비 중" only when the server says translated is false', () => {

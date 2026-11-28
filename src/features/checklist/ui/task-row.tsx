@@ -7,7 +7,7 @@ import {
   deadlineText,
   dueSoon,
   lifeChangeOf,
-  reasonOf,
+  reasonLine,
   translationPending,
 } from '../checklist'
 import { GuideDetail } from './guide-detail'
@@ -44,7 +44,8 @@ export function TaskRow({
   const line = brief || item.summary
   const lifeChange = showLifeChange ? lifeChangeOf(item) : undefined
   // On the life change's own screen (F06b): "자차가 있어서 보여요" (#31).
-  const reason = showLifeChange ? undefined : reasonOf(item)
+  // F06b only: on home the life-change chip already says why.
+  const reason = reasonLine(t, item, !showLifeChange)
   // Unknown life-change codes get no chip rather than a raw key.
   const tag = lifeChange
     ? t(`checklist.lifeChangeTag.${lifeChange}`, { defaultValue: '' })
@@ -91,11 +92,7 @@ export function TaskRow({
           <strong className={styles.title}>{item.title}</strong>
         </span>
         {line && <span className={styles.line}>{line}</span>}
-        {reason && (
-          <span className={styles.reason}>
-            {t(`checklist.reasons.${reason}`)}
-          </span>
-        )}
+        {reason && <span className={styles.reason}>{reason}</span>}
       </button>
       {dDayText && (
         <span className={styles.dDay} data-overdue={overdue}>

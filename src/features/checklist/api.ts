@@ -67,6 +67,14 @@ export interface ChecklistItemResponse {
    * always in the requested language. Older responses may leave it out.
    */
   translated?: boolean
+  /**
+   * Why the member sees this item (BE #42): CAR · KIDS · HOUSE · F4 ·
+   * STAY_EXPIRY · PURPOSE_*; null for items everyone of the same user type
+   * sees. Older responses may leave it out.
+   */
+  reason?: string | null
+  /** `reason` in the requested language, e.g. "자차가 있어서". */
+  reasonLabel?: string | null
 }
 
 export interface ChecklistSummaryResponse {

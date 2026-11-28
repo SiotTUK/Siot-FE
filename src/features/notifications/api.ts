@@ -33,12 +33,30 @@ export interface NotificationItem {
   createdAt: string
 }
 
-/** BE NotificationPreferenceResponse (NTF-03). */
+/** BE NotificationPreferenceResponse (NTF-03, NTF-05). */
 export interface NotificationPreference {
   kind: string
   enabled: boolean
-  /** Saved by the BE, but the sending schedule is still fixed (D-7·D-1). */
+  /** Deprecated: stored but not used for sending. Sent back as read. */
   leadDays: number
+  /** NTF-05 also by email (needs a verified sign-up email). */
+  emailEnabled: boolean
+  /** D-n reminders actually sent, largest first. Empty for EVENT·NOTICE_CHANGED. */
+  leadDaysList: number[]
+  /** D-n this kind can pick (STAY_EXPIRY 120·60·30·14·7·1, CHECKLIST_DEADLINE·TAX 7·1). */
+  availableLeadDays: number[]
+}
+
+/**
+ * BE NotificationPreferenceUpdateRequest. `emailEnabled` and
+ * `leadDaysList` left out keep their saved values.
+ */
+export interface NotificationPreferenceUpdate {
+  kind: string
+  enabled: boolean
+  leadDays: number
+  emailEnabled?: boolean
+  leadDaysList?: number[]
 }
 
 /** Keyed by member so another account never sees cached notifications. */
@@ -79,7 +97,7 @@ export function fetchPreferences(signal?: AbortSignal) {
  * `isRequestCurrent` stops the write if the login session changed meanwhile.
  */
 export function updatePreference(
-  preference: NotificationPreference,
+  preference: NotificationPreferenceUpdate,
   isRequestCurrent: () => boolean,
 ) {
   return apiRequest<NotificationPreference>(`${base}/preferences`, {
@@ -94,6 +112,14 @@ export function markNotificationRead(
   isRequestCurrent: () => boolean,
 ) {
   return apiRequest<NotificationItem>(`${base}/${notificationId}/read`, {
+    method: 'PATCH',
+    isRequestCurrent,
+  })
+}
+
+/** Marks every notification read (204). */
+export function markAllNotificationsRead(isRequestCurrent: () => boolean) {
+  return apiRequest<void>(`${base}/read-all`, {
     method: 'PATCH',
     isRequestCurrent,
   })

@@ -6,6 +6,7 @@ import {
   fetchNotifications,
   fetchPreferences,
   fetchUnreadCount,
+  markAllNotificationsRead,
   markNotificationRead,
   updatePreference,
 } from './api'
@@ -70,14 +71,64 @@ describe('notifications contract', () => {
     const stay = prefs.find((pref) => pref.kind === 'STAY_EXPIRY')!
     expect(
       await updatePreference({ ...stay, enabled: false }, current),
-    ).toEqual({
+    ).toMatchObject({
       kind: 'STAY_EXPIRY',
       enabled: false,
       leadDays: 30,
     })
     expect(
       (await fetchPreferences()).find((pref) => pref.kind === 'STAY_EXPIRY'),
-    ).toEqual({ kind: 'STAY_EXPIRY', enabled: false, leadDays: 30 })
+    ).toMatchObject({ kind: 'STAY_EXPIRY', enabled: false, leadDays: 30 })
+  })
+
+  it('saves email and D-n reminders, keeping what is left out', async () => {
+    await login({ email: 'taken@example.com', password: 'abcd1234' })
+    const tax = (await fetchPreferences()).find((pref) => pref.kind === 'TAX')!
+    expect(tax).toMatchObject({
+      emailEnabled: true,
+      leadDaysList: [7, 1],
+      availableLeadDays: [7, 1],
+    })
+    await updatePreference(
+      { kind: 'TAX', enabled: true, leadDays: tax.leadDays, leadDaysList: [7] },
+      current,
+    )
+    const saved = await updatePreference(
+      {
+        kind: 'TAX',
+        enabled: true,
+        leadDays: tax.leadDays,
+        emailEnabled: false,
+      },
+      current,
+    )
+    expect(saved).toMatchObject({ emailEnabled: false, leadDaysList: [7] })
+    await expect(
+      updatePreference(
+        { kind: 'TAX', enabled: true, leadDays: 7, leadDaysList: [30] },
+        current,
+      ),
+    ).rejects.toMatchObject({ status: 400, code: 'INVALID_INPUT' })
+    await expect(
+      updatePreference(
+        {
+          kind: 'NOTICE_CHANGED',
+          enabled: true,
+          leadDays: 0,
+          leadDaysList: [1],
+        },
+        current,
+      ),
+    ).rejects.toMatchObject({ status: 400 })
+  })
+
+  it('marks every notification read', async () => {
+    await login({ email: 'taken@example.com', password: 'abcd1234' })
+    expect((await fetchUnreadCount()).unreadCount).toBeGreaterThan(0)
+    await markAllNotificationsRead(current)
+    expect((await fetchUnreadCount()).unreadCount).toBe(0)
+    const page = await fetchNotifications(0)
+    expect(page.content.every((item) => item.read)).toBe(true)
   })
 
   it('marks one read, lowers the count and rejects unknown ids', async () => {

@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/shared/i18n/error-message'
+import { Button } from '@/shared/ui/button'
 import { FormError } from '@/shared/ui/page'
 import { InfiniteList } from '@/shared/ui/query-state'
 import { EmptyState } from '@/shared/ui/status-card'
@@ -11,20 +12,44 @@ import {
   notificationGroup,
   notificationPath,
 } from '../notifications'
-import { useMarkNotificationRead, useNotifications } from '../use-notifications'
+import {
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+  useNotifications,
+  useUnreadCount,
+} from '../use-notifications'
 import styles from './notifications.module.css'
 
 /**
  * M09 알림 목록, newest first. Tapping one opens its screen (linkType) and
- * marks it read; one without a screen only marks read.
+ * marks it read; one without a screen only marks read. "모두 읽음" sits above
+ * the list while something is unread (not in Figma v2; placed with the team).
  */
 export function NotificationList({ memberId }: { memberId: number }) {
   const { t } = useTranslation()
   const notifications = useNotifications(memberId)
   const markRead = useMarkNotificationRead(memberId)
+  const markAll = useMarkAllNotificationsRead(memberId)
+  const unread = useUnreadCount(memberId).data ?? 0
 
   return (
     <>
+      {unread > 0 && (
+        <div className={styles.listTools}>
+          <Button
+            variant="text"
+            disabled={markAll.isPending}
+            onClick={markAll.markAll}
+          >
+            {t('notifications.readAll')}
+          </Button>
+        </div>
+      )}
+      {markAll.isError && (
+        <FormError
+          message={`${t('notifications.readAllFailed')} ${errorMessage(t, markAll.error)}`}
+        />
+      )}
       {markRead.isError && (
         <FormError
           message={`${t('notifications.readFailed')} ${errorMessage(t, markRead.error)}`}

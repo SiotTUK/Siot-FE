@@ -11,13 +11,17 @@ import {
   fetchNotifications,
   fetchPreferences,
   fetchUnreadCount,
+  markAllNotificationsRead,
   markNotificationRead,
   notificationKeys,
   updatePreference,
   type NotificationItem,
   type NotificationPreference,
 } from './api'
-import { groupUpdates, type PreferenceGroup } from './notifications'
+import type { PreferenceUpdate } from './notifications'
+
+/** Builds the PUT bodies from the settings as last read. */
+type BuildUpdates = (current: NotificationPreference[]) => PreferenceUpdate[]
 
 /**
  * Writes below carry the login session they started in (`isSessionCurrent`):
@@ -35,25 +39,23 @@ export function usePreferences(memberId: number) {
 }
 
 /**
- * Turns one settings group on or off (one PUT per BE kind). It waits for
- * every PUT, even after one fails, so the re-read below sees the final state.
+ * Saves a settings change (a group on/off, email, D-7·D-1) as one PUT per BE
+ * kind. It waits for every PUT, even after one fails, so the re-read below
+ * sees the final state.
  */
-export function useUpdatePreferenceGroup(memberId: number) {
+export function useUpdatePreferences(memberId: number) {
   const queryClient = useQueryClient()
   const key = notificationKeys.preferences(memberId)
   const mutation = useMutation({
     onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
     mutationFn: async ({
-      group,
-      enabled,
+      build,
       isSessionCurrent,
-    }: SessionScoped & { group: PreferenceGroup; enabled: boolean }) => {
+    }: SessionScoped & { build: BuildUpdates }) => {
       const current =
         queryClient.getQueryData<NotificationPreference[]>(key) ?? []
       const results = await Promise.allSettled(
-        groupUpdates(current, group, enabled).map((pref) =>
-          updatePreference(pref, isSessionCurrent),
-        ),
+        build(current).map((pref) => updatePreference(pref, isSessionCurrent)),
       )
       const saved: NotificationPreference[] = []
       for (const result of results) {
@@ -80,10 +82,9 @@ export function useUpdatePreferenceGroup(memberId: number) {
 
   return {
     ...mutation,
-    save: (group: PreferenceGroup, enabled: boolean) =>
+    save: (build: BuildUpdates) =>
       mutation.mutate({
-        group,
-        enabled,
+        build,
         isSessionCurrent: captureSessionScope(queryClient, memberId),
       }),
   }
@@ -151,5 +152,46 @@ export function useMarkNotificationRead(memberId: number) {
         },
       )
     },
+  }
+}
+
+/** "모두 읽음": marks every notification read and clears the badge. */
+export function useMarkAllNotificationsRead(memberId: number) {
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    onMutate: ({ isSessionCurrent }) => ({ isSessionCurrent }),
+    mutationFn: ({ isSessionCurrent }: SessionScoped) =>
+      markAllNotificationsRead(isSessionCurrent),
+    onSuccess: (_result, { isSessionCurrent }) => {
+      if (!isSessionCurrent()) return
+      const readAt = new Date().toISOString()
+      queryClient.setQueryData<InfiniteData<PageResponse<NotificationItem>>>(
+        notificationKeys.list(memberId),
+        (data) =>
+          data && {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              content: page.content.map((item) =>
+                item.read ? item : { ...item, read: true, readAt },
+              ),
+            })),
+          },
+      )
+      queryClient.setQueryData(notificationKeys.unread(memberId), {
+        unreadCount: 0,
+      })
+      // The server's own read times replace the local ones.
+      void queryClient.invalidateQueries({
+        queryKey: notificationKeys.member(memberId),
+      })
+    },
+  })
+  return {
+    ...mutation,
+    markAll: () =>
+      mutation.mutate({
+        isSessionCurrent: captureSessionScope(queryClient, memberId),
+      }),
   }
 }

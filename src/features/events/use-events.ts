@@ -54,11 +54,15 @@ export function useEventCalendar(
   })
 }
 
-/** Saved (♥) event IDs for the cards. Errors leave every ♥ empty. */
-export function useSavedEventIds(memberId: number) {
-  const query = useQuery({
+/** Saved (♥) event IDs, newest first (M09 찜한 행사 list). */
+export function useSavedEventIdList(memberId: number) {
+  return useQuery({
     queryKey: eventKeys.saved(memberId),
     queryFn: ({ signal }) => fetchSavedEventIds(signal),
   })
-  return new Set(query.data ?? [])
+}
+
+/** Saved (♥) event IDs for the cards. Errors leave every ♥ empty. */
+export function useSavedEventIds(memberId: number) {
+  return new Set(useSavedEventIdList(memberId).data ?? [])
 }

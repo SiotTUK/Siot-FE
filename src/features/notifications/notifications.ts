@@ -99,7 +99,27 @@ export const preferenceGroups = {
 } as const
 export type PreferenceGroup = keyof typeof preferenceGroups
 
-type Preference = { kind: string; enabled: boolean; leadDays: number }
+type Preference = {
+  kind: string
+  enabled: boolean
+  leadDays: number
+  emailEnabled?: boolean
+  leadDaysList?: number[]
+}
+
+/** One PUT body: what is left out keeps its saved value. */
+export type PreferenceUpdate = {
+  kind: string
+  enabled: boolean
+  leadDays: number
+  emailEnabled?: boolean
+  leadDaysList?: number[]
+}
+
+function onOff(on: number, total: number): 'on' | 'off' | 'partial' {
+  if (on === 0) return 'off'
+  return on === total ? 'on' : 'partial'
+}
 
 /**
  * A group's switch state: on when every kind is on, off when none is, and
@@ -111,9 +131,7 @@ export function groupState(
 ): 'on' | 'off' | 'partial' {
   const kinds: readonly string[] = preferenceGroups[group]
   const inGroup = prefs.filter((pref) => kinds.includes(pref.kind))
-  const on = inGroup.filter((pref) => pref.enabled).length
-  if (on === 0) return 'off'
-  return on === inGroup.length ? 'on' : 'partial'
+  return onOff(inGroup.filter((pref) => pref.enabled).length, inGroup.length)
 }
 
 /** The PUT bodies for switching a group, keeping each kind's leadDays. */
@@ -121,11 +139,75 @@ export function groupUpdates(
   prefs: Preference[],
   group: PreferenceGroup,
   enabled: boolean,
-): Preference[] {
+): PreferenceUpdate[] {
   const kinds: readonly string[] = preferenceGroups[group]
   return prefs
     .filter((pref) => kinds.includes(pref.kind))
     .map((pref) => ({ kind: pref.kind, enabled, leadDays: pref.leadDays }))
+}
+
+/**
+ * M09 "이메일로도 받기 (가입 이메일)" (NTF-05). One checkbox for every kind,
+ * events included; the BE sends email only for kinds that are on.
+ */
+export function emailState(prefs: Preference[]) {
+  return onOff(prefs.filter((pref) => pref.emailEnabled).length, prefs.length)
+}
+
+export function emailUpdates(
+  prefs: Preference[],
+  emailEnabled: boolean,
+): PreferenceUpdate[] {
+  return prefs.map((pref) => ({
+    kind: pref.kind,
+    enabled: pref.enabled,
+    leadDays: pref.leadDays,
+    emailEnabled,
+  }))
+}
+
+/** M09 "기한 알림 시점 D-7 · D-1". */
+export const deadlineLeadDays = [7, 1] as const
+export type DeadlineLeadDay = (typeof deadlineLeadDays)[number]
+
+/** A day is picked when every 생활 마감 kind sends it. */
+export function pickedLeadDays(prefs: Preference[]): DeadlineLeadDay[] {
+  const kinds: readonly string[] = preferenceGroups.deadline
+  const inGroup = prefs.filter((pref) => kinds.includes(pref.kind))
+  if (!inGroup.length) return []
+  return deadlineLeadDays.filter((day) =>
+    inGroup.every((pref) => pref.leadDaysList?.includes(day)),
+  )
+}
+
+/**
+ * PUT bodies for the picked D-7·D-1 (at least one). Checklist deadlines and
+ * taxes get exactly the picked days; stay expiry keeps its earlier reminders
+ * (120·60·30·14) and only D-7·D-1 follow the pick.
+ */
+export function leadDaysUpdates(
+  prefs: Preference[],
+  picked: readonly DeadlineLeadDay[],
+): PreferenceUpdate[] {
+  const kinds: readonly string[] = preferenceGroups.deadline
+  const pickedDays: readonly number[] = picked
+  const fixed: readonly number[] = deadlineLeadDays
+  return prefs
+    .filter((pref) => kinds.includes(pref.kind))
+    .map((pref) => {
+      const kept = (pref.leadDaysList ?? []).filter(
+        (day) => !fixed.includes(day),
+      )
+      const leadDaysList = [...new Set([...kept, ...pickedDays])].sort(
+        (a, b) => b - a,
+      )
+      return {
+        kind: pref.kind,
+        enabled: pref.enabled,
+        leadDays: pref.leadDays,
+        leadDaysList,
+      }
+    })
 }
 
 /** Badge number in the top bar: nothing at 0, "99+" past 99. */

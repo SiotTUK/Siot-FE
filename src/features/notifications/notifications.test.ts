@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+  emailState,
+  emailUpdates,
   groupState,
   groupUpdates,
+  leadDaysUpdates,
+  pickedLeadDays,
   notificationDay,
   notificationGroup,
   notificationPath,
@@ -103,5 +107,83 @@ describe('notification screen rules', () => {
     expect(unreadBadge(0)).toBeUndefined()
     expect(unreadBadge(2)).toBe('2')
     expect(unreadBadge(120)).toBe('99+')
+  })
+
+  describe('email and D-n reminders', () => {
+    const full = [
+      {
+        kind: 'STAY_EXPIRY',
+        enabled: true,
+        leadDays: 30,
+        emailEnabled: true,
+        leadDaysList: [120, 60, 30, 14, 7, 1],
+      },
+      {
+        kind: 'CHECKLIST_DEADLINE',
+        enabled: true,
+        leadDays: 7,
+        emailEnabled: true,
+        leadDaysList: [7, 1],
+      },
+      {
+        kind: 'TAX',
+        enabled: true,
+        leadDays: 7,
+        emailEnabled: false,
+        leadDaysList: [7],
+      },
+      {
+        kind: 'EVENT',
+        enabled: true,
+        leadDays: 1,
+        emailEnabled: true,
+        leadDaysList: [],
+      },
+      {
+        kind: 'NOTICE_CHANGED',
+        enabled: true,
+        leadDays: 0,
+        emailEnabled: true,
+        leadDaysList: [],
+      },
+    ]
+
+    it('shows email on, off or partial across every kind', () => {
+      expect(emailState(full)).toBe('partial')
+      expect(
+        emailState(full.map((pref) => ({ ...pref, emailEnabled: true }))),
+      ).toBe('on')
+      expect(emailUpdates(full, false)).toHaveLength(5)
+      expect(emailUpdates(full, false)[2]).toEqual({
+        kind: 'TAX',
+        enabled: true,
+        leadDays: 7,
+        emailEnabled: false,
+      })
+    })
+
+    it('picks a day only when every 생활 마감 kind sends it', () => {
+      expect(pickedLeadDays(full)).toEqual([7])
+      expect(pickedLeadDays([])).toEqual([])
+    })
+
+    it('keeps the earlier stay expiry reminders and sets D-7·D-1', () => {
+      expect(
+        leadDaysUpdates(full, [1]).map(({ kind, leadDaysList }) => [
+          kind,
+          leadDaysList,
+        ]),
+      ).toEqual([
+        ['STAY_EXPIRY', [120, 60, 30, 14, 1]],
+        ['CHECKLIST_DEADLINE', [1]],
+        ['TAX', [1]],
+      ])
+      expect(leadDaysUpdates(full, [7, 1])[2]).toEqual({
+        kind: 'TAX',
+        enabled: true,
+        leadDays: 7,
+        leadDaysList: [7, 1],
+      })
+    })
   })
 })

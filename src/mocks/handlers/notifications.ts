@@ -114,13 +114,27 @@ const defaultLeadDays: Record<string, number> = {
   NOTICE_CHANGED: 0,
 }
 
+/** BE NotificationLeadDays.available: the D-n each kind can pick. */
+const availableLeadDays: Record<string, number[]> = {
+  STAY_EXPIRY: [120, 60, 30, 14, 7, 1],
+  CHECKLIST_DEADLINE: [7, 1],
+  TAX: [7, 1],
+}
+
 function preferencesFor(email: string) {
   const saved = state.notificationPrefs[email] ?? {}
-  return Object.entries(defaultLeadDays).map(([kind, leadDays]) => ({
-    kind,
-    enabled: saved[kind]?.enabled ?? true,
-    leadDays: saved[kind]?.leadDays ?? leadDays,
-  }))
+  return Object.entries(defaultLeadDays).map(([kind, leadDays]) => {
+    const available = availableLeadDays[kind] ?? []
+    return {
+      kind,
+      enabled: saved[kind]?.enabled ?? true,
+      leadDays: saved[kind]?.leadDays ?? leadDays,
+      // BE defaults: email on, every available D-n.
+      emailEnabled: saved[kind]?.emailEnabled ?? true,
+      leadDaysList: saved[kind]?.leadDaysList ?? available,
+      availableLeadDays: available,
+    }
+  })
 }
 
 export const notificationHandlers = [
@@ -137,16 +151,63 @@ export const notificationHandlers = [
     const kind = typeof input.kind === 'string' ? input.kind.toUpperCase() : ''
     if (!kind || typeof input.enabled !== 'boolean')
       return error(400, 'INVALID_INPUT', '요청 값이 올바르지 않습니다.')
+    if (!(kind in defaultLeadDays))
+      return error(
+        400,
+        'INVALID_INPUT',
+        `kind 는 ${Object.keys(defaultLeadDays).join(', ')} 중 하나입니다.`,
+      )
     // Like the BE: a missing leadDays is stored as 0.
     const leadDays = typeof input.leadDays === 'number' ? input.leadDays : 0
-    ;(state.notificationPrefs[member.email] ??= {})[kind] = {
+    const available = availableLeadDays[kind] ?? []
+    const list: unknown = input.leadDaysList
+    if (list !== undefined && list !== null) {
+      if (!available.length)
+        return error(
+          400,
+          'INVALID_INPUT',
+          `${kind} 는 알림 시점을 고를 수 없습니다.`,
+        )
+      if (
+        !Array.isArray(list) ||
+        !list.length ||
+        list.some((day) => !available.includes(day as number))
+      )
+        return error(
+          400,
+          'INVALID_INPUT',
+          `leadDaysList 는 ${available.join(', ')} 중에서 고릅니다.`,
+        )
+    }
+    const prefs = (state.notificationPrefs[member.email] ??= {})
+    const before = prefs[kind]
+    prefs[kind] = {
       enabled: input.enabled,
       leadDays,
+      // Left out keeps the saved value.
+      emailEnabled:
+        typeof input.emailEnabled === 'boolean'
+          ? input.emailEnabled
+          : before?.emailEnabled,
+      leadDaysList: Array.isArray(list)
+        ? [...new Set(list as number[])].sort((a, b) => b - a)
+        : before?.leadDaysList,
     }
     persist()
     return HttpResponse.json({
-      data: { kind, enabled: input.enabled, leadDays },
+      data: preferencesFor(member.email).find((pref) => pref.kind === kind),
     })
+  }),
+
+  http.patch(`${path}/read-all`, () => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+    const reads = (state.notificationReads[member.email] ??= {})
+    const now = new Date().toISOString()
+    for (const item of notificationsFor(member.email))
+      if (!item.read) reads[item.notificationId] = now
+    persist()
+    return new HttpResponse(null, { status: 204 })
   }),
 
   http.get(path, ({ request }) => {

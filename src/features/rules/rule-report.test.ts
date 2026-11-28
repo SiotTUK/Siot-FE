@@ -67,7 +67,10 @@ describe('rule report (정보 오류 신고)', () => {
     }
     await expect(
       submitRuleReport({ ...report, guideCode: 'waste-food' }, current),
-    ).resolves.toMatchObject({ reportId: 1 })
+    ).resolves.toMatchObject({
+      reportId: expect.any(Number),
+      status: 'RECEIVED',
+    })
     await expect(
       submitRuleReport({ ...report, guideCode: 'no-such-rule' }, current),
     ).rejects.toMatchObject({ status: 404, code: 'GUIDE_NOT_FOUND' })

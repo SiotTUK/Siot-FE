@@ -4,7 +4,7 @@ export const pageMessages = defineMessages({
   ko: {
     languagePage: {
       title: '언어를 골라 주세요',
-      haveAccount: '이미 회원이에요?',
+      haveAccount: '이미 회원이신가요?',
       login: '로그인',
       autoNext: '누르면 바로 다음 화면으로 넘어가요',
     },

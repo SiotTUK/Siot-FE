@@ -127,12 +127,11 @@
   color: var(--warning);
 }
 .inlineLink {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--muted-foreground);
   text-align: center;
 }
 .inlineLink a {
-  margin-left: 6px;
   font-weight: 700;
   text-decoration: none;
 }

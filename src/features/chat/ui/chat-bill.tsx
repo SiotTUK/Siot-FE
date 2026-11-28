@@ -102,7 +102,7 @@ function ResultSummary({
     <div className={`${billStyles.theme} ${styles.billResult}`}>
       <Stack gap={12}>
         {summary && <p>{summary}</p>}
-        <dl className={billStyles.facts}>
+        <dl className={styles.billFacts}>
           <div>
             <dt>{t('bill.amount')}</dt>
             <dd>
@@ -131,7 +131,8 @@ function ResultSummary({
         </dl>
         <p className={styles.billVerify}>{t('chat.bill.verify')}</p>
         <ButtonLink
-          className={billStyles.primary}
+          className={billStyles.secondary}
+          variant="secondary"
           to={`${billTranslationPath}/${translationId}`}
           state={{ from: conversationPath }}
         >

@@ -184,3 +184,54 @@ export const UserIcon = () => (
     <path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2" />
   </Icon>
 )
+
+/* Bill translation (Figma v2 M11): album, PDF, document, privacy, tips. */
+export const ImageIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <rect x="4" y="4" width="16" height="16" rx="3" />
+    <circle cx="9" cy="9.5" r="1.5" fill="currentColor" stroke="none" />
+    <path d="m5 18 5-5 4 4 2-2 3 3" />
+  </Icon>
+)
+
+export const FileTextIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4M9 13h6M9 17h6" />
+  </Icon>
+)
+
+export const DocumentIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M6 3h8l4 4v14H6z" />
+    <path d="M14 3v4h4" />
+  </Icon>
+)
+
+export const FileErrorIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z" />
+    <path d="M14 2v6h6M14.5 12.5l-5 5M9.5 12.5l5 5" />
+  </Icon>
+)
+
+export const LockIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+  </Icon>
+)
+
+export const LightbulbIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <path d="M9 18h6M10 21h4" />
+    <path d="M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z" />
+  </Icon>
+)
+
+export const InfoIcon = (props: SVGProps<SVGSVGElement>) => (
+  <Icon {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v6M12 7.5V8" />
+  </Icon>
+)

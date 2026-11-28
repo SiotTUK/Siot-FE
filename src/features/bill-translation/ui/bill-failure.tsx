@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/shared/ui/button'
+import { FileErrorIcon } from '@/shared/ui/icons'
 import { Card } from '@/shared/ui/page'
 import type { BillTranslation } from '../api'
 import styles from './bill.module.css'
@@ -18,7 +19,10 @@ export function BillFailureCard({
   const reason = result.retake?.reason
   return (
     <Card>
-      <strong className={styles.errorTitle}>{t('bill.recognition')}</strong>
+      <strong className={styles.errorTitle}>
+        <FileErrorIcon />
+        {t('bill.recognition')}
+      </strong>
       <p role="alert">
         {reason
           ? t(`bill.retake.${reason}`, {

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ClockIcon } from '@/shared/ui/icons'
 import { Card, Muted } from '@/shared/ui/page'
 import styles from './bill.module.css'
 
@@ -17,7 +18,7 @@ export function BillProcessingCard({ children }: { children?: ReactNode }) {
   return (
     <Card>
       <div className={styles.status} role="status">
-        <span className={styles.spinner} aria-hidden="true" />
+        <ClockIcon className={styles.statusIcon} />
         <div>
           <strong>{t('bill.processing')}</strong>
           <Muted>

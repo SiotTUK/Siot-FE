@@ -1,15 +1,15 @@
 /*
- * Colours of the bill parts. `.body` is the bill screens; put `.theme` around
- * the same parts anywhere else, including inside a sheet.
+ * Colours of the bill parts (Figma v2 M11). `.body` is the bill screens; put
+ * `.theme` around the same parts anywhere else, including inside a sheet.
  */
 .theme,
 .body {
-  --bill-action: #126f98;
-  --bill-action-hover: #0e597b;
-  --bill-tint: #e2f2f6;
-  --bill-hero: #ffb16f;
-  --bill-hero-text: #44240e;
-  --bill-privacy: #fff4da;
+  --bill-action: var(--primary);
+  --bill-action-hover: var(--primary-hover);
+  --bill-tint: var(--secondary);
+  --bill-hero: #fff6da; /* Mascot/Toro Tint */
+  --bill-hero-text: var(--foreground);
+  --bill-privacy: #fff6da;
 }
 
 .body {
@@ -18,35 +18,74 @@
   overflow-wrap: anywhere;
 }
 
-.hero,
-.centerIntro {
-  display: grid;
-  gap: var(--space-4);
-}
-
+/* M11a "안내 카드" / M11c "요약 카드": text left, mascot right. */
 .hero {
-  padding: var(--space-16);
-  border-radius: var(--radius-16);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 18px 12px 18px 20px;
+  border-radius: 20px;
   background: var(--bill-hero);
   color: var(--bill-hero-text);
 }
 
-.hero h2,
+.heroText {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.hero h2 {
+  font: var(--text-title);
+}
+
+.hero p {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.resultHero {
+  background: var(--primary);
+  color: var(--card);
+}
+
+.resultHero p {
+  color: var(--card);
+}
+
+/* White pills on the result card: D-day, issuer. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.resultHero .chips span {
+  padding: var(--space-4) 10px;
+  border-radius: 999px;
+  background: var(--card);
+  color: #016ba8;
+}
+
+/* M11b·M11d: big mascot, title, one line. */
+.centerIntro {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-8);
+  padding: var(--space-24) 0 var(--space-8);
+  text-align: center;
+}
+
 .centerIntro h2 {
   font: var(--text-heading);
 }
 
-.hero p {
-  font: var(--text-caption);
-}
-
-.hero .countdown {
-  font-weight: 700;
-}
-
-.centerIntro {
-  padding-block: var(--space-8);
-  text-align: center;
+.centerIntro p {
+  margin: 0;
+  font: var(--text-body);
+  color: var(--muted-foreground);
 }
 
 .primary:is(:any-link, :enabled) {
@@ -59,7 +98,7 @@
 
 .secondary:is(:any-link, :enabled) {
   background: var(--bill-tint);
-  color: var(--bill-action-hover);
+  color: var(--bill-action);
 }
 
 .actions {
@@ -72,33 +111,173 @@
   min-width: 0;
 }
 
-.status {
-  display: flex;
-  align-items: flex-start;
+/* M11a "사진 찍기": dashed card with a blue round camera. */
+.cameraCard {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  padding: 28px var(--space-16);
+  border: 1.5px dashed var(--primary);
+  border-radius: 20px;
+  background: var(--card);
+  color: var(--foreground);
+  text-align: center;
+  cursor: pointer;
+}
+
+.cameraCard strong {
+  font: var(--text-heading);
+}
+
+.cameraCard > span:last-child {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.cameraCard:focus-visible,
+.options button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.cameraIcon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--card);
+}
+
+.cameraIcon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* M11a "다른 방법": two white buttons with an icon. */
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-12);
 }
 
-.spinner {
+.options button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 14px;
+  border: 0;
+  border-radius: var(--radius-16);
+  background: var(--card);
+  font: var(--text-label);
+  color: var(--foreground);
+  text-align: start;
+  cursor: pointer;
+}
+
+.options svg {
   flex: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  border: 2px solid var(--bill-tint);
-  border-top-color: var(--bill-action);
-  border-radius: 50%;
-  animation: bill-spin 0.9s linear infinite;
+  color: var(--muted-foreground);
 }
 
-@keyframes bill-spin {
-  to {
-    transform: rotate(360deg);
-  }
+/* M11a "개인정보": lock + one line; the full notice opens below. */
+.privacyLine summary,
+.tipsRow summary {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .spinner {
-    animation-duration: 2.5s;
-  }
+.privacyLine summary::-webkit-details-marker,
+.tipsRow summary::-webkit-details-marker {
+  display: none;
+}
+
+.privacyLine summary {
+  gap: 10px;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.privacyLine summary > svg:first-child {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: #3d7f44;
+}
+
+.privacyLine summary > span {
+  flex: 1;
+}
+
+.privacyLine > p {
+  margin: var(--space-8) 0 0;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+  transition: transform 0.2s;
+}
+
+details[open] > summary .chevron {
+  transform: rotate(180deg);
+}
+
+/* M11a "잘 찍는 방법" row. */
+.tipsRow {
+  padding: var(--space-4) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.tipsRow summary {
+  gap: var(--space-12);
+  padding-block: 14px;
+  font: var(--text-label);
+  color: var(--foreground);
+}
+
+.tipsRow summary > span:nth-child(2) {
+  flex: 1;
+}
+
+.tipsRow[open] {
+  padding-bottom: var(--space-16);
+}
+
+.tipsIcon {
+  display: grid;
+  place-items: center;
+  padding: var(--space-8);
+  border-radius: 10px;
+  background: #fff6da;
+  color: #489550; /* Mascot/Toro Deep */
+}
+
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+}
+
+.statusIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: #1769dc;
 }
 
 .privacy > div {
@@ -106,7 +285,22 @@
 }
 
 .errorTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  font: var(--text-label);
   color: var(--destructive);
+}
+
+.errorTitle svg {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: #1769dc;
+}
+
+.cardTitle {
+  font: var(--text-label);
 }
 
 .help {
@@ -133,6 +327,7 @@
   overflow-wrap: anywhere;
 }
 
+/* Label above value (the chat card uses this). */
 .facts {
   display: grid;
   gap: var(--space-12);
@@ -156,6 +351,87 @@
 .facts dd p,
 .facts dd ul {
   flex-basis: 100%;
+}
+
+/* M11c "핵심 정보": label left (72px), value right, lines between rows. */
+.factCard {
+  padding: var(--space-4) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.factTable {
+  margin: 0;
+}
+
+.factTable > div {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--space-12);
+  padding-block: 14px;
+}
+
+.factTable > div + div {
+  border-top: 1px solid var(--border);
+}
+
+.factTable dt {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.factTable dd {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  font: var(--text-label);
+  color: var(--foreground);
+}
+
+.factTable dd p {
+  margin: 0;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+/* M11c "확인 안내": red info icon and one line. */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+}
+
+.check > svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--destructive);
+}
+
+.check p {
+  margin: 0;
+}
+
+/* M11c "원문과 함께 보기": the original lines in one card. */
+.lines {
+  margin: 0;
+  padding: var(--space-4) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+  list-style: none;
+}
+
+.lines li {
+  padding-block: 12px;
+  font: var(--text-body);
+  color: var(--foreground);
+}
+
+.lines li + li {
+  border-top: 1px solid var(--border);
 }
 
 .disclosure {
@@ -184,16 +460,26 @@
   font: var(--text-caption);
 }
 
+/* M11a "최근 번역": a tinted document icon before each title. */
 .recent a::before {
   display: inline-block;
-  width: 0.7em;
-  height: 0.9em;
-  margin-inline-end: 0.45em;
-  border: 1px solid currentColor;
-  border-radius: 2px;
-  vertical-align: -0.08em;
-  background:
-    linear-gradient(currentColor, currentColor) center 35% / 55% 1px no-repeat,
-    linear-gradient(currentColor, currentColor) center 65% / 55% 1px no-repeat;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-inline-end: var(--space-12);
+  padding: var(--space-8);
+  border-radius: 10px;
+  background: #e3f2f7
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23018eda' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='M6 3h8l4 4v14H6z'/%3E%3Cpath d='M14 3v4h4'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+  vertical-align: middle;
   content: '';
+}
+
+.recent a {
+  display: inline-flex;
+  align-items: center;
+  font: var(--text-label);
+  color: var(--foreground);
+  text-decoration: none;
 }

@@ -1,7 +1,7 @@
 # 좁은 화면 가로 스크롤·헤더 제목 잘림·홈 제목 구조 수정
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: [#127](https://github.com/SiotTUK/Siot-FE/issues/127), [#128](https://github.com/SiotTUK/Siot-FE/issues/128), [#130](https://github.com/SiotTUK/Siot-FE/issues/130) / 미생성. 발견 경위: [#74](https://github.com/SiotTUK/Siot-FE/issues/74) 점검
+- 관련 이슈 / PR: [#127](https://github.com/SiotTUK/Siot-FE/issues/127), [#128](https://github.com/SiotTUK/Siot-FE/issues/128), [#130](https://github.com/SiotTUK/Siot-FE/issues/130) / [#136](https://github.com/SiotTUK/Siot-FE/pull/136). 발견 경위: [#74](https://github.com/SiotTUK/Siot-FE/issues/74) 점검
 
 ## 목적
 

@@ -12,6 +12,7 @@ import {
   useMarkChecklistItem,
 } from '@/features/checklist/use-checklist'
 import { currentLanguage } from '@/shared/i18n'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { PageBody, PageLoader } from '@/shared/ui/mobile-frame'
 import { Muted } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
@@ -27,6 +28,7 @@ export function ChecklistDetailPage() {
 
   const query = useChecklistItem(memberId, language, code)
   const mark = useMarkChecklistItem(memberId, language)
+  useDocumentTitle(query.item?.title, t('checklist.detail.screenTitle'))
 
   if (query.isPending && !query.data) {
     return <PageLoader label={t('common.loading')} />

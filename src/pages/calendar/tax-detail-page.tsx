@@ -6,6 +6,7 @@ import { useTaxDetail } from '@/features/calendar/use-taxes'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Muted, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
@@ -73,6 +74,7 @@ function TaxDetail({
   const { t } = useTranslation()
   const language = currentLanguage()
   const query = useTaxDetail(scheduleId, language, source)
+  useDocumentTitle(query.data?.title, t(`calendar.${source}.screenTitle`))
   if (query.error instanceof ApiError && query.error.status === 404)
     return <Muted>{t(`calendar.${source}.notFound`)}</Muted>
 

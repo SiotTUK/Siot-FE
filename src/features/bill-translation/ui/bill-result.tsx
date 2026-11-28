@@ -4,6 +4,7 @@ import { TaxDetailLink } from '@/features/calendar/ui/tax-detail-link'
 import { useChecklist } from '@/features/checklist/use-checklist'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { ButtonLink } from '@/shared/ui/button'
 import { InfoIcon } from '@/shared/ui/icons'
 import { MascotImage } from '@/shared/ui/mascot-image'
@@ -35,7 +36,11 @@ import { useBill, useBillReminder } from '../use-bill-translations'
 import styles from './bill.module.css'
 
 export function BillResult({ memberId, id }: { memberId: number; id: number }) {
+  const { t } = useTranslation()
   const query = useBill(memberId, id)
+  const itemTitle =
+    query.data?.summary?.what || query.data?.taxType || undefined
+  useDocumentTitle(itemTitle, t('bill.result'))
   return (
     <QueryState query={query}>
       {query.data && (

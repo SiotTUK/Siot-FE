@@ -5,6 +5,7 @@ import {
 } from '@/features/auth/password-rules'
 import type { GuideTranslationResponse } from '@/features/admin/api'
 import type { AdminEventDetail } from '@/features/admin/event-api'
+import type { AdminReport } from '@/features/admin/report-api'
 import type { AdminRuleDetail, AdminRuleFaq } from '@/features/admin/rule-api'
 import type { BillTranslation } from '@/features/bill-translation/api'
 import type {
@@ -50,6 +51,8 @@ export interface MockState {
   adminRules?: MockAdminRules
   /** ADM-05: admin event data, seeded from the event mock on first use. */
   adminEvents?: { events: AdminEventDetail[]; nextId: number }
+  /** ADM-07: content error reports, seeded on first use; COM-01 adds to it. */
+  adminReports?: { reports: AdminReport[]; nextId: number }
   /**
    * CHK-06·NTF-07 source link and contact changed by an admin, by item code.
    * Only changed fields are kept (null = cleared); the rest stay as seeded.

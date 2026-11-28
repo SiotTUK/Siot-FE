@@ -6,6 +6,7 @@ import { EventCreate, EventEdit } from '@/features/admin/ui/event-editor'
 import { EventList } from '@/features/admin/ui/event-list'
 import { GuideEditor } from '@/features/admin/ui/guide-editor'
 import { MemberList } from '@/features/admin/ui/member-list'
+import { ReportDetail, ReportList } from '@/features/admin/ui/report-list'
 import { ReviewList } from '@/features/admin/ui/review-list'
 import { RuleCategoryList } from '@/features/admin/ui/rule-categories'
 import { RuleCreate, RuleEdit } from '@/features/admin/ui/rule-editor'
@@ -46,6 +47,7 @@ const menus = [
   ['documents', 'admin.menuDocuments', 'admin.menuDocumentsDesc'],
   ['rules', 'admin.menuRules', 'admin.menuRulesDesc'],
   ['events', 'admin.menuEvents', 'admin.menuEventsDesc'],
+  ['reports', 'admin.menuReports', 'admin.menuReportsDesc'],
 ] as const
 
 export function AdminHomePage() {
@@ -176,7 +178,7 @@ export function AdminEventNewPage() {
   )
 }
 
-/** EVE-08·09. ADM-07 (#39) links reported events here. */
+/** EVE-08·09. ADM-07 links reported events here. */
 export function AdminEventEditPage() {
   const { t } = useTranslation()
   const eventId = Number(useParams().eventId)
@@ -184,6 +186,27 @@ export function AdminEventEditPage() {
   return (
     <AdminScreen title={t('admin.menuEvents')} backTo="/admin/events">
       <EventEdit key={eventId} eventId={eventId} created={created} />
+    </AdminScreen>
+  )
+}
+
+/** ADM-07 */
+export function AdminReportsPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen title={t('admin.menuReports')} backTo="/admin">
+      <ReportList />
+    </AdminScreen>
+  )
+}
+
+/** ADM-07 one report */
+export function AdminReportPage() {
+  const { t } = useTranslation()
+  const reportId = Number(useParams().reportId)
+  return (
+    <AdminScreen title={t('admin.menuReports')} backTo="/admin/reports">
+      <ReportDetail key={reportId} reportId={reportId} />
     </AdminScreen>
   )
 }

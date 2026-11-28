@@ -150,7 +150,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        // ADM-01·02~04·08, CHK-06. The server still rejects non-admins with 403.
+        // ADM-01~08, CHK-06. The server still rejects non-admins with 403.
         path: '/admin',
         element: <RequireMember when="admin" />,
         children: [
@@ -204,6 +204,15 @@ export const router = createBrowserRouter([
           {
             path: 'events/:eventId',
             element: deferredPage(adminScreen, 'AdminEventEditPage'),
+          },
+          // ADM-07
+          {
+            path: 'reports',
+            element: deferredPage(adminScreen, 'AdminReportsPage'),
+          },
+          {
+            path: 'reports/:reportId',
+            element: deferredPage(adminScreen, 'AdminReportPage'),
           },
         ],
       },

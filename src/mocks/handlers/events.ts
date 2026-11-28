@@ -15,6 +15,7 @@ import { ruleEntries } from '../data/rule-content'
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
 import { body, currentMember, error, persist, state, unauthorized } from '../db'
+import { recordReport } from './admin-reports'
 
 // Events that already ended, for "지난 행사 보기" (past=true).
 const pastTitles: Record<Language, string[]> = {
@@ -433,9 +434,13 @@ export const eventHandlers = [
     )
       return error(404, 'EVENT_NOT_FOUND', '행사를 찾을 수 없습니다.')
 
-    return HttpResponse.json(
-      { data: { reportId: 1, status: 'RECEIVED' } },
-      { status: 201 },
-    )
+    // BE keeps the Korean title when no snapshot is sent.
+    const koreanTitle =
+      typeof report.guideCode === 'string'
+        ? ruleEntries.find(({ code }) => code === report.guideCode)?.title.ko
+        : mockEvents('ko').find(({ eventId }) => eventId === report.eventId)
+            ?.title
+    const saved = recordReport(member.id, report, koreanTitle ?? null)
+    return HttpResponse.json({ data: saved }, { status: 201 })
   }),
 ]

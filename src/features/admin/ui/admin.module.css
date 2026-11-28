@@ -65,3 +65,15 @@
   padding-left: 18px;
   font-size: 14px;
 }
+
+/* ADM-07 quoted text in a report row. */
+.quote {
+  margin: 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}

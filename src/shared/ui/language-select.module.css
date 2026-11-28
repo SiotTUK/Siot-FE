@@ -69,3 +69,17 @@
 .field .caret {
   right: var(--space-16);
 }
+
+/* Chat M08a: white rounded chip, caption text, small caret. */
+.pill .select {
+  min-height: 32px;
+  padding: 6px 26px 6px 12px;
+  border-radius: 999px;
+  font: var(--text-caption);
+  field-sizing: content;
+}
+.pill .caret {
+  right: 12px;
+  font-size: 13px;
+  color: var(--foreground);
+}

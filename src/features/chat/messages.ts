@@ -12,7 +12,11 @@ export const chatMessages = defineMessages({
       intro: '공식 자료로 답하고 출처를 함께 보여 줘요',
       answerLanguage: '답변 언어',
       greetingHello: '안녕하세요! 저는 토로예요.',
-      greetingAsk: '시흥 생활에서 궁금한 걸 편하게 물어보세요.',
+      greetingAsk:
+        '시흥 생활에서 궁금한 걸 편하게 물어보세요. 서류 사진을 보내면 번역도 해 줘요.',
+      title: '웰컴시흥 도우미',
+      today: '오늘 {{time}}',
+      answerIn: '한국어로 답해요',
       relatedOpen: '{{title}} 자세히 보기',
       privacy: '개인정보(여권·외국인등록번호)는 입력하지 마세요.',
       inputLabel: '질문',
@@ -85,7 +89,11 @@ export const chatMessages = defineMessages({
       intro: 'Answers come from official materials, with sources',
       answerLanguage: 'Answer language',
       greetingHello: 'Hello! I am Toro.',
-      greetingAsk: 'Ask me anything about living in Siheung.',
+      greetingAsk:
+        'Ask me anything about living in Siheung. Send a photo of a document and I will translate it too.',
+      title: 'Welcome Siheung Helper',
+      today: 'Today {{time}}',
+      answerIn: 'Answer in English',
       relatedOpen: 'See {{title}}',
       privacy:
         'Do not enter personal data (passport or residence card numbers).',
@@ -159,7 +167,11 @@ export const chatMessages = defineMessages({
       intro: '根据官方资料回答，并附上出处',
       answerLanguage: '回答语言',
       greetingHello: '你好！我是 Toro。',
-      greetingAsk: '关于在始兴的生活，有什么想问的都可以问我。',
+      greetingAsk:
+        '关于在始兴的生活，有什么想问的都可以问我。发送文件照片，我还可以帮你翻译。',
+      title: '始兴生活助手',
+      today: '今天 {{time}}',
+      answerIn: '用中文回答',
       relatedOpen: '查看{{title}}详情',
       privacy: '请勿输入个人信息（护照号、外国人登录证号）。',
       inputLabel: '问题',
@@ -231,7 +243,11 @@ export const chatMessages = defineMessages({
       intro: 'Trả lời theo tài liệu chính thức, kèm nguồn',
       answerLanguage: 'Ngôn ngữ trả lời',
       greetingHello: 'Xin chào! Mình là Toro.',
-      greetingAsk: 'Hãy hỏi mình bất cứ điều gì về cuộc sống ở Siheung.',
+      greetingAsk:
+        'Hãy hỏi mình bất cứ điều gì về cuộc sống ở Siheung. Gửi ảnh giấy tờ, mình sẽ dịch giúp bạn.',
+      title: 'Trợ lý Siheung',
+      today: 'Hôm nay {{time}}',
+      answerIn: 'Trả lời bằng tiếng Việt',
       relatedOpen: 'Xem chi tiết {{title}}',
       privacy:
         'Không nhập thông tin cá nhân (số hộ chiếu, số thẻ đăng ký người nước ngoài).',

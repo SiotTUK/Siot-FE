@@ -71,7 +71,7 @@ export function ChatPage() {
 }
 
 function ChatScreen() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const param = useParams().conversationId
   const id = param === undefined ? undefined : Number(param)
   const invalidId = id !== undefined && !(Number.isSafeInteger(id) && id > 0)
@@ -163,7 +163,7 @@ function ChatScreen() {
             label: t('chat.back'),
             to: chatTopicPath(topic),
           }}
-          title={t('nav.chat')}
+          title={t('chat.title')}
           actions={
             <>
               <HeaderAction to="/chat/history">
@@ -220,9 +220,11 @@ function ChatScreen() {
           <ChatIntro
             language={
               <LanguageSelect
+                variant="pill"
                 label={t('chat.answerLanguage')}
                 value={currentLanguage()}
                 onChange={changeLanguage}
+                optionLabel={(code) => i18n.getFixedT(code)('chat.answerIn')}
               />
             }
             suggestions={suggestions.data?.questions}

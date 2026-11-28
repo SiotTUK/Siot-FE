@@ -11,10 +11,11 @@ import { formatMonthDay, koreaToday } from '@/shared/i18n/format'
  * reminder (SCHEDULE, its common tax schedule id) opens the tax detail
  * (CAL-03 /calendar/taxes/:id, the calendar when the id is not a number),
  * personal dates open the calendar, rules open their detail page when the
- * slug is recognized (/rules when unknown). A bill reminder opens its translation result; without an id (the
- * translation was deleted) it opens the screen with the recent list.
- * Unknown codes fall back to their main home/rules list.
- * Unknown link types return undefined and the card only marks read.
+ * slug is recognized (/rules when unknown). A bill reminder opens its
+ * translation result; without an id (the translation was deleted) it opens
+ * the screen with the recent list. Unknown codes fall back to their main
+ * home/rules list. Unknown link types return undefined and the card only
+ * marks read.
  */
 export function notificationPath(link: {
   linkType: string | null

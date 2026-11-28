@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { dDayLabel, httpUrl } from '@/features/calendar/calendar'
 import { useTaxDetail } from '@/features/calendar/use-taxes'
 import { ApiError } from '@/shared/api/client'
@@ -34,6 +34,9 @@ export function ScheduleDetailPage() {
 function DetailPage({ source }: { source: Source }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  // First screen of this tab (a new tab from a notification, a typed or
+  // bookmarked address): there is no previous screen, so go to the calendar.
+  const opened = useLocation().key === 'default'
   const id = Number(useParams().scheduleId)
   const valid = Number.isSafeInteger(id) && id > 0
 
@@ -41,7 +44,13 @@ function DetailPage({ source }: { source: Source }) {
     <>
       <ScreenHeader
         title={t(`calendar.${source}.screenTitle`)}
-        back={{ label: t('common.back'), onClick: () => void navigate(-1) }}
+        back={{
+          label: t('common.back'),
+          onClick: () =>
+            void (opened
+              ? navigate('/calendar', { replace: true })
+              : navigate(-1)),
+        }}
       />
       <PageBody className={styles.body}>
         {valid ? (

@@ -6,7 +6,7 @@ const path = '*/api/members/me/notifications'
 const hour = 60 * 60 * 1000
 
 /**
- * Four sample notifications per member, like Figma M09 (dev/test only;
+ * Sample notifications per member, like Figma M09 (dev/test only;
  * the BE writes real ones from its schedules). Read times live in state.
  */
 function notificationsFor(email: string): NotificationItem[] {
@@ -47,6 +47,34 @@ function notificationsFor(email: string): NotificationItem[] {
       title: '「세계인의 날」 신청 마감 3일 전',
       ago: 24 * 9,
       readAgo: 24 * 8,
+    },
+    // Deadline kinds the BE scheduler saves (FE #52); older and already read.
+    {
+      id: 7,
+      kind: 'REGISTRATION',
+      guideId: 1,
+      linkType: 'CHECKLIST',
+      linkCode: 'CL-01',
+      title: '외국인등록 마감 30일 전이에요.',
+      ago: 24 * 10,
+      readAgo: 24 * 10,
+    },
+    {
+      id: 6,
+      kind: 'RESIDENCE_REPORT',
+      linkType: 'LIFE_CHANGE_TASK',
+      linkCode: 'LC-01-1',
+      title: '체류지 변경 신고 마감 7일 전이에요.',
+      ago: 24 * 11,
+      readAgo: 24 * 11,
+    },
+    {
+      id: 5,
+      kind: 'BILL_DUE',
+      linkType: 'BILL_TRANSLATION',
+      title: '고지서 납부 마감 1일 전이에요.',
+      ago: 24 * 12,
+      readAgo: 24 * 12,
     },
   ]
   return seeds.map((seed) => {

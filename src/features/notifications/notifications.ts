@@ -49,9 +49,21 @@ export function notificationPath(link: {
 /** Figma M09 badge groups: 생활 마감 · 행사 · 안내 변경, the rest as 알림. */
 export type NotificationGroup = 'deadline' | 'event' | 'notice' | 'other'
 
+/**
+ * Notification kinds the BE saves for deadlines. CHECKLIST_DEADLINE is only a
+ * preference kind (it turns REGISTRATION·RESIDENCE_REPORT on or off), so it
+ * never arrives as a notification kind (FE #52).
+ */
+const deadlineKinds: readonly string[] = [
+  'STAY_EXPIRY',
+  'REGISTRATION',
+  'RESIDENCE_REPORT',
+  'TAX',
+  'BILL_DUE',
+]
+
 export function notificationGroup(kind: string): NotificationGroup {
-  if (['STAY_EXPIRY', 'CHECKLIST_DEADLINE', 'TAX'].includes(kind))
-    return 'deadline'
+  if (deadlineKinds.includes(kind)) return 'deadline'
   if (kind === 'EVENT') return 'event'
   if (kind === 'NOTICE_CHANGED') return 'notice'
   return 'other'

@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom'
 import { authLinkState, returnState } from '@/features/auth/return-path'
 import { LoginForm } from '@/features/auth/ui/login-form'
 import { NewPasswordForm } from '@/features/auth/ui/new-password-form'
@@ -8,9 +13,8 @@ import { ResetRequestForm } from '@/features/auth/ui/reset-request-form'
 import { SignupForm } from '@/features/auth/ui/signup-form'
 import { MascotTip } from '@/shared/ui/mascot-tip'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Stack } from '@/shared/ui/page'
+import { InlineLink, Stack } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
-import { TextLink } from '@/shared/ui/text-link'
 import styles from './auth-pages.module.css'
 
 /** Auth screens a ‹ back may return to (set by the links between them). */
@@ -30,7 +34,7 @@ function useBackPath(fallback: string) {
 
 /**
  * Figma v2 M02a–d: ‹ back + title header, an optional mascot tip, the form,
- * then text links ("처음이신가요? 회원가입") on the left.
+ * then centered prompts with inline links.
  */
 function AuthScreen({
   title,
@@ -66,13 +70,11 @@ function AuthScreen({
           {links.length > 0 && (
             <div className={styles.links}>
               {links.map((link) => (
-                <TextLink
-                  key={link.to}
-                  to={link.to}
-                  state={authLinkState(pathname, state)}
-                >
-                  {link.text} {link.label}
-                </TextLink>
+                <InlineLink key={link.to} text={link.text}>
+                  <Link to={link.to} state={authLinkState(pathname, state)}>
+                    {link.label}
+                  </Link>
+                </InlineLink>
               ))}
             </div>
           )}

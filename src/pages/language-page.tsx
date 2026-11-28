@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { returnState } from '@/features/auth/return-path'
 import { sessionState, useChangeLanguage } from '@/features/auth/use-session'
 import type { Language } from '@/shared/api/types'
@@ -7,8 +7,7 @@ import { currentLanguage, isLanguage, languages } from '@/shared/i18n'
 import { ChoiceCard, ChoiceList } from '@/shared/ui/choice-card'
 import { MascotImage } from '@/shared/ui/mascot-image'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import { Muted, Notice, PageHeading } from '@/shared/ui/page'
-import { TextLink } from '@/shared/ui/text-link'
+import { InlineLink, Muted, Notice, PageHeading } from '@/shared/ui/page'
 import styles from './pages.module.css'
 
 const codes = Object.keys(languages) as Language[]
@@ -78,9 +77,11 @@ export function LanguagePage() {
       </ChoiceList>
       <div className={styles.footer}>
         <Muted>{t('languagePage.autoNext')}</Muted>
-        <TextLink to="/login" state={carry}>
-          {t('languagePage.haveAccount')} {t('languagePage.login')}
-        </TextLink>
+        <InlineLink text={t('languagePage.haveAccount')}>
+          <Link to="/login" state={carry}>
+            {t('languagePage.login')}
+          </Link>
+        </InlineLink>
       </div>
     </PageBody>
   )

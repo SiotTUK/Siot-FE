@@ -1,7 +1,7 @@
 # 관리자 화면 개선: 항목 고르기, 관리자 우선 정렬, 챗봇 답변 검색
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: 이슈 미생성 / FE PR 미생성, BE SiotTUK/Siot-BE#41
+- 관련 이슈 / PR: 이슈 미생성 / SiotTUK/Siot-FE#119, BE SiotTUK/Siot-BE#41
 
 ## 목적
 

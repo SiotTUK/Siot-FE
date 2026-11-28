@@ -28,9 +28,12 @@ import styles from './home-page.module.css'
  * LIVING opens this month's to-dos first, and members can switch at the top.
  */
 export function HomePage() {
+  const { t } = useTranslation()
   const { data: me } = useMe()
   return (
     <PageBody className={styles.body}>
+      {/* Other tab screens title themselves with an h1; home names its tab. */}
+      <h1 className="visually-hidden">{t('nav.home')}</h1>
       {me && <HomeContent key={`${me.id}:${me.userType ?? ''}`} member={me} />}
     </PageBody>
   )

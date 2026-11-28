@@ -58,6 +58,18 @@ export interface GuideTranslationResponse {
   sourceName: string | null
   noticeChangedAt: string | null
   updatedAt: string
+  /** CHK-06 source booklet pages. */
+  pageStart: number | null
+  pageEnd: number | null
+  /** Server text, e.g. "p.12~14". */
+  sourcePages: string | null
+  /** #14 life-rule sentences in order; empty for checklist items (BE #23). */
+  points: string[]
+  when: string | null
+  /** null = the screen uses the item's shared contact number. */
+  contact: string | null
+  /** true = human-checked translation; auto-translation will not overwrite it. */
+  reviewed: boolean
 }
 
 /** PUT replaces everything: omitted or empty fields are cleared. */

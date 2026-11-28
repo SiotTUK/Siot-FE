@@ -50,6 +50,10 @@ export interface ChecklistItemResponse {
   warning?: boolean
   warningMessage?: string | null
   warningType?: string | null
+  /** CHK-06 source booklet pages. */
+  pageStart?: number | null
+  pageEnd?: number | null
+  /** Server text, e.g. "p.12~14". */
   sourcePages?: string | null
   /**
    * Language of the item text (title, summary, content, badge, place, docs,

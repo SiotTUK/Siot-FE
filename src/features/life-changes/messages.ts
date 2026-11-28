@@ -86,6 +86,7 @@ export const lifeChangeMessages = defineMessages({
     errors: {
       INVALID_LIFE_CHANGE_CODE: '지원하지 않는 생활 변화 유형이에요.',
       LIFE_CHANGE_NOT_FOUND: '생활 변화 기록을 찾을 수 없어요.',
+      LIFE_CHANGE_DATE_INVALID: '이사일은 오늘까지 입력할 수 있어요.',
     },
   },
   en: {
@@ -173,6 +174,7 @@ export const lifeChangeMessages = defineMessages({
     errors: {
       INVALID_LIFE_CHANGE_CODE: 'This type of life change is unavailable.',
       LIFE_CHANGE_NOT_FOUND: 'This life change record could not be found.',
+      LIFE_CHANGE_DATE_INVALID: 'The move date must be today or earlier.',
     },
   },
   zh: {
@@ -257,6 +259,7 @@ export const lifeChangeMessages = defineMessages({
     errors: {
       INVALID_LIFE_CHANGE_CODE: '不支持此生活变化类型。',
       LIFE_CHANGE_NOT_FOUND: '找不到该生活变化记录。',
+      LIFE_CHANGE_DATE_INVALID: '搬家日期不能晚于今天。',
     },
   },
   vi: {
@@ -343,6 +346,8 @@ export const lifeChangeMessages = defineMessages({
     errors: {
       INVALID_LIFE_CHANGE_CODE: 'Loại thay đổi này không được hỗ trợ.',
       LIFE_CHANGE_NOT_FOUND: 'Không tìm thấy bản ghi thay đổi này.',
+      LIFE_CHANGE_DATE_INVALID:
+        'Ngày chuyển nhà phải là hôm nay hoặc trước đó.',
     },
   },
 })

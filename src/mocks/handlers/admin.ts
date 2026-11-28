@@ -177,9 +177,11 @@ export const adminHandlers = [
       const now = new Date().toISOString()
       const text = (value: unknown) =>
         typeof value === 'string' && value ? value : null
+      const language = toLanguage(params.language)
+      const saved = state.guides[key] ?? ruleTranslation(code, language)
       state.guides[key] = {
         code,
-        language: toLanguage(params.language),
+        language,
         title: input.title,
         summary: text(input.summary),
         content: text(input.content),
@@ -195,6 +197,18 @@ export const adminHandlers = [
             ? now
             : (state.guides[key]?.noticeChangedAt ?? null),
         updatedAt: now,
+        // Page numbers come from document loading, not this form.
+        pageStart: saved?.pageStart ?? null,
+        pageEnd: saved?.pageEnd ?? null,
+        sourcePages: saved?.sourcePages ?? null,
+        points: Array.isArray(input.points)
+          ? input.points.map(String)
+          : (saved?.points ?? []),
+        when: 'when' in input ? text(input.when) : (saved?.when ?? null),
+        contact:
+          'contact' in input ? text(input.contact) : (saved?.contact ?? null),
+        // BE #23: an admin save of a non-Korean language marks it reviewed.
+        reviewed: language !== 'ko',
       }
       persist()
       return HttpResponse.json({ data: state.guides[key] })
@@ -234,6 +248,13 @@ function ruleTranslation(
     sourceName: null,
     noticeChangedAt: null,
     updatedAt: '2026-11-26T00:00:00Z',
+    pageStart: null,
+    pageEnd: null,
+    sourcePages: null,
+    points: rule.points.map((point) => point[language]),
+    when: rule.facts?.when?.[language] ?? null,
+    contact: rule.facts?.contact?.[language] ?? null,
+    reviewed: false,
   }
 }
 

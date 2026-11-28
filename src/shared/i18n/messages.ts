@@ -37,6 +37,11 @@ export const sharedMessages = defineMessages({
         '보안 확인이 만료됐어요. 페이지를 새로고침한 뒤 다시 시도해 주세요',
       INTERNAL_ERROR: '잠시 문제가 생겼어요. 잠시 뒤 다시 시도해 주세요',
       NETWORK: '인터넷 연결을 확인하고 다시 시도해 주세요.',
+      NOT_FOUND: '요청한 내용을 찾을 수 없어요',
+      METHOD_NOT_ALLOWED:
+        '지원하지 않는 요청이에요. 페이지를 새로고침해 주세요',
+      UNSUPPORTED_MEDIA_TYPE:
+        '요청 형식이 올바르지 않아요. 페이지를 새로고침해 주세요',
       UNKNOWN: '요청을 처리하지 못했어요. 잠시 뒤 다시 시도해 주세요',
     },
   },
@@ -76,6 +81,11 @@ export const sharedMessages = defineMessages({
         'Your security check has expired. Please refresh the page and try again',
       INTERNAL_ERROR: 'Something went wrong. Please try again later',
       NETWORK: 'Please check your internet connection and try again',
+      NOT_FOUND: 'We could not find what you requested',
+      METHOD_NOT_ALLOWED:
+        'This request is not supported. Please refresh the page',
+      UNSUPPORTED_MEDIA_TYPE:
+        'The request format is not valid. Please refresh the page',
       UNKNOWN: 'We could not process your request. Please try again later',
     },
   },
@@ -113,6 +123,9 @@ export const sharedMessages = defineMessages({
       CSRF_TOKEN_INVALID: '安全验证已过期。请刷新页面后重试',
       INTERNAL_ERROR: '出现了问题。请稍后重试',
       NETWORK: '请检查网络连接后重试',
+      NOT_FOUND: '找不到请求的内容',
+      METHOD_NOT_ALLOWED: '不支持此请求。请刷新页面',
+      UNSUPPORTED_MEDIA_TYPE: '请求格式不正确。请刷新页面',
       UNKNOWN: '无法处理您的请求。请稍后重试',
     },
   },
@@ -152,6 +165,10 @@ export const sharedMessages = defineMessages({
         'Xác minh bảo mật đã hết hạn. Hãy tải lại trang rồi thử lại',
       INTERNAL_ERROR: 'Đã xảy ra sự cố. Hãy thử lại sau',
       NETWORK: 'Hãy kiểm tra kết nối internet rồi thử lại',
+      NOT_FOUND: 'Không tìm thấy nội dung được yêu cầu',
+      METHOD_NOT_ALLOWED: 'Yêu cầu này không được hỗ trợ. Hãy tải lại trang',
+      UNSUPPORTED_MEDIA_TYPE:
+        'Định dạng yêu cầu không hợp lệ. Hãy tải lại trang',
       UNKNOWN: 'Không thể xử lý yêu cầu. Hãy thử lại sau',
     },
   },

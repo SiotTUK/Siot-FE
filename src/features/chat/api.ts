@@ -76,6 +76,8 @@ export interface SuggestionsResponse {
 }
 
 export const questionMaxLength = 1000
+/** CB-04 FeedbackRequest.comment @Size(max = 500). */
+export const feedbackCommentMaxLength = 500
 
 export const chatKeys = {
   all: ['chat'] as const,
@@ -118,14 +120,20 @@ export function deleteConversation(conversationId: number) {
   })
 }
 
+/**
+ * CB-04. Re-sending overwrites the rating and the comment. A blank comment is
+ * left out; the BE masks personal data before saving it.
+ */
 export function sendFeedback(
   conversationId: number,
   messageId: number,
   helpful: boolean,
+  comment?: string,
 ) {
+  const text = comment?.trim()
   return apiRequest(
     `/api/chat/conversations/${conversationId}/messages/${messageId}/feedback`,
-    { method: 'PUT', body: { helpful } },
+    { method: 'PUT', body: text ? { helpful, comment: text } : { helpful } },
   )
 }
 

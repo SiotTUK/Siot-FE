@@ -97,7 +97,8 @@ export const adminHandlers = [
           answer: message.content,
           answerStatus: message.answerStatus,
           helpful: message.helpful,
-          feedbackComment: null,
+          feedbackComment:
+            conversation.feedbackComments?.[message.messageId] ?? null,
           sources: message.sources,
           reviewed: record.reviewed,
           adminMemo: record.adminMemo,

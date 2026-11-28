@@ -86,6 +86,30 @@ describe('chat contract', () => {
     })
   })
 
+  it('sends a feedback comment only when it is not blank', async () => {
+    const { conversationId } = await createConversation('ko')
+    const { answer } = await askQuestion(conversationId, '외국인등록은?')
+    const sentBody = () =>
+      JSON.parse(String(vi.mocked(fetch).mock.lastCall?.[1]?.body)) as unknown
+
+    await sendFeedback(conversationId, answer.messageId, false, '   ')
+    expect(sentBody()).toEqual({ helpful: false })
+    await sendFeedback(
+      conversationId,
+      answer.messageId,
+      false,
+      ' 장소가 없어요 ',
+    )
+    expect(sentBody()).toEqual({ helpful: false, comment: '장소가 없어요' })
+
+    await expect(
+      sendFeedback(conversationId, answer.messageId, false, 'a'.repeat(501)),
+    ).rejects.toMatchObject({ status: 400, code: 'INVALID_INPUT' })
+    const [, saved] = await fetchMessages(conversationId)
+    expect(saved).toMatchObject({ helpful: false })
+    expect(saved).not.toHaveProperty('feedbackComment')
+  })
+
   it('rejects empty or too long questions', async () => {
     const { conversationId } = await createConversation('ko')
     await expect(askQuestion(conversationId, '   ')).rejects.toMatchObject({

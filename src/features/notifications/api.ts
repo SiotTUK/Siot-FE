@@ -4,7 +4,11 @@ import type { PageResponse } from '@/shared/api/types'
 /** BE NotificationResponse (NTF-04). Text comes in the member's language. */
 export interface NotificationItem {
   notificationId: number
-  /** STAY_EXPIRY · CHECKLIST_DEADLINE · TAX · EVENT · NOTICE_CHANGED … */
+  /**
+   * STAY_EXPIRY · REGISTRATION · RESIDENCE_REPORT · TAX · EVENT ·
+   * NOTICE_CHANGED · BILL_DUE (BE NotificationResponse). CHECKLIST_DEADLINE
+   * is a preference kind only.
+   */
   kind: string
   eventId: number | null
   guideId: number | null

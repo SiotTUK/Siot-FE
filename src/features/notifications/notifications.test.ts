@@ -11,8 +11,12 @@ import {
 describe('notification screen rules', () => {
   it.each([
     ['STAY_EXPIRY', 'deadline'],
-    ['CHECKLIST_DEADLINE', 'deadline'],
+    ['REGISTRATION', 'deadline'],
+    ['RESIDENCE_REPORT', 'deadline'],
     ['TAX', 'deadline'],
+    ['BILL_DUE', 'deadline'],
+    // Preference kind only; the BE never sends it as a notification kind.
+    ['CHECKLIST_DEADLINE', 'other'],
     ['EVENT', 'event'],
     ['NOTICE_CHANGED', 'notice'],
     ['SOMETHING_NEW', 'other'],

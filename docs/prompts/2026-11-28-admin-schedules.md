@@ -1,7 +1,7 @@
 # 관리자 달력 공통 일정·세금 일정 관리 화면 (CAL-01~03·NTF-01)
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: SiotTUK/Siot-FE#131, PR 미생성
+- 관련 이슈 / PR: SiotTUK/Siot-FE#131, SiotTUK/Siot-FE#150
 
 ## 목적
 
@@ -71,4 +71,3 @@ BE의 관리자 달력 일정 API 4개(`AdminScheduleController`)를 FE가 쓰�
 ## 남은 작업
 
 - 실제 BE(관리자 계정)로 목록·등록·수정·정기분 만들기 확인
-- PR 생성 후 이 기록의 PR 번호 연결

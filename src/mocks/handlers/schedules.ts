@@ -3,6 +3,7 @@ import type {
   ScheduleResponse,
   TaxDetailResponse,
 } from '@/features/calendar/api'
+import { buildMonthlyTodos } from '@/features/calendar/monthly-todos'
 import { isLanguage } from '@/shared/i18n'
 import { koreaToday } from '@/shared/i18n/format'
 import { currentMember, error, unauthorized, type MockMember } from '../db'
@@ -82,6 +83,25 @@ export const scheduleHandlers = [
     const period = `${params.get('year') ?? year}-${(params.get('month') ?? month).padStart(2, '0')}`
     return HttpResponse.json({
       data: monthSchedules(member, period, params.get('language')),
+    })
+  }),
+  // CAL-02 home monthly to-dos: remaining schedules of this month, or next
+  // month when none remain (declared before /:scheduleId).
+  http.get('*/api/schedules/this-month', ({ request }) => {
+    const member = currentMember()
+    if (!member) return unauthorized()
+
+    const language = new URL(request.url).searchParams.get('language')
+    return HttpResponse.json({
+      data: buildMonthlyTodos(
+        (year, month) =>
+          monthSchedules(
+            member,
+            `${year}-${String(month).padStart(2, '0')}`,
+            language,
+          ),
+        koreaToday(),
+      ),
     })
   }),
   // CAL-01: by start date, the member's own schedules added (BE #28).

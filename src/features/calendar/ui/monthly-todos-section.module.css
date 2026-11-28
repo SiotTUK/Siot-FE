@@ -1,0 +1,75 @@
+.notice {
+  margin: 0;
+  padding: 10px var(--space-16);
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-caption);
+  color: var(--foreground);
+}
+
+.empty {
+  padding: var(--space-20) var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.list {
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-16);
+  background: var(--card);
+}
+
+.list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-16) 0;
+  border-bottom: 1px solid var(--background);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font: var(--text-body);
+  font-weight: 600;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.link {
+  align-self: flex-start;
+  margin-top: 2px;
+  font: var(--text-caption);
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.badges {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}

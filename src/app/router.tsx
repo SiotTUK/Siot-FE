@@ -192,6 +192,19 @@ export const router = createBrowserRouter([
             path: 'rule-faqs',
             element: deferredPage(adminScreen, 'AdminRuleFaqsPage'),
           },
+          // ADM-05·EVE-07~09
+          {
+            path: 'events',
+            element: deferredPage(adminScreen, 'AdminEventsPage'),
+          },
+          {
+            path: 'events/new',
+            element: deferredPage(adminScreen, 'AdminEventNewPage'),
+          },
+          {
+            path: 'events/:eventId',
+            element: deferredPage(adminScreen, 'AdminEventEditPage'),
+          },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

@@ -56,3 +56,12 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* ADM-05 collection runs and duplicate events. */
+.runs {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+}

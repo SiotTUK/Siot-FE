@@ -1,4 +1,5 @@
 import { adminHandlers } from './handlers/admin'
+import { adminEventHandlers } from './handlers/admin-events'
 import { adminRuleHandlers } from './handlers/admin-rules'
 import { authHandlers } from './handlers/auth'
 import { billHandlers } from './handlers/bills'
@@ -28,5 +29,6 @@ export const handlers = [
   ...chatHandlers,
   ...adminHandlers,
   ...adminRuleHandlers,
+  ...adminEventHandlers,
   ...documentHandlers,
 ]

@@ -45,6 +45,7 @@ import { useEventHeart } from '@/features/events/use-event-heart'
 import { ApiError } from '@/shared/api/client'
 import { currentLanguage } from '@/shared/i18n'
 import { koreaToday } from '@/shared/i18n/format'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import {
   CalendarIcon,
@@ -249,6 +250,7 @@ export function EventDetailPage() {
   const { data: member } = useMe()
   const from = state?.from
   const detail = useEventDetailIfValid(member?.id, eventId)
+  useDocumentTitle(detail?.title, t('events.detail'))
 
   return (
     <>

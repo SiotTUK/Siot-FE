@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { errorMessage } from '@/shared/i18n/error-message'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { Button } from '@/shared/ui/button'
 import { MascotImage } from '@/shared/ui/mascot-image'
 import { MascotTip } from '@/shared/ui/mascot-tip'
@@ -43,6 +44,7 @@ export function QuestionScreen({ question }: { question: Question }) {
   const [invalidDate, setInvalidDate] = useState(false)
 
   const { kind, textKey, step } = questions[question]
+  useDocumentTitle(t(`onboarding.headers.${textKey}`))
   const index = questionOrder.indexOf(question)
   const previous = questionOrder[index - 1]
   const next = questionOrder[index + 1]

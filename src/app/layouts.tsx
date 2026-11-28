@@ -1,10 +1,17 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, ScrollRestoration } from 'react-router-dom'
+import {
+  Outlet,
+  ScrollRestoration,
+  useLocation,
+  useMatches,
+} from 'react-router-dom'
 import { MemberLanguageSync } from '@/features/auth/route-guards'
 import { useChangeLanguage, useMe } from '@/features/auth/use-session'
 import { NotificationBell } from '@/features/notifications/ui/notification-bell'
 import { OnboardingProvider } from '@/features/onboarding/onboarding-provider'
 import { currentLanguage } from '@/shared/i18n'
+import { formatDocumentTitle, routeTitleKey } from '@/shared/lib/document-title'
 import { BottomNav } from '@/shared/ui/bottom-nav'
 import {
   BookOpenIcon,
@@ -22,9 +29,41 @@ export function RootLayout() {
   return (
     <MobileFrame>
       <MemberLanguageSync />
+      <RouteTitleSync />
       <ScrollRestoration />
       <Outlet />
     </MobileFrame>
+  )
+}
+
+/**
+ * Keeps `document.title` synced with the active route and current language
+ * (WCAG 2.4.2, #125), and announces route transitions politely for screen
+ * readers. Runs in `useLayoutEffect` so detail screens' `useDocumentTitle`
+ * (`useEffect`) can safely refine the title with the loaded item name.
+ */
+function RouteTitleSync() {
+  const { t, i18n } = useTranslation()
+  const matches = useMatches()
+  const { pathname } = useLocation()
+  const titleKey = routeTitleKey(matches)
+  const brand = t('common.brand')
+  const screenTitle = titleKey ? t(titleKey) : undefined
+  const [announcement, setAnnouncement] = useState('')
+  const previousPath = useRef(pathname)
+
+  useLayoutEffect(() => {
+    document.title = formatDocumentTitle(brand, screenTitle)
+    if (previousPath.current !== pathname) {
+      previousPath.current = pathname
+      setAnnouncement(screenTitle ?? brand)
+    }
+  }, [brand, screenTitle, pathname, i18n.language])
+
+  return (
+    <div className="visually-hidden" aria-live="polite" aria-atomic="true">
+      {announcement}
+    </div>
   )
 }
 

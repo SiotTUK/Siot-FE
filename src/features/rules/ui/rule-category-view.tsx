@@ -4,6 +4,7 @@ import { ChipGroup } from '@/shared/ui/chip-group'
 import { MascotTip } from '@/shared/ui/mascot-tip'
 import { Stack } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { ruleCategories, type RuleCategory } from '../rules'
 import { useRules } from '../use-rules'
 import { CategoryIcon } from './category-icon'
@@ -18,6 +19,7 @@ export function RuleCategoryView({ category }: { category: RuleCategory }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { query, rules: all } = useRules()
+  useDocumentTitle(t(`rules.groups.${category}`), t('nav.rules'))
   const rules = all.filter((rule) => rule.category === category)
 
   return (

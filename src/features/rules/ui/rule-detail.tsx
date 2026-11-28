@@ -8,6 +8,7 @@ import { Button, ButtonLink } from '@/shared/ui/button'
 import { KeepTogether } from '@/shared/ui/keep-together'
 import { Muted, Section, Tag } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
+import { useDocumentTitle } from '@/shared/lib/document-title'
 import { isRuleNotFound } from '../api'
 import { parseContacts, safeUrl, type Rule } from '../rules'
 import { useRule } from '../use-rules'
@@ -26,6 +27,7 @@ const knowKeys = ['when', 'where', 'fee', 'penalty'] as const
 export function RuleDetail({ code }: { code: string }) {
   const { t } = useTranslation()
   const { query, rule } = useRule(code)
+  useDocumentTitle(rule?.title, t('nav.rules'))
   // A deleted or unknown code (old links, notifications) is not a load failure.
   if (query.isError && isRuleNotFound(query.error))
     return <Muted>{t('rules.notFound')}</Muted>

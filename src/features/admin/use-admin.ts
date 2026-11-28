@@ -13,6 +13,7 @@ import {
   adminKeys,
   changeRole,
   fetchGuideInfo,
+  fetchGuides,
   fetchGuideTranslation,
   fetchReviews,
   saveGuideTranslation,
@@ -21,6 +22,7 @@ import {
   updateReview,
   type GuideInfoUpdateRequest,
   type GuideTranslationUpdateRequest,
+  type ReviewSearch,
   type ReviewType,
   type Role,
 } from './api'
@@ -49,10 +51,14 @@ export function useChangeRole() {
   })
 }
 
-export function useReviews(type: ReviewType, reviewed: boolean | undefined) {
+export function useReviews(
+  type: ReviewType,
+  reviewed: boolean | undefined,
+  search: ReviewSearch = {},
+) {
   return useInfiniteQuery({
-    queryKey: adminKeys.reviews(type, reviewed),
-    queryFn: ({ pageParam }) => fetchReviews(type, reviewed, pageParam),
+    queryKey: adminKeys.reviews(type, reviewed, search),
+    queryFn: ({ pageParam }) => fetchReviews(type, reviewed, pageParam, search),
     initialPageParam: 0,
     getNextPageParam: nextPage,
   })
@@ -75,6 +81,11 @@ export function useUpdateReview() {
         queryKey: [...adminKeys.all, 'reviews'],
       }),
   })
+}
+
+/** CHK-06 items to pick on the text editor. */
+export function useGuides() {
+  return useQuery({ queryKey: adminKeys.guides(), queryFn: fetchGuides })
 }
 
 /**

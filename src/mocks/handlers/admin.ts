@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import type { GuideTranslationResponse } from '@/features/admin/api'
 import { ruleEntries } from '../data/rule-content'
+import { mockGuideSummaries } from './checklist'
 import { isLanguage } from '@/shared/i18n'
 import {
   body,
@@ -24,7 +25,12 @@ export const adminHandlers = [
     const rows = Object.values(state.members)
       .filter((member) => !email || member.email.includes(email))
       .filter((member) => !role || member.role === role)
-      .sort((a, b) => b.id - a.id)
+      // BE: admins first, then newest.
+      .sort(
+        (a, b) =>
+          Number(b.role === 'ADMIN') - Number(a.role === 'ADMIN') ||
+          b.id - a.id,
+      )
       .map((member) => ({
         id: member.id,
         email: member.email,
@@ -69,6 +75,13 @@ export const adminHandlers = [
     const url = new URL(request.url)
     const type = url.searchParams.get('type') ?? 'ALL'
     const reviewed = url.searchParams.get('reviewed')
+    const messageId = url.searchParams.get('messageId')
+    const keyword = (url.searchParams.get('keyword') ?? '').trim().toLowerCase()
+    if (keyword.length > 100)
+      return error(400, 'INVALID_INPUT', '검색어는 100자 이하로 입력해 주세요.')
+    // BE: the text is matched in the masked question, answer and feedback.
+    const matches = (text: string | null) =>
+      (text ?? '').toLowerCase().includes(keyword)
     const rows = Object.values(state.conversations)
       .flatMap((conversation) =>
         conversation.messages.map((message, index) => ({
@@ -109,6 +122,14 @@ export const adminHandlers = [
       })
       .filter((row) => type === 'ALL' || row.reason === type)
       .filter((row) => reviewed === null || String(row.reviewed) === reviewed)
+      .filter((row) => !messageId || row.messageId === Number(messageId))
+      .filter(
+        (row) =>
+          !keyword ||
+          matches(row.question) ||
+          matches(row.answer) ||
+          matches(row.feedbackComment),
+      )
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     return HttpResponse.json({ data: page(rows, url) })
   }),
@@ -144,6 +165,30 @@ export const adminHandlers = [
       })
     },
   ),
+
+  http.get('*/api/admin/guides', () => {
+    const denied = requireAdmin()
+    if (denied) return denied
+    const rules = state.adminRules
+      ? Object.values(state.adminRules.rules)
+          .filter((rule) => !rule.deletedAt)
+          .map(({ code, title, category }) => ({ code, title, category }))
+      : ruleEntries.map(({ code, title, category }) => ({
+          code,
+          title: title.ko,
+          category,
+        }))
+    return HttpResponse.json({
+      data: [
+        ...mockGuideSummaries(),
+        ...rules.map((rule) => ({
+          ...rule,
+          kind: 'RULE',
+          lifeChangeCode: null,
+        })),
+      ],
+    })
+  }),
 
   http.patch('*/api/admin/guides/:code', async ({ request, params }) => {
     const denied = requireAdmin()

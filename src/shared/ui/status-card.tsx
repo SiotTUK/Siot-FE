@@ -16,12 +16,14 @@ export function StatusCard({
   mascot,
   title,
   description,
+  meta,
   action,
   role,
 }: {
   mascot: keyof typeof images
   title: string
   description?: string
+  meta?: string
   action?: ReactNode
   role?: 'alert' | 'status'
 }) {
@@ -38,6 +40,7 @@ export function StatusCard({
         <div className={styles.text}>
           <strong>{title}</strong>
           {description && <p>{description}</p>}
+          {meta && <p className={styles.meta}>{meta}</p>}
         </div>
       </div>
       {action}

@@ -5,10 +5,12 @@ import type {
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { PageResponse } from '../api/types'
+import { currentLanguage } from '../i18n'
 import { errorKey, errorMessage } from '../i18n/error-message'
 import { Button } from './button'
 import { PageLoader } from './mobile-frame'
 import { Muted, Stack } from './page'
+import { lastUpdatedText } from './query-state-meta'
 import { StatusCard } from './status-card'
 
 type QueryLike = {
@@ -16,13 +18,15 @@ type QueryLike = {
   isError: boolean
   isFetching: boolean
   error: unknown
+  dataUpdatedAt?: number
   refetch: () => unknown
 }
 
 /**
  * Loading → error with retry → content. Shared by every screen that reads
  * data. The error is the Figma v2 M13 card: "연결이 잠깐 끊겼어요" when the
- * network is down, otherwise the server's message under a generic title.
+ * network is down, otherwise the server's message under a generic title, plus
+ * the last-loaded time (Korea time) when prior data exists (#36).
  */
 export function QueryState({
   query,
@@ -36,12 +40,16 @@ export function QueryState({
   const { t } = useTranslation()
   if (query.isPending) return <PageLoader label={t('common.loading')} />
   const offline = query.isError && errorKey(query.error) === 'errors.NETWORK'
+  const updated = query.isError
+    ? lastUpdatedText(t, query.dataUpdatedAt, currentLanguage())
+    : undefined
   const error = query.isError ? (
     <StatusCard
       role="alert"
       mascot="toro"
       title={t(offline ? 'common.connectionLost' : 'common.loadFailed')}
       description={errorMessage(t, query.error)}
+      meta={updated}
       action={
         <Button
           variant="secondary"
@@ -78,7 +86,7 @@ export function InfiniteList<T>({
   const { t } = useTranslation()
   const items = query.data?.pages.flatMap((page) => page.content) ?? []
   return (
-    <QueryState query={query}>
+    <QueryState query={query} keepContentOnError={items.length > 0}>
       {items.length === 0 ? (
         typeof empty === 'string' ? (
           <Muted>{empty}</Muted>

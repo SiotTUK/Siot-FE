@@ -53,7 +53,10 @@ export function RuleBrowser() {
         }}
       />
       {searching ? (
-        <QueryState query={rulesQuery}>
+        <QueryState
+          query={rulesQuery}
+          keepContentOnError={Boolean(rulesQuery.data)}
+        >
           <SearchResults rules={searchRules(rules, query)} />
         </QueryState>
       ) : (
@@ -74,7 +77,10 @@ export function RuleBrowser() {
               </Link>
             }
           >
-            <QueryState query={faqQuery}>
+            <QueryState
+              query={faqQuery}
+              keepContentOnError={Boolean(faqQuery.data)}
+            >
               <RuleFaqList faqs={faqs.slice(0, faqTopCount)} />
             </QueryState>
           </Section>

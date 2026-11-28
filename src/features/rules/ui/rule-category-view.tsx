@@ -43,7 +43,7 @@ export function RuleCategoryView({ category }: { category: RuleCategory }) {
           <small>{t(`rules.descriptions.${category}`)}</small>
         </span>
       </div>
-      <QueryState query={query}>
+      <QueryState query={query} keepContentOnError={Boolean(query.data)}>
         <h2 className={styles.count}>
           {t('rules.ruleCount', { count: rules.length })}
         </h2>

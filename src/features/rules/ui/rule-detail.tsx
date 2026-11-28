@@ -30,7 +30,7 @@ export function RuleDetail({ code }: { code: string }) {
   if (query.isError && isRuleNotFound(query.error))
     return <Muted>{t('rules.notFound')}</Muted>
   return (
-    <QueryState query={query}>
+    <QueryState query={query} keepContentOnError={Boolean(rule)}>
       {rule && <RuleDetailBody rule={rule} />}
     </QueryState>
   )

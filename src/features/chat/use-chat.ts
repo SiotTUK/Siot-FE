@@ -102,6 +102,13 @@ export function useDeleteConversation() {
   })
 }
 
+export interface FeedbackInput {
+  messageId: number
+  helpful: boolean
+  /** Optional reason sent with "안 됐어요"; a blank one is left out. */
+  comment?: string
+}
+
 /** CB-04. Re-sending overwrites; the cache shows the choice right away. */
 export function useFeedback(conversationId: number) {
   const queryClient = useQueryClient()
@@ -113,8 +120,13 @@ export function useFeedback(conversationId: number) {
       ),
     )
   return useMutation({
-    mutationFn: (input: { messageId: number; helpful: boolean }) =>
-      sendFeedback(conversationId, input.messageId, input.helpful),
+    mutationFn: (input: FeedbackInput) =>
+      sendFeedback(
+        conversationId,
+        input.messageId,
+        input.helpful,
+        input.comment,
+      ),
     onMutate: ({ messageId, helpful }) => {
       const previous = queryClient
         .getQueryData<MessageResponse[]>(key)

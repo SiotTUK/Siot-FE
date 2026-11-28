@@ -82,6 +82,8 @@ export interface MockConversation {
   createdAt: string
   updatedAt: string
   messages: MessageResponse[]
+  /** CB-04 comment by answer id; kept apart because messages do not return it. */
+  feedbackComments?: Record<number, string>
 }
 
 const storageKey = 'siot:mock-state'

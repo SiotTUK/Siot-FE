@@ -7,7 +7,12 @@ import {
   forgetConversation,
   type ChatTopic,
 } from './chat-entry'
-import { useAsk, useFeedback, useMessages } from './use-chat'
+import {
+  useAsk,
+  useFeedback,
+  useMessages,
+  type FeedbackInput,
+} from './use-chat'
 
 /**
  * State of one chat screen: the open conversation (or a new one), the question
@@ -74,8 +79,10 @@ export function useChatConversation(
     send,
     ask,
     feedback,
-    rate: (messageId: number, helpful: boolean) =>
-      activeId !== undefined && feedback.mutate({ messageId, helpful }),
+    /** `onSent` runs once the BE saved it (e.g. to close the comment box). */
+    rate: (input: FeedbackInput, onSent?: () => void) =>
+      activeId !== undefined &&
+      feedback.mutate(input, { onSuccess: () => onSent?.() }),
     startOver: () => {
       forgetConversation()
       setCreatedId(undefined)

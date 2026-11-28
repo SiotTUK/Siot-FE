@@ -76,7 +76,12 @@ describe('ADM-08 chat reviews', () => {
     await login(member)
     const { conversationId } = await createConversation('ko')
     const asked = await askQuestion(conversationId, '외국인등록은 어디서 해요?')
-    await sendFeedback(conversationId, asked.answer.messageId, false)
+    await sendFeedback(
+      conversationId,
+      asked.answer.messageId,
+      false,
+      ' 등록번호 12345678 넣었는데 장소가 없어요 ',
+    )
     await logout()
 
     await login(admin)
@@ -86,6 +91,7 @@ describe('ADM-08 chat reviews', () => {
     ).toMatchObject({
       reason: 'NEGATIVE',
       question: '외국인등록은 어디서 해요?',
+      feedbackComment: '등록번호 ******** 넣었는데 장소가 없어요',
       reviewed: false,
     })
     await updateReview(asked.answer.messageId, {

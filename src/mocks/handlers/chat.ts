@@ -150,10 +150,22 @@ export const chatHandlers = [
           'CHAT_FEEDBACK_NOT_ALLOWED',
           '챗봇 답변만 평가할 수 있습니다.',
         )
-      const { helpful } = await body(request)
-      if (typeof helpful !== 'boolean')
+      const { helpful, comment } = await body(request)
+      if (
+        typeof helpful !== 'boolean' ||
+        (comment != null &&
+          (typeof comment !== 'string' || comment.length > 500))
+      )
         return error(400, 'INVALID_INPUT', '요청 값이 올바르지 않습니다.')
       target.helpful = helpful
+      // Like the BE: overwrite, store blank as null, mask personal numbers.
+      const text = typeof comment === 'string' ? comment.trim() : ''
+      const comments = (conversation.feedbackComments ??= {})
+      if (text)
+        comments[target.messageId] = text.replace(/\d{6,}/g, (digits) =>
+          '*'.repeat(digits.length),
+        )
+      else delete comments[target.messageId]
       persist()
       return new HttpResponse(null, { status: 204 })
     },

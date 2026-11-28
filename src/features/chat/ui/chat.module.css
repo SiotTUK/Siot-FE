@@ -222,6 +222,68 @@
   background: var(--primary);
   color: var(--card);
 }
+/* CB-04 optional comment under "안 됐어요". */
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+}
+.comment label {
+  font: var(--text-label);
+  font-weight: 700;
+}
+.comment p {
+  margin: 0;
+  line-height: 1.4;
+}
+.comment textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-8);
+  background: var(--card);
+  font-size: 15px;
+  line-height: 1.4;
+  resize: vertical;
+}
+.comment textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--secondary);
+}
+.commentCount {
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.commentActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+}
+.commentActions button {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: var(--secondary);
+  font: var(--text-label);
+  font-weight: 700;
+  color: var(--primary-hover);
+}
+.commentActions button[type='submit'] {
+  background: var(--primary);
+  color: var(--card);
+}
+.commentActions button:disabled {
+  opacity: 0.5;
+}
+.commentSent {
+  margin: var(--space-8) 0 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
 .sourceDetail {
   display: flex;
   flex-wrap: wrap;

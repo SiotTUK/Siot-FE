@@ -7,10 +7,12 @@ import {
 } from '@/features/chat/api'
 import {
   changeRole,
+  fetchGuideInfo,
   fetchGuideTranslation,
   fetchReviews,
   saveGuideTranslation,
   searchMembers,
+  updateGuideInfo,
   updateReview,
 } from './api'
 
@@ -76,7 +78,12 @@ describe('ADM-08 chat reviews', () => {
     await login(member)
     const { conversationId } = await createConversation('ko')
     const asked = await askQuestion(conversationId, '외국인등록은 어디서 해요?')
-    await sendFeedback(conversationId, asked.answer.messageId, false)
+    await sendFeedback(
+      conversationId,
+      asked.answer.messageId,
+      false,
+      ' 등록번호 12345678 넣었는데 장소가 없어요 ',
+    )
     await logout()
 
     await login(admin)
@@ -86,6 +93,7 @@ describe('ADM-08 chat reviews', () => {
     ).toMatchObject({
       reason: 'NEGATIVE',
       question: '외국인등록은 어디서 해요?',
+      feedbackComment: '등록번호 ******** 넣었는데 장소가 없어요',
       reviewed: false,
     })
     await updateReview(asked.answer.messageId, {
@@ -132,6 +140,53 @@ describe('CHK-06 guide text', () => {
     })
     expect(saved).toMatchObject({ language: 'vi', docs: ['Hộ chiếu'] })
     expect(saved.noticeChangedAt).not.toBeNull()
+  })
+
+  it('reads and changes the source link and contact: omitted stays, "" clears', async () => {
+    await login(member)
+    await expect(fetchGuideInfo('CL-01')).rejects.toMatchObject({
+      status: 403,
+      code: 'FORBIDDEN',
+    })
+    await expect(
+      updateGuideInfo('CL-01', { contact: '1345' }),
+    ).rejects.toMatchObject({ status: 403, code: 'FORBIDDEN' })
+    await logout()
+
+    await login(admin)
+    await expect(fetchGuideInfo('CL-01')).resolves.toMatchObject({
+      code: 'CL-01',
+      kind: 'CHECKLIST',
+      sourceUrl: 'https://www.hikorea.go.kr',
+      contact: '1345',
+    })
+    await expect(
+      updateGuideInfo('CL-01', {
+        sourceUrl: ' https://www.hikorea.go.kr/info ',
+      }),
+    ).resolves.toMatchObject({
+      sourceUrl: 'https://www.hikorea.go.kr/info',
+      contact: '1345',
+    })
+    await updateGuideInfo('CL-01', { contact: '' })
+    await expect(fetchGuideInfo('CL-01')).resolves.toMatchObject({
+      sourceUrl: 'https://www.hikorea.go.kr/info',
+      contact: null,
+    })
+    await expect(
+      updateGuideInfo('CL-01', { sourceUrl: 'www.hikorea.go.kr' }),
+    ).rejects.toMatchObject({ status: 400, code: 'INVALID_INPUT' })
+    await expect(fetchGuideInfo('XX-99')).rejects.toMatchObject({
+      status: 404,
+      code: 'GUIDE_NOT_FOUND',
+    })
+    await expect(
+      updateGuideInfo('XX-99', { contact: '1345' }),
+    ).rejects.toMatchObject({ status: 404, code: 'GUIDE_NOT_FOUND' })
+    await expect(fetchGuideInfo('waste-food')).resolves.toMatchObject({
+      kind: 'RULE',
+      updatedAt: null,
+    })
   })
 
   it('opens living rules by their lowercase code, case-sensitively like the BE', async () => {

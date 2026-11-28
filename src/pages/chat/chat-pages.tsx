@@ -250,8 +250,11 @@ function ChatScreen() {
                     id === undefined ? undefined : `/chat/${id}`
                   }
                   feedbackDisabled={chat.feedback.isPending}
-                  onFeedback={(helpful) =>
-                    chat.rate(message.messageId, helpful)
+                  onFeedback={(input, onSent) =>
+                    chat.rate(
+                      { messageId: message.messageId, ...input },
+                      onSent,
+                    )
                   }
                   onRetry={retryable ? () => send(question.content) : undefined}
                 />

@@ -7,7 +7,7 @@ import type { z } from 'zod'
 import { currentLanguage } from '@/shared/i18n'
 import { errorMessage, useMessage } from '@/shared/i18n/error-message'
 import { formatDateTime } from '@/shared/i18n/format'
-import { Button, ButtonLink } from '@/shared/ui/button'
+import { Button } from '@/shared/ui/button'
 import { ConfirmPanel } from '@/shared/ui/confirm-panel'
 import { CheckField, TextAreaField, TextField } from '@/shared/ui/field'
 import {
@@ -38,6 +38,7 @@ import {
   useUpdateRule,
 } from '../use-admin-rules'
 import styles from './admin.module.css'
+import { RuleTranslations } from './rule-translations'
 
 type ParsedRuleForm = z.output<typeof ruleFormSchema>
 
@@ -151,12 +152,6 @@ function RuleEditForm({
       {!deleted && (
         <Notice tone="note">{t('admin.rules.translationNotice')}</Notice>
       )}
-      <ButtonLink
-        variant="secondary"
-        to={`/admin/guides?code=${encodeURIComponent(saved.code)}`}
-      >
-        {t('admin.rules.editTranslations')}
-      </ButtonLink>
       <RuleFields
         mode="edit"
         saved={saved}
@@ -193,6 +188,7 @@ function RuleEditForm({
           )
         }
       />
+      {!deleted && <RuleTranslations code={saved.code} />}
       {!deleted &&
         (confirmDelete ? (
           <ConfirmPanel

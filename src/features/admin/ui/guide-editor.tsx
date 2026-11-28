@@ -8,7 +8,7 @@ import type { Language } from '@/shared/api/types'
 import { currentLanguage, languages } from '@/shared/i18n'
 import { errorMessage, useMessage } from '@/shared/i18n/error-message'
 import { formatDateTime } from '@/shared/i18n/format'
-import { Button } from '@/shared/ui/button'
+import { Button, ButtonLink } from '@/shared/ui/button'
 import {
   CheckField,
   SelectField,
@@ -24,12 +24,13 @@ import {
   Toolbar,
 } from '@/shared/ui/page'
 import { QueryState } from '@/shared/ui/query-state'
-import type {
-  GuideInfoResponse,
-  GuideKind,
-  GuideTranslationResponse,
-} from '../api'
-import { guideKinds, guideOptions } from '../guide-list'
+import type { GuideInfoResponse, GuideTranslationResponse } from '../api'
+import {
+  editableGuides,
+  guideKinds,
+  guideOptions,
+  type EditableGuideKind,
+} from '../guide-list'
 import {
   toGuideInfoForm,
   guideInfoFormSchema,
@@ -66,13 +67,20 @@ export function GuideEditor() {
   const [params] = useSearchParams()
   const initialCode = params.get('code')?.trim() ?? ''
   const [code, setCode] = useState(initialCode)
-  const [kind, setKind] = useState<GuideKind | ''>('')
+  const [kind, setKind] = useState<EditableGuideKind | ''>('')
   const [language, setLanguage] = useState<Language>('ko')
   const [target, setTarget] = useState<
     { code: string; language: Language } | undefined
   >(() => (initialCode ? { code: initialCode, language: 'ko' } : undefined))
-  const guide = useGuideTranslation(target?.code, target?.language ?? 'ko')
   const guides = useGuides()
+  // ADM-06: living rules are edited on the rule screen only.
+  const targetRule = guides.data?.some(
+    (item) => item.code === target?.code && item.kind === 'RULE',
+  )
+  const guide = useGuideTranslation(
+    targetRule ? undefined : target?.code,
+    target?.language ?? 'ko',
+  )
 
   return (
     <>
@@ -99,7 +107,7 @@ export function GuideEditor() {
                 label={t('admin.guideKind')}
                 value={kind}
                 onChange={(event) => {
-                  setKind(event.target.value as GuideKind | '')
+                  setKind(event.target.value as EditableGuideKind | '')
                   setCode('')
                 }}
                 options={[
@@ -116,7 +124,7 @@ export function GuideEditor() {
                 disabled={guides.isPending}
                 onChange={(event) => setCode(event.target.value)}
                 options={guideOptions(
-                  guides.data ?? [],
+                  editableGuides(guides.data ?? []),
                   kind,
                   code,
                   t(guides.isPending ? 'common.loading' : 'admin.guidePick'),
@@ -140,7 +148,20 @@ export function GuideEditor() {
           </Toolbar>
         </Stack>
       </form>
-      {target && (
+      {target && targetRule && (
+        <Notice tone="note">
+          <Stack gap={8}>
+            {t('admin.ruleMoved')}
+            <ButtonLink
+              variant="secondary"
+              to={`/admin/rules/${encodeURIComponent(target.code)}`}
+            >
+              {t('admin.openRule')}
+            </ButtonLink>
+          </Stack>
+        </Notice>
+      )}
+      {target && !targetRule && (
         <QueryState query={guide}>
           <GuideInfoEditor key={target.code} code={target.code} />
           <GuideTextForm

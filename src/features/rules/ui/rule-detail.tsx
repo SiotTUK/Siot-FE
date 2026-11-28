@@ -191,7 +191,7 @@ function RuleDetailBody({ rule }: { rule: Rule }) {
         </div>
       )}
 
-      <div className={styles.bottomBar}>
+      <div className={styles.bottomBar} data-sticky-bottom="">
         <Button
           variant="secondary"
           aria-expanded={reporting}

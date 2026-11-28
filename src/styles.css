@@ -115,6 +115,16 @@ summary {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
 }
+/*
+ * Keep keyboard-focused elements clear of sticky top/bottom bars (WCAG 2.4.11, #126).
+ * Includes space for the 3px focus outline + 2px offset so rings never clip.
+ */
+html:has([data-sticky-top]) {
+  scroll-padding-top: 76px;
+}
+html:has([data-sticky-bottom]) {
+  scroll-padding-bottom: calc(108px + env(safe-area-inset-bottom));
+}
 .visually-hidden {
   position: absolute;
   width: 1px;

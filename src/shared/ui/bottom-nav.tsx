@@ -21,7 +21,7 @@ export function BottomNav({
   disabledHint: string
 }) {
   return (
-    <nav className={styles.nav} aria-label={label}>
+    <nav className={styles.nav} aria-label={label} data-sticky-bottom="">
       {items.map(({ icon: ItemIcon, ...item }) =>
         item.to ? (
           <NavLink

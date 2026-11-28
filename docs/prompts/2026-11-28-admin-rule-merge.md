@@ -1,7 +1,7 @@
 # 관리자 생활수칙 편집을 생활수칙 화면 하나로 합치기
 
 - 작성일: 2026-11-28
-- 관련 이슈 / PR: 이슈 미생성 / SiotTUK/Siot-FE#120 (선행: SiotTUK/Siot-FE#119)
+- 관련 이슈 / PR: 이슈 미생성 / SiotTUK/Siot-FE#121 (#120은 base를 #119 브랜치로 잘못 잡아 main에 들어가지 않음, 선행: SiotTUK/Siot-FE#119)
 
 ## 목적
 

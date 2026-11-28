@@ -69,6 +69,13 @@
   color: #016ba8;
 }
 
+/* The due date has passed: the same pill in red. */
+.resultHero .chips .overdue {
+  background: var(--destructive-bg);
+  color: var(--destructive);
+  font-weight: 700;
+}
+
 /* M11b·M11d: big mascot, title, one line. */
 .centerIntro {
   display: grid;
@@ -450,6 +457,15 @@ details[open] > summary .chevron {
 
 .disclosure[open] {
   padding-bottom: var(--space-16);
+}
+
+/* M11c reminder: when it cannot be turned on, fade the switch and times. */
+.reminder[data-locked] :is([role='switch'] + span, .schedule) {
+  opacity: 0.35;
+}
+
+.reminder[data-locked] label > span:first-child > span:first-child {
+  color: var(--muted-foreground);
 }
 
 .schedule {

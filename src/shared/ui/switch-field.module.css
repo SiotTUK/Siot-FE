@@ -72,3 +72,9 @@
     transition: none;
   }
 }
+
+/* Locked: not clickable. */
+.row:has(.input:disabled),
+.input:disabled {
+  cursor: not-allowed;
+}

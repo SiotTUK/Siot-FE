@@ -64,6 +64,8 @@ function ResultDetails({
     : null
   const days = result.dueDate ? billDaysLeft(result.dueDate) : null
   const dDay = billDDayLabel(t, result.dueDate)
+  // No due date, or it has passed: the reminder cannot be turned on.
+  const unavailable = !result.reminder && (days === null || days < 0)
   const amount = formatBillAmount(result.amount, language)
   const unknown = t('bill.unknown')
   const howToPay =
@@ -95,7 +97,15 @@ function ResultDetails({
           <h2>{date ? t('bill.payBy', { date }) : t('bill.dueUnclear')}</h2>
           {(dDay || result.issuer) && (
             <p className={styles.chips}>
-              {dDay && <span>{dDay}</span>}
+              {dDay && (
+                <span
+                  className={
+                    days !== null && days < 0 ? styles.overdue : undefined
+                  }
+                >
+                  {dDay}
+                </span>
+              )}
               {result.issuer && <span lang="ko">{result.issuer}</span>}
             </p>
           )}
@@ -176,24 +186,26 @@ function ResultDetails({
       )}
       <Section title={t('bill.reminderSchedule')}>
         <Card>
-          <SwitchField
-            label={t('bill.reminder')}
-            hint={t(
-              days === null || days < 0
-                ? 'bill.reminderUnavailable'
-                : 'bill.reminderHint',
-            )}
-            checked={result.reminder}
-            disabled={
-              reminder.isPending ||
-              (!result.reminder && (days === null || days < 0))
-            }
-            onChange={(event) => reminder.change(event.target.checked)}
-          />
-          <ul className={styles.schedule}>
-            <li>{t('bill.reminderSeven')}</li>
-            <li>{t('bill.reminderOne')}</li>
-          </ul>
+          <div
+            className={styles.reminder}
+            data-locked={unavailable || undefined}
+          >
+            <SwitchField
+              label={t('bill.reminder')}
+              hint={t(
+                days === null || days < 0
+                  ? 'bill.reminderUnavailable'
+                  : 'bill.reminderHint',
+              )}
+              checked={result.reminder}
+              disabled={reminder.isPending || unavailable}
+              onChange={(event) => reminder.change(event.target.checked)}
+            />
+            <ul className={styles.schedule}>
+              <li>{t('bill.reminderSeven')}</li>
+              <li>{t('bill.reminderOne')}</li>
+            </ul>
+          </div>
           {reminder.isError && (
             <FormError message={billErrorMessage(t, reminder.error)} />
           )}

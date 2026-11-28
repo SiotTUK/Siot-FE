@@ -86,6 +86,7 @@ export const eventKeys = {
     [...eventKeys.member(memberId), 'subscription', eventId] as const,
   calendar: (memberId: number, year: number, month: number) =>
     [...eventKeys.member(memberId), 'calendar', year, month] as const,
+  collectionStatus: () => [...eventKeys.all, 'collection-status'] as const,
   detail: (memberId: number, eventId: string) =>
     [...eventKeys.member(memberId), 'detail', eventId] as const,
 }
@@ -110,19 +111,49 @@ export function fetchEvents(
     )
 
   if (filters.status === 'ended') return fetchPage(page)
+  // The split below finds where scheduled events start in the DATE order.
+  const byDate = (pageNumber: number) =>
+    fetchPage(pageNumber, { ...filters, sort: 'DATE' })
   if (filters.status === 'scheduled') {
     return filters.to && filters.to <= today
       ? Promise.resolve(emptyEventListPage(page))
-      : fetchActiveEventPage(page, today, 'scheduled', fetchPage)
+      : fetchActiveEventPage(page, today, 'scheduled', byDate)
   }
 
   // A future period can still overlap a currently running event.
   if (filters.from && filters.from > today)
-    return fetchActiveEventPage(page, today, 'ongoing', fetchPage)
+    return fetchActiveEventPage(page, today, 'ongoing', byDate)
 
   // The non-past endpoint already checks the end date. Cap the start date at today.
   const to = filters.to && filters.to < today ? filters.to : today
   return fetchPage(page, { ...filters, to })
+}
+
+/** EVE-10 collection status (GET /api/events/collection-status). */
+export interface EventCollectionStatus {
+  /** Most recent successful collection; null if none has succeeded. */
+  lastUpdatedAt: string | null
+  sources: {
+    source: 'GGC' | 'FESTIVAL_STD' | 'TOURAPI'
+    lastSucceededAt: string | null
+    /** Last run, succeeded or not. */
+    lastRun: {
+      runId: number
+      source: string
+      status: 'RUNNING' | 'SUCCEEDED' | 'FAILED'
+      startedAt: string
+      finishedAt: string | null
+      fetchedCount: number
+      upsertedCount: number
+      error: string | null
+    } | null
+  }[]
+}
+
+export function fetchEventCollectionStatus(signal?: AbortSignal) {
+  return apiRequest<EventCollectionStatus>('/api/events/collection-status', {
+    signal,
+  })
 }
 
 export function fetchEventDetail(eventId: string, signal?: AbortSignal) {

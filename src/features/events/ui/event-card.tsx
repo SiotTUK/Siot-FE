@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import { currentLanguage } from '@/shared/i18n'
-import { koreaToday } from '@/shared/i18n/format'
 import type { EventSummary } from '../api'
-import { formatEventDates } from '../event-display'
+import { eventStatus, formatEventDates, soonDays } from '../event-display'
 import { EventHeart } from './event-heart'
 import { EventImage } from './event-image'
 import styles from './event-card.module.css'
@@ -36,11 +35,13 @@ export function EventCard({
   ]
     .filter(Boolean)
     .join(' · ')
-  const badge = status && (
+  // zh·vi say "starts within 7 days": their "soon" and "planned" read alike.
+  const statusText = status && t(`events.${status}`, { days: soonDays })
+  const badge = statusText && (
     <span className={styles.status}>
       {variant === 'featured'
-        ? `${t(`events.${status}`)} · ${t('events.recommended')}`
-        : t(`events.${status}`)}
+        ? `${statusText} · ${t('events.recommended')}`
+        : statusText}
     </span>
   )
 
@@ -76,13 +77,4 @@ export function EventCard({
       </div>
     </article>
   )
-}
-
-/** Ongoing / planned by the event's Korea dates; ended events have none. */
-function eventStatus(event: EventSummary) {
-  const today = koreaToday()
-  const startDate = event.startsOn ?? event.endsOn
-  const endDate = event.endsOn ?? event.startsOn
-  if (!startDate || !endDate || endDate < today) return undefined
-  return startDate <= today ? 'ongoing' : 'planned'
 }

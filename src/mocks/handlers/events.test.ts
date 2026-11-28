@@ -30,3 +30,10 @@ it('filters by category like the BE, ignoring case', () => {
   expect(list('category=festival&past=true')).toEqual([5])
   expect(events[0].categoryName).toBe('교육·체험')
 })
+
+it('sorts like the BE: open deadlines first, or newest registered first', () => {
+  // Winter market (3) closes in 3 days, the concert (4) in 6; the rest by date.
+  expect(list('sort=DEADLINE')).toEqual([3, 4, 1, 2])
+  expect(list('sort=LATEST')).toEqual([4, 3, 2, 1])
+  expect(list('sort=DATE')).toEqual(list(''))
+})

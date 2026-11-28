@@ -16,6 +16,20 @@
   list-style: none;
 }
 
+/* M12 "갱신 11.13 03:00" on the title's right. */
+.collectedAt {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+/* M12 footer line about where events come from. */
+.collectionNotice {
+  font: var(--text-caption);
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
 .pager {
   display: flex;
   flex-wrap: wrap;

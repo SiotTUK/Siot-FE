@@ -1,4 +1,4 @@
-import { formatCalendarDate } from '@/shared/i18n/format'
+import { formatCalendarDate, koreaToday } from '@/shared/i18n/format'
 import type { EventSummary } from './api'
 
 export function formatEventDates(event: EventSummary, language: string) {
@@ -34,4 +34,41 @@ export function eventLink(value: string | null) {
   } catch {
     return undefined
   }
+}
+
+/** Figma H1·M12 "곧 시작": a scheduled event starting within this many days. */
+export const soonDays = 7
+
+const dayMs = 24 * 60 * 60 * 1000
+
+/**
+ * Badge by the event's Korea dates: ongoing, soon (starts within
+ * {@link soonDays} days), planned. Ended or undated events have none.
+ */
+export function eventStatus(
+  event: Pick<EventSummary, 'startsOn' | 'endsOn'>,
+  today = koreaToday(),
+) {
+  const startDate = event.startsOn ?? event.endsOn
+  const endDate = event.endsOn ?? event.startsOn
+  if (!startDate || !endDate || endDate < today) return undefined
+  if (startDate <= today) return 'ongoing'
+  const days =
+    (Date.parse(`${startDate}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) /
+    dayMs
+  return days <= soonDays ? 'soon' : 'planned'
+}
+
+/** Collection time in Korea time, e.g. "11. 13. 03:00" (M12 "갱신 11.13 03:00"). */
+export function formatCollectedAt(value: string, language: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return new Intl.DateTimeFormat(language, {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'Asia/Seoul',
+  }).format(date)
 }

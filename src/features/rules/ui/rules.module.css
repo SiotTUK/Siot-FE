@@ -30,8 +30,8 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-8);
-  background: var(--category-bg);
-  color: var(--category-fg);
+  background: var(--category-bg, var(--secondary));
+  color: var(--category-fg, var(--primary));
 }
 .tags {
   display: flex;

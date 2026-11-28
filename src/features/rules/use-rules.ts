@@ -1,7 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import type { Language } from '@/shared/api/types'
 import { currentLanguage } from '@/shared/i18n'
-import { useRuleFaqQuery, useRuleListQuery, useRuleQuery } from './api'
+import {
+  useRuleCategoriesQuery,
+  useRuleFaqQuery,
+  useRuleListQuery,
+  useRuleQuery,
+} from './api'
 import { toFaqItems, toRule } from './rules'
 
 /**
@@ -12,6 +17,15 @@ import { toFaqItems, toRule } from './rules'
 export function useScreenLanguage(): Language {
   useTranslation()
   return currentLanguage()
+}
+
+/** Member rule categories in server `sortOrder` (`GET /api/rules/categories`). */
+export function useRuleCategories() {
+  const query = useRuleCategoriesQuery(useScreenLanguage())
+  const categories = query.data
+    ? [...query.data].sort((a, b) => a.sortOrder - b.sortOrder)
+    : []
+  return { query, categories }
 }
 
 /** Every rule in the screen language (`GET /api/rules`). */

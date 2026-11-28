@@ -1,6 +1,6 @@
 import type { Language } from '@/shared/api/types'
 import { koreaToday } from '@/shared/i18n/format'
-import type { RuleFaqResponse, RuleResponse } from './api'
+import type { RuleCategoryResponse, RuleFaqResponse, RuleResponse } from './api'
 
 /** Figma M06 order: 기초 질서 · 쓰레기 · 교통 · 세금 · 생활 편의 · 교육·상담 */
 export const ruleCategories = [
@@ -28,6 +28,10 @@ export interface Rule {
   code: string
   /** null: a category the screens do not know (added by an admin). */
   category: RuleCategory | null
+  /** Korean original category name from BE `RuleResponse.category`. */
+  categoryRaw: string | null
+  /** Requested-language category name from BE `RuleResponse.categoryName`. */
+  categoryName: string | null
   title: string
   summary: string
   points: string[]
@@ -51,8 +55,45 @@ export interface RuleFaqItem {
   rule: string
 }
 
-const isRuleCategory = (value: string | null): value is RuleCategory =>
+export const isRuleCategory = (
+  value: string | null | undefined,
+): value is RuleCategory =>
   ruleCategories.some((category) => category === value)
+
+/**
+ * URL slug for `/rules/category/:category` (#132): built-in categories keep
+ * their stable FE key (`waste`, …); admin-added categories (`key: null`) use
+ * their Korean original `category` name.
+ */
+export function categorySlug(
+  item: Pick<RuleCategoryResponse, 'key' | 'category'>,
+) {
+  return item.key ?? item.category
+}
+
+export function categoryPath(
+  item: Pick<RuleCategoryResponse, 'key' | 'category'>,
+) {
+  return `/rules/category/${encodeURIComponent(categorySlug(item))}`
+}
+
+export function findRuleCategory(
+  categories: readonly RuleCategoryResponse[],
+  param: string | undefined,
+) {
+  if (!param) return undefined
+  return categories.find(
+    (item) => item.key === param || item.category === param,
+  )
+}
+
+export function ruleBelongsToCategory(
+  rule: Pick<Rule, 'category' | 'categoryRaw'>,
+  item: Pick<RuleCategoryResponse, 'key' | 'category'>,
+) {
+  if (item.key !== null && rule.category === item.key) return true
+  return rule.categoryRaw !== null && rule.categoryRaw === item.category
+}
 
 /**
  * The penalty mentions a fine, in the language it is written in. The BE
@@ -99,6 +140,8 @@ export function toRule(response: RuleResponse, language: Language): Rule {
     category: isRuleCategory(response.categoryKey)
       ? response.categoryKey
       : null,
+    categoryRaw: response.category?.trim() || null,
+    categoryName: response.categoryName?.trim() || null,
     title: response.title,
     summary: response.summary ?? '',
     points: response.points,
@@ -125,12 +168,28 @@ export function toFaqItems(faqs: RuleFaqResponse[]): RuleFaqItem[] {
 }
 
 export interface RuleGroup {
-  category: RuleCategory
+  category: RuleCategory | string
   rules: Rule[]
 }
 
-/** "분야별 안내": one group per category in the Figma order, empty ones skipped. */
-export function groupByCategory(rules: Rule[]): RuleGroup[] {
+/**
+ * "분야별 안내": when BE categories are provided, groups in server `sortOrder`
+ * (including admin-added categories with `key: null`); otherwise falls back to
+ * the 6 built-in keys. Empty groups are skipped.
+ */
+export function groupByCategory(
+  rules: Rule[],
+  categories?: readonly RuleCategoryResponse[],
+): RuleGroup[] {
+  if (categories) {
+    return [...categories]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((item) => ({
+        category: categorySlug(item),
+        rules: rules.filter((rule) => ruleBelongsToCategory(rule, item)),
+      }))
+      .filter((group) => group.rules.length > 0)
+  }
   return ruleCategories
     .map((category) => ({
       category,

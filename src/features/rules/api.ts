@@ -10,6 +10,10 @@ import type { Language } from '@/shared/api/types'
 export interface RuleResponse {
   /** URL slug, e.g. `waste-food`. */
   code: string
+  /** Korean original category name (list filter value). */
+  category?: string | null
+  /** Category name in the requested language (RUL-13); Korean if untranslated. */
+  categoryName?: string | null
   /** FE category key (order, waste, …); null for a category an admin added. */
   categoryKey: string | null
   title: string
@@ -53,12 +57,34 @@ export interface RuleFaqResponse {
   language: Language
 }
 
+/** RUL-12·13 member rule category (`GET /api/rules/categories?language=`). */
+export interface RuleCategoryResponse {
+  /** Korean original name; also accepted as the `category` filter value. */
+  category: string
+  /** Name in the requested language, or Korean when `translated` is false. */
+  name: string
+  /** false → Korean original shown ("번역 준비 중"). */
+  translated: boolean
+  /** Built-in FE key (order, waste, …); null for admin-added categories. */
+  key: string | null
+  sortOrder: number
+}
+
 export const ruleKeys = {
   all: ['rules'] as const,
+  categories: (language: Language) =>
+    [...ruleKeys.all, 'categories', language] as const,
   list: (language: Language) => [...ruleKeys.all, 'list', language] as const,
   faqs: (language: Language) => [...ruleKeys.all, 'faqs', language] as const,
   detail: (code: string, language: Language) =>
     [...ruleKeys.all, 'detail', code, language] as const,
+}
+
+export function fetchRuleCategories(language: Language, signal?: AbortSignal) {
+  return apiRequest<RuleCategoryResponse[]>(
+    `/api/rules/categories?language=${language}`,
+    { signal },
+  )
 }
 
 /** Every rule, in category order then the order inside each category. */
@@ -84,6 +110,13 @@ export function fetchRule(
     `/api/rules/${encodeURIComponent(code)}?language=${language}`,
     { signal },
   )
+}
+
+export function useRuleCategoriesQuery(language: Language) {
+  return useQuery({
+    queryKey: ruleKeys.categories(language),
+    queryFn: ({ signal }) => fetchRuleCategories(language, signal),
+  })
 }
 
 export function useRuleListQuery(language: Language) {

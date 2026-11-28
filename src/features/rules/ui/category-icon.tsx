@@ -1,7 +1,7 @@
 import { Icon } from '@/shared/ui/icons'
 import type { RuleCategory } from '../rules'
 
-/** Line icon for each 분야 (20px, currentColor), as in Figma v2 M06. */
+/** Line icon for each built-in 분야 (20px, currentColor), as in Figma v2 M06. */
 const paths: Record<RuleCategory, string> = {
   // two people: public order and manners
   order:
@@ -20,16 +20,20 @@ const paths: Record<RuleCategory, string> = {
     'M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z',
 }
 
+/** Default document icon for admin-added categories (`key: null`, #132). */
+const fallbackPath =
+  'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5'
+
 export function CategoryIcon({
   category,
   className,
 }: {
-  category: RuleCategory
+  category: RuleCategory | null
   className?: string
 }) {
   return (
     <Icon className={className}>
-      <path d={paths[category]} />
+      <path d={category ? paths[category] : fallbackPath} />
     </Icon>
   )
 }

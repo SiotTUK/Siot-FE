@@ -91,7 +91,11 @@ export function Toolbar({
 
 /** Pins the main action to the bottom of the screen. */
 export function BottomArea({ children }: { children: ReactNode }) {
-  return <div className={styles.bottom}>{children}</div>
+  return (
+    <div className={styles.bottom} data-sticky-bottom="">
+      {children}
+    </div>
+  )
 }
 
 /** Bordered box for list items and grouped rows. */

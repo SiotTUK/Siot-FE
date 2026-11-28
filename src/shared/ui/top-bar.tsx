@@ -11,7 +11,7 @@ export function TopBar({
   children?: ReactNode
 }) {
   return (
-    <header className={styles.bar}>
+    <header className={styles.bar} data-sticky-top="">
       <span className={styles.brand}>{brand}</span>
       <div className={styles.actions}>{children}</div>
     </header>

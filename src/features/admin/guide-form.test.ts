@@ -50,6 +50,13 @@ describe('guide text form', () => {
       sourceName: null,
       noticeChangedAt: '2026-11-14T00:00:00Z',
       updatedAt: '2026-11-14T00:00:00Z',
+      pageStart: 12,
+      pageEnd: 14,
+      sourcePages: 'p.12~14',
+      points: [],
+      when: null,
+      contact: null,
+      reviewed: false,
     })
     expect(form.docs).toBe('여권\n사진 1장')
     expect(form.noticeChanged).toBe(false)

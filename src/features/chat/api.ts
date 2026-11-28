@@ -37,7 +37,7 @@ export interface EmergencyContact {
 export interface Referral {
   notice: string
   contacts: {
-    topic: 'VISA' | 'LEGAL' | 'MEDICAL'
+    topic: 'VISA' | 'LEGAL' | 'MEDICAL' | 'TAX' | 'LABOR' | 'WORK_INJURY'
     number: string
     label: string
   }[]

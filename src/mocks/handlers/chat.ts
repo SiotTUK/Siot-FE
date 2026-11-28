@@ -224,6 +224,23 @@ function cannedAnswer(
         ],
       },
     }
+  // BE ReferralDetector LABOR (해고·임금 체불), number and label from BE Referral.
+  if (/해고|체불|월급을 안|sa thải|nợ lương|解雇|欠薪/i.test(question))
+    return {
+      ...answerId,
+      answerStatus: 'ANSWERED',
+      content: '임금을 받지 못했다면 진정을 낼 수 있어요.',
+      referral: {
+        notice: '개인 상황에 따라 달라서 판단할 수 없어요.',
+        contacts: [
+          {
+            topic: 'LABOR',
+            number: '1350',
+            label: '고용노동부 고객상담센터 (해고·임금·근로조건)',
+          },
+        ],
+      },
+    }
   if (/맛집|식당|restaurant/i.test(question))
     return {
       ...answerId,

@@ -115,6 +115,8 @@ export function mockEvents(language: Language) {
     eventId: index + 1,
     title,
     venue: text.venues[index],
+    // The BE always sends the field (null when the source has no photo).
+    thumbnailUrl: null,
     startsOn: dateIn(index === 0 ? -9 : index * 4),
     endsOn: dateIn(index === 0 ? 14 : index * 4 + 12),
     startsAt: index === 1 ? null : '14:00:00',

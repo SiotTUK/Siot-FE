@@ -11,7 +11,8 @@ export interface EventSummary {
   eventId: number
   title: string
   venue: string | null
-  thumbnailUrl?: string | null
+  /** Event photo URL; null when the source has none (BE #19). */
+  thumbnailUrl: string | null
   startsOn: string | null
   endsOn: string | null
   startsAt: string | null

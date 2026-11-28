@@ -63,7 +63,15 @@ export interface MockState {
   /** member email → kind → saved preference */
   notificationPrefs: Record<
     string,
-    Record<string, { enabled: boolean; leadDays: number }>
+    Record<
+      string,
+      {
+        enabled: boolean
+        leadDays: number
+        emailEnabled?: boolean
+        leadDaysList?: number[]
+      }
+    >
   >
 }
 

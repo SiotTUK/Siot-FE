@@ -79,10 +79,16 @@ describe('mock rules API', () => {
       title: entry.title.en,
       checkedOn: rulesCheckedOn,
       translated: true,
+      noticeChangedAt: null,
       taxKind: 'TAX_CAR',
     })
     const noise = ruleEntries.find((item) => item.code === 'order-noise')!
     expect(mockRule(noise, 'ko').taxKind).toBeNull()
+    // NTF-07: one rule carries a change time so the mock shows "안내 변경".
+    const food = ruleEntries.find((item) => item.code === 'waste-food')!
+    expect(mockRule(food, 'vi').noticeChangedAt).toBe(
+      '2026-11-27T14:30:00+09:00',
+    )
   })
 
   it('numbers the FAQ and links each to its rule title', () => {

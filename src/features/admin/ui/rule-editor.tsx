@@ -158,7 +158,8 @@ function RuleEditForm({
         readOnly={deleted}
         pending={update.isPending}
         error={update.isError ? errorMessage(t, update.error) : undefined}
-        // NTF-07: ask before saving whether members get a change notice.
+        // NTF-07: ask before saving whether the member detail shows "안내 변경".
+        // Rules send no change notification (BE NotificationService).
         onSave={setPending}
         confirm={
           pending && (

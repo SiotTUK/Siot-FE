@@ -1,4 +1,5 @@
 import type { Language } from '@/shared/api/types'
+import { koreaToday } from '@/shared/i18n/format'
 import type { RuleFaqResponse, RuleResponse } from './api'
 
 /** Figma M06 order: 기초 질서 · 쓰레기 · 교통 · 세금 · 생활 편의 · 교육·상담 */
@@ -38,6 +39,8 @@ export interface Rule {
   checkedOn: string | null
   /** false → the text is the Korean original: "번역 준비 중". */
   translated: boolean
+  /** NTF-07 YYYY-MM-DD in Korea of the last real change: "안내 변경 11. 28.". */
+  noticeChangedOn: string | null
   taxKind: string | null
 }
 
@@ -65,6 +68,17 @@ const finePatterns: Record<Language, RegExp> = {
 
 export function mentionsFine(penalty: string | null, language: Language) {
   return penalty ? finePatterns[language].test(penalty) : false
+}
+
+/**
+ * The day in Korea of a BE time such as `2026-11-28T10:00:00+09:00`, so the
+ * date does not depend on the offset the BE writes or the viewer's timezone.
+ * null when there is no time or it cannot be read.
+ */
+export function koreaDateOf(value: string | null) {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : koreaToday(date)
 }
 
 /**
@@ -96,6 +110,7 @@ export function toRule(response: RuleResponse, language: Language): Rule {
     fine: mentionsFine(response.penalty, response.translated ? language : 'ko'),
     checkedOn: response.checkedOn,
     translated: response.translated,
+    noticeChangedOn: koreaDateOf(response.noticeChangedAt),
     taxKind: response.taxKind,
   }
 }

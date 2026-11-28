@@ -201,11 +201,11 @@ export const adminMessages = defineKoreanMessages({
       translationsTitle: '번역 (영어 · 중국어 · 베트남어)',
       saveTranslation: '{{language}} 번역 저장',
       noticeChangedAt: '안내 변경 {{date}}',
-      noticeQuestion: '회원에게 안내 변경 알림을 보낼까요?',
+      noticeQuestion: '회원 상세 화면에 "안내 변경"을 표시할까요?',
       noticeHelp:
-        '기한·장소·수수료처럼 실제 안내가 바뀌었으면 알림을 보내요. 오타 수정이면 알림 없이 저장하세요.',
-      saveWithNotice: '알림 보내고 저장',
-      saveWithoutNotice: '알림 없이 저장',
+        '기한·장소·수수료처럼 실제 안내가 바뀌었으면 표시하세요. 회원 생활수칙 상세에 "안내 변경"과 오늘 날짜가 보여요. 생활수칙은 알림을 보내지 않아요. 오타 수정이면 표시 없이 저장하세요. 이미 표시한 날짜는 그대로 남아요.',
+      saveWithNotice: '안내 변경 표시하고 저장',
+      saveWithoutNotice: '표시 없이 저장',
       delete: '삭제',
       deleteConfirm:
         '"{{title}}"을(를) 삭제할까요? 회원 화면에서 사라지고, 이 코드는 다시 쓸 수 없어요.',

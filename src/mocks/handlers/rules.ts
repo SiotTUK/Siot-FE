@@ -20,6 +20,14 @@ const taxKinds: Record<string, string> = {
   'tax-resident': 'TAX_RESIDENT',
 }
 
+/**
+ * NTF-07 rules saved as a real change (RuleResponse.noticeChangedAt), so the
+ * mock shows "안내 변경" on their detail. Mock-only; the other rules have null.
+ */
+const noticeChanges: Record<string, string> = {
+  'waste-food': '2026-11-27T14:30:00+09:00',
+}
+
 /** BE `?language=`: ko/en/zh/vi, missing = ko, anything else 400. */
 function requestLanguage(request: Request): Language | null {
   const value = new URL(request.url).searchParams.get('language')
@@ -49,6 +57,7 @@ export function mockRule(entry: RuleEntry, language: Language): RuleResponse {
     sources: entry.sources,
     checkedOn: rulesCheckedOn,
     translated: true,
+    noticeChangedAt: noticeChanges[entry.code] ?? null,
     taxKind: taxKinds[entry.code] ?? null,
   }
 }

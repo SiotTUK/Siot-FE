@@ -1,10 +1,16 @@
 import type { GuideKind, GuideSummaryResponse } from './api'
 
+/** Kinds edited on the checklist text screen. Rules have their own screen. */
 export const guideKinds = [
   'CHECKLIST',
   'LIFE_CHANGE_TASK',
-  'RULE',
 ] as const satisfies readonly GuideKind[]
+export type EditableGuideKind = (typeof guideKinds)[number]
+
+/** Items of the checklist text screen: no living rules (ADM-06 edits them). */
+export function editableGuides(guides: readonly GuideSummaryResponse[]) {
+  return guides.filter((guide) => guide.kind !== 'RULE')
+}
 
 /** "CL-01 · 외국인등록", or the code alone when there is no Korean title. */
 export function guideLabel(
@@ -20,7 +26,7 @@ export function guideLabel(
  */
 export function guideOptions(
   guides: readonly GuideSummaryResponse[],
-  kind: GuideKind | '',
+  kind: EditableGuideKind | '',
   selected: string,
   placeholder: string,
 ) {

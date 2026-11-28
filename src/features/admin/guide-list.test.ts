@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { GuideSummaryResponse } from './api'
-import { guideLabel, guideOptions } from './guide-list'
+import { editableGuides, guideLabel, guideOptions } from './guide-list'
 
 const guides: GuideSummaryResponse[] = [
   {
@@ -40,14 +40,23 @@ describe('guide picker', () => {
       { value: 'waste-food', label: 'waste-food' },
     ])
     expect(
-      guideOptions(guides, 'RULE', '', '-').map((option) => option.value),
-    ).toEqual(['', 'waste-food'])
+      guideOptions(guides, 'CHECKLIST', '', '-').map((option) => option.value),
+    ).toEqual(['', 'CL-01'])
+  })
+
+  it('leaves living rules to the rule screen', () => {
+    expect(editableGuides(guides).map((guide) => guide.code)).toEqual([
+      'CL-01',
+      'LC-01-1',
+    ])
   })
 
   it('keeps a code opened by link even when it is not listed', () => {
     expect(
-      guideOptions(guides, 'RULE', 'CL-01', '-').map((option) => option.label),
-    ).toEqual(['-', 'CL-01 · 외국인등록', 'waste-food'])
+      guideOptions(guides, 'LIFE_CHANGE_TASK', 'CL-01', '-').map(
+        (option) => option.label,
+      ),
+    ).toEqual(['-', 'CL-01 · 외국인등록', 'LC-01-1 · 체류지 변경 신고'])
     expect(guideOptions(guides, '', 'CL-99', '-')[1]).toEqual({
       value: 'CL-99',
       label: 'CL-99',

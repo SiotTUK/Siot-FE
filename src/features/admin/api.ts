@@ -86,6 +86,12 @@ export interface GuideTranslationUpdateRequest {
   sourceName: string | null
   /** true = real guidance change (shows "변경됨"), false = typo fix (NTF-07). */
   noticeChanged: boolean
+  /** #14 rule sentences. Omitted = unchanged. */
+  points?: string[]
+  /** #14 rule timing. Omitted = unchanged, "" clears. */
+  when?: string
+  /** #14 this language's contact text. Omitted = unchanged, "" clears. */
+  contact?: string
 }
 
 export type GuideKind = 'CHECKLIST' | 'LIFE_CHANGE_TASK' | 'RULE'

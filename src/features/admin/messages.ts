@@ -10,12 +10,14 @@ export const adminMessages = defineKoreanMessages({
     menuReviews: '챗봇 답변 검토',
     menuReviewsDesc: '안 됐어요 · 자료 없음 답변 확인과 처리 기록',
     menuGuides: '체크리스트 문구',
-    menuGuidesDesc: '항목 상세 문구를 언어별로 수정',
+    menuGuidesDesc: '체크리스트 · 생활 변화 할 일 문구를 언어별로 수정',
+    ruleMoved:
+      '생활수칙은 생활수칙 화면에서 한국어 · 번역 · 출처 · 문의를 한곳에서 고쳐요.',
+    openRule: '생활수칙 화면에서 열기',
     guideKind: '항목 종류',
     guideKinds: {
       CHECKLIST: '체크리스트',
       LIFE_CHANGE_TASK: '생활 변화 할 일',
-      RULE: '생활수칙',
     },
     guideItem: '항목',
     guidePick: '수정할 항목을 고르세요',
@@ -195,8 +197,9 @@ export const adminMessages = defineKoreanMessages({
       checkedOn: '공식 페이지와 대조한 날',
       dateInvalid: '날짜를 YYYY-MM-DD로 입력해 주세요',
       translationNotice:
-        '한국어를 저장하면 영어·중국어·베트남어를 자동 번역으로 다시 만들어요. 언어별 문구 수정에서 직접 고친(사람이 확인한) 번역은 덮어쓰지 않아요.',
-      editTranslations: '언어별 문구 검토 · 수정',
+        '한국어를 저장하면 영어·중국어·베트남어를 자동 번역으로 다시 만들어요. 아래 번역에서 직접 고친(사람이 확인한) 번역은 덮어쓰지 않아요.',
+      translationsTitle: '번역 (영어 · 중국어 · 베트남어)',
+      saveTranslation: '{{language}} 번역 저장',
       noticeChangedAt: '안내 변경 {{date}}',
       noticeQuestion: '회원에게 안내 변경 알림을 보낼까요?',
       noticeHelp:

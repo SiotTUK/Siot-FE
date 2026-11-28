@@ -7,6 +7,7 @@ import type { GuideTranslationResponse } from '@/features/admin/api'
 import type { AdminEventDetail } from '@/features/admin/event-api'
 import type { AdminReport } from '@/features/admin/report-api'
 import type { AdminRuleDetail, AdminRuleFaq } from '@/features/admin/rule-api'
+import type { AdminSchedule } from '@/features/admin/schedule-api'
 import type { BillTranslation } from '@/features/bill-translation/api'
 import type {
   DocumentResponse,
@@ -53,6 +54,8 @@ export interface MockState {
   adminEvents?: { events: AdminEventDetail[]; nextId: number }
   /** ADM-07: content error reports, seeded on first use; COM-01 adds to it. */
   adminReports?: { reports: AdminReport[]; nextId: number }
+  /** CAL-01~03 common calendar schedules, seeded on first use. */
+  adminSchedules?: { schedules: AdminSchedule[]; nextId: number }
   /**
    * CHK-06·NTF-07 source link and contact changed by an admin, by item code.
    * Only changed fields are kept (null = cleared); the rest stay as seeded.

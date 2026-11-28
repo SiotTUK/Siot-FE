@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { DocumentList } from '@/features/admin/ui/document-list'
 import { EventCreate, EventEdit } from '@/features/admin/ui/event-editor'
 import { EventList } from '@/features/admin/ui/event-list'
@@ -12,6 +12,12 @@ import { RuleCategoryList } from '@/features/admin/ui/rule-categories'
 import { RuleCreate, RuleEdit } from '@/features/admin/ui/rule-editor'
 import { RuleFaqList } from '@/features/admin/ui/rule-faqs'
 import { RuleList } from '@/features/admin/ui/rule-list'
+import {
+  ScheduleCreate,
+  ScheduleEdit,
+} from '@/features/admin/ui/schedule-editor'
+import { ScheduleList } from '@/features/admin/ui/schedule-list'
+import { parseScheduleYear } from '@/features/admin/schedule-form'
 import { PageBody } from '@/shared/ui/mobile-frame'
 import { Card, Muted, Stack } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
@@ -43,7 +49,8 @@ function AdminScreen({
 /**
  * Most frequent work first: queues that fill up every day (member reports,
  * chatbot answers), then content that changes often (events, rules, checklist
- * text), then occasional setup (source documents, admin roles).
+ * text), then a few times a year (calendar schedules: the server makes the
+ * regular tax rounds), then occasional setup (source documents, admin roles).
  */
 const menus = [
   ['reports', 'admin.menuReports', 'admin.menuReportsDesc'],
@@ -51,6 +58,7 @@ const menus = [
   ['events', 'admin.menuEvents', 'admin.menuEventsDesc'],
   ['rules', 'admin.menuRules', 'admin.menuRulesDesc'],
   ['guides', 'admin.menuGuides', 'admin.menuGuidesDesc'],
+  ['schedules', 'admin.menuSchedules', 'admin.menuSchedulesDesc'],
   ['documents', 'admin.menuDocuments', 'admin.menuDocumentsDesc'],
   ['members', 'admin.menuMembers', 'admin.menuMembersDesc'],
 ] as const
@@ -212,6 +220,54 @@ export function AdminReportPage() {
   return (
     <AdminScreen title={t('admin.menuReports')} backTo="/admin/reports">
       <ReportDetail key={reportId} reportId={reportId} />
+    </AdminScreen>
+  )
+}
+
+/** Year being browsed (`?year=`), so back returns to the same list. */
+function useScheduleYear() {
+  return parseScheduleYear(useSearchParams()[0].get('year'))
+}
+const schedulesOf = (year: number | undefined) =>
+  year ? `/admin/schedules?year=${year}` : '/admin/schedules'
+
+/** CAL-01~03·NTF-01 */
+export function AdminSchedulesPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen title={t('admin.menuSchedules')} backTo="/admin">
+      <ScheduleList />
+    </AdminScreen>
+  )
+}
+
+/** CAL-01~03 a schedule outside the regular tax rounds */
+export function AdminScheduleNewPage() {
+  const { t } = useTranslation()
+  return (
+    <AdminScreen
+      title={t('admin.schedules.create')}
+      backTo={schedulesOf(useScheduleYear())}
+    >
+      <ScheduleCreate />
+    </AdminScreen>
+  )
+}
+
+/** CAL-01~03·NTF-01 edit, off and on */
+export function AdminScheduleEditPage() {
+  const { t } = useTranslation()
+  const scheduleId = Number(useParams().scheduleId)
+  const year = useScheduleYear()
+  const created = (useLocation().state as { created?: boolean } | null)?.created
+  return (
+    <AdminScreen title={t('admin.menuSchedules')} backTo={schedulesOf(year)}>
+      <ScheduleEdit
+        key={scheduleId}
+        scheduleId={scheduleId}
+        year={year}
+        created={created}
+      />
     </AdminScreen>
   )
 }

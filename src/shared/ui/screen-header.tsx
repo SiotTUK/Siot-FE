@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { busyButtonProps, guardBusyClick } from './button-guard'
 import styles from './screen-header.module.css'
 
 /** `state` rides along with a `to` link, e.g. the way back to a chat (CB-10). */
@@ -57,7 +58,7 @@ export function HeaderAction({
   ...props
 }: { children: ReactNode } & (
   | { to: string; state?: unknown; onClick?: () => void }
-  | { onClick: () => void; disabled?: boolean }
+  | { onClick: () => void; disabled?: boolean; loading?: boolean }
 )) {
   return 'to' in props ? (
     <Link
@@ -72,8 +73,14 @@ export function HeaderAction({
     <button
       type="button"
       className={styles.action}
-      onClick={props.onClick}
-      disabled={props.disabled}
+      {...busyButtonProps({
+        disabled: props.disabled,
+        loading: props.loading,
+      })}
+      onClick={guardBusyClick(
+        Boolean(props.disabled || props.loading),
+        props.onClick,
+      )}
     >
       {children}
     </button>

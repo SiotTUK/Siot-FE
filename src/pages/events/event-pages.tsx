@@ -486,7 +486,7 @@ function EventBottomActions({
         </ButtonLink>
         <Button
           aria-pressed={heart.liked}
-          disabled={heart.pending}
+          loading={heart.pending}
           onClick={heart.toggle}
         >
           <HeartIcon filled={heart.liked} />{' '}

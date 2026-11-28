@@ -46,12 +46,15 @@ export function EventAlerts({
           <SelectField
             label={t('events.alerts.before')}
             value={leadDays}
-            disabled={pending || status.isPending}
+            disabled={status.isPending}
+            aria-disabled={pending || undefined}
+            aria-busy={pending || undefined}
             options={eventLeadDays.map((day) => ({
               value: String(day),
               label: t(`events.reminder.day${day}`),
             }))}
             onChange={(e) => {
+              if (pending || status.isPending) return
               const day = eventLeadDays.find(
                 (value) => value === Number(e.target.value),
               )

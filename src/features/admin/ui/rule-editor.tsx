@@ -172,7 +172,7 @@ function RuleEditForm({
                 <Button
                   variant="secondary"
                   block
-                  disabled={update.isPending}
+                  loading={update.isPending}
                   onClick={() => save(false)}
                 >
                   {t('admin.rules.saveWithoutNotice')}

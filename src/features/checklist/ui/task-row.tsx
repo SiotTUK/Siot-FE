@@ -61,9 +61,13 @@ export function TaskRow({
           type="checkbox"
           className={styles.check}
           checked={item.status === 'DONE'}
-          disabled={busy || notApplicable}
+          disabled={notApplicable}
+          aria-disabled={busy || undefined}
+          aria-busy={busy || undefined}
           aria-label={`${item.title} ${t('checklist.done')}`}
-          onChange={onToggleDone}
+          onChange={() => {
+            if (!busy) onToggleDone()
+          }}
         />
       ) : (
         <span aria-hidden="true" />

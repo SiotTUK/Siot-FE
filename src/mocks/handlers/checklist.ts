@@ -233,7 +233,16 @@ function changeSeeds(member: MockMember): Seed[] {
  * answer its display rule checks above. Common items have none.
  */
 const reasonOfCode: Record<string, string> = {
+  'CL-02': 'F4',
   'CL-05': 'STAY_EXPIRY',
+  'CL-06': 'PURPOSE_STUDY',
+  'CL-07': 'PURPOSE_WORK',
+  'CL-08': 'PURPOSE_FAMILY',
+  'CL-09': 'PURPOSE_OTHER',
+  'CL-10': 'CAR',
+  'CL-11': 'HOUSE',
+  'CL-12': 'KIDS',
+  'CL-13': 'F4',
   'LC-01-2': 'F4',
   'LC-01-3': 'CAR',
   'LC-01-4': 'KIDS',
@@ -261,6 +270,12 @@ const reasonLabels: Record<string, Record<MockMember['language'], string>> = {
     zh: '因为您是在外同胞（F-4）',
     vi: 'Vì bạn là kiều bào (F-4)',
   },
+  HOUSE: {
+    ko: '자가라서',
+    en: 'Because you own property',
+    zh: '因为您有自己的房产',
+    vi: 'Vì bạn có nhà đất riêng',
+  },
   STAY_EXPIRY: {
     ko: '체류 만료일을 입력해서',
     en: 'Because you entered your stay expiry date',
@@ -278,6 +293,18 @@ const reasonLabels: Record<string, Record<MockMember['language'], string>> = {
     en: 'Because you came to work',
     zh: '因为您来工作',
     vi: 'Vì bạn đến để làm việc',
+  },
+  PURPOSE_FAMILY: {
+    ko: '가족과 살아서',
+    en: 'Because you live with your family',
+    zh: '因为您和家人一起生活',
+    vi: 'Vì bạn sống cùng gia đình',
+  },
+  PURPOSE_OTHER: {
+    ko: '체류 목적이 기타·모름이라서',
+    en: 'Because your purpose of stay is other or not sure',
+    zh: '因为您的滞留目的是其他或不确定',
+    vi: 'Vì mục đích lưu trú của bạn là khác hoặc chưa rõ',
   },
 }
 

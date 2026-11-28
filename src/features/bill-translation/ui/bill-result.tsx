@@ -5,6 +5,8 @@ import { useChecklist } from '@/features/checklist/use-checklist'
 import { currentLanguage } from '@/shared/i18n'
 import { formatCalendarDate } from '@/shared/i18n/format'
 import { ButtonLink } from '@/shared/ui/button'
+import { InfoIcon } from '@/shared/ui/icons'
+import { MascotImage } from '@/shared/ui/mascot-image'
 import {
   Card,
   FormError,
@@ -87,17 +89,24 @@ function ResultDetails({
 
   return (
     <Stack>
-      <section className={styles.hero}>
-        <p>{t(`bill.type.${result.documentType ?? 'OTHER'}`)}</p>
-        <h2>{date ? t('bill.payBy', { date }) : t('bill.dueUnclear')}</h2>
-        {dDay && <p className={styles.countdown}>{dDay}</p>}
-        {result.issuer && <p lang="ko">{result.issuer}</p>}
+      <section className={`${styles.hero} ${styles.resultHero}`}>
+        <div className={styles.heroText}>
+          <p>{t(`bill.type.${result.documentType ?? 'OTHER'}`)}</p>
+          <h2>{date ? t('bill.payBy', { date }) : t('bill.dueUnclear')}</h2>
+          {(dDay || result.issuer) && (
+            <p className={styles.chips}>
+              {dDay && <span>{dDay}</span>}
+              {result.issuer && <span lang="ko">{result.issuer}</span>}
+            </p>
+          )}
+        </div>
+        <MascotImage pose="toroStand" height={96} />
       </section>
       {result.firstPageOnly && (
         <Notice tone="note">{t('bill.firstPage')}</Notice>
       )}
-      <Card>
-        <dl className={styles.facts}>
+      <div className={styles.factCard}>
+        <dl className={styles.factTable}>
           {rows.map(({ key, summary, value }) => (
             <div key={key}>
               <dt>{t(`bill.${key}`)}</dt>
@@ -123,34 +132,36 @@ function ResultDetails({
             </div>
           ))}
         </dl>
-      </Card>
+      </div>
       {/* CAL-03: the round the due date falls in, else one by tax kind. */}
       <TaxDetailLink
         taxKind={result.taxKind}
         scheduleId={result.taxScheduleId}
       />
-      <Notice tone="note" title={t('bill.verifyOriginal')}>
-        <p>{t('bill.disclaimer')}</p>
-        {result.warnings.length > 0 && (
-          <>
-            <strong>{t('bill.warnings')}</strong>
-            <ul className={styles.list} lang={result.language}>
-              {result.warnings.map(({ code, message }, index) => (
-                <li key={`${code}-${index}`}>{message}</li>
-              ))}
-            </ul>
-          </>
-        )}
-      </Notice>
+      <section className={styles.check} aria-label={t('bill.verifyOriginal')}>
+        <InfoIcon />
+        <div>
+          <p>{t('bill.disclaimer')}</p>
+          {result.warnings.length > 0 && (
+            <>
+              <strong>{t('bill.warnings')}</strong>
+              <ul className={styles.list} lang={result.language}>
+                {result.warnings.map(({ code, message }, index) => (
+                  <li key={`${code}-${index}`}>{message}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </section>
       {result.originalLines.length > 0 && (
-        <details className={styles.disclosure}>
-          <summary>{t('bill.original')}</summary>
-          <ul className={styles.list} lang="ko">
+        <Section title={t('bill.original')}>
+          <ul className={styles.lines} lang="ko">
             {result.originalLines.map((line, index) => (
               <li key={index}>{line}</li>
             ))}
           </ul>
-        </details>
+        </Section>
       )}
       {guides.length > 0 && (
         <Section title={t('bill.guides')}>
@@ -188,13 +199,19 @@ function ResultDetails({
           )}
         </Card>
       </Section>
-      <ButtonLink className={styles.secondary} variant="secondary" to="/chat">
-        {t('bill.ask')}
-      </ButtonLink>
       <Stack gap={8}>
-        <ButtonLink className={styles.primary} to={billTranslationPath}>
-          {t('bill.done')}
-        </ButtonLink>
+        <div className={styles.actions}>
+          <ButtonLink
+            className={styles.secondary}
+            variant="secondary"
+            to="/chat"
+          >
+            {t('bill.ask')}
+          </ButtonLink>
+          <ButtonLink className={styles.primary} to={billTranslationPath}>
+            {t('bill.done')}
+          </ButtonLink>
+        </div>
         {result.id !== null && <Muted>{t('bill.saved')}</Muted>}
       </Stack>
       <Notice tone="note" title={t('bill.privacyTitle')}>

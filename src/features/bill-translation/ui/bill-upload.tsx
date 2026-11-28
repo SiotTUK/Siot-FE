@@ -3,16 +3,19 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { currentLanguage } from '@/shared/i18n'
 import { Button } from '@/shared/ui/button'
+import {
+  CameraIcon,
+  ChevronDownIcon,
+  FileTextIcon,
+  ImageIcon,
+  LightbulbIcon,
+  LockIcon,
+} from '@/shared/ui/icons'
+import { MascotImage } from '@/shared/ui/mascot-image'
+import { MascotTip } from '@/shared/ui/mascot-tip'
 import { AttachmentItem } from '@/shared/ui/document'
 import { PageBody } from '@/shared/ui/mobile-frame'
-import {
-  FormError,
-  Muted,
-  Notice,
-  Card,
-  Section,
-  Stack,
-} from '@/shared/ui/page'
+import { FormError, Muted, Card, Section, Stack } from '@/shared/ui/page'
 import { ScreenHeader } from '@/shared/ui/screen-header'
 import { Sheet } from '@/shared/ui/sheet'
 import type { BillTranslation } from '../api'
@@ -130,42 +133,54 @@ export function BillUpload({ memberId }: { memberId: number }) {
         {state.screen === 'select' && (
           <>
             <section className={styles.hero}>
-              <h2>{t('bill.uploadTitle')}</h2>
-              <p>{t('bill.uploadIntro')}</p>
+              <div className={styles.heroText}>
+                <h2>{t('bill.uploadTitle')}</h2>
+                <p>{t('bill.uploadIntro')}</p>
+              </div>
+              <MascotImage pose="hug" height={92} />
             </section>
+            <button
+              type="button"
+              className={styles.cameraCard}
+              onClick={() => camera.current?.click()}
+            >
+              <span className={styles.cameraIcon}>
+                <CameraIcon />
+              </span>
+              <strong>{t('bill.camera')}</strong>
+              <span>{t('bill.cameraHint')}</span>
+            </button>
+            <div className={styles.options}>
+              <button type="button" onClick={() => album.current?.click()}>
+                <ImageIcon />
+                {t('bill.album')}
+              </button>
+              <button type="button" onClick={() => pdf.current?.click()}>
+                <FileTextIcon />
+                {t('bill.pdf')}
+              </button>
+            </div>
             <Muted>
               {t('bill.documentExamples')} {t('bill.formats')}
             </Muted>
-            <Notice tone="note" title={t('bill.privacyTitle')}>
-              {t('bill.privacy')}
-            </Notice>
-            <Stack gap={8}>
-              <Button
-                className={styles.primary}
-                onClick={() => camera.current?.click()}
-              >
-                {t('bill.camera')}
-              </Button>
-              <Muted>{t('bill.cameraHint')}</Muted>
-            </Stack>
-            <div className={styles.actions}>
-              <Button
-                className={styles.secondary}
-                variant="secondary"
-                block
-                onClick={() => album.current?.click()}
-              >
-                {t('bill.album')}
-              </Button>
-              <Button
-                className={styles.primary}
-                onClick={() => pdf.current?.click()}
-              >
-                {t('bill.pdf')}
-              </Button>
-            </div>
-            <details className={styles.disclosure} open>
-              <summary>{t('bill.tipsTitle')}</summary>
+            <details className={styles.privacyLine}>
+              <summary>
+                <LockIcon />
+                <span>{t('bill.storageNotice')}</span>
+                <ChevronDownIcon className={styles.chevron} />
+              </summary>
+              <p>
+                <strong>{t('bill.privacyTitle')}</strong> {t('bill.privacy')}
+              </p>
+            </details>
+            <details className={styles.tipsRow}>
+              <summary>
+                <span className={styles.tipsIcon}>
+                  <LightbulbIcon />
+                </span>
+                <span>{t('bill.tipsTitle')}</span>
+                <ChevronDownIcon className={styles.chevron} />
+              </summary>
               <BillPhotoTips />
             </details>
             <RecentBills memberId={memberId} />
@@ -249,10 +264,11 @@ function Processing({ file, onCancel }: { file: File; onCancel: () => void }) {
     }
   }, [file])
   return (
-    <Stack gap={12}>
+    <Stack gap={16}>
       <section className={styles.centerIntro}>
+        <MascotImage pose="toroStand" height={140} />
         <h2>{t('bill.processingTitle')}</h2>
-        <Muted>{t('bill.usualTime')}</Muted>
+        <p>{t('bill.usualTime')}</p>
       </section>
       <BillProcessingCard />
       <AttachmentItem name={file.name}>
@@ -274,11 +290,7 @@ function Processing({ file, onCancel }: { file: File; onCancel: () => void }) {
             />
           ))}
       </AttachmentItem>
-      <div className={styles.privacy}>
-        <Notice tone="note" title={t('bill.privacyTitle')}>
-          {t('bill.storageNotice')}
-        </Notice>
-      </div>
+      <MascotTip mascot="toro">{t('bill.storageNotice')}</MascotTip>
       <Button
         className={styles.secondary}
         variant="secondary"
@@ -304,13 +316,14 @@ function RecognitionFailure({
 }) {
   const { t } = useTranslation()
   return (
-    <Stack gap={12}>
+    <Stack gap={16}>
       <section className={styles.centerIntro}>
+        <MascotImage pose="haeroSit" height={130} />
         <h2>{t('bill.failed')}</h2>
       </section>
       <BillFailureCard result={result} onRetry={onRetry} />
       <Card>
-        <strong>{t('bill.tipsTitle')}</strong>
+        <strong className={styles.cardTitle}>{t('bill.tipsTitle')}</strong>
         <BillPhotoTips />
       </Card>
       <BillRetakeActions onAlbum={onAlbum} onRetake={onRetake} />

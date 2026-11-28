@@ -2,3 +2,15 @@
   align-self: center;
   object-fit: contain;
 }
+/* A pose cropped to the character as in Figma ("mascot/toro" etc.). */
+.crop {
+  position: relative;
+  display: block;
+  flex: none;
+  align-self: center;
+  overflow: hidden;
+}
+.crop img {
+  position: absolute;
+  max-width: none;
+}

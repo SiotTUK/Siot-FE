@@ -397,19 +397,54 @@
 .billPending {
   white-space: normal;
 }
+/* M08d: amount, due date and where to pay in one light-yellow box. */
+.billFacts {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-16);
+  border-radius: var(--radius-16);
+  background: #fff6da; /* Mascot/Toro Tint */
+}
+.billFacts > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-8);
+}
+.billFacts dt {
+  font: var(--text-label);
+  color: var(--foreground);
+}
+.billFacts dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin: 0;
+  font: var(--text-body);
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+.billFacts dd strong {
+  font-weight: 500;
+}
+.billFacts > div:last-child :is(dt, dd) {
+  color: var(--muted-foreground);
+}
 .billDDay {
-  padding: 2px var(--space-8);
-  border-radius: var(--radius-8);
-  background: var(--warning-bg);
-  font-weight: 700;
+  font: var(--text-body);
+}
+.billDDay::before {
+  content: '(';
+}
+.billDDay::after {
+  content: ')';
 }
 .billVerify {
   margin: 0;
-  padding: var(--space-8) var(--space-12);
-  border-radius: var(--radius-8);
-  background: var(--warning-bg);
   font: var(--text-caption);
-  font-weight: 700;
+  color: var(--muted-foreground);
 }
 
 /* History */
